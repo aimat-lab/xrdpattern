@@ -1,5 +1,5 @@
 from typing import Optional
-from file_io import get_axrd_repr, Formats, print_supported_formats
+from file_io import get_axrd_repr, Formats
 import re
 
 # -------------------------------------------
@@ -17,7 +17,7 @@ class XrdPattern:
 
     def import_from_file(self,filepath : str):
         _ = self
-        self.axrd_repr = get_axrd_repr(input_path=filepath, input_format=Formats.RIET7_ILL_D1A5_PSI_DMC)
+        self.axrd_repr = get_axrd_repr(input_path=filepath, input_format=Formats.riet7)
 
         print(self.axrd_repr[:10000])
 
@@ -60,5 +60,5 @@ class XrdPattern:
 
 if __name__ == "__main__":
     # xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
-    # xrd_pattern = XrdPattern(filepath="/home/daniel/OneDrive/Downloads/Glass_wAS.dat")
-    print_supported_formats()
+    xrd_pattern = XrdPattern(filepath="/home/daniel/OneDrive/Downloads/Glass_wAS.dat")
+    # print_supported_formats()
