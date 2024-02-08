@@ -42,15 +42,13 @@ def convert_file(opt):
     d = xylib.load_file(opt.INPUT_FILE)
     with open(opt.OUTPUT_PATH, 'w') as f:
         f.write('# exported by xylib from a %s file\n' % d.fi.name)
-        if not opt.s and d.meta.size():
-            export_metadata(f, d.meta)
-            f.write('\n')
+        export_metadata(f, d.meta)
+        f.write('\n')
         nb = d.get_block_count()
         for i in range(nb):
             block = d.get_block(i)
             if nb > 1 or block.get_name():
                 f.write('\n### block #%d %s\n', i, block.get_name())
-            if not opt.s:
                 export_metadata(f, block.meta)
 
             ncol = block.get_column_count()

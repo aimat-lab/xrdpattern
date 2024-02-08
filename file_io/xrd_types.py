@@ -8,7 +8,6 @@ class XYLibOption:
     def __init__(self, input_path : str, output_path : str):
         self.INPUT_FILE : str = input_path
         self.OUTPUT_PATH : str = output_path
-        self.s : bool = True
 
 
 class Formats:
