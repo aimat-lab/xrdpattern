@@ -44,24 +44,23 @@ def convert_file(opt):
         f.write('# exported by xylib from a %s file\n' % d.fi.name)
         export_metadata(f, d.meta)
         f.write('\n')
-        nb = d.get_block_count()
-        for i in range(nb):
-            block = d.get_block(i)
-            if nb > 1 or block.get_name():
-                f.write('\n### block #%d %s\n', i, block.get_name())
+        number_of_blocks = d.get_block_count()
+        for block_counter in range(number_of_blocks):
+            block = d.get_block(block_counter)
+            if number_of_blocks > 1 or block.get_name():
+                f.write('\n### block #%d %s\n', block_counter, block.get_name())
                 export_metadata(f, block.meta)
 
-            ncol = block.get_column_count()
+            number_of_cols = block.get_column_count()
             # column 0 is pseudo-column with point indices, we skip it
-            col_names = [block.get_column(k).get_name() or ('column_%d' % k)
-                         for k in range(1, ncol+1)]
+            col_names = [block.get_column(col_counter).get_name() or ('column_%d' % col_counter)
+                         for col_counter in range(1, number_of_cols+1)]
             f.write('# ' + '\t'.join(col_names) + '\n')
-            nrow = block.get_point_count()
-            for j in range(nrow):
-                values = ["%.6f" % block.get_column(k).get_value(j)
-                          for k in range(1, ncol+1)]
+            number_of_rows = block.get_point_count()
+            for row_counter in range(number_of_rows):
+                values = ["%.6f" % block.get_column(k).get_value(row_counter)
+                          for k in range(1, number_of_cols+1)]
                 f.write('\t'.join(values) + '\n')
-
 
 
 # def main():
@@ -92,6 +91,6 @@ def convert_file(opt):
 #         convert_file(opt)
 #     except RuntimeError as e:
 #         sys.exit(str(e))
-
-if __name__ == '__main__':
-    main()
+#
+# if __name__ == '__main__':
+#     main()

@@ -19,7 +19,7 @@ class XrdPattern:
         _ = self
         self.axrd_repr = get_axrd_repr(input_path=filepath)
 
-        print(self.axrd_repr)
+        print(self.axrd_repr[:10000])
 
 
         rows = [row for row in self.axrd_repr.split('\n') if not row.strip() == '']
