@@ -6,7 +6,6 @@ Home-page: https://github.com/wojdyr/xylib
 Author: Marcin Wojdyr
 Author-email: wojdyr@gmail.com
 License: LGPL2.1
-Platform: UNKNOWN
 Classifier: Development Status :: 5 - Production/Stable
 Classifier: Intended Audience :: Developers
 Classifier: Intended Audience :: Science/Research
@@ -22,5 +21,3 @@ This module includes bindings to xylib and xylib itself.
 The first two numbers in the version are the version of included xylib.
 
 Prerequisites for building: SWIG and Boost libraries (headers only).
-
-
