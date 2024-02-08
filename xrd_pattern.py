@@ -3,6 +3,8 @@ from numpy import ndarray as NumpyArr
 from file_io import get_repr, Formats
 
 
+# -------------------------------------------
+
 class XrdPattern:
     def __init__(self, filepath : Optional[str] = None):
         self.wave_length_angstrom : Optional[float] = None
