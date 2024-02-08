@@ -31,7 +31,6 @@ class Formats:
     CANBERRA_CNF = XrdFormat("Canberra CNF file", ".cnf")
     XFIT_XDD = XrdFormat("XFIT XDD files", ".xdd")
     RIET7_ILL_D1A5_PSI_DMC = XrdFormat("RIET7 / ILL_D1A5 / PSI_DMC files", ".dat")
-    SPECTRA = XrdFormat("Spectra Omicron XPS data example", ".1")
     SPECSLAB2_XY = XrdFormat("SpecsLab2 xy-file", ".xy")
     XSYG = XrdFormat("xsyg example file", ".xsyg")
 
