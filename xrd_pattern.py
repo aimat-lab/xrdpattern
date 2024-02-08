@@ -1,17 +1,19 @@
 from typing import Optional
 from numpy import ndarray as NumpyArr
+from xylib.xyconv import convert_file
+
 
 class XrdPattern:
     def __init__(self, filepath : Optional[str] = None):
         self.wave_length_angstrom : Optional[float] = None
         self.np_degree_repr : Optional[NumpyArr] = None
+        self.source_file : Optional[bytes] = None
 
         if filepath:
             self.import_from_file(filepath=filepath)
 
-
     def import_from_file(self,filepath : str):
-        pass
+        convert_file()
 
 
     def export_to_file(self):
@@ -31,3 +33,4 @@ class XrdPattern:
 
         return self.np_degree_repr
 
+xyconv.convert_file()
