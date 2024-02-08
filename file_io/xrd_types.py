@@ -1,3 +1,5 @@
+from typing import Optional
+
 class XrdFormat:
     def __init__(self, name : str, suffix :str):
         self.name : str = name
@@ -5,9 +7,10 @@ class XrdFormat:
 
 
 class XYLibOption:
-    def __init__(self, input_path : str, output_path : str):
+    def __init__(self, input_path : str, output_path : str, input_type : Optional[XrdFormat] = None):
         self.INPUT_FILE : str = input_path
         self.OUTPUT_PATH : str = output_path
+        self.INPUT_TYPE : Optional[XrdFormat] = input_type
 
 
 class Formats:

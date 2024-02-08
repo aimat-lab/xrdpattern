@@ -2,13 +2,12 @@
 # Simplified, pythonic version of xyconv - a test for xylib bindings
 # Licence: Lesser GNU Public License 2.1 (LGPL)
 
-import argparse
-import sys
+from .xrd_types import XYLibOption
 import xylib
 
 __version__ = xylib.xylib_get_version()
 
-def list_supported_formats():
+def print_supported_formats():
     n = 0
     while True:
         form = xylib.xylib_get_format(n)
@@ -38,8 +37,13 @@ def export_metadata(f, meta):
         f.write('# %s: %s\n' % (key, value.replace('\n', '\n#\t')))
 
 
-def convert_file(opt):
-    d = xylib.load_file(opt.INPUT_FILE)
+def convert_file(opt : XYLibOption):
+    if opt.INPUT_TYPE:
+        args = (opt.INPUT_FILE, opt.INPUT_TYPE.name)
+    else:
+        args = opt.INPUT_FILE
+
+    d = xylib.load_file(*args)
     with open(opt.OUTPUT_PATH, 'w') as f:
         f.write('# exported by xylib from a %s file\n' % d.fi.name)
         export_metadata(f, d.meta)
@@ -94,3 +98,5 @@ def convert_file(opt):
 #
 # if __name__ == '__main__':
 #     main()
+
+
