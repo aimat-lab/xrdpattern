@@ -1,6 +1,6 @@
 from typing import Optional
 from numpy import ndarray as NumpyArr
-from xylib.xyconv import convert_file
+from file_io import get_repr, Formats
 
 
 class XrdPattern:
@@ -12,8 +12,12 @@ class XrdPattern:
         if filepath:
             self.import_from_file(filepath=filepath)
 
+
     def import_from_file(self,filepath : str):
-        convert_file()
+        _ = self
+        print(f'Beginning conversion')
+        xy_content = get_repr(input_path=filepath, xrd_format=Formats.XSYG)
+        print(f'Xy content is {xy_content}')
 
 
     def export_to_file(self):
@@ -33,4 +37,5 @@ class XrdPattern:
 
         return self.np_degree_repr
 
-xyconv.convert_file()
+if __name__ == "__main__":
+    xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")

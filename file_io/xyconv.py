@@ -39,35 +39,30 @@ def export_metadata(f, meta):
 
 
 def convert_file(opt):
-    if opt.INPUT_FILE == '-':
-        src = (sys.stdin.buffer if hasattr(sys.stdin, 'buffer') else sys.stdin)
-        d = xylib.load_string(src.read(), opt.t)
-    else:
-        d = xylib.load_file(opt.INPUT_FILE, opt.t or '')
-    f = opt.OUTPUT_FILE
-    f.write('# exported by xylib from a %s file\n' % d.fi.name)
-    # output the file-level meta-info
-    if not opt.s and d.meta.size():
-        export_metadata(f, d.meta)
-        f.write('\n')
-    nb = d.get_block_count()
-    for i in range(nb):
-        block = d.get_block(i)
-        if nb > 1 or block.get_name():
-            f.write('\n### block #%d %s\n', i, block.get_name())
-        if not opt.s:
-            export_metadata(f, block.meta)
+    d = xylib.load_file(opt.INPUT_FILE)
+    with open(opt.OUTPUT_PATH, 'w') as f:
+        f.write('# exported by xylib from a %s file\n' % d.fi.name)
+        if not opt.s and d.meta.size():
+            export_metadata(f, d.meta)
+            f.write('\n')
+        nb = d.get_block_count()
+        for i in range(nb):
+            block = d.get_block(i)
+            if nb > 1 or block.get_name():
+                f.write('\n### block #%d %s\n', i, block.get_name())
+            if not opt.s:
+                export_metadata(f, block.meta)
 
-        ncol = block.get_column_count()
-        # column 0 is pseudo-column with point indices, we skip it
-        col_names = [block.get_column(k).get_name() or ('column_%d' % k)
-                     for k in range(1, ncol+1)]
-        f.write('# ' + '\t'.join(col_names) + '\n')
-        nrow = block.get_point_count()
-        for j in range(nrow):
-            values = ["%.6f" % block.get_column(k).get_value(j)
-                      for k in range(1, ncol+1)]
-            f.write('\t'.join(values) + '\n')
+            ncol = block.get_column_count()
+            # column 0 is pseudo-column with point indices, we skip it
+            col_names = [block.get_column(k).get_name() or ('column_%d' % k)
+                         for k in range(1, ncol+1)]
+            f.write('# ' + '\t'.join(col_names) + '\n')
+            nrow = block.get_point_count()
+            for j in range(nrow):
+                values = ["%.6f" % block.get_column(k).get_value(j)
+                          for k in range(1, ncol+1)]
+                f.write('\t'.join(values) + '\n')
 
 
 
