@@ -11,35 +11,50 @@ from dataclasses import dataclass
 
 @dataclass
 class Metadata:
-    primary_wavelength : float
-    secondary_wavelength : float
-    primary_to_secondary_ratio : float
-    anode_material : str
-    measurement_datetime : datetime
+    primary_wavelength: float
+    secondary_wavelength: float
+    primary_to_secondary_ratio: float
+    anode_material: str
+    measurement_datetime: datetime
 
     def read_from_header_str(self, header_str: str):
-        for line in header_str.splitlines():
-            if line.startswith('#'):
-                key_value = line[1:].split(':', 1)  # Split at the first ':' only
-                if len(key_value) == 2:
-                    key, value = key_value
-                    key = key.strip()
-                    value = value.strip()
-                    if key == 'ALPHA1':
-                        self.primary_wavelength = float(value)
-                    elif key == 'ALPHA2':
-                        self.secondary_wavelength = float(value)
-                    elif key == 'ALPHA_RATIO':
-                        self.primary_to_secondary_ratio = float(value)
-                    elif key == 'ANODE_MATERIAL':
-                        self.anode_material = value
-                    elif key == 'MEASURE_DATE' or key == 'MEASURE_TIME':
-                        if not hasattr(self, 'measurement_datetime'):
-                            # Combine date and time if both are present
-                            date_str = header_str.split('# MEASURE_DATE: ')[1].split('\n')[0].strip()
-                            time_str = header_str.split('# MEASURE_TIME: ')[1].split('\n')[0].strip()
-                            combined_str = date_str + ' ' + time_str
-                            self.measurement_datetime = datetime.strptime(combined_str, '%m/%d/%Y %H:%M:%S')
+        for key, value in self.get_key_value_pairs(header_str):
+            self.process_key_value_pair(key, value)
+
+
+    @staticmethod
+    def get_key_value_pairs(header_str: str):
+        commented_lines = [line for line in header_str.splitlines() if line.startswith('#')]
+        for line in commented_lines:
+            key_value = line[1:].split(':')
+            if len(key_value) == 2:
+                yield key_value[0].strip(), key_value[1].strip()
+            else:
+                raise ValueError(f"Invalid key-value pair in header line: {line}")
+
+
+    def process_key_value_pair(self, key: str, value: str):
+        if key == 'ALPHA1':
+            self.primary_wavelength = float(value)
+        elif key == 'ALPHA2':
+            self.secondary_wavelength = float(value)
+        elif key == 'ALPHA_RATIO':
+            self.primary_to_secondary_ratio = float(value)
+        elif key == 'ANODE_MATERIAL':
+            self.anode_material = value
+        elif key == 'MEASURE_DATE' or key == 'MEASURE_TIME':
+            self._update_measurement_datetime(value, key)
+
+
+    def _update_measurement_datetime(self, value: str, key: str):
+        if not hasattr(self, 'measurement_datetime'):
+            date_str = value if key == 'MEASURE_DATE' else None
+            time_str = value if key == 'MEASURE_TIME' else None
+            if date_str and time_str:
+                combined_str = date_str + ' ' + time_str
+                self.measurement_datetime = datetime.strptime(combined_str, '%m/%d/%Y %H:%M:%S')
+
+
 
 
 class XrdPattern:
