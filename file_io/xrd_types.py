@@ -38,4 +38,4 @@ class Formats:
     xsyg = XrdFormat("xsyg", ".xsyg")
 
 
-file_endings = [xrd_format.suffix for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)]
+allowed_suffix_types = [xrd_format.suffix for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)]

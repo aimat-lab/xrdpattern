@@ -3,7 +3,7 @@ from uuid import uuid4
 from tempfile import TemporaryDirectory
 from typing import Optional
 
-from .xrd_types import XYLibOption, file_endings, XrdFormat
+from .xrd_types import XYLibOption, allowed_suffix_types, XrdFormat
 from .xyconv import convert_file
 # -------------------------------------------
 
@@ -13,9 +13,11 @@ def get_axrd_repr(input_path : str, input_format : Optional[XrdFormat] = None) -
         raise ValueError(f"File {input_path} does not exist")
 
     if input_format is None:
-        input_format = '.' + input_path.split('.')[-1]
-        if not input_format in file_endings:
-            raise ValueError(f"File {input_path} is not a supported format")
+        input_format_suffix = '.' + input_path.split('.')[-1]
+    else:
+        input_format_suffix = input_format.suffix
+    if not input_format_suffix in allowed_suffix_types:
+        raise ValueError(f"File {input_path} is not a supported format")
 
     try:
         with TemporaryDirectory() as output_dir:

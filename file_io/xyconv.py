@@ -39,11 +39,10 @@ def export_metadata(f, meta):
 
 def convert_file(opt : XYLibOption):
     if opt.INPUT_TYPE:
-        args = (opt.INPUT_FILE, opt.INPUT_TYPE.name)
+        d = xylib.load_file(opt.INPUT_FILE, opt.INPUT_TYPE.name)
     else:
-        args = opt.INPUT_FILE
+        d = xylib.load_file(opt.INPUT_FILE)
 
-    d = xylib.load_file(*args)
     with open(opt.OUTPUT_PATH, 'w') as f:
         f.write('# exported by xylib from a %s file\n' % d.fi.name)
         export_metadata(f, d.meta)
