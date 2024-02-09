@@ -15,7 +15,7 @@ from scipy.interpolate import CubicSpline
 class XrdPattern:
     standard_entries_num = 1000
     std_angle_start = 0
-    std_angle_end = 180
+    std_angle_end = 90
 
     def __init__(self, filepath : Optional[str] = None):
         self.deg_to_intensity : Mapping = {}
