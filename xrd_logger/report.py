@@ -11,7 +11,7 @@ class Report:
         return self.report_str
 
 
-def get_report(filepath : str, metadata : Metadata, deg_over_intensity : list):
+def get_report(filepath : str, metadata : Metadata, deg_over_intensity : dict):
     report_str = f'Successfully processed file {filepath}'
     has_errors = True
     has_warnings = True

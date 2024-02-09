@@ -40,3 +40,7 @@ class Formats:
     aimat_json = XrdFormat("ajson","json")
 
 allowed_suffix_types = [xrd_format.suffix for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)]
+
+
+class Mapping(dict[float,float]):
+    pass

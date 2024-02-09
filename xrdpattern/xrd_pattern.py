@@ -4,10 +4,13 @@ import re
 import json
 import numpy as np
 from file_io import Metadata, write_to_json
+from file_io.xrd_types import Mapping
 from xrd_logger import log_xrd_info
 from xrd_logger.report import Report, get_report
+from scipy.interpolate import CubicSpline
 
 # -------------------------------------------
+
 
 class XrdPattern:
     standard_entries_num = 1000
@@ -15,7 +18,7 @@ class XrdPattern:
     std_angle_end = 180
 
     def __init__(self, filepath : Optional[str] = None):
-        self.deg_over_intensity : list = []
+        self.deg_to_intensity : Mapping = {}
         self.metadata : Optional[Metadata] = None
         self.processing_report : Optional[Report] = None
 
@@ -29,7 +32,7 @@ class XrdPattern:
             self._initialize_from_json(filepath=filepath)
         else:
             self._import_from_data_file(filepath=filepath)
-        log_msg = str(get_report(filepath=filepath, metadata=self.metadata, deg_over_intensity=self.deg_over_intensity))
+        log_msg = str(get_report(filepath=filepath, metadata=self.metadata, deg_over_intensity=self.deg_to_intensity))
         log_xrd_info(msg=log_msg)
 
 
@@ -60,7 +63,7 @@ class XrdPattern:
         for row in data_rows:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
-            self.deg_over_intensity.append([deg, intensity])
+            self.deg_to_intensity[deg] = intensity
 
         self.metadata = Metadata(header_str=header_str)
 
@@ -84,21 +87,27 @@ class XrdPattern:
         return self.metadata.primary_wavelength_angstrom
 
 
-    def get_np_repr(self):
-        if not self.deg_over_intensity:
-            raise ValueError(f"Numpy array is None")
-
-        return np.array(self.deg_over_intensity)
-
-
     def to_json(self) -> str:
         data = self.__dict__
         return json.dumps(data)
 
 
-    def get_standardized(self) -> list:
-        pass
+    def get_std_mapping(self) -> Mapping:
+        std_angles = np.linspace(start=XrdPattern.std_angle_start,
+                                          stop=XrdPattern.std_angle_end,
+                                          num= 1000)
 
+        print(f'std_angle : {std_angles}')
+        x = np.array(list(self.deg_to_intensity.keys()))
+        y = np.array(list(self.deg_to_intensity.values()))
+        cs = CubicSpline(x, y)
+
+        std_intensity_mapping = {}
+        for angle in std_angles:
+            std_intensity_mapping[angle] = cs(angle)
+
+        return std_intensity_mapping
 
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
+    print(xrd_pattern.get_std_mapping())
