@@ -9,7 +9,7 @@ class XrdPattern:
     def __init__(self, filepath : Optional[str] = None):
         self.wave_length_angstrom : Optional[float] = None
         self.degree_over_intensity : list[(float,float)] = []
-        self.axrd_repr : Optional[str] = None
+        self.xylib_repr : Optional[str] = None
 
         if filepath:
             self.import_from_file(filepath=filepath)
@@ -17,16 +17,12 @@ class XrdPattern:
 
     def import_from_file(self,filepath : str):
         _ = self
-        self.axrd_repr = get_axrd_repr(input_path=filepath, input_format=Formats.riet7)
-
-        print(self.axrd_repr[:10000])
-
-
-        rows = [row for row in self.axrd_repr.split('\n') if not row.strip() == '']
+        self.xylib_repr = get_axrd_repr(input_path=filepath, input_format=Formats.riet7)
+        rows = [row for row in self.xylib_repr.split('\n') if not row.strip() == '']
         header_pattern = r'# column_1\tcolumn_2'
 
         try:
-            header_match = re.findall(pattern=header_pattern, string=self.axrd_repr)[0]
+            header_match = re.findall(pattern=header_pattern, string=self.xylib_repr)[0]
         except Exception as e:
             raise ValueError(f"Could not find header matching pattern \"{header_pattern}\" in file {filepath}. Error: {str(e)}")
 
@@ -39,7 +35,7 @@ class XrdPattern:
             self.degree_over_intensity.append((deg, intensity))
 
 
-    def export_to_file(self):
+    def export_as_json_file(self):
         pass
 
 
