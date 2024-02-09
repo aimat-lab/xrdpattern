@@ -51,7 +51,7 @@ def convert_file(opt : XYLibOption):
         for block_counter in range(number_of_blocks):
             block = d.get_block(block_counter)
             if number_of_blocks > 1 or block.get_name():
-                f.write('\n### block #%d %s\n', block_counter, block.get_name())
+                f.write(f'\n### block #{block_counter} {block.get_name()}\n')
                 export_metadata(f, block.meta)
 
             number_of_cols = block.get_column_count()
