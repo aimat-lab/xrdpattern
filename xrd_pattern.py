@@ -1,5 +1,5 @@
 from typing import Optional
-from file_io import get_axrd_repr, Formats
+from file_io import get_xy_repr, Formats
 import re
 import json
 import numpy as np
@@ -21,9 +21,23 @@ class XrdPattern:
             self.import_from_file(filepath=filepath)
 
 
-    def import_from_file(self,filepath : str):
+    def import_from_file(self, filepath : str):
+        suffix = filepath.split('.')[-1]
+        if f'.{suffix}' == Formats.aimat_json.suffix:
+            self.import_from_json(filepath=filepath)
+        else:
+            self.import_from_data_file(filepath=filepath)
+
+
+    def import_from_json(self, filepath : str):
+        with open(filepath, 'r') as file:
+            data = file.read()
+            self.__dict__.update(json.loads(data))
+
+
+    def import_from_data_file(self, filepath : str):
         _ = self
-        xylib_repr = get_axrd_repr(input_path=filepath, input_format=Formats.bruker_raw)
+        xylib_repr = get_xy_repr(input_path=filepath, input_format=Formats.bruker_raw)
         rows = [row for row in xylib_repr.split('\n') if not row.strip() == '']
         header_pattern = r'# column_1\tcolumn_2'
 
@@ -40,6 +54,16 @@ class XrdPattern:
             deg, intensity = float(deg_str), float(intensity_str)
             self.degree_over_intensity.append([deg, intensity])
 
+
+    def export_as_json(self, filepath : str):
+        json_type_suffix = Formats.aimat_json.suffix
+        try:
+            with open(f'{filepath}{json_type_suffix}', 'w') as file:
+                file.write(self.to_json())
+        except:
+            raise ValueError(f"Could not write to file {filepath}")
+
+
     # -------------------------------------------
     # get
 
@@ -49,12 +73,6 @@ class XrdPattern:
 
         return self.wave_length_angstrom
 
-    def export_as_json(self, filepath : str):
-        try:
-            with open(filepath, 'w') as file:
-                file.write(self.to_json())
-        except:
-            raise ValueError(f"Could not write to file {filepath}")
 
 
     def get_np_repr(self):
@@ -66,7 +84,6 @@ class XrdPattern:
 
     def to_json(self) -> str:
         return json.dumps(self.__dict__)
-
 
     @classmethod
     def from_json(cls, json_str: str):
@@ -80,13 +97,15 @@ class XrdPattern:
         pass
 
 
-
 if __name__ == "__main__":
-    xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
+    # xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
+    # xrd_pattern.export_as_json(filepath='test')
     # xrd_pattern = XrdPattern(filepath="/home/daniel/OneDrive/Downloads/Glass_wAS.dat")
-    print(xrd_pattern.__dict__)
-    test_json = xrd_pattern.to_json()
-
-    new_pattern = XrdPattern.from_json(json_str=test_json)
-    print(new_pattern.__dict__)
-    new_pattern.export_as_json(filepath='test')
+    # print(xrd_pattern.__dict__)
+    # test_json = xrd_pattern.to_json()
+    #
+    # new_pattern = XrdPattern.from_json(json_str=test_json)
+    # print(new_pattern.__dict__)
+    # xrd_pattern.export_as_json(filepath='test')
+    new_pattern = XrdPattern(filepath='test.json')
+    print(new_pattern.to_json())

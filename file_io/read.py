@@ -8,7 +8,7 @@ from .xyconv import convert_file
 # -------------------------------------------
 
 
-def get_axrd_repr(input_path : str, input_format : Optional[XrdFormat] = None) -> str:
+def get_xy_repr(input_path : str, input_format : Optional[XrdFormat] = None) -> str:
     if not os.path.isfile(input_path):
         raise ValueError(f"File {input_path} does not exist")
 

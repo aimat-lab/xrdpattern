@@ -36,6 +36,6 @@ class Formats:
     xfit_xdd = XrdFormat("xfit_xdd", ".xdd")
     xrdml = XrdFormat("xrdml", ".xrdml")
     xsyg = XrdFormat("xsyg", ".xsyg")
-
+    aimat_json = XrdFormat("ajson",".json")
 
 allowed_suffix_types = [xrd_format.suffix for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)]
