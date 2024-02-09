@@ -8,14 +8,14 @@ from .xyconv import convert_file
 # -------------------------------------------
 
 
-def get_xy_repr(input_path : str, input_format : Optional[XrdFormat] = None) -> str:
+def get_xy_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None) -> str:
     if not os.path.isfile(input_path):
         raise ValueError(f"File {input_path} does not exist")
 
-    if input_format is None:
-        input_format_suffix = '.' + input_path.split('.')[-1]
+    if input_format_hint is None:
+        input_format_suffix = input_path.split('.')[-1]
     else:
-        input_format_suffix = input_format.suffix
+        input_format_suffix = input_format_hint.suffix
     if not input_format_suffix in allowed_suffix_types:
         raise ValueError(f"File {input_path} is not a supported format")
 
@@ -23,7 +23,7 @@ def get_xy_repr(input_path : str, input_format : Optional[XrdFormat] = None) -> 
         with TemporaryDirectory() as output_dir:
             file_name = uuid4()
             output_path =  os.path.join(output_dir, f"{file_name}.axrd")
-            option = XYLibOption(input_path=input_path, output_path=output_path, input_type = input_format)
+            option = XYLibOption(input_path=input_path, output_path=output_path, input_type = input_format_hint)
             convert_file(opt=option)
             return get_file_contents(filepath=output_path)
 

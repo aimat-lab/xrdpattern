@@ -12,7 +12,6 @@ class XrdPattern:
     std_angle_start = 0
     std_angle_end = 180
 
-
     def __init__(self, filepath : Optional[str] = None):
         self.wave_length_angstrom : Optional[float] = None
         self.degree_over_intensity : list = []
@@ -23,10 +22,19 @@ class XrdPattern:
 
     def import_from_file(self, filepath : str):
         suffix = filepath.split('.')[-1]
-        if f'.{suffix}' == Formats.aimat_json.suffix:
+        if suffix == Formats.aimat_json.suffix:
             self.import_from_json(filepath=filepath)
         else:
             self.import_from_data_file(filepath=filepath)
+
+
+    def export_as_json(self, filepath : str):
+        json_type_suffix = Formats.aimat_json.suffix
+        try:
+            with open(f'{filepath}.{json_type_suffix}', 'w') as file:
+                file.write(self.to_json())
+        except:
+            raise ValueError(f"Could not write to file {filepath}")
 
 
     def import_from_json(self, filepath : str):
@@ -37,7 +45,7 @@ class XrdPattern:
 
     def import_from_data_file(self, filepath : str):
         _ = self
-        xylib_repr = get_xy_repr(input_path=filepath, input_format=Formats.bruker_raw)
+        xylib_repr = get_xy_repr(input_path=filepath, input_format_hint=Formats.bruker_raw)
         rows = [row for row in xylib_repr.split('\n') if not row.strip() == '']
         header_pattern = r'# column_1\tcolumn_2'
 
@@ -54,18 +62,9 @@ class XrdPattern:
             deg, intensity = float(deg_str), float(intensity_str)
             self.degree_over_intensity.append([deg, intensity])
 
-
-    def export_as_json(self, filepath : str):
-        json_type_suffix = Formats.aimat_json.suffix
-        try:
-            with open(f'{filepath}{json_type_suffix}', 'w') as file:
-                file.write(self.to_json())
-        except:
-            raise ValueError(f"Could not write to file {filepath}")
-
-
     # -------------------------------------------
     # get
+
 
     def get_wavelength_angstrom(self) -> float:
         if self.wave_length_angstrom is None:
@@ -98,8 +97,8 @@ class XrdPattern:
 
 
 if __name__ == "__main__":
-    # xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
-    # xrd_pattern.export_as_json(filepath='test')
+    xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
+    xrd_pattern.export_as_json(filepath='test3')
     # xrd_pattern = XrdPattern(filepath="/home/daniel/OneDrive/Downloads/Glass_wAS.dat")
     # print(xrd_pattern.__dict__)
     # test_json = xrd_pattern.to_json()
@@ -109,3 +108,5 @@ if __name__ == "__main__":
     # xrd_pattern.export_as_json(filepath='test')
     new_pattern = XrdPattern(filepath='test.json')
     print(new_pattern.to_json())
+
+    new_pattern.export_as_json(filepath='test2')
