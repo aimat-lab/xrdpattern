@@ -8,6 +8,11 @@ import numpy as np
 
 
 class XrdPattern:
+    standard_entries_num = 1000
+    std_angle_start = 0
+    std_angle_end = 180
+
+
     def __init__(self, filepath : Optional[str] = None):
         self.wave_length_angstrom : Optional[float] = None
         self.degree_over_intensity : list = []
@@ -35,17 +40,22 @@ class XrdPattern:
             deg, intensity = float(deg_str), float(intensity_str)
             self.degree_over_intensity.append([deg, intensity])
 
+    # -------------------------------------------
+    # get
 
-    # def export_as_json_file(self):
-    #     pass
-    #
-    #
-    # def get_wavelength_angstrom(self) -> float:
-    #     return self.wave_length_angstrom
-    #
-    #
-    # def get_standardized(self):
-    #     pass
+    def get_wavelength_angstrom(self) -> float:
+        if self.wave_length_angstrom is None:
+            raise ValueError(f"Wavelength is None")
+
+        return self.wave_length_angstrom
+
+    def export_as_json(self, filepath : str):
+        try:
+            with open(filepath, 'w') as file:
+                file.write(self.to_json())
+        except:
+            raise ValueError(f"Could not write to file {filepath}")
+
 
     def get_np_repr(self):
         if not self.degree_over_intensity:
@@ -53,8 +63,10 @@ class XrdPattern:
 
         return np.array(self.degree_over_intensity)
 
+
     def to_json(self) -> str:
         return json.dumps(self.__dict__)
+
 
     @classmethod
     def from_json(cls, json_str: str):
@@ -64,12 +76,17 @@ class XrdPattern:
         return obj
 
 
+    def get_standardized(self) -> list:
+        pass
+
+
+
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
     # xrd_pattern = XrdPattern(filepath="/home/daniel/OneDrive/Downloads/Glass_wAS.dat")
-    # print_supported_formats()
     print(xrd_pattern.__dict__)
-    json_str = xrd_pattern.to_json()
+    test_json = xrd_pattern.to_json()
 
-    new_pattern = XrdPattern.from_json(json_str=json_str)
+    new_pattern = XrdPattern.from_json(json_str=test_json)
     print(new_pattern.__dict__)
+    new_pattern.export_as_json(filepath='test')
