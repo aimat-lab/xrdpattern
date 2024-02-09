@@ -51,7 +51,6 @@ class XrdPattern:
             intensities = list(self.deg_to_intensity.values())
             label = 'Original Intensity'
 
-        # Plotting
         plt.figure(figsize=(10, 6))
         plt.plot(angles, intensities, label=label)
         plt.xlabel('Angle (Degrees)')
@@ -125,12 +124,15 @@ class XrdPattern:
         y = np.array(list(self.deg_to_intensity.values()))
         cs = CubicSpline(x, y)
 
+        interpolated_intensities = [cs(angle) for angle in std_angles if start_angle <= angle <= end_angle]
+        max_intensity = max(interpolated_intensities) if interpolated_intensities else 1
+
         std_intensity_mapping = {}
         for angle in std_angles:
             if angle < start_angle or angle > end_angle:
                 std_intensity_mapping[angle] = 0
             else:
-                std_intensity_mapping[angle] = cs(angle)
+                std_intensity_mapping[angle] = cs(angle) / max_intensity
 
         return std_intensity_mapping
 
