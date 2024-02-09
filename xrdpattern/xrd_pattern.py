@@ -20,6 +20,8 @@ class XrdPattern:
     def __init__(self, filepath : Optional[str] = None):
         self.degree_over_intensity : list = []
         self.metadata : Optional[Metadata] = None
+        self.has_errors : Optional[bool] = None
+        self.has_warnings : Optional[bool] = None
 
         if filepath:
             self.import_from_file(filepath=filepath)
@@ -31,7 +33,7 @@ class XrdPattern:
             self._initialize_from_json(filepath=filepath)
         else:
             self._import_from_data_file(filepath=filepath)
-        log_msg = self.get_import_report(filepath=filepath)
+        log_msg = self.make_report_and_set_flags(filepath=filepath)
         log_xrd_info(msg=log_msg)
 
     def export_as_json(self, filepath : str):
@@ -95,26 +97,42 @@ class XrdPattern:
     # -------------------------------------------
     # get
 
-    def get_import_report(self, filepath : str):
-        report_str = f'Successfully processed file {filepath} \n'
-        report_str += '- Errors:\n'
+    def make_report_and_set_flags(self, filepath : str):
+        report_str = f'Successfully processed file {filepath}'
+        self.has_errors = True
+        self.has_warnings = True
+
+        error_start = '- Errors:'
+        error_str = error_start
         if self.metadata.primary_wavelength_angstrom is None:
-            report_str += "Primary wavelength missing! \n"
+            error_str += "\nPrimary wavelength missing!"
 
         if len(self.degree_over_intensity) == 0:
-            report_str += "No data found. Degree over intensity is empty! \n"
+            error_str += "\nNo data found. Degree over intensity is empty!"
 
         elif len(self.degree_over_intensity) < 10:
-            report_str += "Data is too short. Less than 10 entries! \n"
+            error_str += "\nData is too short. Less than 10 entries!"
 
+        if error_str == error_start:
+            error_str = f'\nNo errors found: Wavelength and data successfully parsed'
+            self.has_errors = False
+        report_str += error_str
 
-        report_str += '- Warnings:\n'
+        warning_start = '- Warnings:'
+        warning_str = warning_start
         if self.metadata.secondary_wavelength_angstrom is None:
-            report_str += "No secondary wavelength found\n"
+            warning_str += "\nNo secondary wavelength found"
         if self.metadata.anode_material is None:
-            report_str += "No anode material found\n"
+            warning_str += "\nNo anode material found"
         if self.metadata.measurement_datetime is None:
-            report_str += "No measurement datetime found\n"
+            warning_str += "\nNo measurement datetime found"
+
+        if warning_str == warning_start:
+            warning_str = f'\nNo warnings found: All metadata was successfully parsed'
+            self.has_warnings = False
+
+        report_str += warning_str
+
         return report_str
 
 
