@@ -1,19 +1,19 @@
 from typing import Optional
 from datetime import datetime
 
-class Logger:
+class XrdLogger:
     _instance = None
     _is_initialized = False
 
     def __new__(cls, *args, **kwargs):
-        if not Logger._instance:
-            obj = Logger._instance = super(Logger, cls).__new__(cls)
+        if not XrdLogger._instance:
+            obj = XrdLogger._instance = super(XrdLogger, cls).__new__(cls)
             obj.__init__(*args, **kwargs)
-        return Logger._instance
+        return XrdLogger._instance
 
 
     def __init__(self, include_timestamp : bool, log_file_path : Optional[str] = None):
-        if Logger._is_initialized:
+        if XrdLogger._is_initialized:
             return
 
         self.include_timestamp : bool = include_timestamp
@@ -24,7 +24,7 @@ class Logger:
                 open(log_file_path, "w").close()
             except:
                 raise ValueError(f"File {log_file_path} could not be created")
-        Logger._is_initialized = True
+        XrdLogger._is_initialized = True
 
 
     def log(self, msg : str):
@@ -50,17 +50,17 @@ class Logger:
 
 
 def initialize_logger(include_timestamp : bool, log_file_path : Optional[str] = None):
-    Logger(include_timestamp=include_timestamp, log_file_path=log_file_path)
+    XrdLogger(include_timestamp=include_timestamp, log_file_path=log_file_path)
 
 
-def log(msg : str):
-    logger = Logger.get()
+def log_xrd_info(msg : str):
+    logger = XrdLogger.get()
     if logger is None:
-        raise ValueError("Logger not initialized")
-    logger.log(msg=msg)
-
+        raise ValueError("XrdPattern Logger not initialized. Using defaults")
+    initialize_logger(include_timestamp=True, log_file_path=None)
+    logger.log_xrd_info(msg=msg)
 
 
 if __name__ == "__main__":
     initialize_logger(include_timestamp=True)
-    log(msg='hi')
+    log_xrd_info(msg='hi')
