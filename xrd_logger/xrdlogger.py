@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import logging
 from typing import Optional
 from datetime import datetime
 
@@ -32,7 +34,7 @@ class XrdLogger:
         if self.include_timestamp:
             current_timestamp = datetime.now()
             timestamp = current_timestamp.strftime("%Y-%m-%d %H:%M:%S")
-            msg = f"[{timestamp}]:{msg}"
+            msg = f"[{timestamp}]: {msg}"
         if self.log_file_path:
             self.log_to_file(msg=msg)
         self.log_to_console(msg=msg)
@@ -57,7 +59,7 @@ def initialize_logger(include_timestamp : bool, log_file_path : Optional[str] = 
 def log_xrd_info(msg : str):
     logger = XrdLogger.get()
     if logger is None:
-        print("XrdPattern Logger not initialized. Using defaults")
+        logging.warning("XrdPattern Logger not initialized. Using defaults")
         logger = XrdLogger(include_timestamp=True, log_file_path=None)
 
     logger.log(msg=msg)

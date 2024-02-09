@@ -31,7 +31,8 @@ class XrdPattern:
             self._initialize_from_json(filepath=filepath)
         else:
             self._import_from_data_file(filepath=filepath)
-        log_xrd_info(msg=self.get_import_report())
+        log_msg = self.get_import_report(filepath=filepath)
+        log_xrd_info(msg=log_msg)
 
     def export_as_json(self, filepath : str):
         try:
@@ -94,8 +95,9 @@ class XrdPattern:
     # -------------------------------------------
     # get
 
-    def get_import_report(self):
-        report_str = '[Errors]:'
+    def get_import_report(self, filepath : str):
+        report_str = f'Successfully processed file {filepath} \n'
+        report_str += '- Errors:\n'
         if self.metadata.primary_wavelength_angstrom is None:
             report_str += "Primary wavelength missing! \n"
 
@@ -106,7 +108,7 @@ class XrdPattern:
             report_str += "Data is too short. Less than 10 entries! \n"
 
 
-        report_str = '[Warnings]:\n'
+        report_str += '- Warnings:\n'
         if self.metadata.secondary_wavelength_angstrom is None:
             report_str += "No secondary wavelength found\n"
         if self.metadata.anode_material is None:
