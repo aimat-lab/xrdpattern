@@ -4,8 +4,9 @@ from file_io import get_xy_repr, Formats
 import re
 import json
 import numpy as np
-from datetime import datetime
+# from datetime import datetime
 from file_io.metadata import Metadata
+from xrd_logger import log_xrd_info
 
 # -------------------------------------------
 
@@ -30,7 +31,7 @@ class XrdPattern:
             self._initialize_from_json(filepath=filepath)
         else:
             self._import_from_data_file(filepath=filepath)
-
+        log_xrd_info(msg=self.get_import_report())
 
     def export_as_json(self, filepath : str):
         try:
@@ -92,6 +93,28 @@ class XrdPattern:
 
     # -------------------------------------------
     # get
+
+    def get_import_report(self):
+        report_str = '[Errors]:'
+        if self.metadata.primary_wavelength_angstrom is None:
+            report_str += "Primary wavelength missing! \n"
+
+        if len(self.degree_over_intensity) == 0:
+            report_str += "No data found. Degree over intensity is empty! \n"
+
+        elif len(self.degree_over_intensity) < 10:
+            report_str += "Data is too short. Less than 10 entries! \n"
+
+
+        report_str = '[Warnings]:\n'
+        if self.metadata.secondary_wavelength_angstrom is None:
+            report_str += "No secondary wavelength found\n"
+        if self.metadata.anode_material is None:
+            report_str += "No anode material found\n"
+        if self.metadata.measurement_datetime is None:
+            report_str += "No measurement datetime found\n"
+        return report_str
+
 
     def get_primary_wavelength_angstrom(self) -> float:
         if self.metadata.primary_wavelength_angstrom is None:

@@ -6,7 +6,7 @@ class Metadata:
     def __init__(self, header_str: str):
         key_value_dict = self.get_key_value_dict(header_str)
 
-        self.primary_wavelength_angstrom: float = float(key_value_dict.get('ALPHA1', 0))
+        self.primary_wavelength_angstrom: Optional[float] = float(key_value_dict.get('ALPHA1', 0))
         self.secondary_wavelength_angstrom: Optional[float] = float(key_value_dict.get('ALPHA2', 0))
         self.primary_to_secondary_ratio: Optional[float] = float(key_value_dict.get('ALPHA_RATIO', 0))
         self.anode_material: Optional[str] = key_value_dict.get('ANODE_MATERIAL', '')

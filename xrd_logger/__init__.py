@@ -1,1 +1,1 @@
-from .xrdlogger import XrdLogger, initialize_logger
+from .xrdlogger import initialize_logger, log_xrd_info

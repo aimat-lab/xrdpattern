@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Optional
 from datetime import datetime
 
@@ -45,7 +46,7 @@ class XrdLogger:
         print(msg)
 
     @classmethod
-    def get(cls):
+    def get(cls) -> XrdLogger:
         return cls._instance
 
 
@@ -56,9 +57,10 @@ def initialize_logger(include_timestamp : bool, log_file_path : Optional[str] = 
 def log_xrd_info(msg : str):
     logger = XrdLogger.get()
     if logger is None:
-        raise ValueError("XrdPattern Logger not initialized. Using defaults")
-    initialize_logger(include_timestamp=True, log_file_path=None)
-    logger.log_xrd_info(msg=msg)
+        print("XrdPattern Logger not initialized. Using defaults")
+        logger = XrdLogger(include_timestamp=True, log_file_path=None)
+
+    logger.log(msg=msg)
 
 
 if __name__ == "__main__":
