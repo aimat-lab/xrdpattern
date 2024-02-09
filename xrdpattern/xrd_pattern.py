@@ -18,7 +18,7 @@ class XrdPattern:
     std_angle_end = 90
 
     def __init__(self, filepath : Optional[str] = None):
-        self.deg_to_intensity : Mapping = {}
+        self.twotheta_to_intensity : Mapping = {}
         self.metadata : Optional[Metadata] = None
         self.processing_report : Optional[Report] = None
 
@@ -32,7 +32,7 @@ class XrdPattern:
             self._initialize_from_json(filepath=filepath)
         else:
             self._import_from_data_file(filepath=filepath)
-        log_msg = str(get_report(filepath=filepath, metadata=self.metadata, deg_over_intensity=self.deg_to_intensity))
+        log_msg = str(get_report(filepath=filepath, metadata=self.metadata, deg_over_intensity=self.twotheta_to_intensity))
         log_xrd_info(msg=log_msg)
 
 
@@ -42,13 +42,13 @@ class XrdPattern:
 
     def plot(self, use_interpolation=True):
         if use_interpolation:
-            std_mapping = self.get_std_mapping()
+            std_mapping = self.get_standardized_mapping()
             angles = list(std_mapping.keys())
             intensities = list(std_mapping.values())
             label = 'Interpolated Intensity'
         else:
-            angles = list(self.deg_to_intensity.keys())
-            intensities = list(self.deg_to_intensity.values())
+            angles = list(self.twotheta_to_intensity.keys())
+            intensities = list(self.twotheta_to_intensity.values())
             label = 'Original Intensity'
 
         plt.figure(figsize=(10, 6))
@@ -83,7 +83,7 @@ class XrdPattern:
         for row in data_rows:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
-            self.deg_to_intensity[deg] = intensity
+            self.twotheta_to_intensity[deg] = intensity
 
         self.metadata = Metadata(header_str=header_str)
 
@@ -112,16 +112,19 @@ class XrdPattern:
         return json.dumps(data)
 
 
-    def get_std_mapping(self) -> Mapping:
-        angles = list(self.deg_to_intensity.keys())
+    def get_standardized_mapping(self) -> Mapping:
+        """
+        :return: Mapping from 2 theta to intensity with theta in [0,90] and intensity in [0,1] by padding missing angle range with 0, interpolating the intensity and then normalizing it by diving through the max intensity
+        """
+        angles = list(self.twotheta_to_intensity.keys())
         start_angle, end_angle =  angles[0], angles[-1]
 
         std_angles = np.linspace(start=XrdPattern.std_angle_start,
                                           stop=XrdPattern.std_angle_end,
                                           num= 1000)
 
-        x = np.array(list(self.deg_to_intensity.keys()))
-        y = np.array(list(self.deg_to_intensity.values()))
+        x = np.array(list(self.twotheta_to_intensity.keys()))
+        y = np.array(list(self.twotheta_to_intensity.values()))
         cs = CubicSpline(x, y)
 
         interpolated_intensities = [cs(angle) for angle in std_angles if start_angle <= angle <= end_angle]
@@ -139,5 +142,5 @@ class XrdPattern:
 
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
-    print(xrd_pattern.get_std_mapping())
+    print(xrd_pattern.get_standardized_mapping())
     xrd_pattern.plot()
