@@ -20,7 +20,7 @@ class Logger(ABC):
 
 
 class FileLogger(Logger):
-    def __init__(self, log_file_path : str, include_timestamp : bool):
+    def __init__(self, log_file_path : str, include_timestamp : bool = True):
         super().__init__(include_timestamp=include_timestamp)
 
         try:
@@ -37,7 +37,7 @@ class FileLogger(Logger):
 
 
 class ConsoleLogger(Logger):
-    def __init__(self, include_timestamp : bool):
+    def __init__(self, include_timestamp : bool = True):
         super().__init__(include_timestamp=include_timestamp)
 
 

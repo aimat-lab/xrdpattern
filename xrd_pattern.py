@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from file_io import get_xy_repr, Formats
 import re
@@ -5,7 +6,6 @@ import json
 import numpy as np
 
 # -------------------------------------------
-
 
 class XrdPattern:
     standard_entries_num = 1000
@@ -15,7 +15,6 @@ class XrdPattern:
     def __init__(self, filepath : Optional[str] = None):
         self.wave_length_angstrom : Optional[float] = None
         self.degree_over_intensity : list = []
-
         if filepath:
             self.import_from_file(filepath=filepath)
 
@@ -29,9 +28,21 @@ class XrdPattern:
 
 
     def export_as_json(self, filepath : str):
-        json_type_suffix = Formats.aimat_json.suffix
         try:
-            with open(f'{filepath}.{json_type_suffix}', 'w') as file:
+            base_path = filepath.split('.')[0]
+            filepath_suffix= filepath.split('.')[-1]
+
+            if filepath_suffix != Formats.aimat_json.suffix:
+                raise ValueError(f"Invalid file ending for json export")
+
+        except:
+            logging.warning(f"Invalid json export path {filepath}. Correcting to json suffix path")
+            base_path = filepath
+            filepath_suffix = Formats.aimat_json.suffix
+
+        write_path = f'{base_path}.{filepath_suffix}'
+        try:
+            with open(write_path, 'w') as file:
                 file.write(self.to_json())
         except:
             raise ValueError(f"Could not write to file {filepath}")
@@ -57,7 +68,6 @@ class XrdPattern:
         header_row_index = rows.index(header_match)
         data_rows = rows[header_row_index+1:]
         for row in data_rows:
-
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
             self.degree_over_intensity.append([deg, intensity])
@@ -65,13 +75,11 @@ class XrdPattern:
     # -------------------------------------------
     # get
 
-
     def get_wavelength_angstrom(self) -> float:
         if self.wave_length_angstrom is None:
             raise ValueError(f"Wavelength is None")
 
         return self.wave_length_angstrom
-
 
 
     def get_np_repr(self):
@@ -82,13 +90,17 @@ class XrdPattern:
 
 
     def to_json(self) -> str:
-        return json.dumps(self.__dict__)
+        data = self.__dict__
+        return json.dumps(data)
+
 
     @classmethod
     def from_json(cls, json_str: str):
         data = json.loads(json_str)
         obj = cls()
         obj.__dict__.update(data)
+        print(obj.__dict__)
+
         return obj
 
 
@@ -106,7 +118,7 @@ if __name__ == "__main__":
     # new_pattern = XrdPattern.from_json(json_str=test_json)
     # print(new_pattern.__dict__)
     # xrd_pattern.export_as_json(filepath='test')
-    new_pattern = XrdPattern(filepath='test.json')
+    new_pattern = XrdPattern(filepath='test3.json')
     print(new_pattern.to_json())
 
     new_pattern.export_as_json(filepath='test2')
