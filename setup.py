@@ -1,12 +1,15 @@
-from setuptools import setup, find_packages
+import os
+
+from setuptools import setup
 
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
+requirements += [f"xylib-py @ file://localhost/{os.getcwd()}/xylib"]
+
 setup(
     name='xrdpattern',
-    version='0.1.0',
-    packages=find_packages(),
-    install_requires=requirements,
-    dependency_links=['./xylib']
+    version='0.2.0',
+    packages=['xrdpattern'],
+    install_requires=requirements
 )

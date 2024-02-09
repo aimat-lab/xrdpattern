@@ -1,1 +1,1 @@
-from .xrdlogger import XrdLogger, FileLogger, ConsoleLogger
+from .xrdlogger import XrdLogger, initialize_logger
