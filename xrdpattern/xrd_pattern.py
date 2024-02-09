@@ -5,56 +5,44 @@ import re
 import json
 import numpy as np
 from datetime import datetime
-from dataclasses import dataclass
 
 # -------------------------------------------
 
-@dataclass
+
+
 class Metadata:
-    primary_wavelength: float
-    secondary_wavelength: float
-    primary_to_secondary_ratio: float
-    anode_material: str
-    measurement_datetime: datetime
+    def __init__(self, header_str: str):
+        key_value_dict = self.get_key_value_dict(header_str)
 
-    def read_from_header_str(self, header_str: str):
+        self.primary_wavelength_angstrom: float = float(key_value_dict.get('ALPHA1', 0))
+        self.secondary_wavelength_angstrom: Optional[float] = float(key_value_dict.get('ALPHA2', 0))
+        self.primary_to_secondary_ratio: Optional[float] = float(key_value_dict.get('ALPHA_RATIO', 0))
+        self.anode_material: Optional[str] = key_value_dict.get('ANODE_MATERIAL', '')
+        self.measurement_datetime: Optional[datetime] = self.get_date_time(key_value_dict.get('MEASURE_DATE'),
+                                                                           key_value_dict.get('MEASURE_TIME'))
+
+    def get_key_value_dict(self,header_str: str) -> dict:
+        key_value_dict = {}
         for key, value in self.get_key_value_pairs(header_str):
-            self.process_key_value_pair(key, value)
-
+            key_value_dict[key] = value
+        return key_value_dict
 
     @staticmethod
     def get_key_value_pairs(header_str: str):
         commented_lines = [line for line in header_str.splitlines() if line.startswith('#')]
         for line in commented_lines:
-            key_value = line[1:].split(':')
+            key_value = line[1:].split(':',1)
             if len(key_value) == 2:
                 yield key_value[0].strip(), key_value[1].strip()
-            else:
-                raise ValueError(f"Invalid key-value pair in header line: {line}")
 
+    @staticmethod
+    def get_date_time(date_str: str, time_str: str) -> Optional[datetime]:
+        print(date_str, time_str)
 
-    def process_key_value_pair(self, key: str, value: str):
-        if key == 'ALPHA1':
-            self.primary_wavelength = float(value)
-        elif key == 'ALPHA2':
-            self.secondary_wavelength = float(value)
-        elif key == 'ALPHA_RATIO':
-            self.primary_to_secondary_ratio = float(value)
-        elif key == 'ANODE_MATERIAL':
-            self.anode_material = value
-        elif key == 'MEASURE_DATE' or key == 'MEASURE_TIME':
-            self._update_measurement_datetime(value, key)
-
-
-    def _update_measurement_datetime(self, value: str, key: str):
-        if not hasattr(self, 'measurement_datetime'):
-            date_str = value if key == 'MEASURE_DATE' else None
-            time_str = value if key == 'MEASURE_TIME' else None
-            if date_str and time_str:
-                combined_str = date_str + ' ' + time_str
-                self.measurement_datetime = datetime.strptime(combined_str, '%m/%d/%Y %H:%M:%S')
-
-
+        if date_str and time_str:
+            combined_str = date_str + ' ' + time_str
+            return datetime.strptime(combined_str, '%m/%d/%Y %H:%M:%S')
+        return None
 
 
 class XrdPattern:
@@ -63,9 +51,9 @@ class XrdPattern:
     std_angle_end = 180
 
     def __init__(self, filepath : Optional[str] = None):
-        self.wave_length_angstrom : Optional[float] = None
         self.degree_over_intensity : list = []
         self.measurement_timestamp : Optional[datetime] = None
+        self.metadata : Optional[Metadata] = None
 
         if filepath:
             self.import_from_file(filepath=filepath)
@@ -102,7 +90,7 @@ class XrdPattern:
             deg, intensity = float(deg_str), float(intensity_str)
             self.degree_over_intensity.append([deg, intensity])
 
-        # print(xylib_repr)
+        self.metadata = Metadata(header_str=header_str)
 
 
     def export_as_json(self, filepath : str):
@@ -128,11 +116,11 @@ class XrdPattern:
     # -------------------------------------------
     # get
 
-    def get_wavelength_angstrom(self) -> float:
-        if self.wave_length_angstrom is None:
+    def get_primary_wavelength_angstrom(self) -> float:
+        if self.metadata.primary_wavelength_angstrom is None:
             raise ValueError(f"Wavelength is None")
 
-        return self.wave_length_angstrom
+        return self.metadata.primary_wavelength_angstrom
 
 
     def get_np_repr(self):
