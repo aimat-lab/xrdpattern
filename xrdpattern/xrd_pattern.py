@@ -7,21 +7,21 @@ import numpy as np
 # from datetime import datetime
 from file_io.metadata import Metadata
 from xrd_logger import log_xrd_info
+from xrd_logger.report import Report, get_report
+
 
 # -------------------------------------------
+
 
 class XrdPattern:
     standard_entries_num = 1000
     std_angle_start = 0
     std_angle_end = 180
 
-
-
     def __init__(self, filepath : Optional[str] = None):
-        self.degree_over_intensity : list = []
+        self.deg_over_intensity : list = []
         self.metadata : Optional[Metadata] = None
-        self.has_errors : Optional[bool] = None
-        self.has_warnings : Optional[bool] = None
+        self.processing_report : Optional[Report] = None
 
         if filepath:
             self.import_from_file(filepath=filepath)
@@ -33,8 +33,9 @@ class XrdPattern:
             self._initialize_from_json(filepath=filepath)
         else:
             self._import_from_data_file(filepath=filepath)
-        log_msg = self.make_report_and_set_flags(filepath=filepath)
+        log_msg = str(get_report(filepath=filepath, metadata=self.metadata, deg_over_intensity=self.deg_over_intensity))
         log_xrd_info(msg=log_msg)
+
 
     def export_as_json(self, filepath : str):
         try:
@@ -80,7 +81,7 @@ class XrdPattern:
         for row in data_rows:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
-            self.degree_over_intensity.append([deg, intensity])
+            self.deg_over_intensity.append([deg, intensity])
 
         self.metadata = Metadata(header_str=header_str)
 
@@ -97,45 +98,6 @@ class XrdPattern:
     # -------------------------------------------
     # get
 
-    def make_report_and_set_flags(self, filepath : str):
-        report_str = f'Successfully processed file {filepath}'
-        self.has_errors = True
-        self.has_warnings = True
-
-        error_start = '- Errors:'
-        error_str = error_start
-        if self.metadata.primary_wavelength_angstrom is None:
-            error_str += "\nPrimary wavelength missing!"
-
-        if len(self.degree_over_intensity) == 0:
-            error_str += "\nNo data found. Degree over intensity is empty!"
-
-        elif len(self.degree_over_intensity) < 10:
-            error_str += "\nData is too short. Less than 10 entries!"
-
-        if error_str == error_start:
-            error_str = f'\nNo errors found: Wavelength and data successfully parsed'
-            self.has_errors = False
-        report_str += error_str
-
-        warning_start = '- Warnings:'
-        warning_str = warning_start
-        if self.metadata.secondary_wavelength_angstrom is None:
-            warning_str += "\nNo secondary wavelength found"
-        if self.metadata.anode_material is None:
-            warning_str += "\nNo anode material found"
-        if self.metadata.measurement_datetime is None:
-            warning_str += "\nNo measurement datetime found"
-
-        if warning_str == warning_start:
-            warning_str = f'\nNo warnings found: All metadata was successfully parsed'
-            self.has_warnings = False
-
-        report_str += warning_str
-
-        return report_str
-
-
     def get_primary_wavelength_angstrom(self) -> float:
         if self.metadata.primary_wavelength_angstrom is None:
             raise ValueError(f"Wavelength is None")
@@ -144,10 +106,10 @@ class XrdPattern:
 
 
     def get_np_repr(self):
-        if not self.degree_over_intensity:
+        if not self.deg_over_intensity:
             raise ValueError(f"Numpy array is None")
 
-        return np.array(self.degree_over_intensity)
+        return np.array(self.deg_over_intensity)
 
 
     def to_json(self) -> str:
