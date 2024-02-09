@@ -1,17 +1,13 @@
-import logging
 from typing import Optional
 from file_io import get_xy_repr, Formats
 import re
 import json
 import numpy as np
-# from datetime import datetime
-from file_io.metadata import Metadata
+from file_io import Metadata, write_to_json
 from xrd_logger import log_xrd_info
 from xrd_logger.report import Report, get_report
 
-
 # -------------------------------------------
-
 
 class XrdPattern:
     standard_entries_num = 1000
@@ -38,24 +34,7 @@ class XrdPattern:
 
 
     def export_as_json(self, filepath : str):
-        try:
-            base_path = filepath.split('.')[0]
-            filepath_suffix= filepath.split('.')[-1]
-
-            if filepath_suffix != Formats.aimat_json.suffix:
-                raise ValueError(f"Invalid file ending for json export")
-
-        except:
-            logging.warning(f"Invalid json export path {filepath}. Correcting to json suffix path")
-            base_path = filepath
-            filepath_suffix = Formats.aimat_json.suffix
-
-        write_path = f'{base_path}.{filepath_suffix}'
-        try:
-            with open(write_path, 'w') as file:
-                file.write(self.to_json())
-        except:
-            raise ValueError(f"Could not write to file {filepath}")
+        write_to_json(filepath=filepath, content=self.to_json())
 
     # -------------------------------------------
     # import methods
