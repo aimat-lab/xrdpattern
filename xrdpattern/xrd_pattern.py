@@ -93,20 +93,26 @@ class XrdPattern:
 
 
     def get_std_mapping(self) -> Mapping:
+        angles = list(self.deg_to_intensity.keys())
+        start_angle, end_angle =  angles[0], angles[-1]
+
         std_angles = np.linspace(start=XrdPattern.std_angle_start,
                                           stop=XrdPattern.std_angle_end,
                                           num= 1000)
 
-        print(f'std_angle : {std_angles}')
         x = np.array(list(self.deg_to_intensity.keys()))
         y = np.array(list(self.deg_to_intensity.values()))
         cs = CubicSpline(x, y)
 
         std_intensity_mapping = {}
         for angle in std_angles:
-            std_intensity_mapping[angle] = cs(angle)
+            if angle < start_angle or angle > end_angle:
+                std_intensity_mapping[angle] = 0
+            else:
+                std_intensity_mapping[angle] = cs(angle)
 
         return std_intensity_mapping
+
 
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
