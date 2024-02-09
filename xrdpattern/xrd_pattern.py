@@ -8,7 +8,7 @@ from file_io.xrd_types import Mapping
 from xrd_logger import log_xrd_info
 from xrd_logger.report import Report, get_report
 from scipy.interpolate import CubicSpline
-
+import matplotlib.pyplot as plt
 # -------------------------------------------
 
 
@@ -38,6 +38,27 @@ class XrdPattern:
 
     def export_as_json(self, filepath : str):
         write_to_json(filepath=filepath, content=self.to_json())
+
+
+    def plot(self, use_interpolation=True):
+        if use_interpolation:
+            std_mapping = self.get_std_mapping()
+            angles = list(std_mapping.keys())
+            intensities = list(std_mapping.values())
+            label = 'Interpolated Intensity'
+        else:
+            angles = list(self.deg_to_intensity.keys())
+            intensities = list(self.deg_to_intensity.values())
+            label = 'Original Intensity'
+
+        # Plotting
+        plt.figure(figsize=(10, 6))
+        plt.plot(angles, intensities, label=label)
+        plt.xlabel('Angle (Degrees)')
+        plt.ylabel('Intensity')
+        plt.title('XRD Pattern')
+        plt.legend()
+        plt.show()
 
     # -------------------------------------------
     # import methods
@@ -117,3 +138,4 @@ class XrdPattern:
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
     print(xrd_pattern.get_std_mapping())
+    xrd_pattern.plot()
