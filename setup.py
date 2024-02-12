@@ -10,6 +10,6 @@ requirements += [f"xylib-py @ file://localhost/{os.getcwd()}/xylib"]
 setup(
     name='xrdpattern',
     version='0.2.0',
-    packages=['xrdpattern'],
+    packages=['xrdpattern, xrd_logger'],
     install_requires=requirements
 )

@@ -1,9 +1,8 @@
 from typing import Optional
-from xrd_file_io import get_xy_repr, Formats, Metadata
+from xrd_file_io import get_xy_repr, Formats, Metadata, write_to_json
 import re
 import json
 import numpy as np
-from xrd_file_io import write_to_json
 from xrd_file_io.xrd_types import Mapping
 from xrd_logger import log_xrd_info
 from xrd_logger.report import Report, get_report
