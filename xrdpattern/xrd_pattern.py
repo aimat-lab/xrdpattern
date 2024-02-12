@@ -1,27 +1,23 @@
 from typing import Optional
 from xrd_file_io import get_xy_repr, Formats, Metadata, write_to_json
 import re
-import json
 import numpy as np
 from xrd_file_io.xrd_types import Mapping
 from xrd_logger import log_xrd_info
 from xrd_logger.report import Report, get_report
 from scipy.interpolate import CubicSpline
 import matplotlib.pyplot as plt
+from serialization import SerializableDataclass
 # -------------------------------------------
 
 
-class XrdPattern:
-    standard_entries_num = 1000
-    std_angle_start = 0
-    std_angle_end = 90
+class XrdPattern(SerializableDataclass):
+    datafile_filepath: str
+    twotheta_to_intensity: Mapping = {}
+    metadata: Optional[Metadata] = None
+    processing_report: Optional[Report] = None
 
     def __init__(self, filepath : str):
-        self.datafile_filepath : str = filepath
-        self.twotheta_to_intensity : Mapping = {}
-        self.metadata : Optional[Metadata] = None
-        self.processing_report : Optional[Report] = None
-
         self.import_data(filepath=filepath)
 
 
@@ -36,7 +32,7 @@ class XrdPattern:
 
 
     def export_data(self, filepath : str):
-        write_to_json(filepath=filepath, content=self.to_json())
+        write_to_json(filepath=filepath, content=self.to_str())
 
 
     def plot(self, use_interpolation=True):
@@ -64,7 +60,8 @@ class XrdPattern:
     def _initialize_from_json(self, filepath : str):
         with open(filepath, 'r') as file:
             data = file.read()
-            self.__dict__.update(json.loads(data))
+            new_pattern = self.from_str(json_str=data)
+        self.__dict__ = new_pattern.__dict__
 
 
     def _import_from_data_file(self, filepath : str):
@@ -97,21 +94,20 @@ class XrdPattern:
         return self.metadata.primary_wavelength_angstrom
 
 
-    def to_json(self) -> str:
-        data = self.__dict__
-        return json.dumps(data)
-
-
     def get_standardized_mapping(self) -> Mapping:
         """
         :return: Mapping from 2 theta to intensity with theta in [0,90] and intensity in [0,1] by padding missing angle range with 0, interpolating the intensity and then normalizing it by diving through the max intensity
         """
+        standard_entries_num = 1000
+        std_angle_start = 0
+        std_angle_end = 90
+
         angles = list(self.twotheta_to_intensity.keys())
         start_angle, end_angle =  angles[0], angles[-1]
 
-        std_angles = np.linspace(start=XrdPattern.std_angle_start,
-                                          stop=XrdPattern.std_angle_end,
-                                          num= 1000)
+        std_angles = np.linspace(start=std_angle_start,
+                                 stop=std_angle_end,
+                                 num= standard_entries_num)
 
         x = np.array(list(self.twotheta_to_intensity.keys()))
         y = np.array(list(self.twotheta_to_intensity.values()))
@@ -135,3 +131,6 @@ if __name__ == "__main__":
     # print(xrd_pattern.get_standardized_mapping())
     # xrd_pattern.plot()
     xrd_pattern.export_data(filepath='test')
+    print(f'Initialzing from test.json')
+    test_new_pattern = XrdPattern(filepath='test.json')
+    print(test_new_pattern.__dict__)
