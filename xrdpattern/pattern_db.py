@@ -2,8 +2,8 @@ import os.path
 from xrd_file_io import find_all_parsable_files
 from .xrd_pattern import XrdPattern
 from xrd_logger import log_xrd_info
-
-
+import os
+from uuid import uuid4
 
 class XrdPatternDB:
     def __init__(self):
@@ -21,5 +21,18 @@ class XrdPatternDB:
                 log_xrd_info(f"Could not import pattern from file {file_path}. Error: {str(e)}")
 
 
-    def export_data(self):
-        pass
+    def export_data(self, dir_path : dir):
+        try:
+            os.makedirs(dir_path, exist_ok=True)
+        except Exception as e:
+            raise ValueError(f"Could not create directory at {dir_path}. Error: {str(e)}")
+
+        for pattern in self.patterns:
+            file_name = os.path.basename(pattern.datafile_filepath)
+            fpath = os.path.join(dir_path, file_name)
+
+            if os.path.isfile(fpath):
+                fpath = uuid4()
+
+            pattern.export_data(filepath=fpath)
+        
