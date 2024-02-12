@@ -1,13 +1,20 @@
 from __future__ import annotations
+
 import json
 from typing import  get_type_hints
 from typing import get_origin, get_args, Union
 from types import NoneType
-from abc import abstractmethod
 
 # -------------------------------------------
 
 class SerializableDataclass:
+
+    def to_str(self) -> str:
+        return json.dumps(self.to_json())
+
+    @classmethod
+    def from_str(cls, json_str : str):
+        return cls.from_json(json_dict=json.loads(json_str))
 
     def to_json(self) -> dict:
         return {attr : self.get_json_entry(obj=value) for attr, value in self.__dict__.items()}
@@ -18,7 +25,6 @@ class SerializableDataclass:
         attr_types = get_type_hints(cls)
 
         for key, value in json_dict.items():
-            # print(key, value)
             attr_type = attr_types.get(key)
             if is_optional_serializable(the_type=attr_type):
                 if not value is None:
@@ -36,6 +42,7 @@ class SerializableDataclass:
         if is_composite:
             return obj.to_json()
         return obj
+
 
 def is_optional_serializable(the_type : type):
     is_optional_ser = False
@@ -55,26 +62,3 @@ def get_core_type(the_type):
 
     raise TypeError("Type must be of the form Optional[type]")
 
-
-#
-# if __name__ == "__main__":
-#     @dataclass
-#     class MySerializable(SerializableDataclass):
-#         name : str
-#         value : int
-#         # this_stuff : datetime = datetime(year=2022, month=1, day=13)
-#         nested : Optional[SerializableDataclass] = None
-#
-#     inner_obj = MySerializable('nested', 2)
-#     test_obj = MySerializable('test', 1, nested=inner_obj)
-#
-#     test_json_dict = inner_obj.to_json()
-#     test_json_dict2 = test_obj.to_json()
-#
-#     json_str = json.dumps(test_json_dict2)
-#     print(json_str)
-#
-#     new_json = json.loads(json_str)
-#
-#     new_obj = MySerializable.from_json(json_dict=new_json)
-#     print(new_obj.__dict__)
