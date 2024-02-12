@@ -1,4 +1,4 @@
-from file_io.metadata import Metadata
+from xrd_file_io import Metadata
 
 
 class Report:
