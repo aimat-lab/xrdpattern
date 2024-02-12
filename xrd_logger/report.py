@@ -1,11 +1,12 @@
 from xrd_file_io import Metadata
+from serialization import SerializableDataclass
+from dataclasses import dataclass
 
-
-class Report:
-    def __init__(self, has_errors : bool, has_warnings : bool,report_str : str):
-        self.report_str = report_str
-        self.has_errors = has_errors
-        self.has_warnings = has_warnings
+@dataclass
+class Report(SerializableDataclass):
+    report_str : str
+    has_error: bool
+    has_warn : bool
 
     def __str__(self):
         return self.report_str
@@ -47,4 +48,4 @@ def get_report(filepath : str, metadata : Metadata, deg_over_intensity : dict):
 
     report_str += warning_str
 
-    return Report(report_str=report_str, has_errors=has_errors, has_warnings=has_warnings)
+    return Report(report_str=report_str, has_error=has_errors, has_warn=has_warnings)

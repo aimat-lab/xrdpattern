@@ -84,7 +84,7 @@ class XrdPattern:
             deg, intensity = float(deg_str), float(intensity_str)
             self.twotheta_to_intensity[deg] = intensity
 
-        self.metadata = Metadata(header_str=header_str)
+        self.metadata = Metadata.from_header_str(header_str=header_str)
 
 
     # -------------------------------------------

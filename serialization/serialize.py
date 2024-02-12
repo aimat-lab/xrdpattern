@@ -8,7 +8,6 @@ from types import NoneType
 # -------------------------------------------
 
 class SerializableDataclass:
-
     @classmethod
     def from_str(cls, json_str: str):
         json_dict = json.loads(json_str, object_hook=cls.json_decode)
@@ -82,9 +81,6 @@ def get_core_type(the_type):
 
 
 
-
-
-
 if __name__ == "__main__":
     from dataclasses import dataclass
     from typing import Optional
@@ -96,9 +92,16 @@ if __name__ == "__main__":
         example_date : datetime = datetime(year=2000, month=1, day=13)
         nested: Optional[SerializableDataclass] = None
 
+    def abc():
+        pass
+
     inner_obj = MySerializable('nested', 2)
     test_obj = MySerializable('test', 1, nested=inner_obj)
-    inner_str = inner_obj.to_str()
-    new_obj = inner_obj.from_str(json_str=inner_str)
 
+    inner_str = inner_obj.to_str()
+    outer_obj_str = test_obj.to_str()
+
+    new_obj = MySerializable.from_str(json_str=inner_str)
+    new_outer_obj = MySerializable.from_str(json_str=outer_obj_str)
     print(new_obj.__dict__)
+    print(new_outer_obj.__dict__)

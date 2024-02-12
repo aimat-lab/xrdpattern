@@ -1,5 +1,11 @@
+from __future__ import annotations
 from datetime import datetime
 from typing import Optional
+from serialization import SerializableDataclass
+from dataclasses import dataclass
+
+from typing import Iterator, Tuple
+
 
 class XrdFormat:
     def __init__(self, name : str, suffix :str):
@@ -47,25 +53,36 @@ class Mapping(dict[float,float]):
     pass
 
 
-class Metadata:
-    def __init__(self, header_str: str):
-        key_value_dict = self.get_key_value_dict(header_str)
+@dataclass
+class Metadata(SerializableDataclass):
+    primary_wavelength_angstrom: Optional[float]
+    secondary_wavelength_angstrom: Optional[float]
+    primary_to_secondary_ratio: Optional[float]
+    anode_material: Optional[str]
+    measurement_datetime: Optional[datetime]
 
-        self.primary_wavelength_angstrom: Optional[float] = float(key_value_dict.get('ALPHA1', 0))
-        self.secondary_wavelength_angstrom: Optional[float] = float(key_value_dict.get('ALPHA2', 0))
-        self.primary_to_secondary_ratio: Optional[float] = float(key_value_dict.get('ALPHA_RATIO', 0))
-        self.anode_material: Optional[str] = key_value_dict.get('ANODE_MATERIAL', '')
-        self.measurement_datetime: Optional[datetime] = self.get_date_time(key_value_dict.get('MEASURE_DATE'),
-                                                                           key_value_dict.get('MEASURE_TIME'))
+    @classmethod
+    def from_header_str(cls, header_str : str) -> Metadata:
+        key_value_dict = cls.get_key_value_dict(header_str=header_str)
+        metadata = cls(primary_wavelength_angstrom = float(key_value_dict.get('ALPHA1', 0)),
+            secondary_wavelength_angstrom = float(key_value_dict.get('ALPHA2', 0)),
+            primary_to_secondary_ratio = float(key_value_dict.get('ALPHA_RATIO', 0)),
+            anode_material = key_value_dict.get('ANODE_MATERIAL', ''),
+            measurement_datetime = cls.get_date_time(key_value_dict.get('MEASURE_DATE'), key_value_dict.get('MEASURE_TIME'))
+        )
+        return metadata
 
-    def get_key_value_dict(self,header_str: str) -> dict:
+
+    @classmethod
+    def get_key_value_dict(cls,header_str: str) -> dict:
         key_value_dict = {}
-        for key, value in self.get_key_value_pairs(header_str):
+        for key, value in cls.get_key_value_pairs(header_str):
             key_value_dict[key] = value
         return key_value_dict
 
+
     @staticmethod
-    def get_key_value_pairs(header_str: str):
+    def get_key_value_pairs(header_str: str) -> Iterator[Tuple[str, str]]:
         commented_lines = [line for line in header_str.splitlines() if line.startswith('#')]
         for line in commented_lines:
             key_value = line[1:].split(':',1)
