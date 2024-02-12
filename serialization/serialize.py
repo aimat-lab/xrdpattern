@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from datetime import datetime
 import json
 from typing import  get_type_hints
 from typing import get_origin, get_args, Union
@@ -9,12 +9,13 @@ from types import NoneType
 
 class SerializableDataclass:
 
-    def to_str(self) -> str:
-        return json.dumps(self.to_json())
-
     @classmethod
-    def from_str(cls, json_str : str):
-        return cls.from_json(json_dict=json.loads(json_str))
+    def from_str(cls, json_str: str):
+        json_dict = json.loads(json_str, object_hook=cls.json_decode)
+        return cls.from_json(json_dict=json_dict)
+
+    def to_str(self) -> str:
+        return json.dumps(self.to_json(), default=self.json_encode)
 
     def to_json(self) -> dict:
         return {attr : self.get_json_entry(obj=value) for attr, value in self.__dict__.items()}
@@ -43,6 +44,23 @@ class SerializableDataclass:
             return obj.to_json()
         return obj
 
+    @staticmethod
+    def json_decode(json_dict):
+        for key, value in json_dict.items():
+            if isinstance(value, str):
+                try:
+                    json_dict[key] = datetime.fromisoformat(value)
+                except ValueError:
+                    pass
+        return json_dict
+
+    @staticmethod
+    def json_encode(obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        return json.JSONEncoder().default(obj)
+
+
 
 def is_optional_serializable(the_type : type):
     is_optional_ser = False
@@ -62,3 +80,25 @@ def get_core_type(the_type):
 
     raise TypeError("Type must be of the form Optional[type]")
 
+
+
+
+
+
+if __name__ == "__main__":
+    from dataclasses import dataclass
+    from typing import Optional
+
+    @dataclass
+    class MySerializable(SerializableDataclass):
+        name: str
+        value: int
+        example_date : datetime = datetime(year=2000, month=1, day=13)
+        nested: Optional[SerializableDataclass] = None
+
+    inner_obj = MySerializable('nested', 2)
+    test_obj = MySerializable('test', 1, nested=inner_obj)
+    inner_str = inner_obj.to_str()
+    new_obj = inner_obj.from_str(json_str=inner_str)
+
+    print(new_obj.__dict__)
