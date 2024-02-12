@@ -22,10 +22,10 @@ class XrdPattern:
         self.metadata : Optional[Metadata] = None
         self.processing_report : Optional[Report] = None
 
-        self.import_from_file(filepath=filepath)
+        self.import_data(filepath=filepath)
 
 
-    def import_from_file(self, filepath : str):
+    def import_data(self, filepath : str):
         suffix = filepath.split('.')[-1]
         if suffix == Formats.aimat_json.suffix:
             self._initialize_from_json(filepath=filepath)
@@ -35,7 +35,7 @@ class XrdPattern:
         log_xrd_info(msg=log_msg)
 
 
-    def export_as_json(self, filepath : str):
+    def export_data(self, filepath : str):
         write_to_json(filepath=filepath, content=self.to_json())
 
 
@@ -132,5 +132,6 @@ class XrdPattern:
 
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
-    print(xrd_pattern.get_standardized_mapping())
-    xrd_pattern.plot()
+    # print(xrd_pattern.get_standardized_mapping())
+    # xrd_pattern.plot()
+    xrd_pattern.export_data(filepath='test')
