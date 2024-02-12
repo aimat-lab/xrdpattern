@@ -16,13 +16,13 @@ class XrdPattern:
     std_angle_start = 0
     std_angle_end = 90
 
-    def __init__(self, filepath : Optional[str] = None):
+    def __init__(self, filepath : str):
+        self.datafile_filepath : str = filepath
         self.twotheta_to_intensity : Mapping = {}
         self.metadata : Optional[Metadata] = None
         self.processing_report : Optional[Report] = None
 
-        if filepath:
-            self.import_from_file(filepath=filepath)
+        self.import_from_file(filepath=filepath)
 
 
     def import_from_file(self, filepath : str):
@@ -86,15 +86,6 @@ class XrdPattern:
 
         self.metadata = Metadata(header_str=header_str)
 
-
-    @classmethod
-    def from_json_str(cls, json_str: str):
-        data = json.loads(json_str)
-        obj = cls()
-        obj.__dict__.update(data)
-        print(obj.__dict__)
-
-        return obj
 
     # -------------------------------------------
     # get
