@@ -5,8 +5,8 @@ from scipy.interpolate import CubicSpline
 import matplotlib.pyplot as plt
 from serialization import SerializableDataclass
 
-from xrd_file_io import get_xy_repr, Formats, Metadata, write_to_json
-from xrd_file_io import Mapping
+from xrdpattern.xrd_file_io import get_xy_repr, Formats, Metadata, write_to_json
+from xrdpattern.xrd_file_io import Mapping
 from xrdpattern.xrd_logger import log_xrd_info, Report, get_report
 # -------------------------------------------
 
