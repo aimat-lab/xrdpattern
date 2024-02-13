@@ -23,6 +23,7 @@ class XrdPattern(SerializableDataclass):
 
     def import_data(self, filepath : str):
         suffix = filepath.split('.')[-1]
+        self.datafile_filepath = filepath
         if suffix == Formats.aimat_json.suffix:
             self._initialize_from_json(filepath=filepath)
         else:
