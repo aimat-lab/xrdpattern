@@ -4,3 +4,4 @@ venv
 .Trash-1001
 *.egg-info
 build
+dist

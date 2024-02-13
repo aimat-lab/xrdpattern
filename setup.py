@@ -9,7 +9,7 @@ requirements += [f"xylib-py @ file://localhost/{os.getcwd()}/xylib"]
 
 setup(
     name='xrdpattern',
-    version='0.3.0',
+    version='0.4.0',
     author='Daniel Hollarek',
     author_email='daniel.hollarek@googlemail.com',
     description='Python library for XrdPatterns including file import, file export, plotting and postprocessing functionalities',
