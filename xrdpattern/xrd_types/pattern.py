@@ -22,6 +22,8 @@ class XrdPattern(SerializableDataclass):
     #     super().__init__()
     #     self.import_data(filepath=filepath)
 
+    def __post_init__(self):
+        self.initialize()
 
     def initialize(self):
         filepath = self.filepath
@@ -132,13 +134,7 @@ class XrdPattern(SerializableDataclass):
 
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
-    xrd_pattern.initialize()
-    # print(xrdpattern.get_standardized_mapping())
-    # xrdpattern.plot()
     print(xrd_pattern.twotheta_to_intensity)
     print(xrd_pattern.__dict__)
     print(xrd_pattern.to_json())
-    # xrd_pattern.export_data(filepath='test')
-    # print(f'Initialzing from test.json')
-    # test_new_pattern = XrdPattern(filepath='test.json')
-    # print(test_new_pattern.__dict__)
+    xrd_pattern.export_data(filepath='test')
