@@ -7,7 +7,7 @@ from serialization import SerializableDataclass
 
 from xrd_file_io import get_xy_repr, Formats, Metadata, write_to_json
 from xrd_file_io import Mapping
-from xrd_pattern.xrd_logger import log_xrd_info, Report, get_report
+from xrdpattern.xrd_logger import log_xrd_info, Report, get_report
 # -------------------------------------------
 
 
@@ -128,8 +128,8 @@ class XrdPattern(SerializableDataclass):
 
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
-    # print(xrd_pattern.get_standardized_mapping())
-    # xrd_pattern.plot()
+    # print(xrdpattern.get_standardized_mapping())
+    # xrdpattern.plot()
     xrd_pattern.export_data(filepath='test')
     print(f'Initialzing from test.json')
     test_new_pattern = XrdPattern(filepath='test.json')

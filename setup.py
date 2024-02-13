@@ -8,8 +8,13 @@ with open('requirements.txt') as f:
 requirements += [f"xylib-py @ file://localhost/{os.getcwd()}/xylib"]
 
 setup(
-    name='xrd_pattern',
-    version='0.2.0',
-    packages=['xrd_pattern'],
+    name='xrdpattern',
+    version='0.3.0',
+    author='Daniel Hollarek',
+    author_email='daniel.hollarek@googlemail.com',
+    description='Python library for XrdPatterns including file import, file export, plotting and postprocessing functionalities',
+    url='https://github.com/aimat-lab/xrdpattern',
+    packages=['xrdpattern'],
+    python_requires='>=3.8',
     install_requires=requirements
 )
