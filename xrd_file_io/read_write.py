@@ -33,7 +33,7 @@ def write_to_json(filepath : str, content : str):
 
 def get_xy_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None) -> str:
     if not os.path.isfile(input_path):
-        raise ValueError(f"File {input_path} does not exist")
+        raise ValueError(f"File \"{input_path}\" does not exist")
 
     if input_format_hint is None:
         input_format_suffix = input_path.split('.')[-1]
@@ -56,7 +56,7 @@ def get_xy_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None
 
 def get_file_contents(filepath : str) -> str:
     if not os.path.isfile(filepath):
-        raise ValueError(f"File {filepath} does not exist")
+        raise ValueError(f"File \"{filepath}\" does not exist")
 
     with open(filepath, "r") as file:
         return file.read()
