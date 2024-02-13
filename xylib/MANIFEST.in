@@ -1,3 +1,0 @@
-include xylib/*.h
-include xyconv.py
-include README.rst
