@@ -1,1 +1,0 @@
-from .xrd_pattern import XrdPattern

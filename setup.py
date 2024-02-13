@@ -8,8 +8,8 @@ with open('requirements.txt') as f:
 requirements += [f"xylib-py @ file://localhost/{os.getcwd()}/xylib"]
 
 setup(
-    name='xrdpattern',
+    name='xrd_pattern',
     version='0.2.0',
-    packages=['xrdpattern, xrd_logger'],
+    packages=['xrd_pattern'],
     install_requires=requirements
 )

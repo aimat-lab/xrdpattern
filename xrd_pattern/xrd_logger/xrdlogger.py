@@ -4,6 +4,7 @@ import logging
 from typing import Optional
 from datetime import datetime
 
+
 class XrdLogger:
     _instance = None
     _is_initialized = False

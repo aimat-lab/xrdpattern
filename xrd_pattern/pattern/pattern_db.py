@@ -1,9 +1,10 @@
 import os.path
-from xrd_file_io import find_all_parsable_files
-from .xrd_pattern import XrdPattern
-from xrd_logger import log_xrd_info
 import os
 from uuid import uuid4
+
+from xrd_file_io import find_all_parsable_files
+from xrd_pattern.xrd_logger import log_xrd_info
+from .pattern import XrdPattern
 
 class XrdPatternDB:
     def __init__(self):
