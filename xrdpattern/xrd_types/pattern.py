@@ -4,26 +4,29 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 import matplotlib.pyplot as plt
 from serialization import SerializableDataclass
+from dataclasses import dataclass, field
 
 from xrdpattern.xrd_file_io import get_xy_repr, Formats, Metadata, write_to_json
 from xrdpattern.xrd_file_io import Mapping
 from xrdpattern.xrd_logger import log_xrd_info, Report, get_report
 # -------------------------------------------
 
-
+@dataclass
 class XrdPattern(SerializableDataclass):
-    datafile_filepath: str
-    twotheta_to_intensity: Mapping = {}
+    filepath: str
+    twotheta_to_intensity: dict = field(default_factory=dict)
     metadata: Optional[Metadata] = None
     processing_report: Optional[Report] = None
 
-    def __init__(self, filepath : str):
-        self.import_data(filepath=filepath)
+    # def __init__(self, filepath : str):
+    #     super().__init__()
+    #     self.import_data(filepath=filepath)
 
 
-    def import_data(self, filepath : str):
+    def initialize(self):
+        filepath = self.filepath
         suffix = filepath.split('.')[-1]
-        self.datafile_filepath = filepath
+        self.filepath = filepath
         if suffix == Formats.aimat_json.suffix:
             self._initialize_from_json(filepath=filepath)
         else:
@@ -129,9 +132,13 @@ class XrdPattern(SerializableDataclass):
 
 if __name__ == "__main__":
     xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
+    xrd_pattern.initialize()
     # print(xrdpattern.get_standardized_mapping())
     # xrdpattern.plot()
-    xrd_pattern.export_data(filepath='test')
-    print(f'Initialzing from test.json')
-    test_new_pattern = XrdPattern(filepath='test.json')
-    print(test_new_pattern.__dict__)
+    print(xrd_pattern.twotheta_to_intensity)
+    print(xrd_pattern.__dict__)
+    print(xrd_pattern.to_json())
+    # xrd_pattern.export_data(filepath='test')
+    # print(f'Initialzing from test.json')
+    # test_new_pattern = XrdPattern(filepath='test.json')
+    # print(test_new_pattern.__dict__)

@@ -29,7 +29,7 @@ class XrdPatternDB:
             raise ValueError(f"Could not create directory at {dir_path}. Error: {str(e)}")
 
         for pattern in self.patterns:
-            file_name = os.path.basename(pattern.datafile_filepath)
+            file_name = os.path.basename(pattern.filepath)
             fpath = os.path.join(dir_path, file_name)
 
             if os.path.isfile(fpath):
