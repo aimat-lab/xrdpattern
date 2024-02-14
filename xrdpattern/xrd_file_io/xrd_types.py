@@ -95,3 +95,24 @@ class Metadata(SerializableDataclass):
             combined_str = date_str + ' ' + time_str
             return datetime.strptime(combined_str, '%m/%d/%Y %H:%M:%S')
         return None
+
+
+
+class FormatSelector:
+    @classmethod
+    def make_allow_all(cls):
+        return cls(allow_all=True)
+
+    def __init__(self, allow_all : bool, format_list : Optional[list[str]] = None):
+        self.format_list : Optional[list[str]] = format_list
+        self.allow_all : bool = allow_all
+
+        if not self.allow_all and format_list is None:
+            raise ValueError("If allow_all is False, format_list must be provided")
+
+
+    def is_allowed(self, the_format : str) -> bool:
+        if self.allow_all:
+            return True
+        else:
+            return the_format in self.format_list
