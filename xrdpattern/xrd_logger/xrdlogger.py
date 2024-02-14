@@ -36,11 +36,6 @@ class XrdLogger:
 
     @staticmethod
     def log_to_file(msg : str, log_file_path : str):
-        try:
-            open(log_file_path, "w").close()
-        except:
-            raise ValueError(f"File {log_file_path} could not be created")
-
         with open(log_file_path, "a") as log_file:
             log_file.write(f"{msg}\n")
 

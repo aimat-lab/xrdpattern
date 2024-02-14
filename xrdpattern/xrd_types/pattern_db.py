@@ -5,10 +5,12 @@ from uuid import uuid4
 from xrdpattern.xrd_file_io import find_all_parsable_files
 from xrdpattern.xrd_logger import log_xrd_info
 from .pattern import XrdPattern
+from typing import Optional
 
 class XrdPatternDB:
-    def __init__(self):
+    def __init__(self, log_file_path : Optional[str] = None):
         self.patterns : list[XrdPattern] = []
+        self.log_file_path : Optional[str] = log_file_path
 
 
     def import_data(self, dir_path : str):
@@ -16,15 +18,13 @@ class XrdPatternDB:
             raise ValueError(f"Given path {dir_path} is not a directory")
         for file_path in find_all_parsable_files(dir_path=dir_path):
             try:
-                new_pattern = XrdPattern(filepath=file_path)
+                new_pattern = XrdPattern(filepath=file_path, log_file_path = self.log_file_path)
                 self.patterns.append(new_pattern)
             except Exception as e:
-                log_xrd_info(f"Could not import pattern from file {file_path}. Error: {str(e)}")
+                log_xrd_info(f"Could not import pattern from file {file_path}. Error: {str(e)}", log_file_path=self.log_file_path)
 
 
     def export_data(self, dir_path : dir):
-
-
         try:
             os.makedirs(dir_path, exist_ok=True)
         except Exception as e:

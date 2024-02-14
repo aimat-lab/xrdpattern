@@ -14,13 +14,10 @@ from xrdpattern.xrd_logger import log_xrd_info, Report, get_report
 @dataclass
 class XrdPattern(SerializableDataclass):
     filepath: str
+    log_file_path : Optional[str] = None
     twotheta_to_intensity: dict = field(default_factory=dict)
     metadata: Optional[Metadata] = None
     processing_report: Optional[Report] = None
-
-    # def __init__(self, filepath : str):
-    #     super().__init__()
-    #     self.import_data(filepath=filepath)
 
     def __post_init__(self):
         self.initialize()
@@ -34,7 +31,7 @@ class XrdPattern(SerializableDataclass):
         else:
             self._import_from_data_file(filepath=filepath)
         log_msg = str(get_report(filepath=filepath, metadata=self.metadata, deg_over_intensity=self.twotheta_to_intensity))
-        log_xrd_info(msg=log_msg)
+        log_xrd_info(msg=log_msg, log_file_path=self.log_file_path)
 
 
     def export_data(self, filepath : str):
