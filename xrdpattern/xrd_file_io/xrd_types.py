@@ -64,10 +64,11 @@ class Metadata(SerializableDataclass):
     @classmethod
     def from_header_str(cls, header_str : str) -> Metadata:
         key_value_dict = cls.get_key_value_dict(header_str=header_str)
-        metadata = cls(primary_wavelength_angstrom = float(key_value_dict.get('ALPHA1', 0)),
-            secondary_wavelength_angstrom = float(key_value_dict.get('ALPHA2', 0)),
-            primary_to_secondary_ratio = float(key_value_dict.get('ALPHA_RATIO', 0)),
-            anode_material = key_value_dict.get('ANODE_MATERIAL', ''),
+
+        metadata = cls(primary_wavelength_angstrom=float(key_value_dict['ALPHA1']) if 'ALPHA1' in key_value_dict else None,
+            secondary_wavelength_angstrom=float(key_value_dict['ALPHA2']) if 'ALPHA2' in key_value_dict else None,
+            primary_to_secondary_ratio=float(key_value_dict['ALPHA_RATIO']) if 'ALPHA_RATIO' in key_value_dict else None,
+            anode_material=key_value_dict.get('ANODE_MATERIAL', None),
             measurement_datetime = cls.get_date_time(key_value_dict.get('MEASURE_DATE'), key_value_dict.get('MEASURE_TIME'))
         )
         return metadata
