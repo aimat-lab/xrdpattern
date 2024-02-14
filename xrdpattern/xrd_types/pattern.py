@@ -31,7 +31,7 @@ class XrdPattern(SerializableDataclass):
         else:
             self._import_from_data_file(filepath=filepath)
         self.processing_report = get_report(filepath=filepath, metadata=self.metadata, deg_over_intensity=self.twotheta_to_intensity)
-        log_xrd_info(msg=self.processing_report, log_file_path=self.log_file_path)
+        log_xrd_info(msg=str(self.processing_report), log_file_path=self.log_file_path)
 
 
     def export_data(self, filepath : str):

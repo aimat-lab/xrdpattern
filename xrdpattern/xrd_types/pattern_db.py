@@ -15,19 +15,21 @@ class XrdPatternDB:
         self.num_unsuccessful : int = 0
         self.total_count : int = 0
 
+
     def import_data(self, dir_path : str):
         if not os.path.isdir(dir_path):
             raise ValueError(f"Given path {dir_path} is not a directory")
         for file_path in find_all_parsable_files(dir_path=dir_path):
             try:
-                new_pattern = XrdPattern(filepath=file_path, log_file_path = self.log_file_path)
+                new_pattern = XrdPattern(filepath=file_path)
                 self.patterns.append(new_pattern)
             except Exception as e:
                 self.num_unsuccessful += 1
                 self.log(f"Could not import pattern from file {file_path}. Error: {str(e)}")
             finally:
                 self.total_count += 1
-        self.log(msg=self.get_db_report())
+        self.create_db_report()
+
 
     def export_data(self, dir_path : dir):
         try:
@@ -47,16 +49,22 @@ class XrdPatternDB:
     def log(self, msg : str):
         log_xrd_info(msg=msg, log_file_path=self.log_file_path)
 
-    def get_db_report(self):
-        report_str = f'\n--- Finished creating database ---'
-        report_str += f'\n{self.num_unsuccessful}/{self.total_count} patterns could not be parsed'
 
-        patterns_with_crticials = [pattern for pattern in self.patterns if len(pattern.processing_report.critical_errors) == 0]
-        patterns_with_errors = [pattern for pattern in self.patterns if len(pattern.processing_report.errors) == 0]
-        patterns_with_warnings = [pattern for pattern in self.patterns if len(pattern.processing_report.warnings) == 0]
+    def create_db_report(self):
+        summary_str = f'\n----- Finished creating database -----'
+        summary_str += f'\n{self.num_unsuccessful}/{self.total_count} patterns could not be parsed'
 
-        report_str += f'\n{patterns_with_crticials}/{self.total_count} patterns had critical error(s)'
-        report_str += f'\n{patterns_with_errors}/{self.total_count}  patterns had error(s)'
-        report_str += f'\n{patterns_with_warnings}/{self.total_count}  patterns had warning(s)'
+        num_critical_patterns = len([pattern for pattern in self.patterns if len(pattern.processing_report.critical_errors) == 0])
+        num_error_patterns = len([pattern for pattern in self.patterns if len(pattern.processing_report.errors) == 0])
+        num_warning_patterns = len([pattern for pattern in self.patterns if len(pattern.processing_report.warnings) == 0])
 
-        return report_str
+        summary_str += f'\n{num_critical_patterns}/{self.total_count} patterns had critical error(s)'
+        summary_str += f'\n{num_error_patterns}/{self.total_count}  patterns had error(s)'
+        summary_str += f'\n{num_warning_patterns}/{self.total_count}  patterns had warning(s)'
+        self.log(f'{summary_str}\n\n'
+                 f'----------------------------------------\n')
+
+
+        self.log(f'Individual file reports\n\n')
+        for pattern in self.patterns:
+            self.log(msg=str(pattern.processing_report))
