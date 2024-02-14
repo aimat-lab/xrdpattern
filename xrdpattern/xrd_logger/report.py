@@ -19,21 +19,22 @@ class Report(SerializableDataclass):
         report_str = f'--- Successfully processed file ---'
         report_str += f'\nFilepath: {self.filepath}'
         report_str += f'\nNum errors: {len(self.errors)}'
-        report_str += f'\nNum warnings: {len(self.warnings)}'
+        report_str += f'\nNum warnings: {len(self.warnings)}\n'
 
         if len(self.errors) != 0:
-            report_str += f'Found errors:'
+            report_str += f'\nFound errors:'
             for error_msg in self.errors:
                 report_str += error_msg
 
         if len(self.warnings) != 0:
-            report_str += f'Found warnings:'
+            report_str += f'\nFound warnings:'
             for warning_msg in self.warnings:
                 report_str += warning_msg
+        report_str += '\n'
         return report_str
 
     def __str__(self):
-        return self.get_report_str
+        return self.get_report_str()
 
 
 def get_report(filepath : str, metadata : Metadata, deg_over_intensity : dict):
