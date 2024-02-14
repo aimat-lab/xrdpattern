@@ -103,7 +103,7 @@ class FormatSelector:
     def make_allow_all(cls):
         return cls(allow_all=True)
 
-    def __init__(self, allow_all : bool, format_list : Optional[list[str]] = None):
+    def __init__(self, allow_all : bool = False, format_list : Optional[list[str]] = None):
         self.format_list : Optional[list[str]] = format_list
         self.allow_all : bool = allow_all
 
