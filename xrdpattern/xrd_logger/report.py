@@ -6,8 +6,12 @@ from dataclasses import dataclass, field
 @dataclass
 class Report(SerializableDataclass):
     filepath: str
+    critical_errors: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+
+    def add_critical(self, msg : str):
+        self.critical_errors.append(f'\n{msg}')
 
     def add_error(self, msg : str):
         self.errors.append(f'\n{msg}')
@@ -41,12 +45,12 @@ def get_report(filepath : str, metadata : Metadata, deg_over_intensity : dict):
 
     report = Report(filepath=filepath)
 
+    if len(deg_over_intensity) == 0:
+        report.add_critical('No data found. Degree over intensity is empty!')
+    elif len(deg_over_intensity) < 10:
+        report.add_critical('Data is too short. Less than 10 entries!')
     if metadata.primary_wavelength_angstrom is None:
         report.add_error('Primary wavelength missing!')
-    if len(deg_over_intensity) == 0:
-        report.add_error('No data found. Degree over intensity is empty!')
-    elif len(deg_over_intensity) < 10:
-        report.add_error('Data is too short. Less than 10 entries!')
 
     if metadata.secondary_wavelength_angstrom is None:
         report.add_warning('No secondary wavelength found')

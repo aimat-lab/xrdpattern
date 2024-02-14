@@ -5,12 +5,11 @@ from serialization import SerializableDataclass
 from dataclasses import dataclass
 
 from typing import Iterator, Tuple
-
+# -------------------------------------------
 
 class XrdFormat:
     def __init__(self, name : str, suffix :str):
         self.name : str = name
-        # suffix is "csv" not ".csv"
         self.suffix : str = suffix
 
 
