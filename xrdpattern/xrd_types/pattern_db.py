@@ -1,10 +1,17 @@
+from __future__ import annotations
+
 import os.path
 import os
 from uuid import uuid4
-from xrdpattern.xrd_file_io import find_all_parsable_files, FormatSelector
+
+from hollarek.resources import FsysNode
+
+from xrdpattern.xrd_file_io import FormatSelector
 from xrdpattern.xrd_logger import log_xrd_info
 from .pattern import XrdPattern
 from typing import Optional
+
+from ..xrd_file_io.formats import allowed_suffix_types
 
 
 # -------------------------------------------
@@ -21,7 +28,7 @@ class XrdPatternDB:
     def import_data(self, dir_path : str, format_selector : FormatSelector = FormatSelector.make_allow_all()):
         if not os.path.isdir(dir_path):
             raise ValueError(f"Given path {dir_path} is not a directory")
-        for file_path in find_all_parsable_files(dir_path=dir_path, format_selector=format_selector):
+        for file_path in find_xrd_files(dir_path=dir_path, format_selector=format_selector):
             try:
                 new_pattern = XrdPattern(filepath=file_path)
                 self.patterns.append(new_pattern)
@@ -70,3 +77,13 @@ class XrdPatternDB:
         self.log(f'Individual file reports\n\n')
         for pattern in self.patterns:
             self.log(msg=str(pattern.processing_report))
+
+
+def find_xrd_files(dir_path : str, format_selector : Optional[FormatSelector]) -> list[str]:
+    if not os.path.isdir(dir_path):
+        raise ValueError(f"Given path {dir_path} is not a directory")
+    root_node = FsysNode(path=dir_path)
+    xrd_files_nodes = root_node.select_file_nodes(allowed_formats=allowed_suffix_types)
+
+    xrd_file_paths = [node.path for node in xrd_files_nodes if format_selector.is_allowed(node.get_suffix())]
+    return xrd_file_paths

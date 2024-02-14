@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 import re
 import numpy as np
@@ -7,7 +9,6 @@ from serialization import SerializableDataclass
 from dataclasses import dataclass, field
 
 from xrdpattern.xrd_file_io import get_xylib_repr, Formats, Metadata, write_to_json
-from xrdpattern.xrd_file_io import Mapping
 from xrdpattern.xrd_logger import log_xrd_info, Report, get_report
 # -------------------------------------------
 
@@ -135,3 +136,7 @@ if __name__ == "__main__":
     print(xrd_pattern.__dict__)
     print(xrd_pattern.to_json())
     xrd_pattern.export_data(filepath='test')
+
+
+class Mapping(dict[float,float]):
+    pass

@@ -1,35 +1,15 @@
+from __future__ import annotations
+
 import os.path
 from uuid import uuid4
 from tempfile import TemporaryDirectory
 from typing import Optional
 
-from .xrd_types import XYLibOption, allowed_suffix_types, XrdFormat
-from .xyconv import convert_file
+from .formats import allowed_suffix_types
+from .xylib_conv import convert_file
 import logging
-from .xrd_types import Formats
-
+from . import Formats, XrdFormat
 # -------------------------------------------
-
-def write_to_json(filepath : str, content : str):
-    try:
-        base_path = filepath.split('.')[0]
-        filepath_suffix = filepath.split('.')[-1]
-
-        if filepath_suffix != Formats.aimat_json.suffix:
-            raise ValueError(f"Invalid file ending for json export")
-
-    except:
-        logging.warning(f"Invalid json export path {filepath}. Correcting to json suffix path")
-        base_path = filepath
-        filepath_suffix = Formats.aimat_json.suffix
-
-    write_path = f'{base_path}.{filepath_suffix}'
-    try:
-        with open(write_path, 'w') as file:
-            file.write(content)
-    except:
-        raise ValueError(f"Could not write to file {filepath}")
-
 
 def get_xylib_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None) -> str:
     if not os.path.isfile(input_path):
@@ -54,9 +34,40 @@ def get_xylib_repr(input_path : str, input_format_hint : Optional[XrdFormat] = N
         raise ValueError(f"Error obtaining xy repr of file {input_path}: {str(e)}")
 
 
+
+def write_to_json(filepath : str, content : str):
+    try:
+        base_path = filepath.split('.')[0]
+        filepath_suffix = filepath.split('.')[-1]
+
+        if filepath_suffix != Formats.aimat_json.suffix:
+            raise ValueError(f"Invalid file ending for json export")
+
+    except:
+        logging.warning(f"Invalid json export path {filepath}. Correcting to json suffix path")
+        base_path = filepath
+        filepath_suffix = Formats.aimat_json.suffix
+
+    write_path = f'{base_path}.{filepath_suffix}'
+    try:
+        with open(write_path, 'w') as file:
+            file.write(content)
+    except:
+        raise ValueError(f"Could not write to file {filepath}")
+
+
+
+
 def get_file_contents(filepath : str) -> str:
     if not os.path.isfile(filepath):
         raise ValueError(f"File \"{filepath}\" does not exist")
 
     with open(filepath, "r") as file:
         return file.read()
+
+
+class XYLibOption:
+    def __init__(self, input_path : str, output_path : str, input_type : Optional[XrdFormat] = None):
+        self.INPUT_FILE : str = input_path
+        self.OUTPUT_PATH : str = output_path
+        self.INPUT_TYPE : Optional[XrdFormat] = input_type

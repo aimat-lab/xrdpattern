@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # Simplified, pythonic version of xyconv - a test for xylib bindings
 # Licence: Lesser GNU Public License 2.1 (LGPL)
+from __future__ import annotations
 
-from .xrd_types import XYLibOption
 import xylib
 
 __version__ = xylib.xylib_get_version()
+
+from xrdpattern.xrd_file_io.read_write import XYLibOption
+
 
 def print_supported_formats():
     n = 0
