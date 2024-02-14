@@ -9,7 +9,9 @@ from serialization import SerializableDataclass
 from dataclasses import dataclass, field
 
 from xrdpattern.xrd_file_io import get_xylib_repr, Formats, write_to_json
-from xrdpattern.xrd_logger import log_xrd_info, Report, get_report
+from xrdpattern.xrd_logger import log_xrd_info
+from .report import Report, get_report
+from .metadata import Metadata
 # -------------------------------------------
 
 @dataclass

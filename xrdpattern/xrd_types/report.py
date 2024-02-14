@@ -1,6 +1,6 @@
 from serialization import SerializableDataclass
 from dataclasses import dataclass, field
-
+from .metadata import Metadata
 
 @dataclass
 class Report(SerializableDataclass):
