@@ -10,6 +10,15 @@ class Report(SerializableDataclass):
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
+    def has_critical_error(self):
+        return len(self.critical_errors) != 0
+
+    def has_error(self):
+        return len(self.errors) != 0
+
+    def has_warning(self):
+        return len(self.warnings) != 0
+
     def add_critical(self, msg : str):
         self.critical_errors.append(f'\n{msg}')
 
@@ -22,8 +31,14 @@ class Report(SerializableDataclass):
     def get_report_str(self):
         report_str = f'--- Successfully processed file ---'
         report_str += f'\nFilepath: {self.filepath}'
+        report_str += f'\nNum critical errors: {len(self.critical_errors)}'
         report_str += f'\nNum errors: {len(self.errors)}'
         report_str += f'\nNum warnings: {len(self.warnings)}\n'
+
+        if len(self.critical_errors) != 0:
+            report_str += f'\nFound critical errors:'
+            for crit_error_msg in self.critical_errors:
+                report_str += crit_error_msg
 
         if len(self.errors) != 0:
             report_str += f'\nFound errors:'
@@ -42,7 +57,6 @@ class Report(SerializableDataclass):
 
 
 def get_report(filepath : str, metadata : Metadata, deg_over_intensity : dict):
-
     report = Report(filepath=filepath)
 
     if len(deg_over_intensity) == 0:

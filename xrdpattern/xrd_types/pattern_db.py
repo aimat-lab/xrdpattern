@@ -54,9 +54,9 @@ class XrdPatternDB:
         summary_str = f'\n----- Finished creating database -----'
         summary_str += f'\n{self.num_unsuccessful}/{self.total_count} patterns could not be parsed'
 
-        num_critical_patterns = len([pattern for pattern in self.patterns if len(pattern.processing_report.critical_errors) == 0])
-        num_error_patterns = len([pattern for pattern in self.patterns if len(pattern.processing_report.errors) == 0])
-        num_warning_patterns = len([pattern for pattern in self.patterns if len(pattern.processing_report.warnings) == 0])
+        num_critical_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_critical_error()])
+        num_error_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_error()])
+        num_warning_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_warning()])
 
         summary_str += f'\n{num_critical_patterns}/{self.total_count} patterns had critical error(s)'
         summary_str += f'\n{num_error_patterns}/{self.total_count}  patterns had error(s)'
