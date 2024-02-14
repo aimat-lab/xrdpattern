@@ -23,6 +23,8 @@ class XrdPatternDB:
 
 
     def export_data(self, dir_path : dir):
+
+
         try:
             os.makedirs(dir_path, exist_ok=True)
         except Exception as e:

@@ -16,56 +16,54 @@ class XrdLogger:
         return XrdLogger._instance
 
 
-    def __init__(self, include_timestamp : bool, log_file_path : Optional[str] = None):
+    def __init__(self, include_timestamp : bool):
         if XrdLogger._is_initialized:
             return
 
         self.include_timestamp : bool = include_timestamp
-        self.log_file_path = log_file_path
-
-        if log_file_path:
-            try:
-                open(log_file_path, "w").close()
-            except:
-                raise ValueError(f"File {log_file_path} could not be created")
         XrdLogger._is_initialized = True
 
 
-    def log(self, msg : str):
+    def log(self, msg : str, log_file_path : Optional[str] = None):
         if self.include_timestamp:
             current_timestamp = datetime.now()
             timestamp = current_timestamp.strftime("%Y-%m-%d %H:%M:%S")
             msg = f"[{timestamp}]: {msg}"
-        if self.log_file_path:
-            self.log_to_file(msg=msg)
+        if log_file_path:
+            self.log_to_file(msg=msg, log_file_path=log_file_path)
         self.log_to_console(msg=msg)
 
-    def log_to_file(self, msg : str):
-        with open(self.log_file_path, "a") as log_file:
+
+    @staticmethod
+    def log_to_file(msg : str, log_file_path : str):
+        try:
+            open(log_file_path, "w").close()
+        except:
+            raise ValueError(f"File {log_file_path} could not be created")
+
+        with open(log_file_path, "a") as log_file:
             log_file.write(f"{msg}\n")
+
 
     @staticmethod
     def log_to_console(msg : str):
         print(msg)
+
 
     @classmethod
     def get(cls) -> XrdLogger:
         return cls._instance
 
 
-def initialize_logger(include_timestamp : bool, log_file_path : Optional[str] = None):
-    XrdLogger(include_timestamp=include_timestamp, log_file_path=log_file_path)
 
-
-def log_xrd_info(msg : str):
+def log_xrd_info(msg : str, log_file_path : Optional[str] = None):
     logger = XrdLogger.get()
     if logger is None:
         logging.warning("XrdPattern Logger not initialized. Using defaults")
-        logger = XrdLogger(include_timestamp=True, log_file_path=None)
+        logger = XrdLogger(include_timestamp=True)
 
-    logger.log(msg=msg)
+    logger.log(msg=msg, log_file_path=log_file_path)
 
 
 if __name__ == "__main__":
-    initialize_logger(include_timestamp=True)
     log_xrd_info(msg='hi')
