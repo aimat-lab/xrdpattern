@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from serialization import SerializableDataclass
 from dataclasses import dataclass, field
 
-from xrdpattern.xrd_file_io import get_xy_repr, Formats, Metadata, write_to_json
+from xrdpattern.xrd_file_io import get_xylib_repr, Formats, Metadata, write_to_json
 from xrdpattern.xrd_file_io import Mapping
 from xrdpattern.xrd_logger import log_xrd_info, Report, get_report
 # -------------------------------------------
@@ -72,7 +72,7 @@ class XrdPattern(SerializableDataclass):
 
     def _import_from_data_file(self, filepath : str):
         _ = self
-        xylib_repr = get_xy_repr(input_path=filepath, input_format_hint=Formats.bruker_raw)
+        xylib_repr = get_xylib_repr(input_path=filepath)
         column_pattern = r'# column_1\tcolumn_2'
 
         try:

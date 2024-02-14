@@ -31,7 +31,7 @@ def write_to_json(filepath : str, content : str):
         raise ValueError(f"Could not write to file {filepath}")
 
 
-def get_xy_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None) -> str:
+def get_xylib_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None) -> str:
     if not os.path.isfile(input_path):
         raise ValueError(f"File \"{input_path}\" does not exist")
 
@@ -39,6 +39,7 @@ def get_xy_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None
         input_format_suffix = input_path.split('.')[-1]
     else:
         input_format_suffix = input_format_hint.suffix
+    print(input_format_suffix, input_path)
     if not input_format_suffix in allowed_suffix_types:
         raise ValueError(f"File {input_path} is not a supported format")
 

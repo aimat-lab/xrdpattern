@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='xrdpattern',
-    version='0.6.0',
+    version='0.7.1',
     author='Daniel Hollarek',
     author_email='daniel.hollarek@googlemail.com',
     description='Python library for XrdPatterns including file import, file export, plotting and postprocessing functionalities',
