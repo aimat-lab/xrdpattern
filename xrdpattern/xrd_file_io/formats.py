@@ -3,9 +3,15 @@ from typing import Optional
 
 
 class XrdFormat:
+
+    @classmethod
+    def from_suffix(cls, suffix : str) -> Optional[XrdFormat]:
+        return suffix_to_format_dict.get(suffix)
+
     def __init__(self, name : str, suffix :str):
         self.name : str = name
         self.suffix : str = suffix
+
 
 class Formats:
     bruker_raw = XrdFormat("bruker_raw", "raw")
@@ -34,7 +40,7 @@ class Formats:
 
 
 
-
+suffix_to_format_dict = {xrd_format.suffix : xrd_format for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)}
 allowed_suffix_types = [xrd_format.suffix for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)]
 
 class FormatSelector:

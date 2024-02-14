@@ -10,8 +10,8 @@ from dataclasses import dataclass, field
 
 from xrdpattern.xrd_file_io import get_xylib_repr, Formats, write_to_json
 from xrdpattern.xrd_logger import log_xrd_info
-from .report import Report, get_report
-from .metadata import Metadata
+from xrdpattern.xrd_types.report import Report, get_report
+from xrdpattern.xrd_types.metadata import Metadata
 # -------------------------------------------
 
 @dataclass
@@ -133,7 +133,7 @@ class XrdPattern(SerializableDataclass):
 
 
 if __name__ == "__main__":
-    xrd_pattern = XrdPattern(filepath="/home/daniel/aimat/pxrd_data/processed/example_files/asdf.raw")
+    xrd_pattern = XrdPattern(filepath="/home/daniel/test/local/parsed/Simon_Schweidler_Ben_Breitung_2024_02_14_4/data/daten_gallium/Alaa/LLZNb06Gd02In02O_l.raw")
     print(xrd_pattern.twotheta_to_intensity)
     print(xrd_pattern.__dict__)
     print(xrd_pattern.to_json())

@@ -6,28 +6,26 @@ from tempfile import TemporaryDirectory
 from typing import Optional
 
 from .formats import allowed_suffix_types, Formats, XrdFormat
-from .xylib_conv import convert_file, XYLibOption
+from .xyconv import convert_file, XYLibOption
 import logging
 # -------------------------------------------
 
-def get_xylib_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None) -> str:
+def get_xylib_repr(input_path : str, format_hint : Optional[XrdFormat] = None) -> str:
     if not os.path.isfile(input_path):
         raise ValueError(f"File \"{input_path}\" does not exist")
 
-    print(f'input format hint = {input_format_hint}')
+    if format_hint is None:
+        suffix = input_path.split('.')[-1]
+        format_hint = XrdFormat.from_suffix(suffix=suffix)
 
-    if input_format_hint is None:
-        input_format_suffix = input_path.split('.')[-1]
-    else:
-        input_format_suffix = input_format_hint.suffix
-    if not input_format_suffix in allowed_suffix_types:
+    if not format_hint.suffix in allowed_suffix_types:
         raise ValueError(f"File {input_path} is not a supported format")
 
     try:
         with TemporaryDirectory() as output_dir:
             file_name = uuid4()
-            output_path =  os.path.join(output_dir, f"{file_name}.axrd")
-            option = XYLibOption(input_path=input_path, output_path=output_path, input_type = input_format_hint)
+            output_path =  os.path.join(output_dir, f"{file_name}")
+            option = XYLibOption(input_path=input_path, output_path=output_path, format_hint= format_hint)
             convert_file(opt=option)
             return get_file_contents(filepath=output_path)
 

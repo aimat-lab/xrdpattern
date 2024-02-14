@@ -43,10 +43,10 @@ def export_metadata(f, meta):
 
 
 class XYLibOption:
-    def __init__(self, input_path : str, output_path : str, input_type : Optional[XrdFormat] = None):
+    def __init__(self, input_path : str, output_path : str, format_hint : Optional[XrdFormat] = None):
         self.INPUT_FILE : str = input_path
         self.OUTPUT_PATH : str = output_path
-        self.INPUT_TYPE : Optional[XrdFormat] = input_type
+        self.INPUT_TYPE : Optional[XrdFormat] = format_hint
 
 
 def convert_file(opt : XYLibOption):
