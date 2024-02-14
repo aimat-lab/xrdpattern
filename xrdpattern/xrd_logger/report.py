@@ -1,51 +1,60 @@
 from xrdpattern.xrd_file_io import Metadata
 from serialization import SerializableDataclass
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
 
 @dataclass
 class Report(SerializableDataclass):
-    report_str : str
-    has_error: bool
-    has_warn : bool
+    filepath: str
+    errors: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
+
+    def add_error(self, msg : str):
+        self.errors.append(f'\n{msg}')
+
+    def add_warning(self, msg : str):
+        self.warnings.append(f'\n{msg}')
+
+    def get_report_str(self):
+        report_str = f'--- Successfully processed file ---'
+        report_str += f'\nFilepath: {self.filepath}'
+        report_str += f'\nNum errors: {len(self.errors)}'
+        report_str += f'\nNum warnings: {len(self.warnings)}'
+
+        if len(self.errors) != 0:
+            report_str += f'Found errors:'
+            for error_msg in self.errors:
+                report_str += error_msg
+
+        if len(self.warnings) != 0:
+            report_str += f'Found warnings:'
+            for warning_msg in self.warnings:
+                report_str += warning_msg
+        return report_str
 
     def __str__(self):
-        return self.report_str
+        return self.get_report_str
 
 
 def get_report(filepath : str, metadata : Metadata, deg_over_intensity : dict):
-    report_str = f'Successfully processed file {filepath}'
-    has_errors = True
-    has_warnings = True
 
-    error_start = '- Errors:'
-    error_str = error_start
+    report = Report(filepath=filepath)
+
     if metadata.primary_wavelength_angstrom is None:
-        error_str += "\nPrimary wavelength missing!"
-
+        report.add_error('Primary wavelength missing!')
     if len(deg_over_intensity) == 0:
-        error_str += "\nNo data found. Degree over intensity is empty!"
-
+        report.add_error('No data found. Degree over intensity is empty!')
     elif len(deg_over_intensity) < 10:
-        error_str += "\nData is too short. Less than 10 entries!"
+        report.add_error('Data is too short. Less than 10 entries!')
 
-    if error_str == error_start:
-        error_str = f'\nNo errors found: Wavelength and data successfully parsed'
-        has_errors = False
-    report_str += error_str
-
-    warning_start = '- Warnings:'
-    warning_str = warning_start
     if metadata.secondary_wavelength_angstrom is None:
-        warning_str += "\nNo secondary wavelength found"
+        report.add_warning('No secondary wavelength found')
     if metadata.anode_material is None:
-        warning_str += "\nNo anode material found"
+        report.add_warning('No anode material found')
     if metadata.measurement_datetime is None:
-        warning_str += "\nNo measurement datetime found"
+        report.add_warning('No measurement datetime found')
 
-    if warning_str == warning_start:
-        warning_str = f'\nNo warnings found: All metadata was successfully parsed'
-        has_warnings = False
 
-    report_str += warning_str
+    return report
 
-    return Report(report_str=report_str, has_error=has_errors, has_warn=has_warnings)
+
