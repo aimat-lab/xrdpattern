@@ -5,15 +5,16 @@ from uuid import uuid4
 from tempfile import TemporaryDirectory
 from typing import Optional
 
-from .formats import allowed_suffix_types
-from .xylib_conv import convert_file
+from .formats import allowed_suffix_types, Formats, XrdFormat
+from .xylib_conv import convert_file, XYLibOption
 import logging
-from . import Formats, XrdFormat
 # -------------------------------------------
 
 def get_xylib_repr(input_path : str, input_format_hint : Optional[XrdFormat] = None) -> str:
     if not os.path.isfile(input_path):
         raise ValueError(f"File \"{input_path}\" does not exist")
+
+    print(f'input format hint = {input_format_hint}')
 
     if input_format_hint is None:
         input_format_suffix = input_path.split('.')[-1]
@@ -66,8 +67,3 @@ def get_file_contents(filepath : str) -> str:
         return file.read()
 
 
-class XYLibOption:
-    def __init__(self, input_path : str, output_path : str, input_type : Optional[XrdFormat] = None):
-        self.INPUT_FILE : str = input_path
-        self.OUTPUT_PATH : str = output_path
-        self.INPUT_TYPE : Optional[XrdFormat] = input_type

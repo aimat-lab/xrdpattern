@@ -1,4 +1,3 @@
-from xrdpattern.xrd_file_io import Metadata
 from serialization import SerializableDataclass
 from dataclasses import dataclass, field
 

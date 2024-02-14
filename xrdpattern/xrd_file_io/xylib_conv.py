@@ -3,11 +3,13 @@
 # Licence: Lesser GNU Public License 2.1 (LGPL)
 from __future__ import annotations
 
+from typing import Optional
+
 import xylib
 
 __version__ = xylib.xylib_get_version()
 
-from xrdpattern.xrd_file_io.read_write import XYLibOption
+from xrdpattern.xrd_file_io import XrdFormat
 
 
 def print_supported_formats():
@@ -38,6 +40,13 @@ def export_metadata(f, meta):
         key = meta.get_key(i)
         value = meta.get(key)
         f.write('# %s: %s\n' % (key, value.replace('\n', '\n#\t')))
+
+
+class XYLibOption:
+    def __init__(self, input_path : str, output_path : str, input_type : Optional[XrdFormat] = None):
+        self.INPUT_FILE : str = input_path
+        self.OUTPUT_PATH : str = output_path
+        self.INPUT_TYPE : Optional[XrdFormat] = input_type
 
 
 def convert_file(opt : XYLibOption):
