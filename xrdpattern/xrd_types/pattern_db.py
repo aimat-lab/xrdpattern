@@ -4,7 +4,7 @@ import os.path
 import os
 from uuid import uuid4
 
-from hollarek.resources import FsysNode
+from hollarek.io import FsysNode
 
 from xrdpattern.xrd_file_io import FormatSelector
 from xrdpattern.xrd_logger import log_xrd_info
@@ -83,7 +83,7 @@ def find_xrd_files(dir_path : str, format_selector : Optional[FormatSelector]) -
     if not os.path.isdir(dir_path):
         raise ValueError(f"Given path {dir_path} is not a directory")
     root_node = FsysNode(path=dir_path)
-    xrd_files_nodes = root_node.select_file_nodes(allowed_formats=allowed_suffix_types)
+    xrd_files_nodes = root_node.select_file_subnodes(allowed_formats=allowed_suffix_types)
 
-    xrd_file_paths = [node.path for node in xrd_files_nodes if format_selector.is_allowed(node.get_suffix())]
+    xrd_file_paths = [node.get_path() for node in xrd_files_nodes if format_selector.is_allowed(node.get_suffix())]
     return xrd_file_paths
