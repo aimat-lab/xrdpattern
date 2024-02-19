@@ -61,4 +61,4 @@ def log_xrd_info(msg : str, log_file_path : Optional[str] = None):
 
 
 if __name__ == "__main__":
-    log_xrd_info(msg='hi')
+    log_xrd_info(msg='hi.sh')
