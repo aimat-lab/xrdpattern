@@ -1,0 +1,24 @@
+Metadata-Version: 1.1
+Name: xylib-py
+Version: 1.6.1
+Summary: Python bindings to xylib
+Home-page: https://github.com/wojdyr/xylib
+Author: Marcin Wojdyr
+Author-email: wojdyr@gmail.com
+License: LGPL2.1
+Description: xylib is a library for reading obscure file formats with data from
+        powder diffraction, spectroscopy and other experimental methods.
+        For the list of supported formats see https://github.com/wojdyr/xylib .
+        
+        This module includes bindings to xylib and xylib itself.
+        The first two numbers in the version are the version of included xylib.
+        
+        Prerequisites for building: SWIG and Boost libraries (headers only).
+        
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Topic :: Scientific/Engineering :: Chemistry
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
