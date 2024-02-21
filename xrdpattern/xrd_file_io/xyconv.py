@@ -1,15 +1,11 @@
 #!/usr/bin/env python
-# Simplified, pythonic version of xyconv - a test for xylib_dir bindings
-# Licence: Lesser GNU Public License 2.1 (LGPL)
 from __future__ import annotations
-
 from typing import Optional
-
 import xylib
+from xrdpattern.xrd_file_io import XrdFormat
+
 
 __version__ = xylib.xylib_get_version()
-
-from xrdpattern.xrd_file_io import XrdFormat
 
 
 def print_supported_formats():
@@ -76,38 +72,5 @@ def convert_file(opt : XYLibOption):
                 values = ["%.6f" % block.get_column(k).get_value(row_counter)
                           for k in range(1, number_of_cols+1)]
                 f.write('\t'.join(values) + '\n')
-
-
-# def main():
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument('--version', action='version', version=__version__)
-#     parser.add_argument('-l', action='store_true',
-#                         help='list supported file types')
-#     parser.add_argument('-i', metavar='FILETYPE',
-#                         help='show information about filetype')
-#     parser.add_argument('-s', action='store_true',
-#                         help='do not output metadata')
-#     parser.add_argument('-t', metavar='TYPE',
-#                         help='specify filetype of input file')
-#     parser.add_argument('INPUT_FILE', nargs='?')
-#     parser.add_argument('OUTPUT_FILE', type=argparse.FileType('w'), nargs='?')
-#     opt = parser.parse_args()
-#     if opt.l:
-#         list_supported_formats()
-#         return
-#     if opt.i:
-#         print_filetype_info(opt.i)
-#         return
-#     if not opt.INPUT_FILE or not opt.OUTPUT_FILE:
-#         sys.exit('Specify input and output files. Or "-h" for details.')
-#     if opt.INPUT_FILE == '-' and not opt.t:
-#         sys.exit('You need to specify file format for stdin input')
-#     try:
-#         convert_file(opt)
-#     except RuntimeError as e:
-#         sys.exit(str(e))
-#
-# if __name__ == '__main__':
-#     main()
 
 
