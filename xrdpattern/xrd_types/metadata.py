@@ -8,25 +8,23 @@ from typing import Iterator, Tuple
 
 # -------------------------------------------
 
-
 @dataclass
 class Metadata(SerializableDataclass):
-    primary_wavelength_angstrom: Optional[float]
-    secondary_wavelength_angstrom: Optional[float]
-    primary_to_secondary_ratio: Optional[float]
-    anode_material: Optional[str]
-    measurement_datetime: Optional[datetime]
+    prim_wavelength_angstr: Optional[float]
+    sec_wavelength_angstr: Optional[float]
+    prim_to_sec_ratio: Optional[float]
+    anode_material: Optional[str] = None
+    measured_on: Optional[datetime] = None
+    temperature_celcius : Optional[float] = None
 
     @classmethod
     def from_header_str(cls, header_str : str) -> Metadata:
-        key_value_dict = cls.get_key_value_dict(header_str=header_str)
-
-        metadata = cls(primary_wavelength_angstrom=float(key_value_dict['ALPHA1']) if 'ALPHA1' in key_value_dict else None,
-            secondary_wavelength_angstrom=float(key_value_dict['ALPHA2']) if 'ALPHA2' in key_value_dict else None,
-            primary_to_secondary_ratio=float(key_value_dict['ALPHA_RATIO']) if 'ALPHA_RATIO' in key_value_dict else None,
-            anode_material=key_value_dict.get('ANODE_MATERIAL', None),
-            measurement_datetime = cls.get_date_time(key_value_dict.get('MEASURE_DATE'), key_value_dict.get('MEASURE_TIME'))
-        )
+        values = cls.get_key_value_dict(header_str=header_str)
+        metadata = cls(prim_wavelength_angstr=float(values['ALPHA1']) if 'ALPHA1' in values else None,
+                       sec_wavelength_angstr=float(values['ALPHA2']) if 'ALPHA2' in values else None,
+                       prim_to_sec_ratio=float(values['ALPHA_RATIO']) if 'ALPHA_RATIO' in values else None,
+                       anode_material=values.get('ANODE_MATERIAL', None),
+                       measured_on= cls.get_date_time(values.get('MEASURE_DATE'), values.get('MEASURE_TIME')))
         return metadata
 
 
@@ -46,12 +44,10 @@ class Metadata(SerializableDataclass):
             if len(key_value) == 2:
                 yield key_value[0].strip(), key_value[1].strip()
 
+
     @staticmethod
     def get_date_time(date_str: str, time_str: str) -> Optional[datetime]:
         if date_str and time_str:
             combined_str = date_str + ' ' + time_str
             return datetime.strptime(combined_str, '%m/%d/%Y %H:%M:%S')
         return None
-
-
-

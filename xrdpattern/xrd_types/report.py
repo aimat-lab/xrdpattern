@@ -62,14 +62,14 @@ def get_report(filepath : str, metadata : Metadata, deg_over_intensity : dict):
         report.add_critical('No data found. Degree over intensity is empty!')
     elif len(deg_over_intensity) < 10:
         report.add_critical('Data is too short. Less than 10 entries!')
-    if metadata.primary_wavelength_angstrom is None:
+    if metadata.prim_wavelength_angstr is None:
         report.add_error('Primary wavelength missing!')
 
-    if metadata.secondary_wavelength_angstrom is None:
+    if metadata.sec_wavelength_angstr is None:
         report.add_warning('No secondary wavelength found')
     if metadata.anode_material is None:
         report.add_warning('No anode material found')
-    if metadata.measurement_datetime is None:
+    if metadata.measured_on is None:
         report.add_warning('No measurement datetime found')
 
 

@@ -94,10 +94,10 @@ class XrdPattern(SerializableDataclass):
     # get
 
     def get_primary_wavelength_angstrom(self) -> float:
-        if self.metadata.primary_wavelength_angstrom is None:
+        if self.metadata.prim_wavelength_angstr is None:
             raise ValueError(f"Wavelength is None")
 
-        return self.metadata.primary_wavelength_angstrom
+        return self.metadata.prim_wavelength_angstr
 
 
     def get_standardized_mapping(self) -> Mapping:
