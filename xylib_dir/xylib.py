@@ -9,17 +9,15 @@ if _swig_python_version_info < (2, 7, 0):
     raise RuntimeError("Python 2.7 or later required")
 
 # Import the low-level C/C++ module
-# if __package__ or "." in __name__:
-#     from . import _xylib
-# else:
-#     import _xylib
-
-
 if __package__ or "." in __name__:
     from . import _xylib
 else:
     import _xylib
-import builtins as __builtin__
+
+try:
+    import builtins as __builtin__
+except ImportError:
+    import __builtin__
 
 def _swig_repr(self):
     try:
@@ -120,7 +118,7 @@ class FormatInfo(xylibFormat):
     ctor = property(_xylib.FormatInfo_ctor_get, _xylib.FormatInfo_ctor_set)
     checker = property(_xylib.FormatInfo_checker_get, _xylib.FormatInfo_checker_set)
 
-    def __init__(self, name_: "char const *", desc_: "char const *", exts_: "char const *", binary_: "bool", multiblock_: "bool", ctor_: "xylib_dir::FormatInfo::t_ctor", checker_: "xylib_dir::FormatInfo::t_checker", valid_options_: "char const *"=None):
+    def __init__(self, name_: "char const *", desc_: "char const *", exts_: "char const *", binary_: "bool", multiblock_: "bool", ctor_: "xylib::FormatInfo::t_ctor", checker_: "xylib::FormatInfo::t_checker", valid_options_: "char const *"=None):
         _xylib.FormatInfo_swiginit(self, _xylib.new_FormatInfo(name_, desc_, exts_, binary_, multiblock_, ctor_, checker_, valid_options_))
     __swig_destroy__ = _xylib.delete_FormatInfo
 
@@ -222,7 +220,7 @@ class Block(object):
     def get_column_count(self) -> "int":
         return _xylib.Block_get_column_count(self)
 
-    def get_column(self, n: "int") -> "xylib_dir::Column const &":
+    def get_column(self, n: "int") -> "xylib::Column const &":
         return _xylib.Block_get_column(self, n)
 
     def get_point_count(self) -> "int":
@@ -231,7 +229,7 @@ class Block(object):
     def add_column(self, c: "Column", append: "bool"=True) -> "void":
         return _xylib.Block_add_column(self, c, append)
 
-    def del_column(self, n: "int") -> "xylib_dir::Column *":
+    def del_column(self, n: "int") -> "xylib::Column *":
         return _xylib.Block_del_column(self, n)
 
     def set_name(self, name: "std::string const &") -> "void":
@@ -255,7 +253,7 @@ class DataSet(object):
     def get_block_count(self) -> "int":
         return _xylib.DataSet_get_block_count(self)
 
-    def get_block(self, n: "int") -> "xylib_dir::Block const *":
+    def get_block(self, n: "int") -> "xylib::Block const *":
         return _xylib.DataSet_get_block(self, n)
 
     def load_data(self, f: "std::istream &", path: "char const *") -> "void":
@@ -280,10 +278,10 @@ class DataSet(object):
 _xylib.DataSet_swigregister(DataSet)
 
 
-def load_file(*args) -> "xylib_dir::DataSet *":
+def load_file(*args) -> "xylib::DataSet *":
     return _xylib.load_file(*args)
 
-def load_string(*args) -> "xylib_dir::DataSet *":
+def load_string(*args) -> "xylib::DataSet *":
     return _xylib.load_string(*args)
 
 def get_wildcards_string(*args) -> "std::string":

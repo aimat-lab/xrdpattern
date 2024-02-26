@@ -4,7 +4,7 @@
 %{
 #define BUILDING_XYLIB
 #define SWIG_FILE_WITH_INIT
-#include "xylib/xylib.h"
+#include "xylib.h"
 %}
 %include "std_string.i"
 %include "std_except.i"
@@ -45,4 +45,4 @@
 %#endif // python3
 #endif // SWIGPYTHON
 
-%include "xylib/xylib.h"
+%include "xylib.h"

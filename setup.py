@@ -56,7 +56,10 @@ class CustomBuild(build):
                     ('build_clib', build.has_c_libraries),
                     ('build_scripts', build.has_scripts)]
 
-sources = glob('xylib_dir/*.cpp') + ['xylib.i']
+sources = glob('xylib_dir/*.cpp') + ['xylib_dir/xylib.i']
+
+with open('requirements.txt','r') as f:
+    reqs = f.read().split('\n')
 
 swig_opts = ['-c++', '-modern', '-modernargs']
 if sys.version_info[0] == 3:
@@ -66,7 +69,7 @@ setup(name='xrdpattern',
       version='1.6.3',
       description='Python bindings to xylib_dir including a fix for RawV4 files. Xylib is written by Marcin Wojdyr (wojdyr@gmail.com). This package'
                   'includes a fix for RawV4 files that is necessary as a depdency for package xrdpattern',
-
+      install_requires=reqs,
       long_description=long_description,
       packages=find_packages(),
       classifiers=[
@@ -80,7 +83,7 @@ setup(name='xrdpattern',
       author = 'Daniel Hollarek',
       author_email = 'daniel.hollarek@googlemail.com',
       license='LGPL2.1',
-      url='https://github.com/wojdyr/xylib',
+      url='https://github.com/aimat-lab/xrdpattern',
       ext_modules=[Extension('_xylib',
                              sources=sources,
                              language='c++',
