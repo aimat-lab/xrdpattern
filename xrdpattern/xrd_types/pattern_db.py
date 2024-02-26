@@ -61,17 +61,10 @@ class XrdPatternDB:
         os.makedirs(target_dir, exist_ok=True)
         raw_data_paths = find_xrd_files(dir_path=self.root_path, format_selector=allowed_formats)
 
-        def find_free_path(basename : str):
-            while True:
-                fpath = f'{basename}{uuid4()}'
-                if not fpath in os.listdir(path=target_dir):
-                    return fpath
-
-
         for path in raw_data_paths:
-            filename = find_free_path(os.path.basename(path))
-            target_path = os.path.join(target_dir, filename)
-            shutil.copy(path, target_path)
+            filename = find_free_path(dirpath=target_dir, basename=os.path.basename(path))
+            fpath = os.path.join(target_dir, filename)
+            shutil.copy(path, fpath)
 
 
     def create_db_report(self, dir_path : str):
@@ -107,3 +100,11 @@ def find_xrd_files(dir_path : str, format_selector : Optional[FormatSelector]) -
 
     xrd_file_paths = [node.get_path() for node in xrd_files_nodes if format_selector.is_allowed(node.get_suffix())]
     return xrd_file_paths
+
+
+def find_free_path(dirpath: str, basename: str):
+    while True:
+        smol_uuid4 = str(uuid4())[:5]
+        fpath = f'{smol_uuid4}_{basename}'
+        if not fpath in os.listdir(path=dirpath):
+            return fpath
