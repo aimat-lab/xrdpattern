@@ -1,43 +1,43 @@
 from __future__ import annotations
 
+import shutil
 import os.path
 import os
 from uuid import uuid4
-
-from hollarek.io import FsysNode
-
-from xrdpattern.xrd_file_io import FormatSelector
-from xrdpattern.xrd_logger import log_xrd_info
-from .pattern import XrdPattern
 from typing import Optional
 
+from hollarek.io import FsysNode
+from xrdpattern.xrd_file_io import FormatSelector
+from xrdpattern.xrd_logger import log_xrd_info
+
+from .pattern import XrdPattern
 from ..xrd_file_io.formats import allowed_suffix_types
-
-
 # -------------------------------------------
 
 
 class XrdPatternDB:
-    def __init__(self, log_file_path : Optional[str] = None):
+    def __init__(self, data_root_path : str):
         self.patterns : list[XrdPattern] = []
-        self.log_file_path : Optional[str] = log_file_path
+        self.root_path : str = data_root_path
+
         self.num_unsuccessful : int = 0
         self.total_count : int = 0
+        self.import_data(dir_path=data_root_path)
 
 
     def import_data(self, dir_path : str, format_selector : FormatSelector = FormatSelector.make_allow_all()):
+        self.root_path = dir_path
         if not os.path.isdir(dir_path):
             raise ValueError(f"Given path {dir_path} is not a directory")
-        for file_path in find_xrd_files(dir_path=dir_path, format_selector=format_selector):
+        for filepath in find_xrd_files(dir_path=dir_path, format_selector=format_selector):
             try:
-                new_pattern = XrdPattern(filepath=file_path)
+                new_pattern = XrdPattern(filepath=filepath)
                 self.patterns.append(new_pattern)
             except Exception as e:
                 self.num_unsuccessful += 1
-                self.log(f"Could not import pattern from file {file_path}. Error: {str(e)}")
+                print(f"Could not import pattern from file {filepath}. Error: {str(e)}")
             finally:
                 self.total_count += 1
-        self.create_db_report()
 
 
     def export_data(self, dir_path : dir):
@@ -53,13 +53,23 @@ class XrdPatternDB:
             if os.path.isfile(fpath):
                 fpath = uuid4()
             pattern.export_data(filepath=fpath)
+        self.create_db_report(dir_path=dir_path)
 
 
-    def log(self, msg : str):
-        log_xrd_info(msg=msg, log_file_path=self.log_file_path)
+    def export_data_files(self, target_dir : str, allowed_formats : FormatSelector = FormatSelector.make_allow_all()):
+        os.makedirs(target_dir, exist_ok=True)
+        raw_data_paths = find_xrd_files(dir_path=self.root_path, format_selector=allowed_formats)
+
+        for path in raw_data_paths:
+            filename = os.path.basename(path)
+            target_path = os.path.join(target_dir, filename)
+            shutil.copy(path, target_path)
 
 
-    def create_db_report(self):
+    def create_db_report(self, dir_path : str):
+        def log(msg: str):
+            log_xrd_info(msg=msg, log_file_path=os.path.join(dir_path, 'log.txt'))
+
         summary_str = f'\n----- Finished creating database -----'
         summary_str += f'\n{self.num_unsuccessful}/{self.total_count} patterns could not be parsed'
 
@@ -70,13 +80,15 @@ class XrdPatternDB:
         summary_str += f'\n{num_critical_patterns}/{self.total_count} patterns had critical error(s)'
         summary_str += f'\n{num_error_patterns}/{self.total_count}  patterns had error(s)'
         summary_str += f'\n{num_warning_patterns}/{self.total_count}  patterns had warning(s)'
-        self.log(f'{summary_str}\n\n'
+        log(f'{summary_str}\n\n'
                  f'----------------------------------------\n')
 
 
-        self.log(f'Individual file reports\n\n')
+        log(f'Individual file reports\n\n')
         for pattern in self.patterns:
-            self.log(msg=str(pattern.processing_report))
+            log(msg=str(pattern.processing_report))
+
+
 
 
 def find_xrd_files(dir_path : str, format_selector : Optional[FormatSelector]) -> list[str]:
