@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import Optional
 import xylib
-from xrdpattern.xrd_file_io import XrdFormat
+from .formats import XrdFormat
 
 
 __version__ = xylib.xylib_get_version()
