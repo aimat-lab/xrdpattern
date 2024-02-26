@@ -2810,7 +2810,7 @@ namespace swig {
 
 #define BUILDING_XYLIB
 #define SWIG_FILE_WITH_INIT
-#include "xylib.h"
+#include "xylib/xylib.h"
 
 
 #include <string>
