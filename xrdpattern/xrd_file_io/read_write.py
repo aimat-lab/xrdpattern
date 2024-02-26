@@ -4,10 +4,12 @@ import os.path
 from uuid import uuid4
 from tempfile import TemporaryDirectory
 from typing import Optional
+import math
+import logging
 
 from .formats import allowed_suffix_types, Formats, XrdFormat
 from .xyconv import convert_file, XYLibOption
-import logging
+
 # -------------------------------------------
 
 def get_xylib_repr(input_path : str, format_hint : Optional[XrdFormat] = None) -> str:
@@ -65,3 +67,8 @@ def get_file_contents(filepath : str) -> str:
         return file.read()
 
 
+
+def q_to_twotheta(q: float, wavelength_angstr: float) -> float:
+    theta = math.asin(q * wavelength_angstr / (4 * math.pi))
+    two_theta = 2 * math.degrees(theta)
+    return two_theta
