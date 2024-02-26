@@ -16,11 +16,10 @@ from ..xrd_file_io.formats import allowed_suffixes
 
 class XrdPatternDB:
     def __init__(self, data_root_path : str,selected_formats : Optional[list[str]] = None):
-        self.patterns : list[XrdPattern] = []
         self.root_path : str = data_root_path
-
         self.selected_formats : Optional[list[str]] = selected_formats
-        self.num_unsuccessful : int = 0
+
+        self.patterns : list[XrdPattern] = []
         self.total_count : int = 0
         self.import_data()
 
@@ -28,15 +27,14 @@ class XrdPatternDB:
     def import_data(self):
         if not os.path.isdir(self.root_path):
             raise ValueError(f"Given path {self.root_path} is not a directory")
-        for filepath in self.get_data_fpaths():
+        data_fpaths = self.get_data_fpaths()
+        self.total_count = len(data_fpaths)
+        for filepath in data_fpaths:
             try:
                 new_pattern = XrdPattern(filepath=filepath)
                 self.patterns.append(new_pattern)
             except Exception as e:
-                self.num_unsuccessful += 1
                 print(f"Could not import pattern from file {filepath}. Error: {str(e)}")
-            finally:
-                self.total_count += 1
 
 
     def export_data(self, dir_path : dir):
@@ -59,20 +57,23 @@ class XrdPatternDB:
         def log(msg: str):
             log_xrd_info(msg=msg, log_file_path=os.path.join(dir_path, 'log.txt'))
 
+        num_unsuccessful = self.total_count-len(self.patterns)
         summary_str =(f'\n----- Finished creating database -----'
-                      f'\n{self.num_unsuccessful}/{self.total_count} patterns could not be parsed')
+                      f'\n{num_unsuccessful}/{self.total_count} patterns could not be parsed')
 
-        
-        num_critical_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_critical_error()])
-        num_error_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_error()])
-        num_warning_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_warning()])
 
-        summary_str += f'\n{num_critical_patterns}/{self.total_count} patterns had critical error(s)'
-        summary_str += f'\n{num_error_patterns}/{self.total_count}  patterns had error(s)'
-        summary_str += f'\n{num_warning_patterns}/{self.total_count}  patterns had warning(s)'
+        num_crit, num_err, num_warn = 0,0,0
+        reports = [pattern.processing_report for pattern in self.patterns]
+        for report in reports:
+            num_crit += report.has_critical_error()
+            num_err += report.has_error()
+            num_warn += report.has_warning()
+
+        summary_str += f'\n{num_crit}/{self.total_count} patterns had critical error(s)'
+        summary_str += f'\n{num_err}/{self.total_count}  patterns had error(s)'
+        summary_str += f'\n{num_warn}/{self.total_count}  patterns had warning(s)'
         log(f'{summary_str}\n\n'
             f'----------------------------------------\n')
-
 
         log(f'Individual file reports\n\n')
         for pattern in self.patterns:
