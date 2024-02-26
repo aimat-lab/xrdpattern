@@ -56,7 +56,7 @@ class CustomBuild(build):
                     ('build_clib', build.has_c_libraries),
                     ('build_scripts', build.has_scripts)]
 
-sources = glob('xylib/*.cpp') + ['xylib.i']
+sources = [f for f in glob('xylib/*.cpp') if f != 'xylib/xylib_wrap.cpp'] + ['xylib/xylib.i']
 
 with open('requirements.txt','r') as f:
     reqs = f.read().split('\n')
