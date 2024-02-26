@@ -41,23 +41,5 @@ class Formats:
 
 
 suffix_to_format_dict = {xrd_format.suffix : xrd_format for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)}
-allowed_suffix_types = [xrd_format.suffix for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)]
+allowed_suffixes = [xrd_format.suffix for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)]
 
-class FormatSelector:
-    @classmethod
-    def make_allow_all(cls):
-        return cls(allow_all=True)
-
-    def __init__(self, allow_all : bool = False, format_list : Optional[list[str]] = None):
-        self.format_list : Optional[list[str]] = format_list
-        self.allow_all : bool = allow_all
-
-        if not self.allow_all and format_list is None:
-            raise ValueError("If allow_all is False, format_list must be provided")
-
-
-    def is_allowed(self, the_format : str) -> bool:
-        if self.allow_all:
-            return True
-        else:
-            return the_format in self.format_list

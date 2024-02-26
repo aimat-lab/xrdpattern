@@ -7,7 +7,7 @@ from typing import Optional
 import math
 import logging
 
-from .formats import allowed_suffix_types, Formats, XrdFormat
+from .formats import allowed_suffixes, Formats, XrdFormat
 from .xyconv import convert_file, XYLibOption
 
 # -------------------------------------------
@@ -20,7 +20,7 @@ def get_xylib_repr(input_path : str, format_hint : Optional[XrdFormat] = None) -
         suffix = input_path.split('.')[-1]
         format_hint = XrdFormat.from_suffix(suffix=suffix)
 
-    if not format_hint.suffix in allowed_suffix_types:
+    if not format_hint.suffix in allowed_suffixes:
         raise ValueError(f"File {input_path} is not a supported format")
 
     try:

@@ -7,20 +7,19 @@ from uuid import uuid4
 from typing import Optional
 
 from hollarek.io import FsysNode
-from xrdpattern.xrd_file_io import FormatSelector
 from xrdpattern.xrd_logger import log_xrd_info
 
 from .pattern import XrdPattern
-from ..xrd_file_io.formats import allowed_suffix_types
+from ..xrd_file_io.formats import allowed_suffixes
 # -------------------------------------------
 
 
 class XrdPatternDB:
-    def __init__(self, data_root_path : str, format_selector : FormatSelector = FormatSelector.make_allow_all()):
+    def __init__(self, data_root_path : str,selected_formats : Optional[list[str]] = None):
         self.patterns : list[XrdPattern] = []
         self.root_path : str = data_root_path
 
-        self.format_selector : FormatSelector = format_selector
+        self.selected_formats : Optional[list[str]] = selected_formats
         self.num_unsuccessful : int = 0
         self.total_count : int = 0
         self.import_data()
@@ -29,8 +28,7 @@ class XrdPatternDB:
     def import_data(self):
         if not os.path.isdir(self.root_path):
             raise ValueError(f"Given path {self.root_path} is not a directory")
-        for filepath in find_xrd_files(dir_path=self.root_path, format_selector=self.format_selector):
-            print(f'{filepath}')
+        for filepath in self.get_data_fpaths():
             try:
                 new_pattern = XrdPattern(filepath=filepath)
                 self.patterns.append(new_pattern)
@@ -57,23 +55,14 @@ class XrdPatternDB:
         self.create_db_report(dir_path=dir_path)
 
 
-    def export_data_files(self, target_dir : str, allowed_formats : FormatSelector = FormatSelector.make_allow_all()):
-        os.makedirs(target_dir, exist_ok=True)
-        raw_data_paths = find_xrd_files(dir_path=self.root_path, format_selector=allowed_formats)
-
-        for path in raw_data_paths:
-            filename = find_free_path(dirpath=target_dir, basename=os.path.basename(path))
-            fpath = os.path.join(target_dir, filename)
-            shutil.copy(path, fpath)
-
-
     def create_db_report(self, dir_path : str):
         def log(msg: str):
             log_xrd_info(msg=msg, log_file_path=os.path.join(dir_path, 'log.txt'))
 
-        summary_str = f'\n----- Finished creating database -----'
-        summary_str += f'\n{self.num_unsuccessful}/{self.total_count} patterns could not be parsed'
+        summary_str =(f'\n----- Finished creating database -----'
+                      f'\n{self.num_unsuccessful}/{self.total_count} patterns could not be parsed')
 
+        
         num_critical_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_critical_error()])
         num_error_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_error()])
         num_warning_patterns = len([pattern for pattern in self.patterns if pattern.processing_report.has_warning()])
@@ -82,7 +71,7 @@ class XrdPatternDB:
         summary_str += f'\n{num_error_patterns}/{self.total_count}  patterns had error(s)'
         summary_str += f'\n{num_warning_patterns}/{self.total_count}  patterns had warning(s)'
         log(f'{summary_str}\n\n'
-                 f'----------------------------------------\n')
+            f'----------------------------------------\n')
 
 
         log(f'Individual file reports\n\n')
@@ -90,16 +79,18 @@ class XrdPatternDB:
             log(msg=str(pattern.processing_report))
 
 
+    def export_data_files(self, target_dir : str):
+        os.makedirs(target_dir, exist_ok=True)
+        for path in self.get_data_fpaths():
+            filename = find_free_path(dirpath=target_dir, basename=os.path.basename(path))
+            fpath = os.path.join(target_dir, filename)
+            shutil.copy(path, fpath)
 
 
-def find_xrd_files(dir_path : str, format_selector : Optional[FormatSelector]) -> list[str]:
-    if not os.path.isdir(dir_path):
-        raise ValueError(f"Given path {dir_path} is not a directory")
-    root_node = FsysNode(path=dir_path)
-    xrd_files_nodes = root_node.select_file_subnodes(allowed_formats=allowed_suffix_types)
-
-    xrd_file_paths = [node.get_path() for node in xrd_files_nodes if format_selector.is_allowed(node.get_suffix())]
-    return xrd_file_paths
+    def get_data_fpaths(self) -> list[str]:
+        root_node = FsysNode(path=self.root_path)
+        xrd_files_nodes = root_node.get_file_subnodes(select_formats=allowed_suffixes)
+        return [node.get_path() for node in xrd_files_nodes]
 
 
 def find_free_path(dirpath: str, basename: str):
