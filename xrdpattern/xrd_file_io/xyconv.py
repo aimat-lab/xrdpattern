@@ -52,7 +52,7 @@ def convert_file(opt : XYLibOption):
         d = xylib.load_file(opt.INPUT_FILE)
 
     with open(opt.OUTPUT_PATH, 'w') as f:
-        f.write('# exported by xylib_dir from a %s file\n' % d.fi.name)
+        f.write('# exported by xylib from a %s file\n' % d.fi.name)
         export_metadata(f, d.meta)
         f.write('\n')
         number_of_blocks = d.get_block_count()

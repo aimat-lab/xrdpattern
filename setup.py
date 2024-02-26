@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
-# This setup.py builds xylib_dir as a python extension, which is experimental.
-# The normal way of building xylib_dir is using configure && make. Or cmake.
+# This setup.py builds xylib as a python extension, which is experimental.
+# The normal way of building xylib is using configure && make. Or cmake.
 long_description="""\
-xylib_dir is a library for reading obscure file formats with data from
+xylib is a library for reading obscure file formats with data from
 powder diffraction, spectroscopy and other experimental methods.
 For the list of supported formats see https://github.com/wojdyr/xylib .
 
-This module includes bindings to xylib_dir and xylib_dir itself.
-The first two numbers in the version are the version of included xylib_dir.
+This module includes bindings to xylib and xylib itself.
+The first two numbers in the version are the version of included xylib.
 
 Prerequisites for building: SWIG and Boost libraries (headers only).
 """
@@ -56,7 +56,7 @@ class CustomBuild(build):
                     ('build_clib', build.has_c_libraries),
                     ('build_scripts', build.has_scripts)]
 
-sources = glob('xylib_dir/*.cpp') + ['xylib_dir/xylib.i']
+sources = glob('xylib/*.cpp') + ['xylib/xylib.i']
 
 with open('requirements.txt','r') as f:
     reqs = f.read().split('\n')
@@ -67,7 +67,7 @@ if sys.version_info[0] == 3:
 
 setup(name='xrdpattern',
       version='1.6.3',
-      description='Python bindings to xylib_dir including a fix for RawV4 files. Xylib is written by Marcin Wojdyr (wojdyr@gmail.com). This package'
+      description='Python bindings to xylib including a fix for RawV4 files. Xylib is written by Marcin Wojdyr (wojdyr@gmail.com). This package'
                   'includes a fix for RawV4 files that is necessary as a depdency for package xrdpattern',
       install_requires=reqs,
       long_description=long_description,
