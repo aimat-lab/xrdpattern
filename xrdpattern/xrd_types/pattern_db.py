@@ -16,20 +16,21 @@ from ..xrd_file_io.formats import allowed_suffix_types
 
 
 class XrdPatternDB:
-    def __init__(self, data_root_path : str):
+    def __init__(self, data_root_path : str, format_selector : FormatSelector = FormatSelector.make_allow_all()):
         self.patterns : list[XrdPattern] = []
         self.root_path : str = data_root_path
 
+        self.format_selector : FormatSelector = format_selector
         self.num_unsuccessful : int = 0
         self.total_count : int = 0
-        self.import_data(dir_path=data_root_path)
+        self.import_data()
 
 
-    def import_data(self, dir_path : str, format_selector : FormatSelector = FormatSelector.make_allow_all()):
-        self.root_path = dir_path
-        if not os.path.isdir(dir_path):
-            raise ValueError(f"Given path {dir_path} is not a directory")
-        for filepath in find_xrd_files(dir_path=dir_path, format_selector=format_selector):
+    def import_data(self):
+        if not os.path.isdir(self.root_path):
+            raise ValueError(f"Given path {self.root_path} is not a directory")
+        for filepath in find_xrd_files(dir_path=self.root_path, format_selector=self.format_selector):
+            print(f'{filepath}')
             try:
                 new_pattern = XrdPattern(filepath=filepath)
                 self.patterns.append(new_pattern)
@@ -60,8 +61,15 @@ class XrdPatternDB:
         os.makedirs(target_dir, exist_ok=True)
         raw_data_paths = find_xrd_files(dir_path=self.root_path, format_selector=allowed_formats)
 
+        def find_free_path(basename : str):
+            while True:
+                fpath = f'{basename}{uuid4()}'
+                if not fpath in os.listdir(path=target_dir):
+                    return fpath
+
+
         for path in raw_data_paths:
-            filename = os.path.basename(path)
+            filename = find_free_path(os.path.basename(path))
             target_path = os.path.join(target_dir, filename)
             shutil.copy(path, target_path)
 
