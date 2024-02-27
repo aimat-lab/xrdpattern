@@ -108,8 +108,8 @@ char read_4lines(istream &f, bool& decimal_comma,
 {
     // We set a limit on the line length because if we get a large file
     // with no new lines we don't want to read it all.
-    const int buflen = 1600;
-    char buffer[1600]; // buflen
+    const int buflen = 6400;
+    char buffer[6400]; // buflen
     string lines[4];
     buffer[buflen-1] = '\0';
     for (int line_no = 1, cnt = 0; cnt < 4; ++line_no) {
