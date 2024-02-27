@@ -37,27 +37,28 @@ class XrdPatternDB:
                 print(f"Could not import pattern from file {filepath}. Error: {str(e)}")
 
 
-    def export(self, target_dir : str):
+    def export(self, container_dir : str):
+        db_dir = os.path.join(container_dir, 'pattern_db')
         try:
-            os.makedirs(target_dir, exist_ok=True)
+            os.makedirs(db_dir, exist_ok=True)
         except Exception as e:
-            raise ValueError(f"Could not create directory at {target_dir}. Error: {str(e)}")
+            raise ValueError(f"Could not create directory at {db_dir}. Error: {str(e)}")
 
         for pattern in self.patterns:
             file_name = os.path.basename(pattern.filepath)
             if len(file_name.split('.')) == 2:
                 file_name = file_name.split('.')[0] + '.json'
-            fpath = os.path.join(target_dir, file_name)
+            fpath = os.path.join(db_dir, file_name)
 
             if os.path.isfile(fpath):
                 fpath = uuid4()
             pattern.export(filepath=fpath)
-        self.create_report(dir_path=target_dir)
+        self.create_report(fpath=os.path.join(container_dir, 'log.txt'))
 
 
-    def create_report(self, dir_path : str):
+    def create_report(self, fpath : str):
         def log(msg: str):
-            log_xrd_info(msg=msg, log_file_path=os.path.join(dir_path, 'log.txt'))
+            log_xrd_info(msg=msg, log_file_path=fpath)
 
         num_unsuccessful = self.total_count-len(self.patterns)
         summary_str =(f'\n----- Finished creating database -----'

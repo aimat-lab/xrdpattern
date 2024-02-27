@@ -1,6 +1,8 @@
 from xrdpattern.xrd_types import XrdPatternDB
+import os
 
 if __name__ == "__main__":
-    data_root_path = '/home/daniel/r_mirror/pxrd/John_Doe_2024_02_27_2/data'
+    submission_dir = '/home/daniel/r_mirror/pxrd/sutter_fella_1'
+    data_root_path = os.path.join(submission_dir,'data')
     patterndb = XrdPatternDB(data_root_path=data_root_path)
-    patterndb.export(target_dir='/home/daniel/OneDrive/Downloads/raw_exportt')
+    patterndb.export(container_dir=submission_dir)
