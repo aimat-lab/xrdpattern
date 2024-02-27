@@ -73,6 +73,7 @@ class XrdPattern(SerializableDataclass):
     def _import_from_data_file(self, filepath : str):
         _ = self
         xylib_repr = get_xylib_repr(input_path=filepath)
+        print(f'xylib repr: {xylib_repr[0:1000]}')
         column_pattern = r'# column_1\tcolumn_2'
 
         try:
