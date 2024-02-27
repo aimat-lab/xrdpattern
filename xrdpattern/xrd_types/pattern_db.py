@@ -37,20 +37,22 @@ class XrdPatternDB:
                 print(f"Could not import pattern from file {filepath}. Error: {str(e)}")
 
 
-    def export(self, dir_path : str):
+    def export(self, target_dir : str):
         try:
-            os.makedirs(dir_path, exist_ok=True)
+            os.makedirs(target_dir, exist_ok=True)
         except Exception as e:
-            raise ValueError(f"Could not create directory at {dir_path}. Error: {str(e)}")
+            raise ValueError(f"Could not create directory at {target_dir}. Error: {str(e)}")
 
         for pattern in self.patterns:
             file_name = os.path.basename(pattern.filepath)
-            fpath = os.path.join(dir_path, file_name)
+            if len(file_name.split('.')) == 2:
+                file_name = file_name.split('.')[0] + '.json'
+            fpath = os.path.join(target_dir, file_name)
 
             if os.path.isfile(fpath):
                 fpath = uuid4()
             pattern.export(filepath=fpath)
-        self.create_report(dir_path=dir_path)
+        self.create_report(dir_path=target_dir)
 
 
     def create_report(self, dir_path : str):
