@@ -12,11 +12,10 @@ The first two numbers in the version are the version of included xylib.
 
 Prerequisites for building: SWIG and Boost libraries (headers only).
 """
-from distutils.core import Extension
 from glob import glob
 
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 import subprocess
 import sys
 
@@ -66,7 +65,7 @@ if sys.version_info[0] == 3:
     swig_opts += ['-py3']
 
 setup(name='xrdpattern',
-      version='1.6.3',
+      version='0.1.0',
       description='Python bindings to xylib including a fix for RawV4 files. Xylib is written by Marcin Wojdyr (wojdyr@gmail.com). This package'
                   'includes a fix for RawV4 files that is necessary as a depdency for package xrdpattern',
       install_requires=reqs,
