@@ -80,7 +80,7 @@ class XrdPatternDB:
             log(msg=str(pattern.processing_report))
 
 
-    def export_data_files(self, target_dir : str):
+    def copy_datafiles(self, target_dir : str):
         os.makedirs(target_dir, exist_ok=True)
         for path in self.get_data_fpaths():
             filename = find_free_path(dirpath=target_dir, basename=os.path.basename(path))
