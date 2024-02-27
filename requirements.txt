@@ -1,4 +1,4 @@
-hollarek==0.7.2
+hollarek==0.7.3
 numpy
 scipy
 matplotlib

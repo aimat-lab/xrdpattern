@@ -37,7 +37,7 @@ class XrdPatternDB:
                 print(f"Could not import pattern from file {filepath}. Error: {str(e)}")
 
 
-    def export_data(self, dir_path : dir):
+    def export(self, dir_path : str):
         try:
             os.makedirs(dir_path, exist_ok=True)
         except Exception as e:
@@ -49,11 +49,11 @@ class XrdPatternDB:
 
             if os.path.isfile(fpath):
                 fpath = uuid4()
-            pattern.export_data(filepath=fpath)
-        self.create_db_report(dir_path=dir_path)
+            pattern.export(filepath=fpath)
+        self.create_report(dir_path=dir_path)
 
 
-    def create_db_report(self, dir_path : str):
+    def create_report(self, dir_path : str):
         def log(msg: str):
             log_xrd_info(msg=msg, log_file_path=os.path.join(dir_path, 'log.txt'))
 

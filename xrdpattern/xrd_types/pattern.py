@@ -37,7 +37,7 @@ class XrdPattern(SerializableDataclass):
         log_xrd_info(msg=str(self.processing_report), log_file_path=self.log_file_path)
 
 
-    def export_data(self, filepath : str):
+    def export(self, filepath : str):
         write_to_json(filepath=filepath, content=self.to_str())
 
 
@@ -131,13 +131,6 @@ class XrdPattern(SerializableDataclass):
 
         return std_intensity_mapping
 
-
-if __name__ == "__main__":
-    xrd_pattern = XrdPattern(filepath="/home/daniel/test/local/parsed/Simon_Schweidler_Ben_Breitung_2024_02_14_4/data/daten_gallium/Alaa/LLZNb06Gd02In02O_l.raw")
-    print(xrd_pattern.twotheta_to_intensity)
-    print(xrd_pattern.__dict__)
-    print(xrd_pattern.to_json())
-    xrd_pattern.export_data(filepath='test')
 
 
 class Mapping(dict[float,float]):
