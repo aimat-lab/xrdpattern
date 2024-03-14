@@ -22,7 +22,6 @@ class IntensityMap:
     def get_standardized(self, start_val : float, stop_val : float, num_entries : int) -> IntensityMap:
         x_values = list(self.data.keys())
         start, end = x_values[0], x_values[-1]
-
         std_angles = np.linspace(start=start_val, stop=stop_val, num=num_entries)
 
         x = np.array(list(self.data.keys()))

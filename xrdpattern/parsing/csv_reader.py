@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from xrdpattern.pattern import XAxisType
+from xrdpattern.pattern import XAxisType, IntensityMap
 # -------------------------------------------
 
 class Orientation(Enum):
@@ -12,23 +12,31 @@ class Orientation(Enum):
 
 @dataclass
 class CsvScheme:
-    variable_type : XAxisType
+    x_axis_type : XAxisType
     pattern_dimension : Orientation
     header_lines : int = 1
 
 
 class NumericalTable(list[list[str]]):
-    def get_header(self):
-        return self[0]
+    def get_preable(self) -> list[list[str]]:
+        return self[:self.locate_data_start()]
+
+    def get_first_data_row(self) -> list[float]:
+        return self.get_data(index=self.locate_data_start())
+
+    def locate_data_start(self) -> int:
+        for index in range(len(self)):
+            try:
+                self.get_data(index=index)
+                return index
+            except:
+                pass
+        raise ValueError(f'Failed to locate start of numerical data. Is this a numerical table?')
 
     def get_data(self, index: int) -> list[float]:
-        if index == 0:
-            raise ValueError("Index 0 is reserved for the header")
-        row = self[index]
-
         err = None
         numerical_data = []
-        for entry in row:
+        for entry in self[index]:
             try:
                 value = float(entry)
                 numerical_data.append(value)
@@ -49,7 +57,17 @@ class CsvPreprocessor:
 
 
     def generate_xy_files(self, csv_fpath : str, csv_scheme : CsvScheme):
-        table = self.read_csv(file_path=)
+        numerical_table = self.read_csv(file_path=csv_fpath,outerDimensionAxis=csv_scheme.pattern_dimension)
+        for index in range(len(numerical_table)):
+            try:
+                x_values = numerical_table.get_first_data_row()
+                intensities = numerical_table.get_data(index=index)
+                data = {}
+                for x,y in zip(x_values, intensities):
+                    data[x] = y
+                map = IntensityMap(data=data, x_axis_type=csv_scheme.x_axis_type)
+            except:
+                pass
 
 
     def read_csv(self, file_path: str, outerDimensionAxis: Orientation) -> NumericalTable:
