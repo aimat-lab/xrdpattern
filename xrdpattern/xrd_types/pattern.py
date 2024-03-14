@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from serialization import SerializableDataclass
 from dataclasses import dataclass, field
 
-from xrdpattern.xrd_file_io import get_xylib_repr, Formats, write_to_json
+from xrdpattern.parsing import get_xylib_repr, Formats, write_to_json
 from xrdpattern.xrd_logger import log_xrd_info
 from xrdpattern.xrd_types.report import Report, get_report
 from xrdpattern.xrd_types.metadata import Metadata
@@ -33,7 +33,9 @@ class XrdPattern(SerializableDataclass):
             self._initialize_from_json(filepath=filepath)
         else:
             self._import_from_data_file(filepath=filepath)
-        self.processing_report = get_report(filepath=filepath, metadata=self.metadata, deg_over_intensity=self.twotheta_to_intensity)
+        self.processing_report = get_report(filepath=filepath,
+                                            metadata=self.metadata,
+                                            deg_over_intensity=self.twotheta_to_intensity)
         log_xrd_info(msg=str(self.processing_report), log_file_path=self.log_file_path)
 
 
@@ -79,7 +81,8 @@ class XrdPattern(SerializableDataclass):
         try:
             column_match = re.findall(pattern=column_pattern, string=xylib_repr)[0]
         except Exception as e:
-            raise ValueError(f"Could not find header matching pattern \"{column_pattern}\" in file {filepath}. Error: {str(e)}")
+            raise ValueError(f"Could not find header matching pattern \"{column_pattern}\" "
+                             f"in file {filepath}. Error: {str(e)}")
 
         header_str, data_str = xylib_repr.split(column_match)
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']

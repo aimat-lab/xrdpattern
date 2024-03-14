@@ -7,7 +7,7 @@ from .formats import XrdFormat
 
 __version__ = xylib.xylib_get_version()
 
-
+# noinspection PyPropertyAccess
 def print_supported_formats():
     n = 0
     while True:
@@ -17,6 +17,8 @@ def print_supported_formats():
         print('%-20s: %s' % (form.name, form.desc))
         n += 1
 
+
+# noinspection PyPropertyAccess
 def print_filetype_info(filetype):
     fi = xylib.xylib_get_format_by_name(filetype)
     if fi:

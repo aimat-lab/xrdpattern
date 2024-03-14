@@ -3,31 +3,30 @@ from __future__ import annotations
 import os.path
 from uuid import uuid4
 from tempfile import TemporaryDirectory
-from typing import Optional
 import math
 import logging
 
 from .formats import allowed_suffixes, Formats, XrdFormat
 from .xyconv import convert_file, XYLibOption
-
+from .options import ParsingOptions
 # -------------------------------------------
 
-def get_xylib_repr(input_path : str, format_hint : Optional[XrdFormat] = None) -> str:
+def get_xylib_repr(input_path : str, options : ParsingOptions = ParsingOptions()) -> str:
     if not os.path.isfile(input_path):
         raise ValueError(f"File \"{input_path}\" does not exist")
 
-    if format_hint is None:
+    if options.format_hint is None:
         suffix = input_path.split('.')[-1]
         format_hint = XrdFormat.from_suffix(suffix=suffix)
 
-    if not format_hint.suffix in allowed_suffixes:
+    if not options.format_hint.suffix in allowed_suffixes:
         raise ValueError(f"File {input_path} is not a supported format")
 
     try:
         with TemporaryDirectory() as output_dir:
             file_name = uuid4()
             output_path =  os.path.join(output_dir, f"{file_name}")
-            option = XYLibOption(input_path=input_path, output_path=output_path, format_hint= format_hint)
+            option = XYLibOption(input_path=input_path, output_path=output_path, format_hint= options.format_hint)
             convert_file(opt=option)
             return get_file_contents(filepath=output_path)
 

@@ -8,7 +8,7 @@ from typing import Optional
 
 from hollarek.io import FsysNode
 from xrdpattern.xrd_logger import log_xrd_info
-from xrdpattern.xrd_file_io.formats import allowed_suffixes
+from xrdpattern.parsing.formats import allowed_suffixes
 
 from .pattern import XrdPattern
 # -------------------------------------------

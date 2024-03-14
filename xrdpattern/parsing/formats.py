@@ -3,7 +3,6 @@ from typing import Optional
 
 
 class XrdFormat:
-
     @classmethod
     def from_suffix(cls, suffix : str) -> Optional[XrdFormat]:
         return suffix_to_format_dict.get(suffix)
