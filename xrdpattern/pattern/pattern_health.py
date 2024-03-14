@@ -1,9 +1,11 @@
 from hollarek.templates import JsonDataclass
 from dataclasses import dataclass, field
+from typing import Optional
+# -------------------------------------------
 
 @dataclass
-class Report(JsonDataclass):
-    filepath: str
+class PatternHealth(JsonDataclass):
+    data_file_path: Optional[str]
     critical_errors: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
@@ -28,7 +30,7 @@ class Report(JsonDataclass):
 
     def get_report_str(self):
         report_str = f'--- Successfully processed file ---'
-        report_str += f'\nFilepath: {self.filepath}'
+        report_str += f'\nFilepath: {self.data_file_path}'
         report_str += f'\nNum critical errors: {len(self.critical_errors)}'
         report_str += f'\nNum errors: {len(self.errors)}'
         report_str += f'\nNum warnings: {len(self.warnings)}\n'
@@ -53,25 +55,3 @@ class Report(JsonDataclass):
     def __str__(self):
         return self.get_report_str()
 
-
-def get_report(filepath : str, metadata : Metadata, deg_over_intensity : dict):
-    report = Report(filepath=filepath)
-
-    if len(deg_over_intensity) == 0:
-        report.add_critical('No data found. Degree over intensity is empty!')
-    elif len(deg_over_intensity) < 10:
-        report.add_critical('Data is too short. Less than 10 entries!')
-    if metadata.primary_wavelength is None:
-        report.add_error('Primary wavelength missing!')
-
-    if metadata.secondary_wavelength is None:
-        report.add_warning('No secondary wavelength found')
-    if metadata.anode_material is None:
-        report.add_warning('No anode material found')
-    if metadata.measurement_date is None:
-        report.add_warning('No measurement datetime found')
-
-
-#     return report
-#
-#

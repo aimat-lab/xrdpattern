@@ -33,8 +33,7 @@ class Metadata(JsonDataclass):
                 val = float(val)
             return val
 
-        wavelength_info = WavelengthInfo(
-            primary=get_float('ALPHA1'),
+        wavelength_info = WavelengthInfo(primary=get_float('ALPHA1'),
             secondary=get_float('ALPHA2'),
             ratio=get_float('ALPHA_RATIO')
         )

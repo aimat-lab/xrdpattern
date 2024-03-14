@@ -3,12 +3,14 @@ from __future__ import annotations
 from typing import Optional
 import matplotlib.pyplot as plt
 from dataclasses import dataclass
+import os
+from uuid import uuid4
+
 from hollarek.templates import JsonDataclass
 
 from .intensity_map import IntensityMap, XAxisType
 from .metadata import Metadata
-import os
-from uuid import uuid4
+from .pattern_health import PatternHealth
 # -------------------------------------------
 
 @dataclass
@@ -16,7 +18,6 @@ class XrdPattern(JsonDataclass):
     twotheta_to_intensity : dict[float, float]
     metadata: Metadata
     datafile_path : Optional[str] = None
-
 
     def plot(self, apply_standardization=True):
         plt.figure(figsize=(10, 6))
@@ -80,6 +81,26 @@ class XrdPattern(JsonDataclass):
             intensity_map = intensity_map.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
 
         return intensity_map
+
+
+    def get_health(self) -> PatternHealth:
+        pattern_health = PatternHealth(data_file_path=self.datafile_path)
+
+        if len(self.twotheta_to_intensity) == 0:
+            pattern_health.add_critical('No data found. Degree over intensity is empty!')
+        elif len(self.twotheta_to_intensity) < 10:
+            pattern_health.add_critical('Data is too short. Less than 10 entries!')
+        if self.get_wavelength(primary=True) is None:
+            pattern_health.add_error('Primary wavelength missing!')
+
+        if self.get_wavelength(primary=False) is None:
+            pattern_health.add_warning('No secondary wavelength found')
+        if self.metadata.anode_material is None:
+            pattern_health.add_warning('No anode material found')
+        if self.metadata.measurement_date is None:
+            pattern_health.add_warning('No measurement datetime found')
+
+        return pattern_health
 
     # -------------------------------------------
 

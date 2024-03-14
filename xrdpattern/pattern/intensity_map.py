@@ -57,6 +57,8 @@ class IntensityMap:
 
         return IntensityMap(data=new_data, x_axis_type=target_axis_type)
 
+    # -------------------------------------------
+
     @staticmethod
     def q_to_twotheta(q: float, wavelength: float) -> float:
         theta = math.asin(q * wavelength / (4 * math.pi))

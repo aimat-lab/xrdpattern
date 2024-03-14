@@ -2,12 +2,11 @@ from __future__ import annotations
 import re
 import os.path
 from typing import Optional
-import math
 from hollarek.fsys import FsysNode
 
+from xrdpattern.xrd_data import XrdPattern, XrdPatternDB, IntensityMap, Metadata
 from .data_formats import Formats, XrdFormat
 from .xylib_repr import get_xylib_repr
-from xrdpattern.xrd_data import XrdPattern, XrdPatternDB, IntensityMap, Metadata
 
 # -------------------------------------------
 
@@ -46,23 +45,23 @@ class Parser:
     @staticmethod
     def from_data_file(fpath: str, format_hint : XrdFormat) -> XrdPattern:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
-        twotheta_to_intensity = IntensityMap()
+
         # print(f'xylib repr: {xylib_repr[0:1000]}')
         column_pattern = r'# column_1\tcolumn_2'
-        try:
-            column_match = re.findall(pattern=column_pattern, string=xylib_repr)[0]
-        except Exception as e:
-            raise ValueError(f"Could not find header matching pattern \"{column_pattern}\" "
-                             f"in file {fpath}. Error: {str(e)}")
+        column_match = re.findall(pattern=column_pattern, string=xylib_repr)[0]
+        if not column_match:
+            raise ValueError(f"Could not find header matching pattern \"{column_pattern}\" in file {fpath}")
 
         header_str, data_str = xylib_repr.split(column_match)
+        metadata = Metadata.from_header_str(header_str=header_str)
+
+        twotheta_to_intensity = {}
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
         for row in data_rows:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
             twotheta_to_intensity[deg] = intensity
 
-        metadata = Metadata.from_header_str(header_str=header_str)
         return XrdPattern(twotheta_to_intensity=twotheta_to_intensity, metadata=metadata)
 
 
@@ -89,11 +88,6 @@ class Parser:
 
 
 
-
-
-
-
-
 def copy_datafiles(self, target_dir : str):
     os.makedirs(target_dir, exist_ok=True)
     for path in self.get_data_fpaths():
@@ -104,34 +98,3 @@ def copy_datafiles(self, target_dir : str):
 
 
 
-
-
-
-
-
-
-    def create_report(self, fpath : str):
-        def log(msg: str):
-            log_xrd_info(msg=msg, log_file_path=fpath)
-
-        num_unsuccessful = self.total_count-len(self.patterns)
-        summary_str =(f'\n----- Finished creating database -----'
-                      f'\n{num_unsuccessful}/{self.total_count} patterns could not be parsed')
-
-
-        num_crit, num_err, num_warn = 0,0,0
-        reports = [pattern.processing_report for pattern in self.patterns]
-        for report in reports:
-            num_crit += report.has_critical_error()
-            num_err += report.has_error()
-            num_warn += report.has_warning()
-
-        summary_str += f'\n{num_crit}/{self.total_count} patterns had critical error(s)'
-        summary_str += f'\n{num_err}/{self.total_count}  patterns had error(s)'
-        summary_str += f'\n{num_warn}/{self.total_count}  patterns had warning(s)'
-        log(f'{summary_str}\n\n'
-            f'----------------------------------------\n')
-
-        log(f'Individual file reports\n\n')
-        for pattern in self.patterns:
-            log(msg=str(pattern.processing_report))
