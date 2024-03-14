@@ -5,10 +5,8 @@ from hollarek.fsys import FsysNode
 
 from xrdpattern.pattern import XrdPattern, Metadata
 from xrdpattern.database import XrdPatternDB
-from .data_formats import Formats, XrdFormat
-from .csv_reader import CsvScheme
-from .xylib_repr import get_xylib_repr
-
+from .data_files import XrdFormat, Formats, get_xylib_repr
+from .csv import CsvScheme, CsvPreprocessor
 
 # -------------------------------------------
 
@@ -79,7 +77,7 @@ class Parser:
 
 
     def preprocess_csv(self, datafolder_path : str, scheme : CsvScheme):
-        orientation = scheme.pattern_dimension
+        raise NotImplementedError
 
 
     def get_datafile_fpaths(self, datafolder_path : str) -> list[str]:
