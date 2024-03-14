@@ -1,4 +1,3 @@
-from .pattern import XrdPattern
+from .pattern import XrdPattern, PatternReport
 from .intensity_map import IntensityMap
-from .pattern_db import XrdPatternDB
 from .metadata import Metadata

@@ -4,13 +4,13 @@ from typing import Optional
 # -------------------------------------------
 
 @dataclass
-class PatternHealth(JsonDataclass):
+class PatternReport(JsonDataclass):
     data_file_path: Optional[str]
     critical_errors: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
-    def has_critical_error(self):
+    def has_critical(self):
         return len(self.critical_errors) != 0
 
     def has_error(self):

@@ -10,7 +10,7 @@ from hollarek.templates import JsonDataclass
 
 from .intensity_map import IntensityMap, XAxisType
 from .metadata import Metadata
-from .pattern_health import PatternHealth
+from .pattern_report import PatternReport
 # -------------------------------------------
 
 @dataclass
@@ -83,8 +83,8 @@ class XrdPattern(JsonDataclass):
         return intensity_map
 
 
-    def get_health(self) -> PatternHealth:
-        pattern_health = PatternHealth(data_file_path=self.datafile_path)
+    def get_parsing_report(self) -> PatternReport:
+        pattern_health = PatternReport(data_file_path=self.datafile_path)
 
         if len(self.twotheta_to_intensity) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
