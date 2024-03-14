@@ -1,12 +1,11 @@
 from __future__ import annotations
-import re
 import os.path
 from typing import Optional
 from hollarek.fsys import FsysNode
 
 from xrdpattern.pattern import XrdPattern, Metadata
 from xrdpattern.database import XrdPatternDB
-from .data_formats import Formats, XrdFormat
+from .data_formats import Formats, XrdFormat, CsvScheme
 from .xylib_repr import get_xylib_repr
 # -------------------------------------------
 
@@ -56,6 +55,7 @@ class Parser:
 
         return XrdPattern(twotheta_to_intensity=twotheta_to_intensity, metadata=metadata)
 
+
     # -------------------------------------------
     # pattern database
 
@@ -73,6 +73,10 @@ class Parser:
             except Exception as e:
                 print(f"Could not import pattern from file {fpath}. Error: {str(e)}")
         return XrdPatternDB(patterns=patterns)
+
+
+    def preprocess_csv(self, datafolder_path : str, scheme : CsvScheme):
+        pass
 
 
     def get_datafile_fpaths(self, datafolder_path : str) -> list[str]:
