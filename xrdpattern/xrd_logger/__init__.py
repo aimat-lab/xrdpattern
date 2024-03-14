@@ -1,1 +1,0 @@
-from .logger import log_xrd_info

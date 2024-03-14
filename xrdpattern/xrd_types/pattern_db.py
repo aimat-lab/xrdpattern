@@ -7,7 +7,7 @@ from uuid import uuid4
 from typing import Optional
 
 from hollarek.io import FsysNode
-from xrdpattern.xrd_logger import log_xrd_info
+from xrdpattern.logging.logger import log_xrd_info
 from xrdpattern.parsing.formats import allowed_suffixes
 
 from .pattern import XrdPattern

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import datetime
 from typing import Optional
-from serialization import SerializableDataclass
+from hollarek.templates import JsonDataclass
 from dataclasses import dataclass
 
 from typing import Iterator, Tuple
@@ -9,7 +9,7 @@ from typing import Iterator, Tuple
 # -------------------------------------------
 
 @dataclass
-class Metadata(SerializableDataclass):
+class Metadata(JsonDataclass):
     prim_wavelength_angstr: Optional[float]
     sec_wavelength_angstr: Optional[float]
     prim_to_sec_ratio: Optional[float]

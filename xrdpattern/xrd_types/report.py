@@ -1,9 +1,9 @@
-from serialization import SerializableDataclass
+from hollarek.templates import JsonDataclass
 from dataclasses import dataclass, field
 from .metadata import Metadata
 
 @dataclass
-class Report(SerializableDataclass):
+class Report(JsonDataclass):
     filepath: str
     critical_errors: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)

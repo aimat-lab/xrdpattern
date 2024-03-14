@@ -17,7 +17,7 @@ def get_xylib_repr(input_path : str, options : ParsingOptions = ParsingOptions()
 
     if options.format_hint is None:
         suffix = input_path.split('.')[-1]
-        format_hint = XrdFormat.from_suffix(suffix=suffix)
+        options.format_hint = XrdFormat.from_suffix(suffix=suffix)
 
     if not options.format_hint.suffix in allowed_suffixes:
         raise ValueError(f"File {input_path} is not a supported format")

@@ -5,17 +5,18 @@ import re
 import numpy as np
 from scipy.interpolate import CubicSpline
 import matplotlib.pyplot as plt
-from serialization import SerializableDataclass
 from dataclasses import dataclass, field
 
+from hollarek.templates import JsonDataclass
+
+from xrdpattern.logging.logger import log_xrd_info
 from xrdpattern.parsing import get_xylib_repr, Formats, write_to_json
-from xrdpattern.xrd_logger import log_xrd_info
 from xrdpattern.xrd_types.report import Report, get_report
 from xrdpattern.xrd_types.metadata import Metadata
 # -------------------------------------------
 
 @dataclass
-class XrdPattern(SerializableDataclass):
+class XrdPattern(JsonDataclass):
     filepath: str
     log_file_path : Optional[str] = None
     twotheta_to_intensity: dict = field(default_factory=dict)
@@ -139,3 +140,5 @@ class XrdPattern(SerializableDataclass):
 
 class Mapping(dict[float,float]):
     pass
+
+
