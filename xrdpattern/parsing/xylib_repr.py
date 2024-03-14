@@ -1,50 +1,27 @@
 #!/usr/bin/env python
 from __future__ import annotations
+import os
 from typing import Optional
+from tempfile import NamedTemporaryFile
 import xylib
-from .formats import XrdFormat
-
-
 __version__ = xylib.xylib_get_version()
+from .data_formats import XrdFormat
 
-# noinspection PyPropertyAccess
-def print_supported_formats():
-    n = 0
-    while True:
-        form = xylib.xylib_get_format(n)
-        if not form:
-            break
-        print('%-20s: %s' % (form.name, form.desc))
-        n += 1
+# -------------------------------------------
 
+def get_xylib_repr(fpath : str, format_hint : XrdFormat) -> str:
+    if not os.path.isfile(fpath):
+        raise ValueError(f"File \"{fpath}\" does not exist")
 
-# noinspection PyPropertyAccess
-def print_filetype_info(filetype):
-    fi = xylib.xylib_get_format_by_name(filetype)
-    if fi:
-        print("Name: %s" % fi.name)
-        print("Description: %s" % fi.desc)
-        print("Possible extensions: %s" % (fi.exts or "(not specified)"))
-        print("Flags: %s-file %s-block" % (
-            ("binary" if fi.binary else "text"),
-            ("multi" if fi.multiblock else "single")))
-        print("Options: %s" % (fi.valid_options or '-'))
-    else:
-        print("Unknown file format.")
-
-
-def export_metadata(f, meta):
-    for i in range(meta.size()):
-        key = meta.get_key(i)
-        value = meta.get(key)
-        f.write('# %s: %s\n' % (key, value.replace('\n', '\n#\t')))
-
-
-class XYLibOption:
-    def __init__(self, input_path : str, output_path : str, format_hint : Optional[XrdFormat] = None):
-        self.INPUT_FILE : str = input_path
-        self.OUTPUT_PATH : str = output_path
-        self.INPUT_TYPE : Optional[XrdFormat] = format_hint
+    try:
+        with NamedTemporaryFile(delete=False) as temp_file:
+            output_path = temp_file.name
+        option = XYLibOption(input_path=fpath, output_path=output_path, format_hint=format_hint)
+        convert_file(opt=option)
+        with open(output_path, "r") as file:
+            return file.read()
+    except BaseException as e:
+        raise ValueError(f"Error obtaining xy repr of file {fpath}: {str(e)}")
 
 
 def convert_file(opt : XYLibOption):
@@ -75,4 +52,16 @@ def convert_file(opt : XYLibOption):
                           for k in range(1, number_of_cols+1)]
                 f.write('\t'.join(values) + '\n')
 
+def export_metadata(f, meta):
+    for i in range(meta.size()):
+        key = meta.get_key(i)
+        value = meta.get(key)
+        f.write('# %s: %s\n' % (key, value.replace('\n', '\n#\t')))
 
+
+
+class XYLibOption:
+    def __init__(self, input_path : str, output_path : str, format_hint : Optional[XrdFormat] = None):
+        self.INPUT_FILE : str = input_path
+        self.OUTPUT_PATH : str = output_path
+        self.INPUT_TYPE : Optional[XrdFormat] = format_hint

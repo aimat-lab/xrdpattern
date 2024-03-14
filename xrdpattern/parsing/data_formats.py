@@ -1,15 +1,12 @@
 from __future__ import annotations
-from typing import Optional
+from dataclasses import dataclass
 
 
+
+@dataclass
 class XrdFormat:
-    @classmethod
-    def from_suffix(cls, suffix : str) -> Optional[XrdFormat]:
-        return suffix_to_format_dict.get(suffix)
-
-    def __init__(self, name : str, suffix :str):
-        self.name : str = name
-        self.suffix : str = suffix
+    name : str
+    suffix : str
 
 
 class Formats:
@@ -37,8 +34,18 @@ class Formats:
     xsyg = XrdFormat("xsyg", "xsyg")
     aimat_json = XrdFormat("ajson","json")
 
+    @classmethod
+    def get_allowed_suffixes(cls) -> list[str]:
+        return [xrd_format.suffix for xrd_format in cls.get_formats()]
 
+    @classmethod
+    def get_formats(cls) -> list[XrdFormat]:
+        return [xrd_format for xrd_format in cls.__dict__.values() if isinstance(xrd_format, XrdFormat)]
 
-suffix_to_format_dict = {xrd_format.suffix : xrd_format for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)}
-allowed_suffixes = [xrd_format.suffix for xrd_format in Formats.__dict__.values() if isinstance(xrd_format, XrdFormat)]
-
+    @classmethod
+    def get_format(cls, suffix : str) -> XrdFormat:
+        suffix_to_format_map = {xrd_format.suffix : xrd_format for xrd_format in cls.get_formats()}
+        xrd_format = suffix_to_format_map.get(suffix)
+        if not xrd_format:
+            raise ValueError(f"Invalid suffix {suffix}")
+        return xrd_format

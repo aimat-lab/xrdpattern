@@ -1,1 +1,1 @@
-from .xrd_types import XrdPattern, XrdPatternDB
+from .xrd_data import XrdPattern, XrdPatternDB

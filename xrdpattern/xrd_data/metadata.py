@@ -8,25 +8,45 @@ from typing import Iterator, Tuple
 
 # -------------------------------------------
 
+
+@dataclass
+class WavelengthInfo(JsonDataclass):
+    primary: Optional[float] = None
+    secondary: Optional[float] = None
+    ratio: Optional[float] = None
+
+
 @dataclass
 class Metadata(JsonDataclass):
-    prim_wavelength_angstr: Optional[float]
-    sec_wavelength_angstr: Optional[float]
-    prim_to_sec_ratio: Optional[float]
+    wavelength_info: WavelengthInfo
     anode_material: Optional[str] = None
-    measured_on: Optional[datetime] = None
-    temperature_celcius : Optional[float] = None
+    temp_celcius: Optional[float] = None
+    measurement_date: Optional[datetime] = None
 
     @classmethod
-    def from_header_str(cls, header_str : str) -> Metadata:
-        values = cls.get_key_value_dict(header_str=header_str)
-        metadata = cls(prim_wavelength_angstr=float(values['ALPHA1']) if 'ALPHA1' in values else None,
-                       sec_wavelength_angstr=float(values['ALPHA2']) if 'ALPHA2' in values else None,
-                       prim_to_sec_ratio=float(values['ALPHA_RATIO']) if 'ALPHA_RATIO' in values else None,
-                       anode_material=values.get('ANODE_MATERIAL', None),
-                       measured_on= cls.get_date_time(values.get('MEASURE_DATE'), values.get('MEASURE_TIME')))
-        return metadata
+    def from_header_str(cls, header_str: str) -> Metadata:
+        metadata_map = cls.get_key_value_dict(header_str=header_str)
 
+        def get_float(key : str) -> Optional[float]:
+            val = metadata_map.get(key)
+            if val:
+                val = float(val)
+            return val
+
+        wavelength_info = WavelengthInfo(
+            primary=get_float('ALPHA1'),
+            secondary=get_float('ALPHA2'),
+            ratio=get_float('ALPHA_RATIO')
+        )
+
+        metadata = cls(
+            wavelength_info=wavelength_info,
+            anode_material=metadata_map.get('ANODE_MATERIAL'),
+            temp_celcius=get_float('TEMP_CELCIUS'),
+            measurement_date=cls.get_date_time(metadata_map.get('MEASURE_DATE'), metadata_map.get('MEASURE_TIME'))
+        )
+
+        return metadata
 
     @classmethod
     def get_key_value_dict(cls,header_str: str) -> dict:
