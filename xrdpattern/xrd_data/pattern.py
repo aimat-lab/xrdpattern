@@ -4,17 +4,12 @@ from typing import Optional
 import matplotlib.pyplot as plt
 from dataclasses import dataclass
 from hollarek.templates import JsonDataclass
-from enum import Enum
 
-from .intensity_map import IntensityMap
+from .intensity_map import IntensityMap, XAxisType
 from .metadata import Metadata
 import os
 from uuid import uuid4
 # -------------------------------------------
-
-class XAxisType(Enum):
-    TwoTheta = 'TwoTheta'
-    QValues = 'QValues'
 
 @dataclass
 class XrdPattern(JsonDataclass):
@@ -68,7 +63,7 @@ class XrdPattern(JsonDataclass):
         return wavelength
 
 
-    def get_data(self, apply_standardization = True, x_axis_type :  XAxisType = XAxisType.TwoTheta) -> IntensityMap:
+    def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> IntensityMap:
         """
         :param apply_standardization: Standardization pads missing values, scales intensity into [0,1] range and makes x-step size uniform
         :param x_axis_type: Specifies the type of x-axis values, defaults to XAxisType.TwoTheta. This determines how the x-axis is interpreted and processed.

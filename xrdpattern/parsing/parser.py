@@ -42,6 +42,7 @@ class Parser:
             new_pattern = XrdPattern.from_str(json_str=data)
         return new_pattern
 
+
     @staticmethod
     def from_data_file(fpath: str, format_hint : XrdFormat) -> XrdPattern:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
@@ -68,6 +69,7 @@ class Parser:
     def get_pattern_db(self, datafolder_path : str) -> XrdPatternDB:
         if not os.path.isdir(datafolder_path):
             raise ValueError(f"Given path {datafolder_path} is not a directory")
+
         patterns = []
         data_fpaths = self.get_datafile_fpaths(datafolder_path=datafolder_path)
         # total_count = len(data_fpaths)
@@ -87,18 +89,7 @@ class Parser:
 
 
 
-def get_suffix(fpath : str) -> Optional[str]:
-    parts = fpath.split('.')
-    if len(parts) == 1:
-        suffix = None
-    else:
-        suffix = parts[-1]
-    return suffix
 
-def q_to_twotheta(q: float, wavelength_angstr: float) -> float:
-    theta = math.asin(q * wavelength_angstr / (4 * math.pi))
-    two_theta = 2 * math.degrees(theta)
-    return two_theta
 
 
 
@@ -109,3 +100,38 @@ def copy_datafiles(self, target_dir : str):
         filename = find_free_path(dirpath=target_dir, basename=os.path.basename(path))
         fpath = os.path.join(target_dir, filename)
         shutil.copy(path, fpath)
+
+
+
+
+
+
+
+
+
+
+    def create_report(self, fpath : str):
+        def log(msg: str):
+            log_xrd_info(msg=msg, log_file_path=fpath)
+
+        num_unsuccessful = self.total_count-len(self.patterns)
+        summary_str =(f'\n----- Finished creating database -----'
+                      f'\n{num_unsuccessful}/{self.total_count} patterns could not be parsed')
+
+
+        num_crit, num_err, num_warn = 0,0,0
+        reports = [pattern.processing_report for pattern in self.patterns]
+        for report in reports:
+            num_crit += report.has_critical_error()
+            num_err += report.has_error()
+            num_warn += report.has_warning()
+
+        summary_str += f'\n{num_crit}/{self.total_count} patterns had critical error(s)'
+        summary_str += f'\n{num_err}/{self.total_count}  patterns had error(s)'
+        summary_str += f'\n{num_warn}/{self.total_count}  patterns had warning(s)'
+        log(f'{summary_str}\n\n'
+            f'----------------------------------------\n')
+
+        log(f'Individual file reports\n\n')
+        for pattern in self.patterns:
+            log(msg=str(pattern.processing_report))
