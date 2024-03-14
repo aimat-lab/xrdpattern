@@ -5,11 +5,33 @@ from typing import Optional
 from tempfile import NamedTemporaryFile
 import xylib
 __version__ = xylib.xylib_get_version()
-from .data_formats import XrdFormat
 
+import re
+from .data_formats import XrdFormat
+from dataclasses import dataclass
 # -------------------------------------------
 
-def get_xylib_repr(fpath : str, format_hint : XrdFormat) -> str:
+@dataclass
+class XYLibPattern:
+    fpath : str
+    content : str
+
+    def __post_init__(self):
+        column_pattern = r'# column_1\tcolumn_2'
+        column_match = re.findall(pattern=column_pattern, string=self.content)[0]
+        if not column_match:
+            raise ValueError(f"Could not find header matching pattern \"{column_pattern}\" in file {self.fpath}")
+
+        self.header_str, self.data_str = self.content.split(column_match)
+
+    def get_header(self) -> str:
+        return self.header_str
+
+    def get_data(self) -> str:
+        return self.data_str
+
+
+def get_xylib_repr(fpath : str, format_hint : XrdFormat) -> XYLibPattern:
     if not os.path.isfile(fpath):
         raise ValueError(f"File \"{fpath}\" does not exist")
 
@@ -19,7 +41,9 @@ def get_xylib_repr(fpath : str, format_hint : XrdFormat) -> str:
         option = XYLibOption(input_path=fpath, output_path=output_path, format_hint=format_hint)
         convert_file(opt=option)
         with open(output_path, "r") as file:
-            return file.read()
+            content = file.read()
+        return XYLibPattern(content=content, fpath=fpath)
+
     except BaseException as e:
         raise ValueError(f"Error obtaining xy repr of file {fpath}: {str(e)}")
 

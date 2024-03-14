@@ -17,6 +17,9 @@ class Parser:
         if select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
 
+    # -------------------------------------------
+    # pattern
+
     def get_pattern(self, fpath : str, format_hint : Optional[XrdFormat] = None) -> XrdPattern:
         suffix = FsysNode(fpath).get_suffix()
 
@@ -41,15 +44,8 @@ class Parser:
     @staticmethod
     def from_data_file(fpath: str, format_hint : XrdFormat) -> XrdPattern:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
-
-        # print(f'xylib repr: {xylib_repr[0:1000]}')
-        column_pattern = r'# column_1\tcolumn_2'
-        column_match = re.findall(pattern=column_pattern, string=xylib_repr)[0]
-        if not column_match:
-            raise ValueError(f"Could not find header matching pattern \"{column_pattern}\" in file {fpath}")
-
-        header_str, data_str = xylib_repr.split(column_match)
-        metadata = Metadata.from_header_str(header_str=header_str)
+        header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
+        metadata = Metadata.from_header_str(header_str=header)
 
         twotheta_to_intensity = {}
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
@@ -60,6 +56,8 @@ class Parser:
 
         return XrdPattern(twotheta_to_intensity=twotheta_to_intensity, metadata=metadata)
 
+    # -------------------------------------------
+    # pattern database
 
     def get_pattern_db(self, datafolder_path : str) -> XrdPatternDB:
         if not os.path.isdir(datafolder_path):
