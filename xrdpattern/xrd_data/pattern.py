@@ -9,11 +9,16 @@ from dataclasses import dataclass
 from hollarek.templates import JsonDataclass
 from xrdpattern.xrd_data.metadata import Metadata
 
+from enum import Enum
 # -------------------------------------------
+
+class XAxisType(Enum):
+    TwoTheta = 'TwoTheta'
+    QValues = 'QValues'
 
 @dataclass
 class XrdPattern(JsonDataclass):
-    twotheta_to_intensity : dict
+    twotheta_to_intensity : dict[float, float]
     metadata: Metadata
     datafile_path : Optional[str] = None
 
@@ -40,43 +45,33 @@ class XrdPattern(JsonDataclass):
     # -------------------------------------------
     # get
 
-    def get_primary_wavelength_angstrom(self) -> float:
-        if self.metadata. is None:
+    def get_wavelength(self, primary : bool = True) -> float:
+        wavelength_info = self.metadata.wavelength_info
+        if primary:
+            wavelength = wavelength_info.primary
+        else:
+            wavelength = wavelength_info.secondary
+        if wavelength is None:
             raise ValueError(f"Wavelength is None")
 
-        return self.metadata.primary_wavelength
+        return wavelength
 
 
-    def get_data(self) -> RealValuedMap:
+    def get_data(self, apply_standardization = True, x_axis_type :  XAxisType = XAxisType.TwoTheta) -> RealValuedMap:
         """
-        :return: Mapping from 2 theta to intensity with theta in [0,90] and intensity in [0,1] by padding missing angle range with 0, interpolating the intensity and then normalizing it by diving through the max intensity
+        :param apply_standardization: Standardization pads missing values, scales intensity into [0,1] range and makes x-step size uniform
+        :param x_axis_type: Specifies the type of x-axis values, defaults to XAxisType.TwoTheta. This determines how the x-axis is interpreted and processed.
+        :return: A mapping from the specified x-axis type to intensity
         """
-        standard_entries_num = 1000
-        std_angle_start = 0
-        std_angle_end = 90
+        if x_axis_type == XAxisType.QValues:
+            raise NotImplementedError
 
-        angles = list(self.twotheta_to_intensity.keys())
-        start_angle, end_angle =  angles[0], angles[-1]
+        mapping = RealValuedMap(self.twotheta_to_intensity)
+        if apply_standardization:
+            start, stop, num_entries = 0, 90, 1000
+            mapping = mapping.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
 
-        std_angles = np.linspace(start=std_angle_start,
-                                 stop=std_angle_end,
-                                 num= standard_entries_num)
-
-        x = np.array(list(self.twotheta_to_intensity.keys()))
-        y = np.array(list(self.twotheta_to_intensity.values()))
-        cs = CubicSpline(x, y)
-
-        interpolated_intensities = [cs(angle) for angle in std_angles if start_angle <= angle <= end_angle]
-        max_intensity = max(interpolated_intensities) if interpolated_intensities else 1
-
-        std_intensity_mapping = {}
-        for angle in std_angles:
-            if angle < start_angle or angle > end_angle:
-                std_intensity_mapping[angle] = 0
-            else:
-                std_intensity_mapping[angle] = cs(angle) / max_intensity
-
-        return RealValuedMap(std_intensity_mapping)
+        return RealValuedMap(mapping)
 
     # -------------------------------------------
 
@@ -86,5 +81,24 @@ class XrdPattern(JsonDataclass):
 
 
 class RealValuedMap(dict[float,float]):
-    pass
 
+    def get_standardized(self, start_val : float, stop_val : float, num_entries : int) -> RealValuedMap:
+        angles = list(self.keys())
+        start_angle, end_angle = angles[0], angles[-1]
+
+        std_angles = np.linspace(start=start_val, stop=stop_val, num=num_entries)
+
+        x = np.array(list(self.keys()))
+        y = np.array(list(self.values()))
+        cs = CubicSpline(x, y)
+
+        interpolated_intensities = [cs(angle) for angle in std_angles if start_angle <= angle <= end_angle]
+        max_intensity = max(interpolated_intensities) if interpolated_intensities else 1
+
+        mapping = {}
+        for angle in std_angles:
+            if angle < start_angle or angle > end_angle:
+                mapping[angle] = 0
+            else:
+                mapping[angle] = cs(angle) / max_intensity
+        return RealValuedMap(mapping)
