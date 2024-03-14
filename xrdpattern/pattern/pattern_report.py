@@ -30,7 +30,8 @@ class PatternReport(JsonDataclass):
 
     def get_report_str(self):
         report_str = f'--- Successfully processed file ---'
-        report_str += f'\nFilepath: {self.data_file_path}'
+        data_file_info = self.data_file_path if self.data_file_path else 'Unavailable'
+        report_str += f'\nData file path: {data_file_info}'
         report_str += f'\nNum critical errors: {len(self.critical_errors)}'
         report_str += f'\nNum errors: {len(self.errors)}'
         report_str += f'\nNum warnings: {len(self.warnings)}\n'

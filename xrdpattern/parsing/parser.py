@@ -5,8 +5,11 @@ from hollarek.fsys import FsysNode
 
 from xrdpattern.pattern import XrdPattern, Metadata
 from xrdpattern.database import XrdPatternDB
-from .data_formats import Formats, XrdFormat, CsvScheme
+from .data_formats import Formats, XrdFormat
+from .csv_reader import CsvScheme
 from .xylib_repr import get_xylib_repr
+
+
 # -------------------------------------------
 
 
@@ -76,11 +79,13 @@ class Parser:
 
 
     def preprocess_csv(self, datafolder_path : str, scheme : CsvScheme):
-        pass
+        orientation = scheme.pattern_dimension
 
 
     def get_datafile_fpaths(self, datafolder_path : str) -> list[str]:
         root_node = FsysNode(path=datafolder_path)
         xrd_files_nodes = root_node.get_file_subnodes(select_formats=self.select_formats)
         return [node.get_path() for node in xrd_files_nodes]
+
+
 

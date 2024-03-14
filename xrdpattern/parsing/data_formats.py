@@ -1,7 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from xrdpattern.pattern import XAxisType
-from enum import Enum
+
 
 @dataclass
 class XrdFormat:
@@ -50,12 +49,4 @@ class Formats:
             raise ValueError(f"Invalid suffix {suffix}")
         return xrd_format
 
-class Orientation(Enum):
-    VERTICAL = 'vertical'
-    HORIZONTAL = 'horizontal'
 
-
-@dataclass
-class CsvScheme:
-    variable_type : XAxisType
-    pattern_dimension : Orientation
