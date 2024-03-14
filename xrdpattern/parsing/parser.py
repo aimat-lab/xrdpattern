@@ -7,7 +7,7 @@ from hollarek.fsys import FsysNode
 
 from .data_formats import Formats, XrdFormat
 from .xylib_repr import get_xylib_repr
-from xrdpattern.xrd_data import XrdPattern, XrdPatternDB, RealValuedMap, Metadata
+from xrdpattern.xrd_data import XrdPattern, XrdPatternDB, IntensityMap, Metadata
 
 # -------------------------------------------
 
@@ -45,7 +45,7 @@ class Parser:
     @staticmethod
     def from_data_file(fpath: str, format_hint : XrdFormat) -> XrdPattern:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
-        twotheta_to_intensity = RealValuedMap()
+        twotheta_to_intensity = IntensityMap()
         # print(f'xylib repr: {xylib_repr[0:1000]}')
         column_pattern = r'# column_1\tcolumn_2'
         try:
