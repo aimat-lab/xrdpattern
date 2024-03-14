@@ -18,22 +18,24 @@ class XrdPattern(JsonDataclass):
     datafile_path : Optional[str] = None
 
 
-    def plot(self, use_interpolation=True):
-        if use_interpolation:
-            std_mapping = self.get_data()
-            angles = list(std_mapping.keys())
-            intensities = list(std_mapping.values())
-            label = 'Interpolated Intensity'
-        else:
-            angles = list(self.twotheta_to_intensity.keys())
-            intensities = list(self.twotheta_to_intensity.values())
-            label = 'Original Intensity'
-
+    def plot(self, apply_standardization=True):
         plt.figure(figsize=(10, 6))
-        plt.plot(angles, intensities, label=label)
-        plt.xlabel('Angle (Degrees)')
         plt.ylabel('Intensity')
         plt.title('XRD Pattern')
+
+        intensity_map = self.get_data(apply_standardization=apply_standardization)
+        x_values, intensities = intensity_map.as_list_pair()
+        if apply_standardization:
+            label = 'Interpolated Intensity'
+        else:
+            label = 'Original Intensity'
+
+        if intensity_map.x_axis_type == XAxisType.TwoTheta:
+            plt.xlabel(r'$2\theta$ (Degrees)')
+        else:
+            plt.xlabel(r'Q ($\AA^{-1}$)')
+
+        plt.plot(x_values, intensities, label=label)
         plt.legend()
         plt.show()
 
@@ -72,12 +74,12 @@ class XrdPattern(JsonDataclass):
         if x_axis_type == XAxisType.QValues:
             raise NotImplementedError
 
-        mapping = IntensityMap(self.twotheta_to_intensity)
+        intensity_map = IntensityMap(self.twotheta_to_intensity,x_axis_type=XAxisType.TwoTheta)
         if apply_standardization:
             start, stop, num_entries = 0, 90, 1000
-            mapping = mapping.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
+            intensity_map = intensity_map.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
 
-        return IntensityMap(mapping)
+        return intensity_map
 
     # -------------------------------------------
 

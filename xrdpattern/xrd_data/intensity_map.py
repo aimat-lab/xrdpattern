@@ -68,3 +68,9 @@ class IntensityMap:
         theta_rad = math.radians(two_theta / 2)
         q = (4 * math.pi * math.sin(theta_rad)) / wavelength
         return q
+
+
+    def as_list_pair(self) -> (list[float], list[float]):
+        x_values = list(self.data.keys())
+        y_values = list(self.data.values())
+        return x_values, y_values
