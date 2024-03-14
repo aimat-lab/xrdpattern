@@ -4,10 +4,10 @@ import os.path
 from typing import Optional
 from hollarek.fsys import FsysNode
 
-from xrdpattern.xrd_data import XrdPattern, XrdPatternDB, IntensityMap, Metadata
+from xrdpattern.pattern import XrdPattern, Metadata
+from xrdpattern.database import XrdPatternDB
 from .data_formats import Formats, XrdFormat
 from .xylib_repr import get_xylib_repr
-
 # -------------------------------------------
 
 
@@ -16,7 +16,6 @@ class Parser:
     def __init__(self, select_suffixes : Optional[list[str]] = None):
         if select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
-
 
     def get_pattern(self, fpath : str, format_hint : Optional[XrdFormat] = None) -> XrdPattern:
         suffix = FsysNode(fpath).get_suffix()
@@ -29,9 +28,6 @@ class Parser:
             pattern = self.from_data_file(fpath=fpath, format_hint=format_hint)
         else:
             raise ValueError(f"Unable to determine format of file {fpath} without format hint or file extension")
-        # report = get_report(fpath=fpath,metadata=metadata,deg_over_intensity=self.twotheta_to_intensity)
-        # log_xrd_info(msg=str(self.processing_report), log_file_path=self.log_file_path)
-
         return pattern
 
     @staticmethod
@@ -85,16 +81,4 @@ class Parser:
         root_node = FsysNode(path=datafolder_path)
         xrd_files_nodes = root_node.get_file_subnodes(select_formats=self.select_formats)
         return [node.get_path() for node in xrd_files_nodes]
-
-
-
-def copy_datafiles(self, target_dir : str):
-    os.makedirs(target_dir, exist_ok=True)
-    for path in self.get_data_fpaths():
-        filename = find_free_path(dirpath=target_dir, basename=os.path.basename(path))
-        fpath = os.path.join(target_dir, filename)
-        shutil.copy(path, fpath)
-
-
-
 

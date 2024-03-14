@@ -10,7 +10,6 @@ from xrdpattern.pattern import XrdPattern, PatternReport
 @dataclass
 class XrdPatternDB:
     patterns : list[XrdPattern]
-    num_data_files : int
 
     def save(self, path : str):
         is_occupied = os.path.isdir(path) or os.path.isfile(path)
@@ -22,9 +21,9 @@ class XrdPatternDB:
             fpath = os.path.join(path, pattern.get_name())
             pattern.save(fpath=fpath)
 
-    def get_parsing_report(self) -> DatabaseReport:
+    def get_parsing_report(self, num_data_files : int) -> DatabaseReport:
         reports = [pattern.get_parsing_report() for pattern in self.patterns]
-        database_health = DatabaseReport(num_data_files=self.num_data_files, pattern_reports=reports)
+        database_health = DatabaseReport(num_data_files=num_data_files, pattern_reports=reports)
         pattern_healths = [pattern.get_parsing_report() for pattern in self.patterns]
         for report in pattern_healths:
             database_health.num_crit += report.has_critical()

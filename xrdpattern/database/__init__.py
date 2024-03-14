@@ -1,0 +1,1 @@
+from .pattern_db import XrdPatternDB
