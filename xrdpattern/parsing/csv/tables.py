@@ -28,12 +28,16 @@ class Region:
 class TextTable:
     content: list[list[str]]
 
-    def __getitem__(self, item):
-        return self.content[item]
-
     def __post_init__(self):
+        max_length = max(len(row) for row in self.content)
+        for i, row in enumerate(self.content):
+            additional_length = max_length - len(row)
+            if additional_length > 0:
+                self.content[i] += [''] * additional_length
+
         if not all([len(row) == len(self.content[0]) for row in self.content]):
             raise ValueError("All rows must have the same length")
+
 
     def get_lower_right_index(self) -> Index:
         return Index(self.get_row_count() - 1, self.get_row_len() - 1)
