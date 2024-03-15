@@ -33,4 +33,4 @@ test_disc = lambda x: x == '1'
 text_table = TextTable(table_5x5)
 # text_table.get_maximal_region(test_disc)
 selector = TableSelector(table=text_table, discriminator=test_disc)
-print(selector.get_lower_right_subtable())
+print(selector.get_lower_right_region())

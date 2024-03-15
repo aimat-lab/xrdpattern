@@ -8,14 +8,12 @@ from .tables import TextTable, Region, Index
 # -------------------------------------------
 
 
-
-
 @dataclass
 class TableSelector:
     table : TextTable
     discriminator : Callable[[str], bool]
 
-    def get_lower_right_subtable(self) -> Optional[Region]:
+    def get_lower_right_region(self) -> Optional[Region]:
         region = self.get_lower_right_square()
         if region:
             region = self.get_upwards_expansion(region=region)
