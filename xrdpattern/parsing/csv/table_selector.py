@@ -44,7 +44,7 @@ class TableSelector:
     def get_upwards_expansion(self, region : Region) -> Region:
         upper_left = region.upper_left
         lower_right = region.lower_right
-        while True:
+        while upper_left.row-1 >= 0:
             partial_row = self.table.get_row(row=upper_left.row-1, start_col=upper_left.col, end_col=lower_right.col)
             is_ok = all([self.discriminator(x) for x in partial_row])
             if is_ok:
@@ -57,7 +57,7 @@ class TableSelector:
     def get_leftwards_expansion(self, region : Region) -> Region:
         upper_left = region.upper_left
         lower_right = region.lower_right
-        while True:
+        while upper_left.col-1 >= 0:
             partial_col = self.table.get_col(col=upper_left.col-1, start_row=upper_left.row, end_row=lower_right.row)
             is_ok = all([self.discriminator(x) for x in partial_col])
             if is_ok:
