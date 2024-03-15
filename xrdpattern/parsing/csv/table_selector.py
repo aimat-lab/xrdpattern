@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, Optional
 
-from .tables import TextTable, Region, Index
+from .tables import TextTable, Region, Index, NumericalTable
 
 # -------------------------------------------
 
@@ -12,6 +12,27 @@ from .tables import TextTable, Region, Index
 class TableSelector:
     table : TextTable
     discriminator : Callable[[str], bool]
+
+
+    @classmethod
+    def get_numerical_subtable(cls, table : TextTable) -> NumericalTable:
+        selector = TableSelector(table=table, discriminator=is_numeric)
+        data_region = selector.get_lower_right_region()
+        if not data_region:
+            raise ValueError("No numerical data found")
+
+        data =  table.get_subtable(region=data_region, dtype=float)
+        preamble= ''
+        for row_num in range(data_region.upper_left.row):
+            row = table.get_row(row_num)
+            preamble += ''.join(row)
+
+        headers = ['' for _ in data_region.get_horizontal_indices()]
+        for index, col_num in enumerate(data_region.get_horizontal_indices()):
+            headers[index] = ''.join(table.get_col(col=col_num, end_row=data_region.upper_left.row-1))
+
+        return NumericalTable(preable=preamble, headers=headers, data=data)
+
 
     def get_lower_right_region(self) -> Optional[Region]:
         region = self.get_lower_right_square()
@@ -67,3 +88,12 @@ class TableSelector:
         else:
             region = Region(upper_left=upper_left, lower_right=self.table.get_lower_right_index())
         return region
+
+
+
+def is_numeric(text : str) -> bool:
+    try:
+        float(text)
+        return True
+    except:
+        return False

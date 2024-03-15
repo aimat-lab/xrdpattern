@@ -1,7 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
-from .table_selector import TableSelector
 # -------------------------------------------
 @dataclass
 class Index:
@@ -19,6 +18,11 @@ class Region:
     def get_vertical_length(self) -> int:
         return self.lower_right.row - self.upper_left.row + 1
 
+    def get_horizontal_indices(self):
+        return range(self.upper_left.col, self.lower_right.col+1)
+
+    def get_vertical_indices(self):
+        return range(self.upper_left.row, self.lower_right.row+1)
 
 @dataclass
 class TextTable:
@@ -33,23 +37,6 @@ class TextTable:
 
     def get_lower_right_index(self) -> Index:
         return Index(self.get_row_count() - 1, self.get_row_len() - 1)
-
-    def get_numerical_subtable(self) -> NumericalTable:
-        selector = TableSelector(table=self, discriminator=is_numeric)
-        data_region = selector.get_lower_right_region()
-
-        if not data_region:
-            raise ValueError("No numerical data found")
-
-        data =  self.get_subtable(region=data_region, dtype=float)
-        preamble = ''
-        headers = ['' for _ in range(data_region.get_horizontal_length())]
-        for row_num in range(data_region.upper_left.row):
-            row = self.get_row(row_num)
-            preamble += ''.join(row)
-            headers += row[data_region.upper_left.row:]
-
-        return NumericalTable(preable=preamble, headers=headers, data=data)
 
     # -------------------------------------------
     # get rows/cols
@@ -86,7 +73,7 @@ class NumericalTable:
     data : list[list[float]]
 
     def __post_init__(self):
-        if not len(self.headers) == len(self.data):
+        if not len(self.headers) == len(self.data[0]):
             raise ValueError(f"Number of headers ({len(self.headers)}) does not match number"
                              f" of data columns ({len(self.data)})")
 
@@ -97,9 +84,3 @@ class NumericalTable:
         return self.headers[index]
 
 
-def is_numeric(text : str) -> boolg:
-    try:
-        float(text)
-        return True
-    except:
-        return False
