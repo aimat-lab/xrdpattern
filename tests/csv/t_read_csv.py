@@ -1,4 +1,5 @@
 import unittest
+import os
 from xrdpattern.parsing.csv import CsvPreprocessor, Orientation, TextTable, TableSelector
 from hollarek.devtools import Unittest
 
@@ -7,8 +8,9 @@ class TestCsvPreprocessor(Unittest):
     def setUp(self):
         # Setup CsvPreprocessor with comma as a separator
         self.preprocessor = CsvPreprocessor(',')
-        self.vertical_csv_path = 'vertical.csv'
-        self.horizontal_csv_path = 'horizontal.csv'
+        test_dirpath = os.path.dirname(os.path.abspath(__file__))
+        self.vertical_csv_path = os.path.join(test_dirpath,'vertical.csv')
+        self.horizontal_csv_path = os.path.join(test_dirpath,'horizontal.csv')
 
     def test_read_csv_vertical(self):
         # Read vertically oriented CSV and validate the structure or content

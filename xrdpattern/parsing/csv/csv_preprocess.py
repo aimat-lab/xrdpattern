@@ -25,15 +25,18 @@ class CsvPreprocessor:
             raise ValueError(f"Invalid seperator: {seperator}")
         self.seperator : str = seperator
 
+
     def read_csv(self, fpath: str, outerDimensionAxis: Orientation = Orientation.VERTICAL) -> NumericalTable:
         data = []
         with open(fpath, 'r', newline='') as infile:
             for line in infile:
-                row = line.strip().split(self.seperator)
-                data.append(row)
+                row = [item.strip() for item in line.strip().split(self.seperator)]
+                if row and any(item for item in row):
+                    data.append(row)
 
         if outerDimensionAxis == Orientation.HORIZONTAL:
             data = [list(col) for col in zip(*data)]
         table = TextTable(data)
+        print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
         return TableSelector.get_numerical_subtable(table=table)
 
