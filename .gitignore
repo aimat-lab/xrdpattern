@@ -11,3 +11,4 @@ xylib/xylib_wrap.cpp
 xylib_wrap.cpp
 xylib.py
 .tox
+_xylib.cpython*
