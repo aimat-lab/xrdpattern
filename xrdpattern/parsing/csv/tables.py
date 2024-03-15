@@ -7,10 +7,20 @@ class Index:
     row : int
     col : int
 
+    def __eq__(self, other):
+        if not isinstance(other, Index):
+            return False
+        return self.row == other.row and self.col == other.col
+
 @dataclass
 class Region:
     upper_left: Index
     lower_right: Index
+
+    def __eq__(self, other):
+        if not isinstance(other, Region):
+            return False
+        return self.upper_left == other.upper_left and self.lower_right == other.lower_right
 
     def get_horizontal_length(self) -> int:
         return self.lower_right.col - self.upper_left.col + 1

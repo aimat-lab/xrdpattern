@@ -35,13 +35,13 @@ class TableSelector:
 
 
     def get_lower_right_region(self) -> Optional[Region]:
-        region = self.get_lower_right_square()
+        region = self._get_lower_right_square()
         if region:
-            region = self.get_upwards_expansion(region=region)
-            region=  self.get_leftwards_expansion(region=region)
+            region = self._get_upwards_expansion(region=region)
+            region=  self._get_leftwards_expansion(region=region)
         return region
 
-    def get_upwards_expansion(self, region : Region) -> Region:
+    def _get_upwards_expansion(self, region : Region) -> Region:
         upper_left = region.upper_left
         lower_right = region.lower_right
         while upper_left.row-1 >= 0:
@@ -54,7 +54,7 @@ class TableSelector:
         return Region(upper_left=upper_left, lower_right=lower_right)
 
 
-    def get_leftwards_expansion(self, region : Region) -> Region:
+    def _get_leftwards_expansion(self, region : Region) -> Region:
         upper_left = region.upper_left
         lower_right = region.lower_right
         while upper_left.col-1 >= 0:
@@ -67,7 +67,7 @@ class TableSelector:
         return Region(upper_left=upper_left, lower_right=lower_right)
 
 
-    def get_lower_right_square(self) -> Optional[Region]:
+    def _get_lower_right_square(self) -> Optional[Region]:
         upper_left = None
         new_upper_left = self.table.get_lower_right_index()
         while True:
