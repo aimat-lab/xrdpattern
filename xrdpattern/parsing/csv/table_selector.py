@@ -3,19 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, Optional
 
-from xrdpattern.parsing.csv.tables import TextTable
+from .tables import TextTable, Region, Index
+
+# -------------------------------------------
 
 
-@dataclass
-class Index:
-    row : int
-    col : int
-
-
-@dataclass
-class Region:
-    upper_left : Index
-    lower_right : Index
 
 
 @dataclass
