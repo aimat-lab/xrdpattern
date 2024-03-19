@@ -1,19 +1,5 @@
 #!/usr/bin/env python
-
-# This setup.py builds xylib as a python extension, which is experimental.
-# The normal way of building xylib is using configure && make. Or cmake.
-long_description="""\
-xylib is a library for reading obscure file formats with data from
-powder diffraction, spectroscopy and other experimental methods.
-For the list of supported formats see https://github.com/wojdyr/xylib .
-
-This module includes bindings to xylib and xylib itself.
-The first two numbers in the version are the version of included xylib.
-
-Prerequisites for building: SWIG and Boost libraries (headers only).
-"""
 from glob import glob
-
 
 from setuptools import setup, find_packages, Extension
 import subprocess
@@ -66,10 +52,14 @@ if sys.version_info[0] == 3:
 
 setup(name='xrdpattern',
       version='0.1.0',
-      description='Python bindings to xylib including a fix for RawV4 files. Xylib is written by Marcin Wojdyr (wojdyr@gmail.com). This package'
-                  'includes a fix for RawV4 files that is necessary as a depdency for package xrdpattern',
+      description='Python library for XrdPatterns including file import, file export and postprocessing functionalities',
       install_requires=reqs,
-      long_description=long_description,
+      long_description=("Python library for XrdPatterns including import from data files, "
+                        "export as json file and postprocessing functionalities. The data file "
+                        "import functionalities are built on C++ library xylib so beyond a standard "
+                        "python install, this library also requires: "
+                        "\n- A C++ compiler and standard library "
+                        "\n- A C++ to python bridge (Swig)"),
       packages=find_packages(),
       classifiers=[
           'Development Status :: 5 - Production/Stable',
