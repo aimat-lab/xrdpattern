@@ -6,10 +6,10 @@ import numpy as np
 from copy import copy
 from dataclasses import dataclass
 from scipy.interpolate import CubicSpline
-
+from hollarek.abstract import SelectableEnum
 # -------------------------------------------
 
-class XAxisType(Enum):
+class XAxisType(SelectableEnum):
     TwoTheta = 'TwoTheta'
     QValues = 'QValues'
 

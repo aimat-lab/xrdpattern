@@ -6,32 +6,49 @@ from hollarek.fsys import FsysNode
 from xrdpattern.pattern import XrdPattern, Metadata
 from xrdpattern.database import XrdPatternDB
 from .data_files import XrdFormat, Formats, get_xylib_repr
-from .csv import CsvScheme, CsvPreprocessor
-
+from .csv import CsvScheme
+from dataclasses import dataclass
 # -------------------------------------------
+
+
+@dataclass
+class ParserOptions:
+    select_suffixes : Optional[list[str]] = None
+    csv_scheme : Optional[CsvScheme] = None
+    format_hint : Optional[XrdFormat] = None
+
 
 
 
 class Parser:
-    def __init__(self, select_suffixes : Optional[list[str]] = None):
-        if select_suffixes is None:
+    def __init__(self, parser_options : ParserOptions = ParserOptions()):
+        if parser_options.select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
+        self.csv_scheme : Optional[CsvScheme] =  parser_options.csv_scheme
+        self.format_hint : Optional[XrdFormat] = parser_options.format_hint
 
     # -------------------------------------------
     # pattern
 
-    def get_pattern(self, fpath : str, format_hint : Optional[XrdFormat] = None) -> XrdPattern:
+    def get_patterns(self, fpath : str) -> list[XrdPattern]:
         suffix = FsysNode(fpath).get_suffix()
 
         if suffix == Formats.aimat_json.suffix:
-            pattern = self.from_json(fpath=fpath)
-        elif suffix:
+            patterns = [self.from_json(fpath=fpath)]
+        elif suffix in Formats.get_datafile_suffixes():
+            format_hint = self.format_hint
             if not format_hint:
                 format_hint = Formats.get_format(suffix=suffix)
-            pattern = self.from_data_file(fpath=fpath, format_hint=format_hint)
+            patterns = [self.from_data_file(fpath=fpath, format_hint=format_hint)]
+        elif suffix == '.csv':
+            csv_scheme = self.csv_scheme
+            if not csv_scheme:
+                csv_scheme = CsvScheme.from_manual(fpath=fpath)
+            patterns = self.from_csv(fpath=fpath, csv_scheme=csv_scheme)
         else:
             raise ValueError(f"Unable to determine format of file {fpath} without format hint or file extension")
-        return pattern
+        return patterns
+
 
     @staticmethod
     def from_json(fpath: str) -> XrdPattern:
@@ -57,6 +74,10 @@ class Parser:
         return XrdPattern(twotheta_to_intensity=twotheta_to_intensity, metadata=metadata)
 
 
+    @staticmethod
+    def from_csv(fpath : str, csv_scheme : CsvScheme):
+        raise NotImplementedError
+
     # -------------------------------------------
     # pattern database
 
@@ -66,11 +87,10 @@ class Parser:
 
         patterns = []
         data_fpaths = self.get_datafile_fpaths(datafolder_path=datafolder_path)
-        # total_count = len(data_fpaths)
         for fpath in data_fpaths:
             try:
-                new_pattern = self.get_pattern(fpath=fpath)
-                patterns.append(new_pattern)
+                new_patterns = self.get_patterns(fpath=fpath)
+                patterns += new_patterns
             except Exception as e:
                 print(f"Could not import pattern from file {fpath}. Error: {str(e)}")
         return XrdPatternDB(patterns=patterns)

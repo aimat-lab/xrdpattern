@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
-
-from .table_selector import TableSelector, NumericalTable, TextTable
+from hollarek.abstract import SelectableEnum
 from xrdpattern.pattern import XAxisType
+from .table_selector import TableSelector, NumericalTable, TextTable
+
 # -------------------------------------------
 
-class Orientation(Enum):
+class Orientation(SelectableEnum):
     VERTICAL = 'vertical'
     HORIZONTAL = 'horizontal'
 
@@ -18,8 +18,15 @@ class CsvScheme:
     pattern_dimension : Orientation
     header_lines : int = 1
 
+    @classmethod
+    def from_manual(cls, fpath : str) -> CsvScheme:
+        x_axis_type = XAxisType.from_manual()
+        pattern_dimension = Orientation.from_manual()
+        print(f'No default csv scheme specified in parser. Please specify csv scheme for {fpath} manually')
+        return CsvScheme(x_axis_type=x_axis_type, pattern_dimension=pattern_dimension)
 
-class CsvPreprocessor:
+
+class CsvReader:
     def __init__(self, seperator : str):
         if not seperator in [',', ';', '\t']:
             raise ValueError(f"Invalid seperator: {seperator}")

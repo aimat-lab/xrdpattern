@@ -33,6 +33,12 @@ class Formats:
     xsyg = XrdFormat("xsyg", "xsyg")
     aimat_json = XrdFormat("ajson","json")
 
+
+    @classmethod
+    def get_datafile_suffixes(cls):
+        return [xrd_format.suffix for xrd_format in cls.get_formats() if not xrd_format.suffix in ["json", "csv"]]
+
+
     @classmethod
     def get_allowed_suffixes(cls) -> list[str]:
         return [xrd_format.suffix for xrd_format in cls.get_formats()]
@@ -48,5 +54,3 @@ class Formats:
         if not xrd_format:
             raise ValueError(f"Invalid suffix {suffix}")
         return xrd_format
-
-
