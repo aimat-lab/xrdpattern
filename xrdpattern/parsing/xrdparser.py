@@ -7,7 +7,7 @@ from hollarek.fsys import FsysNode
 from xrdpattern.pattern import XrdPattern, Metadata
 from xrdpattern.database import XrdPatternDB
 from .data_files import XrdFormat, Formats, get_xylib_repr
-from .csv import CsvScheme
+from .csv import CsvScheme, CsvReader
 
 # -------------------------------------------
 
@@ -23,9 +23,9 @@ class XrdParser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
         if parser_options.select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
-        self.csv_scheme : Optional[CsvScheme] =  parser_options.csv_scheme
         self.format_hint : Optional[XrdFormat] = parser_options.format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
+        self.default_csv_reader : Optional[CsvReader] = CsvReader(parser_options.csv_scheme)
 
     # -------------------------------------------
     # pattern
@@ -41,11 +41,7 @@ class XrdParser:
                 format_hint = Formats.get_format(suffix=suffix)
             xrd_pattern = [self.from_data_file(fpath=fpath, format_hint=format_hint)]
         elif suffix == 'csv':
-            csv_scheme = self.csv_scheme
-            if not csv_scheme:
-                print(f'No csv scheme specified for {fpath}')
-                csv_scheme = CsvScheme.from_manual()
-            xrd_pattern = self.from_csv(fpath=fpath, csv_scheme=csv_scheme)
+            xrd_pattern = self.from_csv(fpath=fpath)
         else:
             raise ValueError(f"Unable to determine format of file {fpath} without format hint or file extension")
         for pattern in xrd_pattern:
@@ -79,9 +75,17 @@ class XrdParser:
         return XrdPattern(twotheta_to_intensity=twotheta_to_intensity, metadata=metadata)
 
 
-    @staticmethod
-    def from_csv(fpath : str, csv_scheme : CsvScheme) -> list[XrdPattern]:
-        raise NotImplementedError(f"CSV parsing not implemented yet")
+    def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[XrdPattern]:
+        csv_reader = None
+        if csv_scheme:
+            csv_reader = CsvReader(csv_scheme)
+        if self.default_csv_reader:
+            csv_reader = self.default_csv_reader
+        if not csv_reader:
+            print(f'No CSV scheme specified in either argument or as default value of xrdparser.'
+                  f'Please specify csv scheme for {fpath} manually:')
+            csv_reader = CsvReader(CsvScheme.from_manual())
+        return csv_reader.read_csv(fpath=fpath)
 
     # -------------------------------------------
     # pattern database
