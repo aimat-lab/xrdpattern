@@ -91,10 +91,12 @@ class NumericalTable:
             raise ValueError(f"Number of headers ({len(self.headers)}) does not match number"
                              f" of data columns ({len(self.data)})")
 
-    def get_data(self, index : int) -> list[float]:
-        return self.data[index]
+    def get_data(self, row : int) -> list[float]:
+        return self.data[row]
 
-    def get_header(self, index : int) -> str:
-        return self.headers[index]
+    def get_headers(self, row : int) -> str:
+        return self.headers[row]
 
 
+    def get_row_count(self) -> int:
+        return len(self.data)

@@ -24,6 +24,10 @@ class Metadata(JsonDataclass):
     measurement_date: Optional[datetime] = None
 
     @classmethod
+    def make_empty(cls):
+        return Metadata(wavelength_info=WavelengthInfo())
+
+    @classmethod
     def from_header_str(cls, header_str: str) -> Metadata:
         metadata_map = cls.get_key_value_dict(header_str=header_str)
 

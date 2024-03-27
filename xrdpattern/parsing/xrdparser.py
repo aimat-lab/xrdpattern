@@ -72,7 +72,7 @@ class XrdParser:
             deg, intensity = float(deg_str), float(intensity_str)
             twotheta_to_intensity[deg] = intensity
 
-        return XrdPattern(twotheta_to_intensity=twotheta_to_intensity, metadata=metadata)
+        return XrdPattern(intensity_map=twotheta_to_intensity, metadata=metadata)
 
 
     def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[XrdPattern]:

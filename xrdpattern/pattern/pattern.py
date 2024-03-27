@@ -14,7 +14,7 @@ from .pattern_report import PatternReport
 
 @dataclass
 class XrdPattern(JsonDataclass):
-    twotheta_to_intensity : dict[float, float]
+    intensity_map : IntensityMap
     metadata: Metadata
     datafile_path : Optional[str] = None
 
@@ -45,9 +45,9 @@ class XrdPattern(JsonDataclass):
     def get_parsing_report(self) -> PatternReport:
         pattern_health = PatternReport(data_file_path=self.datafile_path)
 
-        if len(self.twotheta_to_intensity) == 0:
+        if len(self.intensity_map.data) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.twotheta_to_intensity) < 10:
+        elif len(self.intensity_map.data) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
         if self.get_wavelength(primary=True) is None:
             pattern_health.add_error('Primary wavelength missing!')
@@ -101,7 +101,7 @@ class XrdPattern(JsonDataclass):
         if x_axis_type == XAxisType.QValues:
             raise NotImplementedError
 
-        intensity_map = IntensityMap(self.twotheta_to_intensity,x_axis_type=XAxisType.TwoTheta)
+        intensity_map = self.intensity_map
         if apply_standardization:
             start, stop, num_entries = 0, 90, 1000
             intensity_map = intensity_map.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from hollarek.abstract import SelectableEnum
-from xrdpattern.pattern import XAxisType, XrdPattern
+from xrdpattern.pattern import XAxisType, XrdPattern, IntensityMap, Metadata
 from .table_selector import TableSelector, NumericalTable, TextTable
 
 # -------------------------------------------
@@ -42,7 +42,7 @@ class CsvReader:
         self.csv_scheme : CsvScheme = csv_scheme
 
 
-    def read_csv(self, fpath: str) -> XrdPattern:
+    def as_horiztontal_table(self, fpath : str):
         data = []
         with open(fpath, 'r', newline='') as infile:
             for line in infile:
@@ -54,5 +54,24 @@ class CsvReader:
             data = [list(col) for col in zip(*data)]
         table = TextTable(data)
         print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
-        # return TableSelector.get_numerical_subtable(table=table)
+        return TableSelector.get_numerical_subtable(table=table)
+
+
+    def read_csv(self, fpath: str) -> list[XrdPattern]:
+        numerical_table = self.as_horiztontal_table(fpath=fpath)
+        x_axis_row = numerical_table.get_data(row=0)
+        data_rows = [numerical_table.get_data(row=row) for row in range(1, numerical_table.get_row_count())]
+
+        if len(data_rows) == 0:
+            return []
+
+        if not len(x_axis_row) == len(data_rows[0]):
+            raise ValueError(f"X-axis row length {len(x_axis_row)} does not match data row length {len(data_rows[0])}")
+
+        patterns = []
+        for row in data_rows:
+            data = {x : y for (x,y) in zip(x_axis_row, row)}
+            intensity_map = IntensityMap(data=data, x_axis_type=self.csv_scheme.x_axis_type)
+            new = XrdPattern(intensity_map=intensity_map, metadata=Metadata.make_empty())
+            patterns.append(new)
 
