@@ -1,15 +1,15 @@
 from __future__ import annotations
 import os.path
 from typing import Optional
+from dataclasses import dataclass
 from hollarek.fsys import FsysNode
 
 from xrdpattern.pattern import XrdPattern, Metadata
 from xrdpattern.database import XrdPatternDB
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvScheme
-from dataclasses import dataclass
-# -------------------------------------------
 
+# -------------------------------------------
 
 @dataclass
 class ParserOptions:

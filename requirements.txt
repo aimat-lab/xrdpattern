@@ -1,4 +1,6 @@
-hollarek==0.9.1
+#hollarek==0.9.1
 numpy
 scipy
 matplotlib
+hollarek @ git+ssh://git@github.com/Somerandomguy10111/hollarek.git#egg=hollarek
+
