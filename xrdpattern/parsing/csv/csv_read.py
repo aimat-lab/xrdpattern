@@ -19,10 +19,9 @@ class Seperator(SelectableEnum):
 
 @dataclass
 class CsvScheme:
-    x_axis_type : XAxisType
     pattern_dimension : Orientation
+    x_axis_type: XAxisType = XAxisType.TwoTheta
     seperator: str = ','
-    header_lines : int = 1
 
     def __post_init__(self):
         if not self.seperator in [',', ';', '\t']:
@@ -40,7 +39,6 @@ class CsvScheme:
 class CsvReader:
     def __init__(self, csv_scheme : CsvScheme):
         self.csv_scheme : CsvScheme = csv_scheme
-
 
     def as_horiztontal_table(self, fpath : str):
         data = []

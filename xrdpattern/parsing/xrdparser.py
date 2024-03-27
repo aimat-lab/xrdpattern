@@ -4,7 +4,7 @@ from typing import Optional
 from dataclasses import dataclass
 from hollarek.fsys import FsysNode
 
-from xrdpattern.pattern import XrdPattern, Metadata
+from xrdpattern.pattern import XrdPattern, Metadata, IntensityMap, XAxisType
 from xrdpattern.database import XrdPatternDB
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvScheme, CsvReader
@@ -65,14 +65,14 @@ class XrdParser:
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         metadata = Metadata.from_header_str(header_str=header)
 
-        twotheta_to_intensity = {}
+        two_theta_to_intensity = {}
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
         for row in data_rows:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
-            twotheta_to_intensity[deg] = intensity
-
-        return XrdPattern(intensity_map=twotheta_to_intensity, metadata=metadata)
+            two_theta_to_intensity[deg] = intensity
+        intensity_map = IntensityMap(data=two_theta_to_intensity, x_axis_type=XAxisType.TwoTheta)
+        return XrdPattern(intensity_map=intensity_map, metadata=metadata)
 
 
     def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[XrdPattern]:
