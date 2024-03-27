@@ -264,8 +264,8 @@ HISTORY
 .. raw:: html
 
    <p align="right">
-   <a href="http://sourceforge.net/projects/xylib">
-   <img src="http://sflogo.sourceforge.net/sflogo.php?group_id=204287&amp;type=10" width="80" height="15" />
+   <a href="https://sourceforge.net/projects/xylib">
+   <img src="https://sflogo.sourceforge.net/sflogo.php?group_id=204287&amp;type=10" width="80" height="15" />
    </a>
    </p>
 

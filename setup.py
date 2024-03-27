@@ -50,6 +50,7 @@ swig_opts = ['-c++', '-modern', '-modernargs']
 if sys.version_info[0] == 3:
     swig_opts += ['-py3']
 
+# noinspection PyTypeChecker
 setup(name='xrdpattern',
       version='0.1.0',
       description='Python library for XrdPatterns including file import, file export and postprocessing functionalities',

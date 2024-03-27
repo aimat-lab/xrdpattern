@@ -20,8 +20,8 @@ class CsvScheme:
 
     @classmethod
     def from_manual(cls, fpath : str) -> CsvScheme:
-        x_axis_type = XAxisType.from_manual()
-        pattern_dimension = Orientation.from_manual()
+        x_axis_type = XAxisType.from_manual_query()
+        pattern_dimension = Orientation.from_manual_query()
         print(f'No default csv scheme specified in parser. Please specify csv scheme for {fpath} manually')
         return CsvScheme(x_axis_type=x_axis_type, pattern_dimension=pattern_dimension)
 

@@ -1,12 +1,12 @@
 import unittest
 import os
-from xrdpattern.parsing.csv import CsvReader, Orientation, TextTable, TableSelector
+from xrdpattern.parsing.csv import CsvReader, Orientation
 from hollarek.devtools import Unittest
 
-class TestCsvPreprocessor(Unittest):
+class TestCsvReader(Unittest):
 
     def setUp(self):
-        # Setup CsvPreprocessor with comma as a separator
+        # Setup CsvReader with comma as a separator
         self.preprocessor = CsvReader(',')
         test_dirpath = os.path.dirname(os.path.abspath(__file__))
         self.vertical_csv_path = os.path.join(test_dirpath,'vertical.csv')

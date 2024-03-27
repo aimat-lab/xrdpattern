@@ -6,8 +6,7 @@ from dataclasses import dataclass
 import os
 from uuid import uuid4
 
-from hollarek.templates import JsonDataclass
-
+from hollarek.abstract import JsonDataclass
 from .intensity_map import IntensityMap, XAxisType
 from .metadata import Metadata
 from .pattern_report import PatternReport

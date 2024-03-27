@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import math
-from enum import Enum
 import numpy as np
 from copy import copy
 from dataclasses import dataclass

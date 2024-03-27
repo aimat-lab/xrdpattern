@@ -1,7 +1,7 @@
 from __future__ import annotations
 from datetime import datetime
 from typing import Optional
-from hollarek.templates import JsonDataclass
+from hollarek.abstract import JsonDataclass
 from dataclasses import dataclass
 
 from typing import Iterator, Tuple

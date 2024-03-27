@@ -1,4 +1,3 @@
-import unittest
 from xrdpattern.parsing.csv import TextTable, TableSelector
 from hollarek.devtools import Unittest
 
