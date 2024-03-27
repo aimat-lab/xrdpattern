@@ -16,7 +16,7 @@ class ParserOptions:
     select_suffixes : Optional[list[str]] = None
     csv_scheme : Optional[CsvScheme] = None
     format_hint : Optional[XrdFormat] = None
-    wave_length_angstrom : Optional[float] = None
+    default_wavelength_angstr : Optional[float] = None
 
 
 class XrdParser:
@@ -76,7 +76,7 @@ class XrdParser:
 
     @staticmethod
     def from_csv(fpath : str, csv_scheme : CsvScheme):
-        raise NotImplementedError
+        raise NotImplementedError(f"CSV parsing not implemented yet")
 
     # -------------------------------------------
     # pattern database
@@ -92,12 +92,9 @@ class XrdParser:
                 new_patterns = self.get_patterns(fpath=fpath)
                 patterns += new_patterns
             except Exception as e:
-                print(f"Could not import pattern from file {fpath}. Error: {str(e)}")
+                print(f"Could not import pattern from file {fpath} \n"
+                      f"-> Error: \"{e.__class__.__name__}: {str(e)}\"")
         return XrdPatternDB(patterns=patterns)
-
-
-    def preprocess_csv(self, datafolder_path : str, scheme : CsvScheme):
-        raise NotImplementedError
 
 
     def get_datafile_fpaths(self, datafolder_path : str) -> list[str]:
