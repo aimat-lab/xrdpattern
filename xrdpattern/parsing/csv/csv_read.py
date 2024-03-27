@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 from hollarek.abstract import SelectableEnum
 from xrdpattern.pattern import XAxisType

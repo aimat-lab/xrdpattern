@@ -42,6 +42,26 @@ class XrdPattern(JsonDataclass):
     # -------------------------------------------
     # get
 
+    def get_parsing_report(self) -> PatternReport:
+        pattern_health = PatternReport(data_file_path=self.datafile_path)
+
+        if len(self.twotheta_to_intensity) == 0:
+            pattern_health.add_critical('No data found. Degree over intensity is empty!')
+        elif len(self.twotheta_to_intensity) < 10:
+            pattern_health.add_critical('Data is too short. Less than 10 entries!')
+        if self.get_wavelength(primary=True) is None:
+            pattern_health.add_error('Primary wavelength missing!')
+
+        if self.get_wavelength(primary=False) is None:
+            pattern_health.add_warning('No secondary wavelength found')
+        if self.metadata.anode_material is None:
+            pattern_health.add_warning('No anode material found')
+        if self.metadata.measurement_date is None:
+            pattern_health.add_warning('No measurement datetime found')
+
+        return pattern_health
+
+
     def get_name(self) -> str:
         if self.datafile_path:
             file_name = os.path.basename(self.datafile_path)
@@ -64,6 +84,13 @@ class XrdPattern(JsonDataclass):
 
         return wavelength
 
+    def set_wavelength(self, new_wavelength : float, primary : bool = True):
+        wavelength_info = self.metadata.wavelength_info
+        if primary:
+            wavelength_info.primary = new_wavelength
+        else:
+            wavelength_info.secondary = new_wavelength
+
 
     def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> IntensityMap:
         """
@@ -80,26 +107,6 @@ class XrdPattern(JsonDataclass):
             intensity_map = intensity_map.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
 
         return intensity_map
-
-
-    def get_parsing_report(self) -> PatternReport:
-        pattern_health = PatternReport(data_file_path=self.datafile_path)
-
-        if len(self.twotheta_to_intensity) == 0:
-            pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.twotheta_to_intensity) < 10:
-            pattern_health.add_critical('Data is too short. Less than 10 entries!')
-        if self.get_wavelength(primary=True) is None:
-            pattern_health.add_error('Primary wavelength missing!')
-
-        if self.get_wavelength(primary=False) is None:
-            pattern_health.add_warning('No secondary wavelength found')
-        if self.metadata.anode_material is None:
-            pattern_health.add_warning('No anode material found')
-        if self.metadata.measurement_date is None:
-            pattern_health.add_warning('No measurement datetime found')
-
-        return pattern_health
 
     # -------------------------------------------
 

@@ -25,6 +25,7 @@ class XrdParser:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
         self.csv_scheme : Optional[CsvScheme] =  parser_options.csv_scheme
         self.format_hint : Optional[XrdFormat] = parser_options.format_hint
+        self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
 
     # -------------------------------------------
     # pattern
@@ -33,21 +34,25 @@ class XrdParser:
         suffix = FsysNode(fpath).get_suffix()
 
         if suffix == Formats.aimat_json.suffix:
-            patterns = [self.from_json(fpath=fpath)]
+            xrd_pattern = [self.from_json(fpath=fpath)]
         elif suffix in Formats.get_datafile_suffixes():
             format_hint = self.format_hint
             if not format_hint:
                 format_hint = Formats.get_format(suffix=suffix)
-            patterns = [self.from_data_file(fpath=fpath, format_hint=format_hint)]
+            xrd_pattern = [self.from_data_file(fpath=fpath, format_hint=format_hint)]
         elif suffix == 'csv':
             csv_scheme = self.csv_scheme
             if not csv_scheme:
                 print(f'No csv scheme specified for {fpath}')
                 csv_scheme = CsvScheme.from_manual()
-            patterns = self.from_csv(fpath=fpath, csv_scheme=csv_scheme)
+            xrd_pattern = self.from_csv(fpath=fpath, csv_scheme=csv_scheme)
         else:
             raise ValueError(f"Unable to determine format of file {fpath} without format hint or file extension")
-        return patterns
+        for pattern in xrd_pattern:
+            if pattern.get_wavelength(primary=True) is None and self.default_wavelength_angstr:
+                pattern.set_wavelength(new_wavelength=self.default_wavelength_angstr)
+
+        return xrd_pattern
 
 
     @staticmethod
@@ -75,7 +80,7 @@ class XrdParser:
 
 
     @staticmethod
-    def from_csv(fpath : str, csv_scheme : CsvScheme):
+    def from_csv(fpath : str, csv_scheme : CsvScheme) -> list[XrdPattern]:
         raise NotImplementedError(f"CSV parsing not implemented yet")
 
     # -------------------------------------------
