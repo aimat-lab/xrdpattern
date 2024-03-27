@@ -84,6 +84,7 @@ class XrdPattern(JsonDataclass):
 
         return wavelength
 
+
     def set_wavelength(self, new_wavelength : float, primary : bool = True):
         wavelength_info = self.metadata.wavelength_info
         if primary:

@@ -5,7 +5,7 @@ import numpy as np
 from copy import copy
 from dataclasses import dataclass
 from scipy.interpolate import CubicSpline
-from hollarek.abstract import SelectableEnum
+from hollarek.abstract import SelectableEnum, JsonDataclass
 # -------------------------------------------
 
 class XAxisType(SelectableEnum):
@@ -14,7 +14,7 @@ class XAxisType(SelectableEnum):
 
 
 @dataclass
-class IntensityMap:
+class IntensityMap(JsonDataclass):
     data : dict[float, float]
     x_axis_type : XAxisType
 
