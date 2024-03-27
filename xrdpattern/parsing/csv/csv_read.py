@@ -19,10 +19,10 @@ class CsvScheme:
     header_lines : int = 1
 
     @classmethod
-    def from_manual(cls, fpath : str) -> CsvScheme:
+    def from_manual(cls) -> CsvScheme:
+        print(f'Please specify csv scheme')
         x_axis_type = XAxisType.from_manual_query()
         pattern_dimension = Orientation.from_manual_query()
-        print(f'No default csv scheme specified in parser. Please specify csv scheme for {fpath} manually')
         return CsvScheme(x_axis_type=x_axis_type, pattern_dimension=pattern_dimension)
 
 

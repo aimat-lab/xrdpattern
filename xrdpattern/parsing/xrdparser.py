@@ -16,11 +16,10 @@ class ParserOptions:
     select_suffixes : Optional[list[str]] = None
     csv_scheme : Optional[CsvScheme] = None
     format_hint : Optional[XrdFormat] = None
+    wave_length_angstrom : Optional[float] = None
 
 
-
-
-class Parser:
+class XrdParser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
         if parser_options.select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
@@ -40,10 +39,11 @@ class Parser:
             if not format_hint:
                 format_hint = Formats.get_format(suffix=suffix)
             patterns = [self.from_data_file(fpath=fpath, format_hint=format_hint)]
-        elif suffix == '.csv':
+        elif suffix == 'csv':
             csv_scheme = self.csv_scheme
             if not csv_scheme:
-                csv_scheme = CsvScheme.from_manual(fpath=fpath)
+                print(f'No csv scheme specified for {fpath}')
+                csv_scheme = CsvScheme.from_manual()
             patterns = self.from_csv(fpath=fpath, csv_scheme=csv_scheme)
         else:
             raise ValueError(f"Unable to determine format of file {fpath} without format hint or file extension")
