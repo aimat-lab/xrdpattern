@@ -16,6 +16,8 @@ class WavelengthInfo(JsonDataclass):
     secondary: Optional[float] = None
     ratio: Optional[float] = None
 
+    def __eq__(self, other):
+        return self.primary == other.primary and self.secondary == other.secondary and self.ratio == other.ratio
 
 @dataclass
 class Metadata(JsonDataclass):
@@ -74,3 +76,11 @@ class Metadata(JsonDataclass):
             return datetime.strptime(combined_str, '%m/%d/%Y %H:%M:%S')
         return None
 
+
+    def __eq__(self, other):
+        wavelength_match = self.wavelength_info == other.wavelength_info
+        anode_match = self.anode_material == other.anode_material
+        temp_match = self.temp_celcius == other.temp_celcius
+        date_match = self.measurement_date == other.measurement_date
+
+        return wavelength_match and anode_match and temp_match and date_match

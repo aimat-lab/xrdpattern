@@ -13,6 +13,9 @@ class TestParseXrdpattern(Unittest):
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern, XrdPattern)
 
+        print(f'serialized pattern')
+        print(f'{self.pattern.to_str()}')
+
 
     def test_report_ok(self):
         report = self.pattern.get_parsing_report()
@@ -71,14 +74,6 @@ class TestParserDatabase(Unittest):
         self.assertTrue(len(report.pattern_reports) > 0)
 
 
-
-
 if __name__ == "__main__":
-    # TestParseXrdpattern.execute_all()
+    TestParseXrdpattern.execute_all()
     TestParserDatabase.execute_all()
-
-
-    # def test_read_ok(self):
-    #     pattern_serialization = self.pattern.to_str()
-    #     self.assertIsInstance(pattern_serialization, str)
-    #     print(f'Serialized xrd pattern: {pattern_serialization}')

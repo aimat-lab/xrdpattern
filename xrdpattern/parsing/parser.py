@@ -41,7 +41,7 @@ class Parser:
         elif suffix == 'csv':
             xrd_pattern = self.from_csv(fpath=fpath)
         else:
-            raise ValueError(f"Unable to determine format of file {fpath} without format hint or file extension")
+            raise ValueError(f"Format .{suffix} is not supported")
         for pattern in xrd_pattern:
             if pattern.get_wavelength(primary=True) is None and self.default_wavelength_angstr:
                 pattern.set_wavelength(new_wavelength=self.default_wavelength_angstr)

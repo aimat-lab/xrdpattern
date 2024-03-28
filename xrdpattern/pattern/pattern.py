@@ -98,4 +98,7 @@ class XrdPattern(PatternInfo):
         return intensity_map
 
 
-
+    def __eq__(self, other):
+        if not isinstance(other, XrdPattern):
+            return False
+        return self.intensity_map == other.intensity_map and self.metadata == other.metadata

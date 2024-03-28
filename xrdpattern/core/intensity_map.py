@@ -74,3 +74,10 @@ class IntensityMap(JsonDataclass):
         x_values = list(self.data.keys())
         y_values = list(self.data.values())
         return x_values, y_values
+
+
+    def __eq__(self, other):
+        if not isinstance(other, IntensityMap):
+            return False
+
+        return self.data == other.data and self.x_axis_type == other.x_axis_type

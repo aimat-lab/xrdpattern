@@ -92,7 +92,7 @@ class DatabaseReport:
         summary_str += f'\n{self.num_warn}/{num_attempted}  patterns had warning(s)'
 
         if num_failed > 0:
-            summary_str += f'\n\n Failed files:\n'
+            summary_str += f'\n\nFailed files:\n'
             for pattern_fpath in self.failed_files:
                 summary_str += f'\n{pattern_fpath}'
 
