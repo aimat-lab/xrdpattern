@@ -1,11 +1,9 @@
 from __future__ import annotations
-import os.path
 from typing import Optional
 from dataclasses import dataclass
 from hollarek.fsys import FsysNode
 
-from xrdpattern.pattern import XrdPattern, Metadata, IntensityMap, XAxisType
-from xrdpattern.database import XrdPatternDB
+from ..core import PatternInfo, Metadata, IntensityMap, XAxisType
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvScheme, CsvReader
 
@@ -30,31 +28,31 @@ class XrdParser:
     # -------------------------------------------
     # pattern database
 
-    def get_pattern_db(self, datafolder_path : str) -> XrdPatternDB:
-        if not os.path.isdir(datafolder_path):
-            raise ValueError(f"Given path {datafolder_path} is not a directory")
+    # def get_pattern_db(self, datafolder_path : str) -> PatternInfoDB:
+    #     if not os.path.isdir(datafolder_path):
+    #         raise ValueError(f"Given path {datafolder_path} is not a directory")
+    #
+    #     patterns = []
+    #     data_fpaths = self.get_datafile_fpaths(datafolder_path=datafolder_path)
+    #     for fpath in data_fpaths:
+    #         try:
+    #             new_patterns = self.get_patterns(fpath=fpath)
+    #             patterns += new_patterns
+    #         except Exception as e:
+    #             print(f"Could not import pattern from file {fpath} \n"
+    #                   f"-> Error: \"{e.__class__.__name__}: {str(e)}\"")
+    #     return PatternInfoDB(patterns=patterns)
 
-        patterns = []
-        data_fpaths = self.get_datafile_fpaths(datafolder_path=datafolder_path)
-        for fpath in data_fpaths:
-            try:
-                new_patterns = self.get_patterns(fpath=fpath)
-                patterns += new_patterns
-            except Exception as e:
-                print(f"Could not import pattern from file {fpath} \n"
-                      f"-> Error: \"{e.__class__.__name__}: {str(e)}\"")
-        return XrdPatternDB(patterns=patterns)
 
-
-    def get_datafile_fpaths(self, datafolder_path : str) -> list[str]:
-        root_node = FsysNode(path=datafolder_path)
-        xrd_files_nodes = root_node.get_file_subnodes(select_formats=self.select_formats)
-        return [node.get_path() for node in xrd_files_nodes]
+    # def get_datafile_fpaths(self, datafolder_path : str) -> list[str]:
+    #     root_node = FsysNode(path=datafolder_path)
+    #     xrd_files_nodes = root_node.get_file_subnodes(select_formats=self.select_formats)
+    #     return [node.get_path() for node in xrd_files_nodes]
 
     # -------------------------------------------
     # pattern
 
-    def get_patterns(self, fpath : str) -> list[XrdPattern]:
+    def get_pattern_info_list(self, fpath : str) -> list[PatternInfo]:
         suffix = FsysNode(fpath).get_suffix()
 
         if suffix == Formats.aimat_json.suffix:
@@ -76,15 +74,15 @@ class XrdParser:
 
 
     @staticmethod
-    def from_json(fpath: str) -> XrdPattern:
+    def from_json(fpath: str) -> PatternInfo:
         with open(fpath, 'r') as file:
             data = file.read()
-            new_pattern = XrdPattern.from_str(json_str=data)
+            new_pattern = PatternInfo.from_str(json_str=data)
         return new_pattern
 
 
     @staticmethod
-    def from_data_file(fpath: str, format_hint : XrdFormat) -> XrdPattern:
+    def from_data_file(fpath: str, format_hint : XrdFormat) -> PatternInfo:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         metadata = Metadata.from_header_str(header_str=header)
@@ -96,10 +94,10 @@ class XrdParser:
             deg, intensity = float(deg_str), float(intensity_str)
             two_theta_to_intensity[deg] = intensity
         intensity_map = IntensityMap(data=two_theta_to_intensity, x_axis_type=XAxisType.TwoTheta)
-        return XrdPattern(intensity_map=intensity_map, metadata=metadata)
+        return PatternInfo(intensity_map=intensity_map, metadata=metadata)
 
 
-    def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[XrdPattern]:
+    def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[PatternInfo]:
         csv_reader = None
         if csv_scheme:
             csv_reader = CsvReader(csv_scheme)

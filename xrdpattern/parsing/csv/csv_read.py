@@ -1,8 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from hollarek.abstract import SelectableEnum
-from xrdpattern.pattern import XAxisType, XrdPattern, IntensityMap, Metadata
-from .table_selector import TableSelector, NumericalTable, TextTable
+from ...core import XAxisType, IntensityMap, Metadata, PatternInfo
+from .table_selector import TableSelector, TextTable
 
 # -------------------------------------------
 
@@ -55,7 +55,7 @@ class CsvReader:
         return TableSelector.get_numerical_subtable(table=table)
 
 
-    def read_csv(self, fpath: str) -> list[XrdPattern]:
+    def read_csv(self, fpath: str) -> list[PatternInfo]:
         numerical_table = self.as_horiztontal_table(fpath=fpath)
         x_axis_row = numerical_table.get_data(row=0)
         data_rows = [numerical_table.get_data(row=row) for row in range(1, numerical_table.get_row_count())]
@@ -70,6 +70,6 @@ class CsvReader:
         for row in data_rows:
             data = {x : y for (x,y) in zip(x_axis_row, row)}
             intensity_map = IntensityMap(data=data, x_axis_type=self.csv_scheme.x_axis_type)
-            new = XrdPattern(intensity_map=intensity_map, metadata=Metadata.make_empty())
+            new = PatternInfo(intensity_map=intensity_map, metadata=Metadata.make_empty())
             patterns.append(new)
 

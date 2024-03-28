@@ -1,23 +1,15 @@
 from __future__ import annotations
 
-from typing import Optional
 import matplotlib.pyplot as plt
-from dataclasses import dataclass
 import os
 from uuid import uuid4
 
-from hollarek.abstract import JsonDataclass
-from .intensity_map import IntensityMap, XAxisType
-from .metadata import Metadata
+from xrdpattern.parsing import XrdParser, ParserOptions
+from ..core import IntensityMap, XAxisType, PatternInfo
 from .pattern_report import PatternReport
 # -------------------------------------------
 
-@dataclass
-class XrdPattern(JsonDataclass):
-    intensity_map : IntensityMap
-    metadata: Metadata
-    datafile_path : Optional[str] = None
-
+class XrdPattern(PatternInfo):
     def plot(self, apply_standardization=True):
         plt.figure(figsize=(10, 6))
         plt.ylabel('Intensity')
@@ -38,6 +30,22 @@ class XrdPattern(JsonDataclass):
         plt.plot(x_values, intensities, label=label)
         plt.legend()
         plt.show()
+
+    # -------------------------------------------
+
+    @classmethod
+    def load(cls, fpath : str, parser_options : ParserOptions = ParserOptions()):
+        parser = XrdParser(parser_options=parser_options)
+        pattern_list = parser.get_pattern_info_list(fpath=fpath)
+        if len(pattern_list) > 1:
+            raise ValueError('Multiple patterns found in file')
+        pattern = pattern_list[0]
+        return cls(intensity_map=pattern.intensity_map, metadata=pattern.metadata, datafile_path=fpath)
+
+
+    def save(self, fpath : str):
+        with open(fpath, 'w') as f:
+            f.write(self.to_str())
 
     # -------------------------------------------
     # get
@@ -73,24 +81,7 @@ class XrdPattern(JsonDataclass):
         return file_name
 
 
-    def get_wavelength(self, primary : bool = True) -> float:
-        wavelength_info = self.metadata.wavelength_info
-        if primary:
-            wavelength = wavelength_info.primary
-        else:
-            wavelength = wavelength_info.secondary
-        if wavelength is None:
-            raise ValueError(f"Wavelength is None")
 
-        return wavelength
-
-
-    def set_wavelength(self, new_wavelength : float, primary : bool = True):
-        wavelength_info = self.metadata.wavelength_info
-        if primary:
-            wavelength_info.primary = new_wavelength
-        else:
-            wavelength_info.secondary = new_wavelength
 
 
     def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> IntensityMap:
@@ -109,10 +100,5 @@ class XrdPattern(JsonDataclass):
 
         return intensity_map
 
-    # -------------------------------------------
-
-    def save(self, fpath : str):
-        with open(fpath, 'w') as f:
-            f.write(self.to_str())
 
 

@@ -7,7 +7,7 @@ class TestParseXrdpattern(Unittest):
     def setUp(self):
         self.data_file_path ='/home/daniel/local/pxrd/Simon_Schweidler,_Ben_Breitung_2024_02_22/data/data_kupfer/Bei/HEO-FeSb/01.06.21-NiTeMo.raw'
         self.parser = XrdParser()
-        self.pattern = self.parser.get_patterns(fpath=self.data_file_path)[0]
+        self.pattern = XrdPattern.load(fpath=self.data_file_path)
 
     def test_read_ok(self):
         pattern_serialization = self.pattern.to_str()

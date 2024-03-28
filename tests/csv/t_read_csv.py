@@ -1,7 +1,7 @@
 import unittest
 import os
 from xrdpattern.parsing.csv import CsvReader, Orientation, CsvScheme
-from xrdpattern.pattern import XAxisType
+from xrdpattern.core import XAxisType
 from hollarek.devtools import Unittest
 
 class TestCsvReader(Unittest):
