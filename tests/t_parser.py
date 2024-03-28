@@ -56,23 +56,26 @@ class TestParseXrdpattern(Unittest):
 
 class TestParserDatabase(Unittest):
     def setUp(self):
-        self.datafolder_path : str = '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/'
+        self.datafolder_path : str = '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Aaditya/'
         self.pattern_db = PatternDB.load(datafolder_path=self.datafolder_path)
 
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern_db, PatternDB)
 
-
     def test_report_ok(self):
-        report = self.pattern_db.get_parsing_report()
-        as_str = report.get_report_str()
-        self.assertIsInstance(obj=as_str, cls=str)
+        report = self.pattern_db.database_report
+        as_str = report.get_str()
         print(f'Parsing report: {as_str}')
+
+        self.assertIsInstance(obj=as_str, cls=str)
+        self.assertTrue(len(report.pattern_reports) > 0)
+
 
 
 
 if __name__ == "__main__":
-    TestParseXrdpattern.execute_all()
+    # TestParseXrdpattern.execute_all()
+    TestParserDatabase.execute_all()
 
 
     # def test_read_ok(self):

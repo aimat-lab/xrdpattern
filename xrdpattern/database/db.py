@@ -28,6 +28,8 @@ class PatternDB:
 
     @classmethod
     def load(cls, datafolder_path : str, parser_options : ParserOptions = ParserOptions()) -> PatternDB:
+        datafolder_path = os.path.normpath(path=datafolder_path)
+
         parser = Parser(parser_options=parser_options)
         if not os.path.isdir(datafolder_path):
             raise ValueError(f"Given path {datafolder_path} is not a directory")
@@ -88,6 +90,11 @@ class DatabaseReport:
         summary_str += f'\n{self.num_crit}/{num_attempted} patterns had critical error(s)'
         summary_str += f'\n{self.num_err}/{num_attempted}  patterns had error(s)'
         summary_str += f'\n{self.num_warn}/{num_attempted}  patterns had warning(s)'
+
+        if num_failed > 0:
+            summary_str += f'\n\n Failed files:\n'
+            for pattern_fpath in self.failed_files:
+                summary_str += f'\n{pattern_fpath}'
 
         individual_reports = '\n\nIndividual file reports:\n\n'
         for pattern_health in self.pattern_reports:
