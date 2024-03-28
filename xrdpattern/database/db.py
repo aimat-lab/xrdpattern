@@ -12,6 +12,7 @@ from xrdpattern.pattern import XrdPattern, PatternReport
 @dataclass
 class PatternDB:
     patterns : list[XrdPattern]
+    database_report : Optional[DatabaseReport] = None
 
     # -------------------------------------------
     # save/load
@@ -26,7 +27,7 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, datafolder_path : str, parser_options : ParserOptions) -> PatternDB:
+    def load(cls, datafolder_path : str, parser_options : ParserOptions = ParserOptions()) -> PatternDB:
         parser = Parser(parser_options=parser_options)
         if not os.path.isdir(datafolder_path):
             raise ValueError(f"Given path {datafolder_path} is not a directory")
@@ -35,15 +36,20 @@ class PatternDB:
         data_fpaths = PatternDB.get_datafile_fpaths(datafolder_path=datafolder_path,
                                                     select_formats=parser_options.select_suffixes)
 
+        failed_fpath = []
         for fpath in data_fpaths:
             try:
                 pattern_info_list = parser.get_pattern_info_list(fpath=fpath)
                 new_patterns = [from_info(pattern_info=pattern_info, fpath=fpath) for pattern_info in pattern_info_list]
                 patterns += new_patterns
             except Exception as e:
+                failed_fpath.append(fpath)
                 print(f"Could not import pattern from file {fpath} \n"
                       f"-> Error: \"{e.__class__.__name__}: {str(e)}\"")
-        return PatternDB(patterns=patterns)
+
+        reports = [pattern.get_parsing_report() for pattern in patterns]
+        database_report = DatabaseReport(failed_files=failed_fpath, source_files=data_fpaths, pattern_reports=reports)
+        return PatternDB(patterns=patterns, database_report=database_report)
 
     # -------------------------------------------
     # pattern database
@@ -55,35 +61,33 @@ class PatternDB:
         return [node.get_path() for node in xrd_files_nodes]
 
 
-    def get_parsing_report(self, num_files : int, num_failed : int) -> DatabaseReport:
-        reports = [pattern.get_parsing_report() for pattern in self.patterns]
-        database_health = DatabaseReport(num_data_files=num_files, num_failed=num_failed, pattern_reports=reports)
-        pattern_healths = [pattern.get_parsing_report() for pattern in self.patterns]
-        for report in pattern_healths:
-            database_health.num_crit += report.has_critical()
-            database_health.num_err += report.has_error()
-            database_health.num_warn += report.has_warning()
-        return database_health
-
 
 @dataclass
 class DatabaseReport:
-    num_data_files : int
-    num_failed : int
+    failed_files : list[str]
+    source_files : list[str]
     pattern_reports: list[PatternReport]
-    num_crit: int = 0
-    num_err : int = 0
-    num_warn : int = 0
+
+    def __post_init__(self):
+        self.num_crit, self.num_err, self.num_warn = 0, 0, 0
+        for report in self.pattern_reports:
+            self.num_crit += report.has_critical()
+            self.num_err += report.has_error()
+            self.num_warn += report.has_warning()
+
 
     def get_str(self) -> str:
+        num_failed = len(self.failed_files)
+        num_attempted = len(self.source_files)
+
         summary_str = f'\n----- Finished creating database -----'
-        if self.num_failed > 0:
-            summary_str += f'\n{self.num_failed}/{self.num_data_files} files could not be parsed'
+        if num_failed > 0:
+            summary_str += f'\n{num_failed}/{num_attempted} files could not be parsed'
         else:
             summary_str += f'\nAll patterns were successfully parsed'
-        summary_str += f'\n{self.num_crit}/{self.num_data_files} patterns had critical error(s)'
-        summary_str += f'\n{self.num_err}/{self.num_data_files}  patterns had error(s)'
-        summary_str += f'\n{self.num_warn}/{self.num_data_files}  patterns had warning(s)'
+        summary_str += f'\n{self.num_crit}/{num_attempted} patterns had critical error(s)'
+        summary_str += f'\n{self.num_err}/{num_attempted}  patterns had error(s)'
+        summary_str += f'\n{self.num_warn}/{num_attempted}  patterns had warning(s)'
 
         individual_reports = '\n\nIndividual file reports:\n\n'
         for pattern_health in self.pattern_reports:

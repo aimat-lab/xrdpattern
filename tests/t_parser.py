@@ -1,18 +1,17 @@
 from xrdpattern.pattern import XrdPattern
+from xrdpattern.database import PatternDB
 from xrdpattern.parsing import Parser
 from hollarek.devtools import Unittest
 
 
 class TestParseXrdpattern(Unittest):
     def setUp(self):
-        self.data_file_path ='/home/daniel/local/pxrd/Simon_Schweidler,_Ben_Breitung_2024_02_22/data/data_kupfer/Bei/HEO-FeSb/01.06.21-NiTeMo.raw'
+        self.data_fpath = '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Bei/HEO-FeSb/01.06.21-NiTeMo.raw'
         self.parser = Parser()
-        self.pattern = XrdPattern.load(fpath=self.data_file_path)
+        self.pattern = XrdPattern.load(fpath=self.data_fpath)
 
-    def test_read_ok(self):
-        pattern_serialization = self.pattern.to_str()
-        self.assertIsInstance(pattern_serialization, str)
-        print(f'Serialized xrd pattern: {pattern_serialization}')
+    def test_obj_ok(self):
+        self.assertIsInstance(self.pattern, XrdPattern)
 
 
     def test_report_ok(self):
@@ -43,7 +42,7 @@ class TestParseXrdpattern(Unittest):
         print(f'name : {self.pattern.get_name()}')
         self.assertIsNotNone(obj=self.pattern.datafile_path)
         self.assertIsNotNone(obj=self.pattern.get_name())
-        self.assertEqual(first=self.data_file_path, second=self.pattern.datafile_path)
+        self.assertEqual(first=self.data_fpath, second=self.pattern.datafile_path)
 
 
     def test_data_ok(self):
@@ -55,5 +54,28 @@ class TestParseXrdpattern(Unittest):
             self.pattern.plot()
 
 
+class TestParserDatabase(Unittest):
+    def setUp(self):
+        self.datafolder_path : str = '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/'
+        self.pattern_db = PatternDB.load(datafolder_path=self.datafolder_path)
+
+    def test_obj_ok(self):
+        self.assertIsInstance(self.pattern_db, PatternDB)
+
+
+    def test_report_ok(self):
+        report = self.pattern_db.get_parsing_report()
+        as_str = report.get_report_str()
+        self.assertIsInstance(obj=as_str, cls=str)
+        print(f'Parsing report: {as_str}')
+
+
+
 if __name__ == "__main__":
     TestParseXrdpattern.execute_all()
+
+
+    # def test_read_ok(self):
+    #     pattern_serialization = self.pattern.to_str()
+    #     self.assertIsInstance(pattern_serialization, str)
+    #     print(f'Serialized xrd pattern: {pattern_serialization}')
