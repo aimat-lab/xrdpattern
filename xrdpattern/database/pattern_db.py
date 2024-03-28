@@ -21,9 +21,9 @@ class XrdPatternDB:
             fpath = os.path.join(path, pattern.get_name())
             pattern.save(fpath=fpath)
 
-    def get_parsing_report(self, num_data_files : int) -> DatabaseReport:
+    def get_parsing_report(self, num_files : int, num_failed : int) -> DatabaseReport:
         reports = [pattern.get_parsing_report() for pattern in self.patterns]
-        database_health = DatabaseReport(num_data_files=num_data_files, pattern_reports=reports)
+        database_health = DatabaseReport(num_data_files=num_files, num_failed=num_failed, pattern_reports=reports)
         pattern_healths = [pattern.get_parsing_report() for pattern in self.patterns]
         for report in pattern_healths:
             database_health.num_crit += report.has_critical()
@@ -35,16 +35,16 @@ class XrdPatternDB:
 @dataclass
 class DatabaseReport:
     num_data_files : int
+    num_failed : int
     pattern_reports: list[PatternReport]
     num_crit: int = 0
     num_err : int = 0
     num_warn : int = 0
 
     def get_str(self) -> str:
-        num_failed = self.num_data_files-len(self.pattern_reports)
         summary_str = f'\n----- Finished creating database -----'
-        if num_failed > 0:
-            summary_str += f'\n{num_failed}/{self.num_data_files} patterns could not be parsed'
+        if self.num_failed > 0:
+            summary_str += f'\n{self.num_failed}/{self.num_data_files} files could not be parsed'
         else:
             summary_str += f'\nAll patterns were successfully parsed'
         summary_str += f'\n{self.num_crit}/{self.num_data_files} patterns had critical error(s)'
