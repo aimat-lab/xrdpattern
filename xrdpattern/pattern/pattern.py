@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import os
 from uuid import uuid4
 
-from xrdpattern.parsing import XrdParser, ParserOptions
+from xrdpattern.parsing import Parser, ParserOptions
 from ..core import IntensityMap, XAxisType, PatternInfo
 from .pattern_report import PatternReport
 # -------------------------------------------
@@ -35,10 +35,10 @@ class XrdPattern(PatternInfo):
 
     @classmethod
     def load(cls, fpath : str, parser_options : ParserOptions = ParserOptions()):
-        parser = XrdParser(parser_options=parser_options)
+        parser = Parser(parser_options=parser_options)
         pattern_list = parser.get_pattern_info_list(fpath=fpath)
         if len(pattern_list) > 1:
-            raise ValueError('Multiple patterns found in file')
+            raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern = pattern_list[0]
         return cls(intensity_map=pattern.intensity_map, metadata=pattern.metadata, datafile_path=fpath)
 
@@ -79,9 +79,6 @@ class XrdPattern(PatternInfo):
         else:
             file_name = f'unnamed_file_{uuid4()}'
         return file_name
-
-
-
 
 
     def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> IntensityMap:

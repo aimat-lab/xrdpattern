@@ -1,12 +1,12 @@
 from xrdpattern.pattern import XrdPattern
-from xrdpattern.parsing import XrdParser
+from xrdpattern.parsing import Parser
 from hollarek.devtools import Unittest
 
 
 class TestParseXrdpattern(Unittest):
     def setUp(self):
         self.data_file_path ='/home/daniel/local/pxrd/Simon_Schweidler,_Ben_Breitung_2024_02_22/data/data_kupfer/Bei/HEO-FeSb/01.06.21-NiTeMo.raw'
-        self.parser = XrdParser()
+        self.parser = Parser()
         self.pattern = XrdPattern.load(fpath=self.data_file_path)
 
     def test_read_ok(self):
@@ -51,8 +51,8 @@ class TestParseXrdpattern(Unittest):
         data_str = data.to_str()
         self.assertIsInstance(data_str, str)
         print(f'Xrd data: {data_str}')
-        # if self.is_manual_mode:
-        #     self.pattern.plot()
+        if self.is_manual_mode:
+            self.pattern.plot()
 
 
 if __name__ == "__main__":

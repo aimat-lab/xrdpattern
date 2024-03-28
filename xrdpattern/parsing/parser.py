@@ -17,37 +17,13 @@ class ParserOptions:
     default_wavelength_angstr : Optional[float] = None
 
 
-class XrdParser:
+class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
         if parser_options.select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
         self.format_hint : Optional[XrdFormat] = parser_options.format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
         self.default_csv_reader : Optional[CsvReader] = CsvReader(parser_options.csv_scheme)
-
-    # -------------------------------------------
-    # pattern database
-
-    # def get_pattern_db(self, datafolder_path : str) -> PatternInfoDB:
-    #     if not os.path.isdir(datafolder_path):
-    #         raise ValueError(f"Given path {datafolder_path} is not a directory")
-    #
-    #     patterns = []
-    #     data_fpaths = self.get_datafile_fpaths(datafolder_path=datafolder_path)
-    #     for fpath in data_fpaths:
-    #         try:
-    #             new_patterns = self.get_patterns(fpath=fpath)
-    #             patterns += new_patterns
-    #         except Exception as e:
-    #             print(f"Could not import pattern from file {fpath} \n"
-    #                   f"-> Error: \"{e.__class__.__name__}: {str(e)}\"")
-    #     return PatternInfoDB(patterns=patterns)
-
-
-    # def get_datafile_fpaths(self, datafolder_path : str) -> list[str]:
-    #     root_node = FsysNode(path=datafolder_path)
-    #     xrd_files_nodes = root_node.get_file_subnodes(select_formats=self.select_formats)
-    #     return [node.get_path() for node in xrd_files_nodes]
 
     # -------------------------------------------
     # pattern
@@ -108,7 +84,4 @@ class XrdParser:
                   f'Please specify csv scheme for {fpath} manually:')
             csv_reader = CsvReader(CsvScheme.from_manual())
         return csv_reader.read_csv(fpath=fpath)
-
-
-
 

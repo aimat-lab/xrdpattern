@@ -1,1 +1,1 @@
-from .pattern_db import XrdPatternDB
+from .db import PatternDB

@@ -1,2 +1,2 @@
-from .xrdparser import XrdParser, ParserOptions
+from .parser import Parser, ParserOptions
 from .csv import CsvScheme
