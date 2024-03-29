@@ -53,6 +53,12 @@ class TestParseXrdpattern(Unittest):
         data_str = data.to_str()
         self.assertIsInstance(data_str, str)
         print(f'Xrd data: {data_str}')
+
+        keys, values = data.as_list_pair()
+        for key, value in zip(keys,values):
+            self.assertIsInstance(key, float)
+            self.assertIsInstance(value, float)
+
         if self.is_manual_mode:
             self.pattern.plot()
 
@@ -65,6 +71,7 @@ class TestParserDatabase(Unittest):
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern_db, PatternDB)
 
+
     def test_report_ok(self):
         report = self.pattern_db.database_report
         as_str = report.get_str()
@@ -75,5 +82,5 @@ class TestParserDatabase(Unittest):
 
 
 if __name__ == "__main__":
-    TestParseXrdpattern.execute_all()
-    TestParserDatabase.execute_all()
+    TestParseXrdpattern.execute_all(manual_mode=False)
+    # TestParserDatabase.execute_all(manual_mode=False)
