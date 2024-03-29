@@ -33,7 +33,7 @@ class IntensityMap(JsonDataclass):
         mapping = {}
         for angle in std_angles:
             if angle < start or angle > end:
-                mapping[angle] = 0
+                mapping[angle] = float(0)
             else:
                 mapping[angle] = cs(angle) / max_intensity
         return IntensityMap(data=mapping, x_axis_type=self.x_axis_type)

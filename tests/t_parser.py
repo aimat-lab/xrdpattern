@@ -4,7 +4,7 @@ from xrdpattern.parsing import Parser
 from hollarek.devtools import Unittest
 
 
-class TestParseXrdpattern(Unittest):
+class TestParserPattern(Unittest):
     def setUp(self):
         self.data_fpath = '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Bei/HEO-FeSb/01.06.21-NiTeMo.raw'
         self.parser = Parser()
@@ -49,18 +49,22 @@ class TestParseXrdpattern(Unittest):
 
 
     def test_data_ok(self):
-        data = self.pattern.get_data()
-        data_str = data.to_str()
-        self.assertIsInstance(data_str, str)
-        print(f'Xrd data: {data_str}')
+        raw_data = self.pattern.get_data(apply_standardization=False)
+        std_data = self.pattern.get_data(apply_standardization=True)
 
-        keys, values = data.as_list_pair()
-        for key, value in zip(keys,values):
-            self.assertIsInstance(key, float)
-            self.assertIsInstance(value, float)
+        for data in [raw_data, std_data]:
+            print(f'data is {data}')
+            data_str = data.to_str()
+            self.assertIsInstance(data_str, str)
+            print(f'Xrd data: {data_str}')
 
-        if self.is_manual_mode:
-            self.pattern.plot()
+            keys, values = data.as_list_pair()
+            for key, value in zip(keys,values):
+                self.assertIsInstance(key, float)
+                self.assertIsInstance(value, float)
+
+            if self.is_manual_mode:
+                self.pattern.plot()
 
 
 class TestParserDatabase(Unittest):
@@ -82,5 +86,5 @@ class TestParserDatabase(Unittest):
 
 
 if __name__ == "__main__":
-    TestParseXrdpattern.execute_all(manual_mode=False)
+    TestParserPattern.execute_all(manual_mode=False)
     # TestParserDatabase.execute_all(manual_mode=False)

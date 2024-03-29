@@ -95,6 +95,7 @@ class XrdPattern(PatternInfo):
             start, stop, num_entries = 0, 90, 1000
             intensity_map = intensity_map.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
 
+        print(f'intensity map in get data')
         return intensity_map
 
 
