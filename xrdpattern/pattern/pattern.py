@@ -3,12 +3,21 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import os
 from uuid import uuid4
+from typing import Optional
 
-from xrdpattern.parsing import Parser, ParserOptions
+from xrdpattern.parsing import Parser, XrdFormat, ParserOptions, CsvScheme
 from hollarek.fsys import ensure_suffix
 from ..core import XrdData, XAxisType, PatternInfo
 from .pattern_report import PatternReport
 # -------------------------------------------
+
+
+# @dataclass
+# class ParserOptions:
+#     select_suffixes : Optional[list[str]] = None
+#     csv_scheme : Optional[CsvScheme] = None
+#     default_format_hint : Optional[XrdFormat] = None
+#     default_wavelength_angstr : Optional[float] = None
 
 class XrdPattern(PatternInfo):
     def plot(self, apply_standardization=True):
@@ -35,8 +44,11 @@ class XrdPattern(PatternInfo):
     # -------------------------------------------
 
     @classmethod
-    def load(cls, fpath : str, parser_options : ParserOptions = ParserOptions()):
-        parser = Parser(parser_options=parser_options)
+    def load(cls, fpath : str, format_hint : Optional[XrdFormat] = None,
+                                wavelength : Optional[float] = None,
+                                csv_scheme : Optional[CsvScheme] = None):
+        options = ParserOptions(default_format_hint=format_hint,default_wavelength_angstr=wavelength, csv_scheme=csv_scheme)
+        parser = Parser(parser_options=options)
         pattern_list = parser.get_pattern_info_list(fpath=fpath)
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')

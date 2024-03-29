@@ -54,3 +54,4 @@ class Formats:
         if not xrd_format:
             raise ValueError(f"Invalid suffix {suffix}")
         return xrd_format
+

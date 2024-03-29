@@ -7,6 +7,8 @@ from xrdpattern.core import PatternInfo
 from hollarek.fsys import FsysNode
 from xrdpattern.parsing import ParserOptions, Parser
 from xrdpattern.pattern import XrdPattern, PatternReport
+from xrdpattern.parsing import CsvScheme, XrdFormat
+
 # -------------------------------------------
 
 @dataclass
@@ -29,16 +31,23 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, datafolder_path : str, parser_options : ParserOptions = ParserOptions()) -> PatternDB:
+    def load(cls, datafolder_path : str, select_suffixed : Optional[list[str]] = None,
+                               default_format : Optional[XrdFormat] = None,
+                               default_wavelength : Optional[float] = None,
+                               csv_scheme : Optional[CsvScheme] = None):
+        options = ParserOptions(select_suffixes=select_suffixed,
+                                                     default_format_hint=default_format,
+                                                     default_wavelength_angstr=default_wavelength, csv_scheme=csv_scheme)
+
         datafolder_path = os.path.normpath(path=datafolder_path)
 
-        parser = Parser(parser_options=parser_options)
+        parser = Parser(parser_options=options)
         if not os.path.isdir(datafolder_path):
             raise ValueError(f"Given path {datafolder_path} is not a directory")
 
         patterns = []
         data_fpaths = PatternDB.get_datafile_fpaths(datafolder_path=datafolder_path,
-                                                    select_formats=parser_options.select_suffixes)
+                                                    select_formats=options.select_suffixes)
 
         failed_fpath = []
         for fpath in data_fpaths:
