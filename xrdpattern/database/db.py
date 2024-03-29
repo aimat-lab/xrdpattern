@@ -23,7 +23,9 @@ class PatternDB:
             raise ValueError(f'Path \"{path}\" is occupied by file/dir')
         os.makedirs(path, exist_ok=True)
         for pattern in self.patterns:
+            # fpath = os.path.join(path, f'{pattern.get_name()}.json')
             fpath = os.path.join(path, pattern.get_name())
+            # print(f'fpath is currently {fpath}')
             pattern.save(fpath=fpath)
 
     @classmethod

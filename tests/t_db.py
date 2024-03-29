@@ -16,8 +16,15 @@ class TestPatternDB(Unittest):
         oldpattern, new_patterns= pattern_db.patterns, new_pattern_db.patterns
 
         self.assertEqual(len(oldpattern), len(new_patterns))
-        for old, new in zip(oldpattern, new_patterns):
-            self.assertEqual(first=old, second=new)
+
+        old_pattern_map = {pattern.get_name(): pattern for pattern in oldpattern}
+        new_pattern_map = {pattern.get_name(): pattern for pattern in new_patterns}
+
+        for pattern_name in old_pattern_map:
+            old_pattern = old_pattern_map[pattern_name]
+            new_pattern = new_pattern_map.get(pattern_name)
+            self.assertIsNotNone(new_pattern)
+            self.assertEqual(old_pattern, new_pattern)
 
     @staticmethod
     def get_datafolder_fpath() -> str:

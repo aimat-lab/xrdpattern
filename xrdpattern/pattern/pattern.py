@@ -5,6 +5,7 @@ import os
 from uuid import uuid4
 
 from xrdpattern.parsing import Parser, ParserOptions
+from hollarek.fsys import ensure_suffix
 from ..core import XrdData, XAxisType, PatternInfo
 from .pattern_report import PatternReport
 # -------------------------------------------
@@ -44,6 +45,10 @@ class XrdPattern(PatternInfo):
 
 
     def save(self, fpath : str):
+        if not fpath.endswith(f'.json'):
+            fpath = ensure_suffix(fpath, suffix = 'json')
+        if os.path.isfile(fpath):
+            raise ValueError(f'File {fpath} already exists')
         with open(fpath, 'w') as f:
             f.write(self.to_str())
 
@@ -101,3 +106,5 @@ class XrdPattern(PatternInfo):
         if not isinstance(other, XrdPattern):
             return False
         return self.xrd_data == other.xrd_data and self.metadata == other.metadata
+
+
