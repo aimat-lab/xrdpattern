@@ -14,10 +14,10 @@ class PatternBaseTest(Unittest):
         pass
 
     def check_data_ok(self, data : XrdData):
-        print(f'data is {data}')
+        data_view = str(data)[:1000]+ '...' +  str(data)[-1000:]
+        print(f'data is {data_view}')
         data_str = data.to_str()
         self.assertIsInstance(data_str, str)
-        print(f'Xrd data: {data_str}')
 
         keys, values = data.as_list_pair()
         for key, value in zip(keys, values):

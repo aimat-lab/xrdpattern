@@ -39,14 +39,20 @@ class XrdData(JsonDataclass):
         return XrdData(data=mapping, x_axis_type=self.x_axis_type)
 
 
-    def convert_axis(self, target_axis_type: XAxisType, wavelength: float) -> XrdData:
+    def as_qvalues_map(self, wavelength: float) -> XrdData:
+        return self._convert_axis(target_axis_type=XAxisType.QValues, wavelength=wavelength)
+
+    def as_twotheta_map(self, wavelength: float) -> XrdData:
+        return self._convert_axis(target_axis_type=XAxisType.TwoTheta, wavelength=wavelength)
+
+    def _convert_axis(self, target_axis_type: XAxisType, wavelength: float) -> XrdData:
         if self.x_axis_type == target_axis_type:
             return copy(self)
 
         if target_axis_type == XAxisType.QValues:
-            convert = lambda val : self.twotheta_to_q(val, wavelength)
+            convert = lambda val : self._twotheta_to_q(val, wavelength)
         else:
-            convert = lambda val : self.q_to_twotheta(val, wavelength)
+            convert = lambda val : self._q_to_twotheta(val, wavelength)
 
         new_data = {}
         for old_val, intensity in self.data.items():
@@ -58,13 +64,13 @@ class XrdData(JsonDataclass):
     # -------------------------------------------
 
     @staticmethod
-    def q_to_twotheta(q: float, wavelength: float) -> float:
+    def _q_to_twotheta(q: float, wavelength: float) -> float:
         theta = math.asin(q * wavelength / (4 * math.pi))
         two_theta = 2 * math.degrees(theta)
         return two_theta
 
     @staticmethod
-    def twotheta_to_q(two_theta: float, wavelength: float) -> float:
+    def _twotheta_to_q(two_theta: float, wavelength: float) -> float:
         theta_rad = math.radians(two_theta / 2)
         q = (4 * math.pi * math.sin(theta_rad)) / wavelength
         return q

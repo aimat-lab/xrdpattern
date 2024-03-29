@@ -34,10 +34,12 @@ class TestXrdPattern(PatternBaseTest):
         self.assertTrue(len(intensity_map.data) == 1000)
 
     def test_convert_axis(self):
-        wavelength_angstr = 1.54
+        wavelength = 1.54
         pattern = self.pattern
-        new_intensity = pattern.xrd_data.convert_axis(target_axis_type=XAxisType.QValues, wavelength=wavelength_angstr)
-        print(new_intensity.to_str())
+        new_data = pattern.xrd_data.as_qvalues_map(wavelength=wavelength)
+        # print(new_data.to_str())
+        print(len(new_data.data))
+        self.check_data_ok(data=new_data)
 
     def test_data_ok(self):
         raw_data = self.pattern.get_data(apply_standardization=False)
@@ -45,7 +47,5 @@ class TestXrdPattern(PatternBaseTest):
         for data in [raw_data, std_data]:
             self.check_data_ok(data=data)
 
-
-
 if __name__ == "__main__":
-    TestXrdPattern.execute_all()
+    TestXrdPattern.execute_all(manual_mode=False)
