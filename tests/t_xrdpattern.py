@@ -15,12 +15,9 @@ class TestXrdPattern(PatternBaseTest):
 
     def test_save_load_roundtrip(self):
         pattern = self.pattern
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.json') as tmp_file:
-            temp_file_path = tmp_file.name
-
-        self.pattern_fpath = temp_file_path
-        pattern.save(fpath=self.pattern_fpath)
-        pattern2 = XrdPattern.load(fpath=self.pattern_fpath)
+        save_path = os.path.join(tempfile.mkdtemp(), 'pattern.json')
+        pattern.save(fpath=save_path)
+        pattern2 = XrdPattern.load(fpath=save_path)
         self.assertEqual(first=pattern, second=pattern2)
         print(f'pattern after roundtrip {pattern.to_str()}')
 

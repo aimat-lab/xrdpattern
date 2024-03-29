@@ -15,13 +15,11 @@ class TestParserPattern(PatternBaseTest):
         print(f'serialized pattern')
         print(f'{self.pattern.to_str()}')
 
-
     def test_report_ok(self):
         report = self.pattern.get_parsing_report()
         as_str = report.get_report_str()
         self.assertIsInstance(obj=as_str, cls=str)
         print(f'Parsing report: {as_str}')
-
 
     def test_metadata_ok(self):
         metadata = self.pattern.metadata

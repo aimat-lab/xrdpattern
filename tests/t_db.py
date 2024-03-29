@@ -8,7 +8,7 @@ import os, uuid
 class TestPatternDB(Unittest):
 
     def test_save_load_roundtrip(self):
-        pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath(), parser_options=ParserOptions(select_suffixes=['.raw']))
+        pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath(), select_suffixes=['.raw'])
         tempdir_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
         pattern_db.save(path=tempdir_path)
 

@@ -31,13 +31,13 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, datafolder_path : str, select_suffixed : Optional[list[str]] = None,
-                               default_format : Optional[XrdFormat] = None,
-                               default_wavelength : Optional[float] = None,
-                               csv_scheme : Optional[CsvScheme] = None):
-        options = ParserOptions(select_suffixes=select_suffixed,
-                                                     default_format_hint=default_format,
-                                                     default_wavelength_angstr=default_wavelength, csv_scheme=csv_scheme)
+    def load(cls, datafolder_path : str, select_suffixes : Optional[list[str]] = None,
+             default_format : Optional[XrdFormat] = None,
+             default_wavelength : Optional[float] = None,
+             csv_scheme : Optional[CsvScheme] = None):
+        options = ParserOptions(select_suffixes=select_suffixes,
+                                default_format_hint=default_format,
+                                default_wavelength_angstr=default_wavelength, csv_scheme=csv_scheme)
 
         datafolder_path = os.path.normpath(path=datafolder_path)
 
