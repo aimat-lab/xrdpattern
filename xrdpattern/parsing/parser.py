@@ -13,7 +13,7 @@ from .csv import CsvScheme, CsvReader
 class ParserOptions:
     select_suffixes : Optional[list[str]] = None
     csv_scheme : Optional[CsvScheme] = None
-    format_hint : Optional[XrdFormat] = None
+    default_format_hint : Optional[XrdFormat] = None
     default_wavelength_angstr : Optional[float] = None
 
 
@@ -21,7 +21,7 @@ class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
         if parser_options.select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
-        self.format_hint : Optional[XrdFormat] = parser_options.format_hint
+        self.format_hint : Optional[XrdFormat] = parser_options.default_format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
         self.default_csv_reader : Optional[CsvReader] = CsvReader(parser_options.csv_scheme)
 
@@ -40,6 +40,9 @@ class Parser:
             xrd_pattern = [self.from_data_file(fpath=fpath, format_hint=format_hint)]
         elif suffix == 'csv':
             xrd_pattern = self.from_csv(fpath=fpath)
+        elif suffix is None:
+            raise ValueError(f"Could not determine file format of \"{fpath}\" since not default format"
+                             f"was specified and file does not have suffix indicating format")
         else:
             raise ValueError(f"Format .{suffix} is not supported")
         for pattern in xrd_pattern:

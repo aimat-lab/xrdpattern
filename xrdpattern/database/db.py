@@ -62,6 +62,15 @@ class PatternDB:
         xrd_files_nodes = root_node.get_file_subnodes(select_formats=select_formats)
         return [node.get_path() for node in xrd_files_nodes]
 
+    def __eq__(self, other):
+        if not isinstance(other, PatternDB):
+            return False
+        if len(self.patterns) != len(other.patterns):
+            return False
+        for self_pattern, other_pattern in zip(self.patterns, other.patterns):
+            if self_pattern != other_pattern:
+                return False
+        return True
 
 
 @dataclass
