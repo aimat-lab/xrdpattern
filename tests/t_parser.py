@@ -2,13 +2,12 @@ from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
 from xrdpattern.parsing import Parser
 from hollarek.devtools import Unittest
+from tests.basetest import PatternBaseTest
 
 
-class TestParserPattern(Unittest):
-    def setUp(self):
-        self.data_fpath = '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Bei/HEO-FeSb/01.06.21-NiTeMo.raw'
-        self.parser = Parser()
-        self.pattern = XrdPattern.load(fpath=self.data_fpath)
+class TestParserPattern(PatternBaseTest):
+    def get_fpath(self) -> str:
+        return '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Bei/HEO-FeSb/01.06.21-NiTeMo.raw'
 
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern, XrdPattern)
@@ -45,26 +44,13 @@ class TestParserPattern(Unittest):
         print(f'name : {self.pattern.get_name()}')
         self.assertIsNotNone(obj=self.pattern.datafile_path)
         self.assertIsNotNone(obj=self.pattern.get_name())
-        self.assertEqual(first=self.data_fpath, second=self.pattern.datafile_path)
-
+        self.assertEqual(first=self.get_fpath(), second=self.pattern.datafile_path)
 
     def test_data_ok(self):
         raw_data = self.pattern.get_data(apply_standardization=False)
         std_data = self.pattern.get_data(apply_standardization=True)
-
         for data in [raw_data, std_data]:
-            print(f'data is {data}')
-            data_str = data.to_str()
-            self.assertIsInstance(data_str, str)
-            print(f'Xrd data: {data_str}')
-
-            keys, values = data.as_list_pair()
-            for key, value in zip(keys,values):
-                self.assertIsInstance(key, float)
-                self.assertIsInstance(value, float)
-
-            if self.is_manual_mode:
-                self.pattern.plot()
+            self.check_data_ok(data=data)
 
 
 class TestParserDatabase(Unittest):

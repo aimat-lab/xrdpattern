@@ -106,4 +106,4 @@ class DatabaseReport:
 
 
 def from_info(pattern_info : PatternInfo, fpath : str)-> XrdPattern:
-    return XrdPattern(intensity_map=pattern_info.intensity_map, metadata=pattern_info.metadata, datafile_path=fpath)
+    return XrdPattern(xrd_data=pattern_info.xrd_data, metadata=pattern_info.metadata, datafile_path=fpath)

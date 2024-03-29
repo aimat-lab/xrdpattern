@@ -5,7 +5,7 @@ import os
 from uuid import uuid4
 
 from xrdpattern.parsing import Parser, ParserOptions
-from ..core import IntensityMap, XAxisType, PatternInfo
+from ..core import XrdData, XAxisType, PatternInfo
 from .pattern_report import PatternReport
 # -------------------------------------------
 
@@ -40,7 +40,7 @@ class XrdPattern(PatternInfo):
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern = pattern_list[0]
-        return cls(intensity_map=pattern.intensity_map, metadata=pattern.metadata, datafile_path=fpath)
+        return cls(xrd_data=pattern.xrd_data, metadata=pattern.metadata, datafile_path=fpath)
 
 
     def save(self, fpath : str):
@@ -53,9 +53,9 @@ class XrdPattern(PatternInfo):
     def get_parsing_report(self) -> PatternReport:
         pattern_health = PatternReport(data_file_path=self.datafile_path)
 
-        if len(self.intensity_map.data) == 0:
+        if len(self.xrd_data.data) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.intensity_map.data) < 10:
+        elif len(self.xrd_data.data) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
         if self.get_wavelength(primary=True) is None:
             pattern_health.add_error('Primary wavelength missing!')
@@ -81,7 +81,7 @@ class XrdPattern(PatternInfo):
         return file_name
 
 
-    def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> IntensityMap:
+    def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> XrdData:
         """
         :param apply_standardization: Standardization pads missing values, scales intensity into [0,1] range and makes x-step size uniform
         :param x_axis_type: Specifies the type of x-axis values, defaults to XAxisType.TwoTheta. This determines how the x-axis is interpreted and processed.
@@ -90,7 +90,7 @@ class XrdPattern(PatternInfo):
         if x_axis_type == XAxisType.QValues:
             raise NotImplementedError
 
-        intensity_map = self.intensity_map
+        intensity_map = self.xrd_data
         if apply_standardization:
             start, stop, num_entries = 0, 90, 1000
             intensity_map = intensity_map.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
@@ -102,4 +102,4 @@ class XrdPattern(PatternInfo):
     def __eq__(self, other):
         if not isinstance(other, XrdPattern):
             return False
-        return self.intensity_map == other.intensity_map and self.metadata == other.metadata
+        return self.xrd_data == other.xrd_data and self.metadata == other.metadata
