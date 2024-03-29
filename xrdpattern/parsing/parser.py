@@ -1,8 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 from dataclasses import dataclass
-from hollarek.fsys import FsysNode
-
+from hollarek.fsys import get_suffix
 from ..core import PatternInfo, Metadata, XrdData, XAxisType
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvScheme, CsvReader
@@ -21,7 +20,7 @@ class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
         if parser_options.select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
-        self.format_hint : Optional[XrdFormat] = parser_options.default_format_hint
+        self.default_format : Optional[XrdFormat] = parser_options.default_format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
         self.default_csv_reader : Optional[CsvReader] = CsvReader(parser_options.csv_scheme)
 
@@ -29,26 +28,28 @@ class Parser:
     # pattern
 
     def get_pattern_info_list(self, fpath : str) -> list[PatternInfo]:
-        suffix = FsysNode(fpath).get_suffix()
-
-        if suffix == Formats.aimat_json.suffix:
-            xrd_pattern = [self.from_json(fpath=fpath)]
-        elif suffix in Formats.get_datafile_suffixes():
-            format_hint = self.format_hint
-            if not format_hint:
-                format_hint = Formats.get_format(suffix=suffix)
-            xrd_pattern = [self.from_data_file(fpath=fpath, format_hint=format_hint)]
-        elif suffix == 'csv':
-            xrd_pattern = self.from_csv(fpath=fpath)
-        elif suffix is None:
+        suffix = get_suffix(fpath)
+        if not suffix in Formats.get_allowed_suffixes():
+            raise ValueError(f"File {fpath} has unsupported format .{suffix}")
+        if suffix:
+            the_format = Formats.get_format(suffix)
+        elif not self.default_format is None:
+            the_format = self.default_format
+        else:
             raise ValueError(f"Could not determine file format of \"{fpath}\" since not default format"
                              f"was specified and file does not have suffix indicating format")
+
+        if the_format == Formats.aimat_json:
+            xrd_pattern = [self.from_json(fpath=fpath)]
+        elif the_format.suffix in Formats.get_datafile_suffixes():
+            xrd_pattern = [self.from_data_file(fpath=fpath, format_hint=the_format)]
+        elif the_format == Formats.csv:
+            xrd_pattern = self.from_csv(fpath=fpath)
         else:
-            raise ValueError(f"Format .{suffix} is not supported")
+            raise ValueError(f"Format .{the_format} is not supported")
         for pattern in xrd_pattern:
             if pattern.get_wavelength(primary=True) is None and self.default_wavelength_angstr:
                 pattern.set_wavelength(new_wavelength=self.default_wavelength_angstr)
-
         return xrd_pattern
 
 

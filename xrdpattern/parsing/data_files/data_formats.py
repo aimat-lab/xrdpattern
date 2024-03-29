@@ -36,20 +36,20 @@ class Formats:
 
     @classmethod
     def get_datafile_suffixes(cls):
-        return [xrd_format.suffix for xrd_format in cls.get_formats() if not xrd_format.suffix in ["json", "csv"]]
+        return [xrd_format.suffix for xrd_format in cls.get_all_formats() if not xrd_format.suffix in ["json", "csv"]]
 
 
     @classmethod
     def get_allowed_suffixes(cls) -> list[str]:
-        return [xrd_format.suffix for xrd_format in cls.get_formats()]
+        return [xrd_format.suffix for xrd_format in cls.get_all_formats()]
 
     @classmethod
-    def get_formats(cls) -> list[XrdFormat]:
+    def get_all_formats(cls) -> list[XrdFormat]:
         return [xrd_format for xrd_format in cls.__dict__.values() if isinstance(xrd_format, XrdFormat)]
 
     @classmethod
     def get_format(cls, suffix : str) -> XrdFormat:
-        suffix_to_format_map = {xrd_format.suffix : xrd_format for xrd_format in cls.get_formats()}
+        suffix_to_format_map = {xrd_format.suffix : xrd_format for xrd_format in cls.get_all_formats()}
         xrd_format = suffix_to_format_map.get(suffix)
         if not xrd_format:
             raise ValueError(f"Invalid suffix {suffix}")
