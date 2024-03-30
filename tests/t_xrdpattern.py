@@ -1,7 +1,10 @@
 import os.path
 from tests.basetest import PatternBaseTest
+from pymatgen.io.cif import CifParser
 from xrdpattern.pattern import XrdPattern
 import tempfile
+from pyxtal import pyxtal
+from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 
 class TestXrdPattern(PatternBaseTest):
@@ -43,5 +46,24 @@ class TestXrdPattern(PatternBaseTest):
         for data in [raw_data, std_data]:
             self.check_data_ok(data=data)
 
+    def test_from_pymatgen(self):
+        my_crystal = pyxtal()
+        my_crystal.from_random(3, 227, ['C'], [8])
+        save_path = os.path.join(tempfile.mkdtemp(), 'structure.cif')
+        my_crystal.to_file(save_path)
+        parser = CifParser(save_path)
+        structure = parser.parse_structures(primitive=False)[0]
+        calculator = XRDCalculator()
+        pattern = calculator.get_pattern(structure)
+
+        pattern = XrdPattern.from_pymatgen(pattern, wavelength=1.54)
+        wavelength = pattern.get_wavelength()
+        data = pattern.get_data()
+        print(f'data is {data}')
+
+
 if __name__ == "__main__":
     TestXrdPattern.execute_all(manual_mode=False)
+
+
+
