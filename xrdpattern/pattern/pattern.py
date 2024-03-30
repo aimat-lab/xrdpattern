@@ -1,23 +1,15 @@
 from __future__ import annotations
-
 import matplotlib.pyplot as plt
 import os
 from uuid import uuid4
 from typing import Optional
+from pymatgen.analysis.diffraction.xrd import  DiffractionPattern
+from hollarek.fsys import ensure_suffix
 
 from xrdpattern.parsing import Parser, XrdFormat, ParserOptions, CsvScheme
-from hollarek.fsys import ensure_suffix
-from ..core import XrdData, XAxisType, PatternInfo
+from xrdpattern.core import XrdData, XAxisType, PatternInfo, Metadata
 from .pattern_report import PatternReport
 # -------------------------------------------
-
-
-# @dataclass
-# class ParserOptions:
-#     select_suffixes : Optional[list[str]] = None
-#     csv_scheme : Optional[CsvScheme] = None
-#     default_format_hint : Optional[XrdFormat] = None
-#     default_wavelength_angstr : Optional[float] = None
 
 class XrdPattern(PatternInfo):
     def plot(self, apply_standardization=True):
@@ -64,12 +56,23 @@ class XrdPattern(PatternInfo):
         with open(fpath, 'w') as f:
             f.write(self.to_str())
 
+    @classmethod
+    def from_pymatgen(cls, pymatgen_pattern : DiffractionPattern, wavelength : float):
+        two_theta, intensities = pymatgen_pattern.x, pymatgen_pattern.y
+        if not len(two_theta) == len(intensities):
+            raise ValueError('Two theta and intensity arrays must have the same length')
+
+        data = { x : y for (x,y) in zip(two_theta, intensities)}
+        xrd_data = XrdData(data=data, x_axis_type=XAxisType.TwoTheta)
+        metadata = Metadata.from_wavelength(primary_wavelength=wavelength)
+        return cls(xrd_data=xrd_data, metadata=metadata)
+
     # -------------------------------------------
     # get
 
     def get_parsing_report(self) -> PatternReport:
-        pattern_health = PatternReport(data_file_path=self.datafile_path)
 
+        pattern_health = PatternReport(data_file_path=self.datafile_path)
         if len(self.xrd_data.data) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
         elif len(self.xrd_data.data) < 10:

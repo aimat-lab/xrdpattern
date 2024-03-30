@@ -12,7 +12,7 @@ from typing import Iterator, Tuple
 
 @dataclass
 class WavelengthInfo(JsonDataclass):
-    primary: Optional[float] = None
+    primary: float
     secondary: Optional[float] = None
     ratio: Optional[float] = None
 
@@ -21,14 +21,18 @@ class WavelengthInfo(JsonDataclass):
 
 @dataclass
 class Metadata(JsonDataclass):
-    wavelength_info: WavelengthInfo
+    wavelength_info: Optional[WavelengthInfo]
     anode_material: Optional[str] = None
     temp_celcius: Optional[float] = None
     measurement_date: Optional[datetime] = None
 
     @classmethod
     def make_empty(cls):
-        return Metadata(wavelength_info=WavelengthInfo())
+        return Metadata(wavelength_info=None)
+
+    @classmethod
+    def from_wavelength(cls, primary_wavelength : float, secondary_wavelength : Optional[float] = None):
+        return cls(wavelength_info=WavelengthInfo(primary_wavelength, secondary_wavelength))
 
     @classmethod
     def from_header_str(cls, header_str: str) -> Metadata:

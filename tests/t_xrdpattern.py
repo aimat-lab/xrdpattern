@@ -1,6 +1,5 @@
 import os.path
 from tests.basetest import PatternBaseTest
-from xrdpattern.core import XAxisType
 from xrdpattern.pattern import XrdPattern
 import tempfile
 
