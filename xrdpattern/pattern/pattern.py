@@ -56,17 +56,6 @@ class XrdPattern(PatternInfo):
         with open(fpath, 'w') as f:
             f.write(self.to_str())
 
-    @classmethod
-    def from_pymatgen(cls, pymatgen_pattern : DiffractionPattern, wavelength : float):
-        two_theta, intensities = pymatgen_pattern.x, pymatgen_pattern.y
-        if not len(two_theta) == len(intensities):
-            raise ValueError('Two theta and intensity arrays must have the same length')
-
-        data = { x : y for (x,y) in zip(two_theta, intensities)}
-        xrd_data = XrdData(data=data, x_axis_type=XAxisType.TwoTheta)
-        metadata = Metadata.from_wavelength(primary_wavelength=wavelength)
-        return cls(xrd_data=xrd_data, metadata=metadata)
-
     # -------------------------------------------
     # get
 
@@ -112,14 +101,21 @@ class XrdPattern(PatternInfo):
 
         intensity_map = self.xrd_data
         if apply_standardization:
-            start, stop, num_entries = 0, 90, 1000
+            start, stop = self.get_std_range()
+            num_entries = self.get_std_num_entries()
             intensity_map = intensity_map.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
         return intensity_map
 
+    @classmethod
+    def get_std_num_entries(cls) -> int:
+        return 2000
+
+    @classmethod
+    def get_std_range(cls) -> (float, float):
+        return 0, 90
 
     def __eq__(self, other):
         if not isinstance(other, XrdPattern):
             return False
         return self.xrd_data == other.xrd_data and self.metadata == other.metadata
-
 
