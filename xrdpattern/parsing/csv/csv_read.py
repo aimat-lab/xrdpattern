@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from hollarek.abstract import SelectableEnum
-from ...core import XAxisType, XrdData, Metadata, PatternInfo
+from ...core import XAxisType, XrdIntensities, Metadata, PatternInfo
 from .table_selector import TableSelector, TextTable
 
 # -------------------------------------------
@@ -69,7 +69,7 @@ class CsvReader:
         patterns = []
         for row in data_rows:
             data = {x : y for (x,y) in zip(x_axis_row, row)}
-            intensity_map = XrdData(data=data, x_axis_type=self.csv_scheme.x_axis_type)
+            intensity_map = XrdIntensities(data=data, x_axis_type=self.csv_scheme.x_axis_type)
             new = PatternInfo(xrd_data=intensity_map, metadata=Metadata.make_empty())
             patterns.append(new)
 

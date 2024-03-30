@@ -1,13 +1,13 @@
 from hollarek.abstract import JsonDataclass
 from dataclasses import dataclass
 from typing import Optional
-from .xrd_data import XrdData
+from .xrd_data import XrdIntensities
 from .metadata import Metadata
 
 
 @dataclass
 class PatternInfo(JsonDataclass):
-    xrd_data : XrdData
+    xrd_data : XrdIntensities
     metadata: Metadata
     datafile_path : Optional[str] = None
 

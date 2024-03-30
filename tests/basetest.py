@@ -1,4 +1,4 @@
-from xrdpattern.core import XrdData
+from xrdpattern.core import XrdIntensities
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
 from xrdpattern.parsing import Parser
@@ -13,7 +13,7 @@ class PatternBaseTest(Unittest):
     def get_fpath(self) -> str:
         pass
 
-    def check_data_ok(self, data : XrdData):
+    def check_data_ok(self, data : XrdIntensities):
         data_view = str(data)[:1000]+ '...' +  str(data)[-1000:]
         print(f'data is {data_view}')
         data_str = data.to_str()

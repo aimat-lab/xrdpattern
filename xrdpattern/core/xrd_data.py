@@ -14,11 +14,11 @@ class XAxisType(SelectableEnum):
 
 
 @dataclass
-class XrdData(JsonDataclass):
+class XrdIntensities(JsonDataclass):
     data : dict[float, float]
     x_axis_type : XAxisType
 
-    def get_standardized(self, start_val : float, stop_val : float, num_entries : int) -> XrdData:
+    def get_standardized(self, start_val : float, stop_val : float, num_entries : int) -> XrdIntensities:
         x_values = list(self.data.keys())
         start, end = x_values[0], x_values[-1]
         std_angles = np.linspace(start=start_val, stop=stop_val, num=num_entries)
@@ -36,16 +36,16 @@ class XrdData(JsonDataclass):
                 mapping[angle] = float(0)
             else:
                 mapping[angle] = cs(angle) / max_intensity
-        return XrdData(data=mapping, x_axis_type=self.x_axis_type)
+        return XrdIntensities(data=mapping, x_axis_type=self.x_axis_type)
 
 
-    def as_qvalues_map(self, wavelength: float) -> XrdData:
+    def as_qvalues_map(self, wavelength: float) -> XrdIntensities:
         return self._convert_axis(target_axis_type=XAxisType.QValues, wavelength=wavelength)
 
-    def as_twotheta_map(self, wavelength: float) -> XrdData:
+    def as_twotheta_map(self, wavelength: float) -> XrdIntensities:
         return self._convert_axis(target_axis_type=XAxisType.TwoTheta, wavelength=wavelength)
 
-    def _convert_axis(self, target_axis_type: XAxisType, wavelength: float) -> XrdData:
+    def _convert_axis(self, target_axis_type: XAxisType, wavelength: float) -> XrdIntensities:
         if self.x_axis_type == target_axis_type:
             return copy(self)
 
@@ -59,7 +59,7 @@ class XrdData(JsonDataclass):
             new_val = convert(old_val)
             new_data[new_val] = intensity
 
-        return XrdData(data=new_data, x_axis_type=target_axis_type)
+        return XrdIntensities(data=new_data, x_axis_type=target_axis_type)
 
     # -------------------------------------------
 
@@ -83,7 +83,7 @@ class XrdData(JsonDataclass):
 
 
     def __eq__(self, other):
-        if not isinstance(other, XrdData):
+        if not isinstance(other, XrdIntensities):
             return False
 
         return self.data == other.data and self.x_axis_type == other.x_axis_type

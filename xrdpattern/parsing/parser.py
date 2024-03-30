@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Optional
 from dataclasses import dataclass
 from hollarek.fsys import get_suffix
-from ..core import PatternInfo, Metadata, XrdData, XAxisType
+from ..core import PatternInfo, Metadata, XrdIntensities, XAxisType
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvScheme, CsvReader
 
@@ -73,7 +73,7 @@ class Parser:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
             two_theta_to_intensity[deg] = intensity
-        intensity_map = XrdData(data=two_theta_to_intensity, x_axis_type=XAxisType.TwoTheta)
+        intensity_map = XrdIntensities(data=two_theta_to_intensity, x_axis_type=XAxisType.TwoTheta)
         return PatternInfo(xrd_data=intensity_map, metadata=metadata)
 
 

@@ -7,7 +7,7 @@ from pymatgen.analysis.diffraction.xrd import  DiffractionPattern
 from hollarek.fsys import ensure_suffix
 
 from xrdpattern.parsing import Parser, XrdFormat, ParserOptions, CsvScheme
-from xrdpattern.core import XrdData, XAxisType, PatternInfo, Metadata
+from xrdpattern.core import XrdIntensities, XAxisType, PatternInfo, Metadata
 from .pattern_report import PatternReport
 # -------------------------------------------
 
@@ -90,7 +90,7 @@ class XrdPattern(PatternInfo):
         return file_name
 
 
-    def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> XrdData:
+    def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> XrdIntensities:
         """
         :param apply_standardization: Standardization pads missing values, scales intensity into [0,1] range and makes x-step size uniform
         :param x_axis_type: Specifies the type of x-axis values, defaults to XAxisType.TwoTheta. This determines how the x-axis is interpreted and processed.
