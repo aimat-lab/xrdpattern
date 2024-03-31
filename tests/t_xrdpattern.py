@@ -1,10 +1,7 @@
 import os.path
 from tests.basetest import PatternBaseTest
-from pymatgen.io.cif import CifParser
 from xrdpattern.pattern import XrdPattern
 import tempfile
-from pyxtal import pyxtal
-from pymatgen.analysis.diffraction.xrd import XRDCalculator
 
 
 class TestXrdPattern(PatternBaseTest):

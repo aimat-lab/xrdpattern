@@ -25,17 +25,21 @@ class XrdIntensities(JsonDataclass):
 
         x = np.array(list(self.data.keys()))
         y = np.array(list(self.data.values()))
+        min_val = min(y)
+        y = y - min_val
+
         cs = CubicSpline(x, y)
 
         interpolated_intensities = [cs(angle) for angle in std_angles if start <= angle <= end]
-        max_intensity = max(interpolated_intensities) if interpolated_intensities else 1
+        max_intensity = max(interpolated_intensities)
+        normalization_factor = max_intensity if max_intensity != 0 else 1
 
         mapping = {}
         for angle in std_angles:
             if angle < start or angle > end:
                 mapping[angle] = float(0)
             else:
-                mapping[angle] = cs(angle) / max_intensity
+                mapping[angle] = cs(angle) / normalization_factor
         return XrdIntensities(data=mapping, x_axis_type=self.x_axis_type)
 
 

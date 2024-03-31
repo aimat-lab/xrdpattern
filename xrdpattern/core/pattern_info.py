@@ -1,7 +1,7 @@
 from hollarek.abstract import JsonDataclass
 from dataclasses import dataclass
 from typing import Optional
-from .xrd_data import XrdIntensities
+from .xrd_intensities import XrdIntensities
 from .metadata import Metadata
 
 

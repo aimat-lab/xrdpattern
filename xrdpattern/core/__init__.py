@@ -1,3 +1,3 @@
-from .xrd_data import XrdIntensities, XAxisType
+from .xrd_intensities import XrdIntensities, XAxisType
 from .metadata import Metadata
 from .pattern_info import PatternInfo
