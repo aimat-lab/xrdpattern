@@ -10,7 +10,7 @@ class TestPatternDB(Unittest):
     def test_save_load_roundtrip(self):
         pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath(), select_suffixes=['.raw'])
         tempdir_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
-        pattern_db.save(path=tempdir_path)
+        pattern_db.save(dirpath=tempdir_path)
 
         new_pattern_db = pattern_db.load(tempdir_path)
         oldpattern, new_patterns= pattern_db.patterns, new_pattern_db.patterns

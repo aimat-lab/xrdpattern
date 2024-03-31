@@ -19,15 +19,13 @@ class PatternDB:
     # -------------------------------------------
     # save/load
 
-    def save(self, path : str):
-        is_occupied = os.path.isdir(path) or os.path.isfile(path)
+    def save(self, dirpath : str):
+        is_occupied = os.path.isdir(dirpath) or os.path.isfile(dirpath)
         if is_occupied:
-            raise ValueError(f'Path \"{path}\" is occupied by file/dir')
-        os.makedirs(path, exist_ok=True)
+            raise ValueError(f'Path \"{dirpath}\" is occupied by file/dir')
+        os.makedirs(dirpath, exist_ok=True)
         for pattern in self.patterns:
-            # fpath = os.path.join(path, f'{pattern.get_name()}.json')
-            fpath = os.path.join(path, pattern.get_name())
-            # print(f'fpath is currently {fpath}')
+            fpath = os.path.join(dirpath, pattern.get_name())
             pattern.save(fpath=fpath)
 
     @classmethod

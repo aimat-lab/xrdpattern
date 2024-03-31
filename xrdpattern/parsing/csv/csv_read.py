@@ -1,8 +1,9 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from hollarek.abstract import SelectableEnum
-from ...core import XAxisType, XrdIntensities, Metadata, PatternInfo
-from .table_selector import TableSelector, TextTable
+
+from xrdpattern.core import XAxisType, XrdIntensities, Metadata, PatternInfo
+from .table_selector import TableSelector, TextTable, NumericalTable
 
 # -------------------------------------------
 
@@ -11,21 +12,25 @@ class Orientation(SelectableEnum):
     HORIZONTAL = 'horizontal'
 
 
+    @classmethod
+    def from_manual_query(cls) -> Orientation:
+        return super().from_manual_query()
+
+
 class Seperator(SelectableEnum):
     COMMA = ','
     SEMICOLON = ';'
     TAB = '\t'
 
+    @classmethod
+    def from_manual_query(cls) -> Seperator:
+        return super().from_manual_query()
 
 @dataclass
 class CsvScheme:
     pattern_dimension : Orientation
     x_axis_type: XAxisType = XAxisType.TwoTheta
-    seperator: str = ','
-
-    def __post_init__(self):
-        if not self.seperator in [',', ';', '\t']:
-            raise ValueError(f"Invalid seperator: {self.seperator}")
+    seperator: Seperator = Seperator.COMMA
 
     @classmethod
     def from_manual(cls) -> CsvScheme:
@@ -40,11 +45,11 @@ class CsvReader:
     def __init__(self, csv_scheme : CsvScheme):
         self.csv_scheme : CsvScheme = csv_scheme
 
-    def as_horiztontal_table(self, fpath : str):
+    def as_horiztontal_table(self, fpath : str) -> NumericalTable:
         data = []
         with open(fpath, 'r', newline='') as infile:
             for line in infile:
-                row = [item.strip() for item in line.strip().split(self.csv_scheme.seperator)]
+                row = [item.strip() for item in line.strip().split(self.csv_scheme.seperator.value)]
                 if row and any(item for item in row):
                     data.append(row)
 
@@ -72,4 +77,5 @@ class CsvReader:
             intensity_map = XrdIntensities(data=data, x_axis_type=self.csv_scheme.x_axis_type)
             new = PatternInfo(xrd_data=intensity_map, metadata=Metadata.make_empty())
             patterns.append(new)
+        return patterns
 
