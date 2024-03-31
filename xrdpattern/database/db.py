@@ -1,6 +1,7 @@
 from __future__ import annotations
 import os
 from typing import Optional
+import traceback
 from dataclasses import dataclass
 
 from xrdpattern.core import PatternInfo
@@ -20,12 +21,20 @@ class PatternDB:
     # save/load
 
     def save(self, dirpath : str):
-        is_occupied = os.path.isdir(dirpath) or os.path.isfile(dirpath)
-        if is_occupied:
-            raise ValueError(f'Path \"{dirpath}\" is occupied by file/dir')
+        if os.path.isfile(dirpath):
+            raise ValueError(f'Path \"{dirpath}\" is occupied by file')
         os.makedirs(dirpath, exist_ok=True)
+
+        def get_path(basename : str, index : Optional[int] = None):
+            conditional_index = '' if index is None else f'_{index}'
+            return os.path.join(dirpath, f'{basename}{conditional_index}.json')
+
         for pattern in self.patterns:
-            fpath = os.path.join(dirpath, pattern.get_name())
+            fpath = get_path(basename=pattern.get_name())
+            current_index = 0
+            while os.path.isfile(path=fpath):
+                current_index += 1
+                fpath = get_path(basename=pattern.get_name(), index=current_index)
             pattern.save(fpath=fpath)
 
     @classmethod
@@ -55,8 +64,9 @@ class PatternDB:
                 patterns += new_patterns
             except Exception as e:
                 failed_fpath.append(fpath)
-                print(f"Could not import pattern from file {fpath} \n"
-                      f"-> Error: \"{e.__class__.__name__}: {str(e)}\"")
+                print(f"Could not import pattern from file {fpath}\n"
+                      f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
+                      f"-> Traceback: \n{traceback.format_exc()}")
 
         reports = [pattern.get_parsing_report() for pattern in patterns]
         database_report = DatabaseReport(failed_files=failed_fpath, source_files=data_fpaths, pattern_reports=reports)

@@ -12,7 +12,10 @@ class PatternInfo(JsonDataclass):
     datafile_path : Optional[str] = None
 
 
-    def get_wavelength(self, primary : bool = True) -> float:
+    def get_wavelength(self, primary : bool = True) -> Optional[float]:
+        if not self.metadata.wavelength_info:
+            return None
+
         wavelength_info = self.metadata.wavelength_info
         if primary:
             wavelength = wavelength_info.primary
