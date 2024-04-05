@@ -80,47 +80,36 @@ class BinaryFormat:
 
 
 if __name__ == "__main__":
-    import struct
-
-    example_tuple = (42, "Hello, World!", 3.14, 1, 2, 3, 4, 5)
-    string_length = len(example_tuple[1].encode())
-    fmt_str_correct = f'i{string_length}pf5i'
-    packed_data_correct = struct.pack(fmt_str_correct, example_tuple[0], example_tuple[1].encode(), example_tuple[2],*example_tuple[3:])
-    unpacked_data_correct = struct.unpack(fmt_str_correct, packed_data_correct)
-
-    blocks = [
-        Block(size=4, data_structure=BlockFmt.INT_OR_LONG),
-        Block(size=string_length, data_structure=BlockFmt.PASCAL_STRING),
-        Block(size=4, data_structure=BlockFmt.FLOAT),
-        Block(size=20, data_structure=BlockFmt.INT_OR_LONG)
-    ]
-
-    bin_fmt = BinaryFormat(block_list=blocks)
-    print(bin_fmt._decode_bytes(byte_content=packed_data_correct))
+    stoe_file = f'/home/daniel/OneDrive/Downloads/SN_SS_17_JB-CR(III)_back_m.raw'
+    with open(stoe_file, 'rb') as f:
+        byte_content = f.read()
+    start = 0
+    for j in range(len(byte_content)):
+        try:
+            str_content = byte_content[start:j].decode()
+            # print(f'str content is {str_content}')
+        except:
+            start = j
+        if j % 2 == 0 and j + 4 < len(byte_content):
+            next_bytes = byte_content[j:j+4]
+            print(f'byte number {j}')
+            print(struct.unpack('i', next_bytes)[0])
+            print(f"as Float {struct.unpack('f', next_bytes)[0]}")
 
 
-# if __name__ == "__main__":
-#     abs8_blocks = [
-#         # HEADER
-#         Block(size=5, data_structure=BlockFmt.PASCAL_STRING),  # "AVS84"
-#         Block(size=9, data_structure=BlockFmt.PASCAL_STRING),  # ?
-#         Block(size=9, data_structure=BlockFmt.PASCAL_STRING),  # Spectrometer serial ID
-#         Block(size=1, data_structure=BlockFmt.PASCAL_STRING),  # ?
-#         Block(size=9, data_structure=BlockFmt.PASCAL_STRING),  # Spectrometer serial ID
-#         Block(size=3, data_structure=BlockFmt.PAD_BYTE),  # null padding?
-#         Block(size=292, data_structure=BlockFmt.PASCAL_STRING),  # ?
-#
-#         # SERIES
-#         Block(size=13600, data_structure=BlockFmt.FLOAT),  # X axis
-#         Block(size=13600, data_structure=BlockFmt.FLOAT),  # Y axis
-#         Block(size=13600, data_structure=BlockFmt.FLOAT),  # Z axis
-#
-#         # FOOTER
-#         Block(size=13612, data_structure=BlockFmt.PAD_BYTE),  # null padding?
-#         Block(size=4, data_structure=BlockFmt.FLOAT),  # constant 1.0f
-#         Block(size=5, data_structure=BlockFmt.PAD_BYTE),  # null padding?
-#         Block(size=1884, data_structure=BlockFmt.FLOAT),  # constant 10.0f array?
-#         Block(size=1883, data_structure=BlockFmt.PAD_BYTE),  # null padding?
-#     ]
-#     abs8 = BinaryFormat(block_list=abs8_blocks)
-#     abs8.decode(fpath='/home/daniel/OneDrive/Downloads/SD181_1_abs.ABS8')
+    # import struct
+    #
+    # example_tuple = (42, "Hello, World!", 3.14, 1, 2, 3, 4, 5)
+    # string_length = len(example_tuple[1].encode())
+    # fmt_str_correct = f'i{string_length}pf5i'
+    # packed_data_correct = struct.pack(fmt_str_correct, example_tuple[0], example_tuple[1].encode(), example_tuple[2],*example_tuple[3:])
+    # unpacked_data_correct = struct.unpack(fmt_str_correct, packed_data_correct)
+    #
+    # blocks = [
+    #     Block(size=4, data_structure=BlockFmt.INT_OR_LONG),
+    #     Block(size=string_length, data_structure=BlockFmt.PASCAL_STRING),
+    #     Block(size=4, data_structure=BlockFmt.FLOAT),
+    #     Block(size=20, data_structure=BlockFmt.INT_OR_LONG)
+    # ]
+    #
+    # bin_fmt = BinaryFormat(block_list=blocks)
