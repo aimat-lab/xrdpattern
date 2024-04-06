@@ -42,16 +42,22 @@ class Quantity:
         pass
 
     def get_value(self) -> Any:
-        return self.value
+        if len(self.value) == 1:
+            return self.value[0]
+        else:
+            return self.value
 
-    def extract_value(self, binary_content : bytes):
-        if len(binary_content) < self.start + self.size:
-            raise ValueError(f'Binary content has length {len(binary_content)} but expected at least {self.start + self.size} bytes')
+    def extract_value(self, byte_content : bytes):
+        if len(byte_content) < self.start + self.size:
+            raise ValueError(f'Binary content has length {len(byte_content)} but expected at least {self.start + self.size} bytes')
+
+        if self.size == 0:
+            return
 
         start = self.start
         end = self.start + self.size
-        partial = binary_content[start:end]
-        self.value =  struct.unpack(self.get_fmt_str(), partial)[0]
+        partial = byte_content[start:end]
+        self.value =  struct.unpack(self.get_fmt_str(), partial)
 
     def get_fmt_str(self) -> str:
         elementary_size = self.dtype.get_num_bytes()
@@ -68,41 +74,35 @@ class FloatQuantity(Quantity):
     def get_dtype(self) -> DataType:
         return DataType.FLOAT
 
-    def extract_value(self, binary_content : bytes) -> float:
-        return super().extract_value(binary_content)
-
     def get_value(self) -> float:
-        return self.value
-
+        return super().get_value()
 
 class IntegerQuantity(Quantity):
     def get_dtype(self) -> DataType:
         return DataType.INT_OR_LONG
 
-    def extract_value(self, binary_content : bytes) -> int:
-        return super().extract_value(binary_content)
-
     def get_value(self) -> int:
-        return self.value
+        return super().get_value()
 
 
 class BooleanQuantity(Quantity):
     def get_dtype(self) -> DataType:
         return DataType.BOOLEAN
 
-    def extract_value(self, binary_content : bytes) -> float:
-        return super().extract_value(binary_content)
-
     def get_value(self) -> bool:
-        return self.value
+        return super().get_value()
 
 class BinaryReader:
     def read(self, fpath : str):
         with open(fpath, 'rb') as f:
-            binary_content = f.read()
+            byte_content = f.read()
+        self.read_bytes(byte_content=byte_content)
+
+    def read_bytes(self, byte_content : bytes):
         for key, value in self.__dict__.items():
             if isinstance(value, Quantity):
-                value.extract_value(binary_content)
+                value.extract_value(byte_content)
+
 
 class StoeReader(BinaryReader):
     def __init__(self):
@@ -110,7 +110,16 @@ class StoeReader(BinaryReader):
         self.secondary_wavelength : FloatQuantity = FloatQuantity(start=322)
         self.ratio : FloatQuantity = FloatQuantity(start=384)
         self.num_entries : IntegerQuantity = IntegerQuantity(start=2082)
+        self.angle_start : FloatQuantity = FloatQuantity(start=572)
+        self.angle_end : FloatQuantity = FloatQuantity(start=576)
+        self.intensities : IntegerQuantity = IntegerQuantity(start=2560)
 
+    def read(self, fpath : str):
+        with open(fpath, 'rb') as f:
+            byte_content = f.read()
+        self.num_entries.extract_value(byte_content=byte_content)
+        self.intensities.size = self.num_entries.get_value()
+        super().read_bytes(byte_content=byte_content)
 
 if __name__ == "__main__":
     binary_reader = StoeReader()
@@ -119,19 +128,3 @@ if __name__ == "__main__":
     for key, value in binary_reader.__dict__.items():
         if isinstance(value, Quantity):
             print(f'{key} : {value.get_value()}')
-
-
-    # stoe_file =
-    # with open(stoe_file, 'rb') as f:
-    #     byte_content = f.read()
-    # start = 0
-    # for j in range(len(byte_content)):
-    #     try:
-    #         str_content = byte_content[start:j].decode()
-    #     except:
-    #         start = j
-    #     if j % 2 == 0 and j + 4 < len(byte_content):
-    #         next_bytes = byte_content[j:j+4]
-    #         print(f'byte number {j}')
-    #         print(struct.unpack('i', next_bytes)[0])
-    #         print(f"as Float {struct.unpack('f', next_bytes)[0]}")
