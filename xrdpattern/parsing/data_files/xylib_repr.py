@@ -72,7 +72,7 @@ def convert_file(opt : XYLibOption):
             f.write('# ' + '\t'.join(col_names) + '\n')
             number_of_rows = block.get_point_count()
             for row_counter in range(number_of_rows):
-                values = ["%.6f" % block.get_column(k).get_value(row_counter)
+                values = ["%.6f" % block.get_column(k).extract_value(row_counter)
                           for k in range(1, number_of_cols+1)]
                 f.write('\t'.join(values) + '\n')
 

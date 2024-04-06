@@ -1,13 +1,12 @@
-from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+from typing import Optional, Any
 import struct
+from abc import abstractmethod
 
-class BlockFmt(Enum):
+class DataType(Enum):
     PASCAL_STRING = 'p'
     FLOAT = 'f'
     DOUBLE = 'd'
-    SIGNED_CHAR = 'b'
     UNSIGNED_CHAR = 'B'
     SHORT = 'h'
     UNSIGNED_SHORT = 'H'
@@ -18,7 +17,6 @@ class BlockFmt(Enum):
     CHAR = 'c'
     PAD_BYTE = 'x'
     BOOLEAN = '?'
-
 
     def get_num_bytes(self) -> Optional[int]:
         size_map = {
@@ -31,13 +29,32 @@ class BlockFmt(Enum):
         }
         return size_map.get(self.value, None)
 
-@dataclass
-class Block:
-    size : int
-    data_structure : BlockFmt
+
+class Quantity:
+    def __init__(self, start : int, size : Optional[int] = None):
+        self.start : int = start
+        self.dtype : DataType = self.get_dtype()
+        self.size : int = size if not size is None else self.dtype.get_num_bytes()
+        self.value : Optional[Any] = None
+
+    @abstractmethod
+    def get_dtype(self) -> DataType:
+        pass
+
+    def get_value(self) -> Any:
+        return self.value
+
+    def extract_value(self, binary_content : bytes):
+        if len(binary_content) < self.start + self.size:
+            raise ValueError(f'Binary content has length {len(binary_content)} but expected at least {self.start + self.size} bytes')
+
+        start = self.start
+        end = self.start + self.size
+        partial = binary_content[start:end]
+        self.value =  struct.unpack(self.get_fmt_str(), partial)[0]
 
     def get_fmt_str(self) -> str:
-        elementary_size = self.data_structure.get_num_bytes()
+        elementary_size = self.dtype.get_num_bytes()
         if not elementary_size is None:
             if self.size % elementary_size != 0:
                 raise ValueError(f'Block size {self.size} must be multiple of size of specified '
@@ -45,71 +62,76 @@ class Block:
             num = self.size//elementary_size
         else:
             num = self.size
-        return f'{num}{self.data_structure.value}'
+        return f'{num}{self.dtype.value}'
+
+class FloatQuantity(Quantity):
+    def get_dtype(self) -> DataType:
+        return DataType.FLOAT
+
+    def extract_value(self, binary_content : bytes) -> float:
+        return super().extract_value(binary_content)
+
+    def get_value(self) -> float:
+        return self.value
 
 
-class BinaryFormat:
-    def __init__(self, block_list):
-        self.block_list = block_list
+class IntegerQuantity(Quantity):
+    def get_dtype(self) -> DataType:
+        return DataType.INT_OR_LONG
 
-    def get_fmt_str(self) -> str:
-        fmt_str = ''
-        for block in self.block_list:
-            fmt_str += block.get_fmt_str()
-        return fmt_str
+    def extract_value(self, binary_content : bytes) -> int:
+        return super().extract_value(binary_content)
 
-
-    def decode(self, fpath : str) -> str:
-        with open(fpath, mode='rb') as file:
-            byte_content = file.read()
-        return self._decode_bytes(byte_content=byte_content)
+    def get_value(self) -> int:
+        return self.value
 
 
-    def _decode_bytes(self, byte_content : bytes) -> str:
-        the_fmt_str = self.get_fmt_str()
-        print(the_fmt_str)
-        unpacked_blocks = struct.unpack(the_fmt_str,  byte_content)
-        plain_text = ''
-        for block in unpacked_blocks:
-            if isinstance(block, bytes):
-                block = block.decode(encoding='utf-8')
-            plain_text += str(block)
-        return plain_text
+class BooleanQuantity(Quantity):
+    def get_dtype(self) -> DataType:
+        return DataType.BOOLEAN
 
+    def extract_value(self, binary_content : bytes) -> float:
+        return super().extract_value(binary_content)
 
+    def get_value(self) -> bool:
+        return self.value
+
+class BinaryReader:
+    def read(self, fpath : str):
+        with open(fpath, 'rb') as f:
+            binary_content = f.read()
+        for key, value in self.__dict__.items():
+            if isinstance(value, Quantity):
+                value.extract_value(binary_content)
+
+class StoeReader(BinaryReader):
+    def __init__(self):
+        self.primary_wavelength : FloatQuantity = FloatQuantity(start=326)
+        self.secondary_wavelength : FloatQuantity = FloatQuantity(start=322)
+        self.ratio : FloatQuantity = FloatQuantity(start=384)
+        self.num_entries : IntegerQuantity = IntegerQuantity(start=2082)
 
 
 if __name__ == "__main__":
-    stoe_file = f'/home/daniel/OneDrive/Downloads/SN_SS_17_JB-CR(III)_back_m.raw'
-    with open(stoe_file, 'rb') as f:
-        byte_content = f.read()
-    start = 0
-    for j in range(len(byte_content)):
-        try:
-            str_content = byte_content[start:j].decode()
-            # print(f'str content is {str_content}')
-        except:
-            start = j
-        if j % 2 == 0 and j + 4 < len(byte_content):
-            next_bytes = byte_content[j:j+4]
-            print(f'byte number {j}')
-            print(struct.unpack('i', next_bytes)[0])
-            print(f"as Float {struct.unpack('f', next_bytes)[0]}")
+    binary_reader = StoeReader()
+    binary_reader.read(fpath=f'/home/daniel/OneDrive/Downloads/SN_SS_17_JB-CR(III)_back_m.raw')
+
+    for key, value in binary_reader.__dict__.items():
+        if isinstance(value, Quantity):
+            print(f'{key} : {value.get_value()}')
 
 
-    # import struct
-    #
-    # example_tuple = (42, "Hello, World!", 3.14, 1, 2, 3, 4, 5)
-    # string_length = len(example_tuple[1].encode())
-    # fmt_str_correct = f'i{string_length}pf5i'
-    # packed_data_correct = struct.pack(fmt_str_correct, example_tuple[0], example_tuple[1].encode(), example_tuple[2],*example_tuple[3:])
-    # unpacked_data_correct = struct.unpack(fmt_str_correct, packed_data_correct)
-    #
-    # blocks = [
-    #     Block(size=4, data_structure=BlockFmt.INT_OR_LONG),
-    #     Block(size=string_length, data_structure=BlockFmt.PASCAL_STRING),
-    #     Block(size=4, data_structure=BlockFmt.FLOAT),
-    #     Block(size=20, data_structure=BlockFmt.INT_OR_LONG)
-    # ]
-    #
-    # bin_fmt = BinaryFormat(block_list=blocks)
+    # stoe_file =
+    # with open(stoe_file, 'rb') as f:
+    #     byte_content = f.read()
+    # start = 0
+    # for j in range(len(byte_content)):
+    #     try:
+    #         str_content = byte_content[start:j].decode()
+    #     except:
+    #         start = j
+    #     if j % 2 == 0 and j + 4 < len(byte_content):
+    #         next_bytes = byte_content[j:j+4]
+    #         print(f'byte number {j}')
+    #         print(struct.unpack('i', next_bytes)[0])
+    #         print(f"as Float {struct.unpack('f', next_bytes)[0]}")
