@@ -75,7 +75,7 @@ class CsvReader:
         for row in data_rows:
             data = {x : y for (x,y) in zip(x_axis_row, row)}
             intensity_map = XrdIntensities(data=data, x_axis_type=self.csv_scheme.x_axis_type)
-            new = PatternInfo(xrd_data=intensity_map, metadata=Metadata.make_empty())
+            new = PatternInfo(xrd_intensities=intensity_map, metadata=Metadata.make_empty())
             patterns.append(new)
         return patterns
 

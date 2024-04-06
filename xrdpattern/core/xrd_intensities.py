@@ -18,6 +18,10 @@ class XrdIntensities(JsonDataclass):
     data : dict[float, float]
     x_axis_type : XAxisType
 
+    @classmethod
+    def angle_data(cls, data : dict[float, float]):
+        return cls(data=data, x_axis_type=XAxisType.TwoTheta)
+
     def get_standardized(self, start_val : float, stop_val : float, num_entries : int) -> XrdIntensities:
         x_values = list(self.data.keys())
         start, end = x_values[0], x_values[-1]

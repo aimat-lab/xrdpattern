@@ -7,7 +7,7 @@ from .metadata import Metadata
 
 @dataclass
 class PatternInfo(JsonDataclass):
-    xrd_data : XrdIntensities
+    xrd_intensities : XrdIntensities
     metadata: Metadata
     datafile_path : Optional[str] = None
 

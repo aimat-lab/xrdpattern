@@ -2,7 +2,7 @@ import struct
 from abc import abstractmethod
 from enum import Enum
 from typing import Optional, Any
-
+from typing import Union
 
 class DataType(Enum):
     PASCAL_STRING = 'p'
@@ -76,7 +76,7 @@ class FloatQuantity(Quantity):
     def get_dtype(self) -> DataType:
         return DataType.FLOAT
 
-    def get_value(self) -> float:
+    def get_value(self) -> Union[float, list[float]]:
         return super().get_value()
 
 
@@ -84,7 +84,7 @@ class IntegerQuantity(Quantity):
     def get_dtype(self) -> DataType:
         return DataType.INT_OR_LONG
 
-    def get_value(self) -> int:
+    def get_value(self) -> Union[int, list[int]]:
         return super().get_value()
 
 

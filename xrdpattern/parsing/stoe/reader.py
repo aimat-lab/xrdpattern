@@ -1,3 +1,4 @@
+from xrdpattern.core import Metadata, PatternInfo, XrdIntensities
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
 
 class BinaryReader:
@@ -28,9 +29,29 @@ class StoeReader(BinaryReader):
         self.num_entries.extract_value(byte_content=byte_content)
         self.intensities.size = self.num_entries.get_value()
         super().read_bytes(byte_content=byte_content)
-    #
-    # def get_pattern_info(self, fpath : str) -> PatternInfo:
-    #     self.read(fpath=fpath)
-    #     metadata = Metadata.from_wavelength(primary_wavelength=self)
-    #
-    #     PatternInfo(datafile_path=fpath, )
+
+
+    def get_pattern_info(self, fpath : str) -> PatternInfo:
+        self.read(fpath=fpath)
+        metadata = Metadata(primary=self.primary_wavelength.get_value(),
+                            secondary=self.secondary_wavelength.get_value(),
+                            ratio=self.ratio.get_value())
+
+        angle_values = self._get_x_values()
+        float_intensities = self._get_y_values()
+        data = {angle: intensity for angle, intensity in zip(angle_values, float_intensities)}
+        intensities = XrdIntensities.angle_data(data=data)
+
+        return PatternInfo(datafile_path=fpath, metadata=metadata, xrd_intensities=intensities)
+
+
+    def _get_x_values(self) -> list[float]:
+        start_value = self.angle_start.get_value()
+        end_value = self.angle_end.get_value()
+        num_entries = self.num_entries.get_value()
+        step = (end_value - start_value) / (num_entries - 1)
+        return [start_value + i * step for i in range(num_entries)]
+
+
+    def _get_y_values(self) -> list[float]:
+        return [float(intensity) for intensity in self.intensities.get_value()]

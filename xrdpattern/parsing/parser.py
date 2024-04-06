@@ -74,7 +74,7 @@ class Parser:
             deg, intensity = float(deg_str), float(intensity_str)
             two_theta_to_intensity[deg] = intensity
         intensity_map = XrdIntensities(data=two_theta_to_intensity, x_axis_type=XAxisType.TwoTheta)
-        return PatternInfo(xrd_data=intensity_map, metadata=metadata)
+        return PatternInfo(xrd_intensities=intensity_map, metadata=metadata)
 
 
     def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[PatternInfo]:

@@ -44,7 +44,7 @@ class XrdPattern(PatternInfo):
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern = pattern_list[0]
-        return cls(xrd_data=pattern.xrd_data, metadata=pattern.metadata, datafile_path=fpath)
+        return cls(xrd_intensities=pattern.xrd_intensities, metadata=pattern.metadata, datafile_path=fpath)
 
 
     def save(self, fpath : str):
@@ -62,9 +62,9 @@ class XrdPattern(PatternInfo):
     def get_parsing_report(self) -> PatternReport:
 
         pattern_health = PatternReport(data_file_path=self.datafile_path)
-        if len(self.xrd_data.data) == 0:
+        if len(self.xrd_intensities.data) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.xrd_data.data) < 10:
+        elif len(self.xrd_intensities.data) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
         if self.get_wavelength(primary=True) is None:
             pattern_health.add_error('Primary wavelength missing!')
@@ -99,7 +99,7 @@ class XrdPattern(PatternInfo):
         if x_axis_type == XAxisType.QValues:
             raise NotImplementedError
 
-        intensity_map = self.xrd_data
+        intensity_map = self.xrd_intensities
         if apply_standardization:
             start, stop = self.get_std_range()
             num_entries = self.get_std_num_entries()
@@ -117,5 +117,5 @@ class XrdPattern(PatternInfo):
     def __eq__(self, other):
         if not isinstance(other, XrdPattern):
             return False
-        return self.xrd_data == other.xrd_data and self.metadata == other.metadata
+        return self.xrd_intensities == other.xrd_intensities and self.metadata == other.metadata
 
