@@ -13,14 +13,10 @@ class PatternInfo(JsonDataclass):
 
 
     def get_wavelength(self, primary : bool = True) -> Optional[float]:
-        if not self.metadata.wavelength_info:
-            return None
-
-        wavelength_info = self.metadata.wavelength_info
         if primary:
-            wavelength = wavelength_info.primary
+            wavelength = self.metadata.primary
         else:
-            wavelength = wavelength_info.secondary
+            wavelength = self.metadata.secondary
         if wavelength is None:
             raise ValueError(f"Wavelength is None")
 
@@ -28,8 +24,7 @@ class PatternInfo(JsonDataclass):
 
 
     def set_wavelength(self, new_wavelength : float, primary : bool = True):
-        wavelength_info = self.metadata.wavelength_info
         if primary:
-            wavelength_info.primary = new_wavelength
+            self.metadata.primary = new_wavelength
         else:
-            wavelength_info.secondary = new_wavelength
+            self.metadata.secondary = new_wavelength

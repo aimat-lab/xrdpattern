@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional
 from dataclasses import dataclass
-from hollarek.fsys import get_suffix
+from hollarek.fsys import SaveManager
 from ..core import PatternInfo, Metadata, XrdIntensities, XAxisType
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvScheme, CsvReader
@@ -28,7 +28,7 @@ class Parser:
     # pattern
 
     def get_pattern_info_list(self, fpath : str) -> list[PatternInfo]:
-        suffix = get_suffix(fpath)
+        suffix = SaveManager.get_suffix(fpath)
         if not suffix in Formats.get_allowed_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
         if suffix:

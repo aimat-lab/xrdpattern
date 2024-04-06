@@ -1,5 +1,4 @@
 from xrdpattern.database import PatternDB
-from xrdpattern.parsing import ParserOptions
 from hollarek.devtools import Unittest
 import tempfile
 import os, uuid

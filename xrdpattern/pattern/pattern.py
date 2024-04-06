@@ -3,11 +3,10 @@ import matplotlib.pyplot as plt
 import os
 from uuid import uuid4
 from typing import Optional
-from pymatgen.analysis.diffraction.xrd import  DiffractionPattern
-from hollarek.fsys import ensure_suffix
+from hollarek.fsys import SaveManager
 
 from xrdpattern.parsing import Parser, XrdFormat, ParserOptions, CsvScheme
-from xrdpattern.core import XrdIntensities, XAxisType, PatternInfo, Metadata
+from xrdpattern.core import XrdIntensities, XAxisType, PatternInfo
 from .pattern_report import PatternReport
 # -------------------------------------------
 
@@ -49,9 +48,8 @@ class XrdPattern(PatternInfo):
 
 
     def save(self, fpath : str):
-
         if not fpath.endswith(f'.json'):
-            fpath = ensure_suffix(fpath, suffix = 'json')
+            fpath = SaveManager.ensure_suffix(fpath, suffix = 'json')
         print(f'Current fpath is {fpath}')
         if os.path.isfile(fpath):
             raise ValueError(f'File {fpath} already exists')

@@ -9,30 +9,18 @@ from typing import Iterator, Tuple
 
 # -------------------------------------------
 
-
-@dataclass
-class WavelengthInfo(JsonDataclass):
-    primary: float
-    secondary: Optional[float] = None
-    ratio: Optional[float] = None
-
-    def __eq__(self, other):
-        return self.primary == other.primary and self.secondary == other.secondary and self.ratio == other.ratio
-
 @dataclass
 class Metadata(JsonDataclass):
-    wavelength_info: Optional[WavelengthInfo]
+    primary : Optional[float]
+    secondary : Optional[float]
+    ratio : Optional[float]
     anode_material: Optional[str] = None
     temp_celcius: Optional[float] = None
     measurement_date: Optional[datetime] = None
 
     @classmethod
     def make_empty(cls):
-        return Metadata(wavelength_info=None)
-
-    @classmethod
-    def from_wavelength(cls, primary_wavelength : float, secondary_wavelength : Optional[float] = None):
-        return cls(wavelength_info=WavelengthInfo(primary_wavelength, secondary_wavelength))
+        return Metadata(primary=None, secondary=None, ratio=None)
 
     @classmethod
     def from_header_str(cls, header_str: str) -> Metadata:
@@ -44,13 +32,10 @@ class Metadata(JsonDataclass):
                 val = float(val)
             return val
 
-        wavelength_info = WavelengthInfo(primary=get_float('ALPHA1'),
-                                         secondary=get_float('ALPHA2'),
-                                         ratio=get_float('ALPHA_RATIO')
-                                         )
-
         metadata = cls(
-            wavelength_info=wavelength_info,
+            primary=get_float('ALPHA1'),
+            secondary=get_float('ALPHA2'),
+            ratio=get_float('ALPHA_RATIO'),
             anode_material=metadata_map.get('ANODE_MATERIAL'),
             temp_celcius=get_float('TEMP_CELCIUS'),
             measurement_date=cls.get_date_time(metadata_map.get('MEASURE_DATE'), metadata_map.get('MEASURE_TIME'))
@@ -82,9 +67,13 @@ class Metadata(JsonDataclass):
 
 
     def __eq__(self, other):
-        wavelength_match = self.wavelength_info == other.wavelength_info
+        if not isinstance(other, Metadata):
+            return False
+        primary_match = self.primary == other.primary
+        secondary_match = self.secondary == other.secondary
+        ratio_match = self.ratio == other.ratio
         anode_match = self.anode_material == other.anode_material
         temp_match = self.temp_celcius == other.temp_celcius
         date_match = self.measurement_date == other.measurement_date
 
-        return wavelength_match and anode_match and temp_match and date_match
+        return anode_match and temp_match and date_match and primary_match and secondary_match and ratio_match

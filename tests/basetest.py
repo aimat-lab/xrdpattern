@@ -1,7 +1,5 @@
 from xrdpattern.core import XrdIntensities
 from xrdpattern.pattern import XrdPattern
-from xrdpattern.database import PatternDB
-from xrdpattern.parsing import Parser
 from hollarek.devtools import Unittest
 from abc import abstractmethod
 

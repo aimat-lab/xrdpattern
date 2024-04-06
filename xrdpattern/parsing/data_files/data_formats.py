@@ -10,6 +10,7 @@ class XrdFormat:
 
 class Formats:
     bruker_raw = XrdFormat("bruker_raw", "raw")
+    stoe_raw = XrdFormat("stoe_raw", 'raw')
     bruker_spc = XrdFormat("bruker_spc", "spc")
     canberra_cnf = XrdFormat("canberra_cnf", "cnf")
     canberra_mca = XrdFormat("canberra_mca", "mca")
