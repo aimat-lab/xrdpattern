@@ -39,7 +39,6 @@ class Formats:
     def get_datafile_suffixes(cls):
         return [xrd_format.suffix for xrd_format in cls.get_all_formats() if not xrd_format.suffix in ["json", "csv"]]
 
-
     @classmethod
     def get_allowed_suffixes(cls) -> list[str]:
         return [xrd_format.suffix for xrd_format in cls.get_all_formats()]
@@ -50,6 +49,9 @@ class Formats:
 
     @classmethod
     def get_format(cls, suffix : str) -> XrdFormat:
+        if suffix == 'raw':
+            return Formats.bruker_raw
+
         suffix_to_format_map = {xrd_format.suffix : xrd_format for xrd_format in cls.get_all_formats()}
         xrd_format = suffix_to_format_map.get(suffix)
         if not xrd_format:

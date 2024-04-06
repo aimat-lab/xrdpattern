@@ -1,10 +1,12 @@
-from xrdpattern.database import PatternDB
-from hollarek.devtools import Unittest
 import tempfile
 import os, uuid
+from xrdpattern.database import PatternDB
+from .basetest import ParserBaseTest
 
 
-class TestPatternDB(Unittest):
+class TestPatternDB(ParserBaseTest):
+    def get_fpath(self) -> str:
+        return self.get_datafolder_fpath()
 
     def test_save_load_roundtrip(self):
         pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath(), select_suffixes=['.raw'])
@@ -24,10 +26,6 @@ class TestPatternDB(Unittest):
             new_pattern = new_pattern_map.get(pattern_name)
             self.assertIsNotNone(new_pattern)
             self.assertEqual(old_pattern, new_pattern)
-
-    @staticmethod
-    def get_datafolder_fpath() -> str:
-        return '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Ben/MOF/'
 
 
 if __name__ == "__main__":

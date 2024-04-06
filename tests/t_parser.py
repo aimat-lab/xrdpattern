@@ -5,8 +5,9 @@ from tests.basetest import PatternBaseTest
 
 
 class TestParserPattern(PatternBaseTest):
+
     def get_fpath(self) -> str:
-        return '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Bei/HEO-FeSb/01.06.21-NiTeMo.raw'
+        return self.get_bruker_fpath()
 
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern, XrdPattern)
@@ -70,4 +71,4 @@ class TestParserDatabase(Unittest):
 
 if __name__ == "__main__":
     TestParserPattern.execute_all(manual_mode=False)
-    # TestParserDatabase.execute_all(manual_mode=False)
+    TestParserDatabase.execute_all(manual_mode=False)
