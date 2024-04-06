@@ -5,10 +5,6 @@ from tests.basetest import ParserBaseTest
 
 
 class TestPatternDB(ParserBaseTest):
-    @staticmethod
-    def get_datafolder_fpath() -> str:
-        return '/home/daniel/local/dataset/INT_Copper_2024_02_22/data/data_kupfer/'
-
     def test_save_load_roundtrip(self):
         pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath(), select_suffixes=['.raw'])
         tempdir_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))

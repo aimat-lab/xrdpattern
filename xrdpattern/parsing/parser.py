@@ -63,7 +63,6 @@ class Parser:
 
     @staticmethod
     def from_data_file(fpath: str, format_hint : XrdFormat) -> PatternInfo:
-        print(f'format hint is {format_hint}')
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         metadata = Metadata.from_header_str(header_str=header)

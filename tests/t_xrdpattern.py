@@ -1,16 +1,12 @@
 import os.path
-from tests.basetest import PatternBaseTest
+from tests.base import PatternBaseTest
 from xrdpattern.pattern import XrdPattern
 import tempfile
 
 
 class TestXrdPattern(PatternBaseTest):
     def get_fpath(self) -> str:
-        this_file_path = os.path.abspath(__file__)
-        this_dir_path = os.path.dirname(this_file_path)
-        fpath = os.path.join(this_dir_path, 'pattern.json')
-        return fpath
-
+        return self.get_aimat_json_fpath()
 
     def test_save_load_roundtrip(self):
         pattern = self.pattern
@@ -18,7 +14,7 @@ class TestXrdPattern(PatternBaseTest):
         pattern.save(fpath=save_path)
         pattern2 = XrdPattern.load(fpath=save_path)
         self.assertEqual(first=pattern, second=pattern2)
-        print(f'pattern after roundtrip {pattern.to_str()}')
+        print(f'pattern after roundtrip {pattern.to_str()[:500]} + {pattern.to_str()[-500:]}')
 
     def test_plot(self):
         if self.is_manual_mode:
@@ -27,7 +23,7 @@ class TestXrdPattern(PatternBaseTest):
     def test_standardize(self):
         pattern = self.pattern
         intensity_map =pattern.get_data(apply_standardization=True)
-        self.assertTrue(len(intensity_map.data) == 1000)
+        self.assertTrue(len(intensity_map.data) == XrdPattern.get_std_num_entries())
 
     def test_convert_axis(self):
         wavelength = 1.54

@@ -32,8 +32,13 @@ class ParserBaseTest(Unittest):
         return '/home/daniel/local/misc/example_files/multi.csv'
 
     @staticmethod
+    def get_aimat_json_fpath()->str:
+        return '/home/daniel/local/misc/example_files/aimat.json'
+
+    @staticmethod
     def get_datafolder_fpath() -> str:
         return '/home/daniel/local/misc/example_files/datafolder'
+
 
 
 class PatternBaseTest(ParserBaseTest):

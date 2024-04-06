@@ -38,7 +38,6 @@ def get_xylib_repr(fpath : str, format_hint : XrdFormat) -> XYLibPattern:
     try:
         with NamedTemporaryFile(delete=False) as temp_file:
             output_path = temp_file.name
-        print(f'format hint is {format_hint}')
         option = XYLibOption(input_path=fpath, output_path=output_path, format_hint=format_hint)
         convert_file(opt=option)
         with open(output_path, "r") as file:

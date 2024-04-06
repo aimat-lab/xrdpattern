@@ -1,6 +1,6 @@
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
-from tests.basetest import PatternBaseTest, ParserBaseTest
+from tests.base import PatternBaseTest, ParserBaseTest
 
 
 class TestParserPattern(PatternBaseTest):
@@ -9,9 +9,8 @@ class TestParserPattern(PatternBaseTest):
 
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern, XrdPattern)
-
         print(f'serialized pattern')
-        print(f'{self.pattern.to_str()}')
+        print(f'{self.pattern.to_str()[:1000]} + {self.pattern.to_str()[-1000:]}')
 
     def test_report_ok(self):
         report = self.pattern.get_parsing_report()
@@ -28,9 +27,9 @@ class TestParserPattern(PatternBaseTest):
         for prop in properties:
             self.assertIsNotNone(obj=prop)
 
-        primary_wavelength = metadata.wavelength_info.primary
-        secondary_wavelength = metadata.wavelength_info.secondary
-        ratio = metadata.wavelength_info.ratio
+        primary_wavelength = metadata.primary
+        secondary_wavelength = metadata.secondary
+        ratio = metadata.ratio
         print(f'prim, sec, ratio {primary_wavelength}, {secondary_wavelength}, {ratio}')
 
         for prop in [primary_wavelength, secondary_wavelength, ratio]:
@@ -48,11 +47,12 @@ class TestParserPattern(PatternBaseTest):
         for data in [raw_data, std_data]:
             self.check_data_ok(data=data)
 
+    def save(self):
+        self.pattern.save(fpath='/home/daniel/local/misc/example_files/aimat.json')
 
 class TestParserDatabase(ParserBaseTest):
     def setUp(self):
-        self.datafolder_path : str = '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Aaditya/'
-        self.pattern_db = PatternDB.load(datafolder_path=self.datafolder_path)
+        self.pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
 
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern_db, PatternDB)
@@ -65,6 +65,10 @@ class TestParserDatabase(ParserBaseTest):
         self.assertIsInstance(obj=as_str, cls=str)
         self.assertTrue(len(report.pattern_reports) > 0)
 
+
+class TestParseStoe(PatternBaseTest):
+    def get_fpath(self) -> str:
+        return self.get_stoe_fpath()
 
 if __name__ == "__main__":
     TestParserPattern.execute_all(manual_mode=False)

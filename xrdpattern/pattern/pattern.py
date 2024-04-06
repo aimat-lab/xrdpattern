@@ -50,7 +50,6 @@ class XrdPattern(PatternInfo):
     def save(self, fpath : str):
         if not fpath.endswith(f'.json'):
             fpath = SaveManager.ensure_suffix(fpath, suffix = 'json')
-        print(f'Current fpath is {fpath}')
         if os.path.isfile(fpath):
             raise ValueError(f'File {fpath} already exists')
         with open(fpath, 'w') as f:
