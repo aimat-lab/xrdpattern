@@ -1,11 +1,9 @@
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
-from hollarek.devtools import Unittest
-from tests.basetest import PatternBaseTest
+from tests.basetest import PatternBaseTest, ParserBaseTest
 
 
 class TestParserPattern(PatternBaseTest):
-
     def get_fpath(self) -> str:
         return self.get_bruker_fpath()
 
@@ -51,14 +49,13 @@ class TestParserPattern(PatternBaseTest):
             self.check_data_ok(data=data)
 
 
-class TestParserDatabase(Unittest):
+class TestParserDatabase(ParserBaseTest):
     def setUp(self):
         self.datafolder_path : str = '/home/daniel/local/pxrd/Simon_Schweidler_Ben_Breitung_2024_02_22/data/data_kupfer/Aaditya/'
         self.pattern_db = PatternDB.load(datafolder_path=self.datafolder_path)
 
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern_db, PatternDB)
-
 
     def test_report_ok(self):
         report = self.pattern_db.database_report

@@ -38,6 +38,7 @@ def get_xylib_repr(fpath : str, format_hint : XrdFormat) -> XYLibPattern:
     try:
         with NamedTemporaryFile(delete=False) as temp_file:
             output_path = temp_file.name
+        print(f'format hint is {format_hint}')
         option = XYLibOption(input_path=fpath, output_path=output_path, format_hint=format_hint)
         convert_file(opt=option)
         with open(output_path, "r") as file:
@@ -72,7 +73,7 @@ def convert_file(opt : XYLibOption):
             f.write('# ' + '\t'.join(col_names) + '\n')
             number_of_rows = block.get_point_count()
             for row_counter in range(number_of_rows):
-                values = ["%.6f" % block.get_column(k).extract_value(row_counter)
+                values = ["%.6f" % block.get_column(k).get_value(row_counter)
                           for k in range(1, number_of_cols+1)]
                 f.write('\t'.join(values) + '\n')
 

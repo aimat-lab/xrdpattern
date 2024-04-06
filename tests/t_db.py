@@ -1,12 +1,13 @@
 import tempfile
 import os, uuid
 from xrdpattern.database import PatternDB
-from .basetest import ParserBaseTest
+from tests.basetest import ParserBaseTest
 
 
 class TestPatternDB(ParserBaseTest):
-    def get_fpath(self) -> str:
-        return self.get_datafolder_fpath()
+    @staticmethod
+    def get_datafolder_fpath() -> str:
+        return '/home/daniel/local/dataset/INT_Copper_2024_02_22/data/data_kupfer/'
 
     def test_save_load_roundtrip(self):
         pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath(), select_suffixes=['.raw'])
