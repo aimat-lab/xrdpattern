@@ -15,31 +15,34 @@ class ParserBaseTest(Unittest):
             self.assertIsInstance(key, float)
             self.assertIsInstance(value, float)
 
-    @staticmethod
-    def get_stoe_fpath() -> str:
-        return '/home/daniel/local/misc/example_files/stoe.raw'
+
+    @classmethod
+    def get_stoe_fpath(cls) -> str:
+        return cls.get_example_folderpath() + 'stoe.raw'
+
+    @classmethod
+    def get_bruker_fpath(cls) -> str:
+        return cls.get_example_folderpath() + 'bruker.raw'
+
+    @classmethod
+    def get_single_csv_fpath(cls) -> str:
+        return cls.get_example_folderpath() + 'single.csv'
+
+    @classmethod
+    def get_multi_csv_fpath(cls) -> str:
+        return cls.get_example_folderpath() + 'multi.csv'
+
+    @classmethod
+    def get_aimat_json_fpath(cls) -> str:
+        return cls.get_example_folderpath() + 'aimat.json'
+
+    @classmethod
+    def get_datafolder_fpath(cls) -> str:
+        return cls.get_example_folderpath() + 'datafolder'
 
     @staticmethod
-    def get_bruker_fpath() -> str:
-        return '/home/daniel/local/misc/example_files/bruker.raw'
-
-    @staticmethod
-    def get_single_csv_fpath() -> str:
-        return '/home/daniel/local/misc/example_files/single.csv'
-
-    @staticmethod
-    def get_multi_csv_fpath() -> str:
-        return '/home/daniel/local/misc/example_files/multi.csv'
-
-    @staticmethod
-    def get_aimat_json_fpath()->str:
-        return '/home/daniel/local/misc/example_files/aimat.json'
-
-    @staticmethod
-    def get_datafolder_fpath() -> str:
-        return '/home/daniel/local/misc/example_files/datafolder'
-
-
+    def get_example_folderpath() -> str:
+        return '/home/daniel/pxrd/examples/'
 
 class PatternBaseTest(ParserBaseTest):
     def setUp(self):
