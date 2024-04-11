@@ -1,6 +1,7 @@
 import os.path
-from tests.base import PatternBaseTest
 from xrdpattern.pattern import XrdPattern
+from .base import PatternBaseTest
+
 import tempfile
 
 

@@ -1,6 +1,6 @@
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
-from tests.base import PatternBaseTest, ParserBaseTest
+from t_nexus.base import PatternBaseTest, ParserBaseTest
 
 
 class TestParserPattern(PatternBaseTest):
