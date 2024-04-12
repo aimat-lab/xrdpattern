@@ -19,12 +19,12 @@ jobs:
       - name: Run tox tests
         run: |
           TOX_FILE=$(find . -name tox.ini)
-     echo "-> Located tox file at $TOX_FILE"
-
-    if [ -f "setup.py" ]; then
-        echo "-> Found setup.py, using tox.ini with pkg environment"
-        tox -c $TOX_FILE -e pkg $RECREATE_FLAG
-    else
-        echo "-> No setup.py found, using tox.ini with requirements environment"
-        tox -c $TOX_FILE -e req $RECREATE_FLAG
-    fi
+          echo "-> Located tox file at $TOX_FILE"
+    
+          if [ -f "setup.py" ]; then
+              echo "-> Found setup.py, using tox.ini with pkg environment"
+              tox -c $TOX_FILE -e pkg $RECREATE_FLAG
+          else
+              echo "-> No setup.py found, using tox.ini with requirements environment"
+              tox -c $TOX_FILE -e req $RECREATE_FLAG
+          fi
