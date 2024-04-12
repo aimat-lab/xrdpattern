@@ -27,7 +27,6 @@ def get_zero_regions(byte_content: bytes, min_size: int = 16) -> list[Region]:
             current_zeros = 0
             current_region_start = None
 
-    # Check if the file ends with a large enough zero region
     if current_zeros >= min_size:
         zero_regions.append(Region(start=current_region_start, end=len(byte_content)))
 
@@ -55,7 +54,7 @@ def get_complement_regions(byte_content : bytes, regions : list[Region]) -> list
 
     return complement_regions
 
-# def get_likely_blocks(byte_content : bytes) -> list[Region]
+
 
 if __name__ == "__main__":
     test_bytes_1 = bytes([0]*20)

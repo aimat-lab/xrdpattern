@@ -23,9 +23,14 @@ class StoeReader(BinaryReader):
         self.angle_end : FloatQuantity = FloatQuantity(start=576)
         self.intensities : IntegerQuantity = IntegerQuantity(start=2560)
 
+
+
     def read(self, fpath : str):
         with open(fpath, 'rb') as f:
             byte_content = f.read()
+        min_size = self.intensities.start+4
+        if len(byte_content) < min_size:
+            raise ValueError(f'File is too small. Expected at least {min_size} bytes, got {len(byte_content)} bytes')
         self.num_entries.extract_value(byte_content=byte_content)
         self.intensities.size = self.num_entries.get_value()
         super().read_bytes(byte_content=byte_content)
