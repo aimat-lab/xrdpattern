@@ -47,10 +47,10 @@ class XrdPattern(PatternInfo):
         return cls(xrd_intensities=pattern.xrd_intensities, metadata=pattern.metadata, datafile_path=fpath)
 
 
-    def save(self, fpath : str):
+    def save(self, fpath : str, force_overwrite : bool = False):
         if not fpath.endswith(f'.json'):
             fpath = SaveManager.ensure_suffix(fpath, suffix = 'json')
-        if os.path.isfile(fpath):
+        if os.path.isfile(fpath) and not force_overwrite:
             raise ValueError(f'File {fpath} already exists')
         with open(fpath, 'w') as f:
             f.write(self.to_str())

@@ -45,6 +45,11 @@ class ParserBaseTest(Unittest):
         return '/home/daniel/pxrd/examples/'
 
 class PatternBaseTest(ParserBaseTest):
+    @classmethod
+    def setUpClass(cls):
+        pattern_from_bruker = XrdPattern.load(fpath=cls.get_bruker_fpath())
+        pattern_from_bruker.save(fpath=cls.get_aimat_json_fpath(), force_overwrite=True)
+
     def setUp(self):
         self.pattern = XrdPattern.load(fpath=self.get_fpath())
 
