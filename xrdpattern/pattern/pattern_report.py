@@ -5,7 +5,7 @@ from typing import Optional
 
 @dataclass
 class PatternReport(JsonDataclass):
-    data_file_path: Optional[str]
+    datafile_fpath: Optional[str]
     critical_errors: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
@@ -30,7 +30,7 @@ class PatternReport(JsonDataclass):
 
     def get_report_str(self):
         report_str = f'--- Successfully processed file ---'
-        data_file_info = self.data_file_path if self.data_file_path else 'Unavailable'
+        data_file_info = self.datafile_fpath if self.datafile_fpath else 'Unavailable'
         report_str += f'\nData file path: {data_file_info}'
         report_str += f'\nNum critical errors: {len(self.critical_errors)}'
         report_str += f'\nNum errors: {len(self.errors)}'

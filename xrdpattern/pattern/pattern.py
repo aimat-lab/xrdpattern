@@ -44,7 +44,7 @@ class XrdPattern(PatternInfo):
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern = pattern_list[0]
-        return cls(xrd_intensities=pattern.xrd_intensities, metadata=pattern.metadata, datafile_path=fpath)
+        return cls(xrd_intensities=pattern.xrd_intensities, metadata=pattern.metadata, name=os.path.basename(fpath))
 
 
     def save(self, fpath : str, force_overwrite : bool = False):
@@ -58,9 +58,8 @@ class XrdPattern(PatternInfo):
     # -------------------------------------------
     # get
 
-    def get_parsing_report(self) -> PatternReport:
-
-        pattern_health = PatternReport(data_file_path=self.datafile_path)
+    def get_parsing_report(self, datafile_fpath : str) -> PatternReport:
+        pattern_health = PatternReport(datafile_fpath=datafile_fpath)
         if len(self.xrd_intensities.data) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
         elif len(self.xrd_intensities.data) < 10:
@@ -79,14 +78,14 @@ class XrdPattern(PatternInfo):
 
 
     def get_name(self) -> str:
-        if self.datafile_path:
-            file_name = os.path.basename(self.datafile_path)
-            parts = file_name.split('.')
+        filename = self.name
+        if filename:
+            parts = self.name.split('.')
             if len(parts) == 2:
-                file_name = parts[0]
+                filename = parts[0]
         else:
-            file_name = f'unnamed_file_{uuid4()}'
-        return file_name
+            filename = f'unnamed_file_{uuid4()}'
+        return filename
 
 
     def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> XrdIntensities:

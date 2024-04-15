@@ -1,3 +1,5 @@
+import os.path
+
 from xrdpattern.core import Metadata, PatternInfo, XrdIntensities
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
 
@@ -47,7 +49,7 @@ class StoeReader(BinaryReader):
         data = {angle: intensity for angle, intensity in zip(angle_values, float_intensities)}
         intensities = XrdIntensities.angle_data(data=data)
 
-        return PatternInfo(datafile_path=fpath, metadata=metadata, xrd_intensities=intensities)
+        return PatternInfo(metadata=metadata, xrd_intensities=intensities, name=os.path.basename(fpath))
 
 
     def _get_x_values(self) -> list[float]:

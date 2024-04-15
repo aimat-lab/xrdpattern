@@ -2,13 +2,12 @@ from __future__ import annotations
 import os
 from typing import Optional
 import traceback
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 from xrdpattern.core import PatternInfo
 from hollarek.fsys import FsysNode
-from xrdpattern.parsing import ParserOptions, Parser
+from xrdpattern.parsing import ParserOptions, Parser,CsvScheme, XrdFormat
 from xrdpattern.pattern import XrdPattern, PatternReport
-from xrdpattern.parsing import CsvScheme, XrdFormat
 
 # -------------------------------------------
 
@@ -42,6 +41,8 @@ class PatternDB:
              default_format : Optional[XrdFormat] = None,
              default_wavelength : Optional[float] = None,
              csv_scheme : Optional[CsvScheme] = None):
+
+
         options = ParserOptions(select_suffixes=select_suffixes,
                                 default_format_hint=default_format,
                                 default_wavelength_angstr=default_wavelength, csv_scheme=csv_scheme)
@@ -52,24 +53,29 @@ class PatternDB:
         if not os.path.isdir(datafolder_path):
             raise ValueError(f"Given path {datafolder_path} is not a directory")
 
-        patterns = []
+        patterns : list[XrdPattern] = []
         data_fpaths = PatternDB.get_datafile_fpaths(datafolder_path=datafolder_path,
                                                     select_formats=options.select_suffixes)
 
+        def from_info(pattern_info: PatternInfo) -> XrdPattern:
+            return XrdPattern(**asdict(pattern_info))
+
         failed_fpath = []
+        parsing_reports = []
         for fpath in data_fpaths:
             try:
                 pattern_info_list = parser.get_pattern_info_list(fpath=fpath)
-                new_patterns = [from_info(pattern_info=pattern_info, fpath=fpath) for pattern_info in pattern_info_list]
+                new_patterns = [from_info(pattern_info=info) for info in pattern_info_list]
                 patterns += new_patterns
+                new_reports = [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in patterns]
+                parsing_reports += new_reports
             except Exception as e:
                 failed_fpath.append(fpath)
                 print(f"Could not import pattern from file {fpath}\n"
                       f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
                       f"-> Traceback: \n{traceback.format_exc()}")
 
-        reports = [pattern.get_parsing_report() for pattern in patterns]
-        database_report = DatabaseReport(failed_files=failed_fpath, source_files=data_fpaths, pattern_reports=reports)
+        database_report = DatabaseReport(failed_files=failed_fpath, source_files=data_fpaths, pattern_reports=parsing_reports)
         return PatternDB(patterns=patterns, database_report=database_report)
 
     # -------------------------------------------
@@ -133,5 +139,3 @@ class DatabaseReport:
 
 
 
-def from_info(pattern_info : PatternInfo, fpath : str)-> XrdPattern:
-    return XrdPattern(xrd_intensities=pattern_info.xrd_intensities, metadata=pattern_info.metadata, datafile_path=fpath)

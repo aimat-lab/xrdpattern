@@ -51,7 +51,7 @@ class PatternBaseTest(ParserBaseTest):
         pattern_from_bruker.save(fpath=cls.get_aimat_json_fpath(), force_overwrite=True)
 
     def setUp(self):
-        self.pattern = XrdPattern.load(fpath=self.get_fpath())
+        self.pattern : XrdPattern = XrdPattern.load(fpath=self.get_fpath())
 
     @abstractmethod
     def get_fpath(self) -> str:

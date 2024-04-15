@@ -13,7 +13,7 @@ class TestParserPattern(PatternBaseTest):
         print(f'{self.pattern.to_str()[:1000]} + {self.pattern.to_str()[-1000:]}')
 
     def test_report_ok(self):
-        report = self.pattern.get_parsing_report()
+        report = self.pattern.get_parsing_report(datafile_fpath=self.get_fpath())
         as_str = report.get_report_str()
         self.assertIsInstance(obj=as_str, cls=str)
         print(f'Parsing report: {as_str}')

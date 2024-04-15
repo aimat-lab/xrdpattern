@@ -95,3 +95,11 @@ class XrdIntensities(JsonDataclass):
             return False
 
         return self.data == other.data and self.x_axis_type == other.x_axis_type
+
+if __name__ == '__main__':
+    this = XAxisType.TwoTheta
+    from enum import Enum
+    print(isinstance(this, Enum))
+
+    import json
+    json.dumps(this)

@@ -9,8 +9,7 @@ from .metadata import Metadata
 class PatternInfo(JsonDataclass):
     xrd_intensities : XrdIntensities
     metadata: Metadata
-    datafile_path : Optional[str] = None
-
+    name : Optional[str] = None
 
     def get_wavelength(self, primary : bool = True) -> Optional[float]:
         if primary:
