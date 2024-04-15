@@ -2,7 +2,7 @@ from __future__ import annotations
 import os
 from typing import Optional
 import traceback
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 
 from xrdpattern.core import PatternInfo
 from hollarek.fsys import FsysNode

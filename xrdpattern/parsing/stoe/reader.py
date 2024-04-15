@@ -1,5 +1,3 @@
-import os.path
-
 from xrdpattern.core import Metadata, PatternInfo, XrdIntensities
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
 
