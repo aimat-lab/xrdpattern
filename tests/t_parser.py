@@ -1,3 +1,5 @@
+import os.path
+
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
 from tests.base import PatternBaseTest, ParserBaseTest
@@ -35,11 +37,10 @@ class TestParserPattern(PatternBaseTest):
         for prop in [primary_wavelength, secondary_wavelength, ratio]:
             self.assertIsNotNone(obj=prop)
 
-        print(f'filepath : {self.pattern.datafile_path}')
         print(f'name : {self.pattern.get_name()}')
-        self.assertIsNotNone(obj=self.pattern.datafile_path)
         self.assertIsNotNone(obj=self.pattern.get_name())
-        self.assertEqual(first=self.get_fpath(), second=self.pattern.datafile_path)
+        original_name = os.path.basename(self.get_fpath())
+        self.assertIn(self.pattern.get_name(), original_name)
 
     def test_data_ok(self):
         raw_data = self.pattern.get_data(apply_standardization=False)

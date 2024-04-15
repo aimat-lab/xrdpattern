@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import os.path
 from typing import Optional
 from dataclasses import dataclass
 from hollarek.fsys import SaveManager
@@ -40,17 +42,19 @@ class Parser:
                              f"was specified and file does not have suffix indicating format")
 
         if the_format == Formats.aimat_json:
-            xrd_pattern = [self.from_json(fpath=fpath)]
+            pattern_infos = [self.from_json(fpath=fpath)]
         elif the_format.suffix in Formats.get_datafile_suffixes():
-            xrd_pattern = [self.from_data_file(fpath=fpath, format_hint=the_format)]
+            pattern_infos = [self.from_data_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:
-            xrd_pattern = self.from_csv(fpath=fpath)
+            pattern_infos = self.from_csv(fpath=fpath)
         else:
             raise ValueError(f"Format .{the_format} is not supported")
-        for pattern in xrd_pattern:
+        for pattern in pattern_infos:
             if pattern.get_wavelength(primary=True) is None and self.default_wavelength_angstr:
                 pattern.set_wavelength(new_wavelength=self.default_wavelength_angstr)
-        return xrd_pattern
+        for info in pattern_infos:
+            info.name = os.path.basename(fpath)
+        return pattern_infos
 
 
     @staticmethod

@@ -57,15 +57,15 @@ class PatternDB:
         data_fpaths = PatternDB.get_datafile_fpaths(datafolder_path=datafolder_path,
                                                     select_formats=options.select_suffixes)
 
-        def from_info(pattern_info: PatternInfo) -> XrdPattern:
-            return XrdPattern(**asdict(pattern_info))
+        def from_info(info: PatternInfo) -> XrdPattern:
+            return XrdPattern(xrd_intensities=info.xrd_intensities, metadata=info.metadata, name=info.name)
 
         failed_fpath = []
         parsing_reports = []
         for fpath in data_fpaths:
             try:
                 pattern_info_list = parser.get_pattern_info_list(fpath=fpath)
-                new_patterns = [from_info(pattern_info=info) for info in pattern_info_list]
+                new_patterns = [from_info(info=info) for info in pattern_info_list]
                 patterns += new_patterns
                 new_reports = [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in patterns]
                 parsing_reports += new_reports

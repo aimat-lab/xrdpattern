@@ -18,6 +18,9 @@ class TestPatternDB(ParserBaseTest):
         old_pattern_map = {pattern.get_name(): pattern for pattern in oldpattern}
         new_pattern_map = {pattern.get_name(): pattern for pattern in new_patterns}
 
+        print(f'Old patterns {old_pattern_map.keys()}')
+        print(f'New patterns {new_pattern_map.keys()}')
+
         for pattern_name in old_pattern_map:
             old_pattern = old_pattern_map[pattern_name]
             new_pattern = new_pattern_map.get(pattern_name)

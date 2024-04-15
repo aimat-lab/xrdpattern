@@ -43,8 +43,8 @@ class XrdPattern(PatternInfo):
         pattern_list = parser.get_pattern_info_list(fpath=fpath)
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
-        pattern = pattern_list[0]
-        return cls(xrd_intensities=pattern.xrd_intensities, metadata=pattern.metadata, name=os.path.basename(fpath))
+        pattern_info = pattern_list[0]
+        return cls(xrd_intensities=pattern_info.xrd_intensities, metadata=pattern_info.metadata, name=pattern_info.name)
 
 
     def save(self, fpath : str, force_overwrite : bool = False):

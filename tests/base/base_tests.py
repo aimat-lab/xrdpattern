@@ -5,7 +5,7 @@ from abc import abstractmethod
 
 class ParserBaseTest(Unittest):
     def check_data_ok(self, data : XrdIntensities):
-        data_view = str(data)[:1000]+ '...' +  str(data)[-1000:]
+        data_view = str(data)[:100]+ '...' +  str(data)[-100:]
         print(f'data is {data_view}')
         data_str = data.to_str()
         self.assertIsInstance(data_str, str)
