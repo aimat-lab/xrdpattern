@@ -1,4 +1,4 @@
 numpy
 scipy
 matplotlib
-hollarek @ git+ssh://git@github.com/Somerandomguy10111/hollarek.git
+hollarek @ git+https://git@github.com/Somerandomguy10111/hollarek.git
