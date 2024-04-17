@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
-
+from hollarek.fsys import SaveManager
+from xrdpattern.parsing.stoe import StoeReader
 
 @dataclass
 class XrdFormat:
@@ -19,14 +20,13 @@ class Formats:
     csv = XrdFormat("csv", "csv")
     dbws = XrdFormat("dbws", "dbw")
     pdcif = XrdFormat("pdcif", "cif")
-    philips_raw = XrdFormat("philips_raw", "rd")
+    philips_rd = XrdFormat("philips_rd", "rd")
     philips_udf = XrdFormat("philips_udf", "udf")
     riet7 = XrdFormat("riet7", "dat")
     rigaku_dat = XrdFormat("rigaku_dat", "dat")
     specsxy = XrdFormat("specsxy", "specsxy")
     spectra = XrdFormat("spectra", "spectra")
-    text = XrdFormat("text", "txt"
-                     )
+    text = XrdFormat("text", "txt")
     uxd = XrdFormat("uxd", "uxd")
     vamas = XrdFormat("vamas", "vms")
     winspec_spe = XrdFormat("winspec_spe", "spe")
@@ -49,13 +49,15 @@ class Formats:
         return [xrd_format for xrd_format in cls.__dict__.values() if isinstance(xrd_format, XrdFormat)]
 
     @classmethod
-    def get_format(cls, suffix : str) -> XrdFormat:
+    def get_format(cls, fpath : str) -> XrdFormat:
+        suffix = SaveManager.get_suffix(fpath)
         if suffix == 'raw':
-            return Formats.bruker_raw
+            xrd_format = Formats.stoe_raw if StoeReader.is_stoe(fpath) else Formats.bruker_raw
+        else:
+            suffix_to_format_map = {xrd_format.suffix : xrd_format for xrd_format in cls.get_all_formats()}
+            xrd_format = suffix_to_format_map.get(suffix)
+            if not xrd_format:
+                raise ValueError(f"Invalid suffix {suffix}")
 
-        suffix_to_format_map = {xrd_format.suffix : xrd_format for xrd_format in cls.get_all_formats()}
-        xrd_format = suffix_to_format_map.get(suffix)
-        if not xrd_format:
-            raise ValueError(f"Invalid suffix {suffix}")
         return xrd_format
 

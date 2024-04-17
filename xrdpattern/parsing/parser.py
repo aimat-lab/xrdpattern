@@ -7,7 +7,7 @@ from hollarek.fsys import SaveManager
 from xrdpattern.core import PatternInfo, Metadata, XrdIntensities, XAxisType
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
-
+from xrdpattern.parsing.stoe import StoeReader
 # -------------------------------------------
 
 @dataclass
@@ -24,6 +24,7 @@ class Parser:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
         self.default_format : Optional[XrdFormat] = parser_options.default_format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
+        self.stoe_reader : StoeReader = StoeReader()
 
     # -------------------------------------------
     # pattern
@@ -33,7 +34,7 @@ class Parser:
         if not suffix in Formats.get_allowed_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
         if suffix:
-            the_format = Formats.get_format(suffix)
+            the_format = Formats.get_format(fpath)
         elif not self.default_format is None:
             the_format = self.default_format
         else:
@@ -42,6 +43,8 @@ class Parser:
 
         if the_format == Formats.aimat_json:
             pattern_infos = [self.from_json(fpath=fpath)]
+        elif the_format == Formats.stoe_raw:
+            pattern_infos = [self.stoe_reader.get_pattern_info(fpath=fpath)]
         elif the_format.suffix in Formats.get_datafile_suffixes():
             pattern_infos = [self.from_data_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:

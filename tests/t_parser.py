@@ -56,13 +56,15 @@ class TestParseStoe(PatternBaseTest):
     def get_fpath(self) -> str:
         return self.get_stoe_fpath()
 
-
+from unittest.mock import patch
 class TestParserDatabase(ParserBaseTest):
-    def test_db_ok(self):
+
+    @patch('builtins.input', lambda *args, **kwargs : 'VERTICAL')
+    def test_db_parsing_ok(self):
         import logging
         logger_dict = logging.root.manager.loggerDict
-        logger =  list(logger_dict.keys())
-        print(f'logger {logger}')
+        # logger =  list(logger_dict.keys())
+        # print(f'logger {logger}')
 
         with self.assertNoLogs(level=0):
             self.bruker_only_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
@@ -81,7 +83,7 @@ class TestParserDatabase(ParserBaseTest):
 
 
 if __name__ == "__main__":
-    # TestParserDatabase.execute_all(manual_mode=False)
+    TestParserDatabase.execute_all(manual_mode=False)
 
-    PatternDB.load(datafolder_path=PatternBaseTest.get_example_folderpath())
+    # PatternDB.load(datafolder_path=PatternBaseTest.get_example_folderpath())
 

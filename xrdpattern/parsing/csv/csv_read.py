@@ -60,7 +60,7 @@ class CsvParser:
             new = PatternInfo(xrd_intensities=intensity_map, metadata=Metadata.make_empty())
             pattern_infos.append(new)
 
-        print(f'The format of the csv was automatically recognized as:'
+        print(f'\nThe format of the csv was automatically recognized as:'
               f'\n- XAxisType: \"{pattern_infos[0].xrd_intensities.x_axis_type}\"'
               f'\n- Csv Seperator : \"{CsvParser.get_separator(fpath=fpath)}\"')
 

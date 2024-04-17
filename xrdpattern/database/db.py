@@ -114,16 +114,18 @@ class DatabaseReport:
 
     def get_str(self) -> str:
         num_failed = len(self.failed_files)
-        num_attempted = len(self.source_files)
+        num_attempted_files = len(self.source_files)
+        num_parsed_patterns = len(self.pattern_reports)
 
         summary_str = f'\n----- Finished creating database -----'
         if num_failed > 0:
-            summary_str += f'\n{num_failed}/{num_attempted} files could not be parsed'
+            summary_str += f'\n{num_failed}/{num_attempted_files} files could not be parsed'
         else:
-            summary_str += f'\nAll patterns were successfully parsed'
-        summary_str += f'\n{self.num_crit}/{num_attempted} patterns had critical error(s)'
-        summary_str += f'\n{self.num_err}/{num_attempted}  patterns had error(s)'
-        summary_str += f'\n{self.num_warn}/{num_attempted}  patterns had warning(s)'
+            summary_str += (f'All pattern were successfully parsed\n'
+                            f'- Processed {num_attempted_files} files to extract {num_parsed_patterns} patterns')
+        summary_str += f'\n- {self.num_crit}/{num_parsed_patterns} patterns had had critical error(s)'
+        summary_str += f'\n- {self.num_err}/{num_parsed_patterns} patterns had error(s)'
+        summary_str += f'\n- {self.num_warn}/{num_parsed_patterns} patterns had warning(s)'
 
         if num_failed > 0:
             summary_str += f'\n\nFailed files:\n'
