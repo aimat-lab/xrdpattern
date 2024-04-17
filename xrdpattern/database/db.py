@@ -6,7 +6,6 @@ from typing import Optional
 import traceback
 from dataclasses import dataclass
 
-from xrdpattern.core import PatternInfo
 from hollarek.fsys import FsysNode
 from xrdpattern.parsing import ParserOptions, Parser,CsvScheme, XrdFormat
 from xrdpattern.pattern import XrdPattern, PatternReport

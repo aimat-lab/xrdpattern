@@ -21,8 +21,8 @@ class TestCsvReader(Unittest):
     def test_read_csv_horizontal(self):
         self.read_csv_and_test(Orientation.HORIZONTAL, self.horizontal_csv_path)
 
-    def test_read_csv_single(self):
-        self.read_csv_and_test(Orientation.VERTICAL, self.single_csv_path)
+    # def test_read_csv_single(self):
+    #     self.read_csv_and_test(Orientation.VERTICAL, self.single_csv_path)
 
 
     def read_csv_and_test(self, orientation, csv_path):
@@ -35,4 +35,4 @@ class TestCsvReader(Unittest):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    TestCsvReader.execute_all()

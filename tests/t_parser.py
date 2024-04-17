@@ -57,7 +57,6 @@ class TestParseStoe(PatternBaseTest):
         return self.get_stoe_fpath()
 
 
-from hollarek.core.logging import LogLevel
 class TestParserDatabase(ParserBaseTest):
     def test_db_ok(self):
         import logging

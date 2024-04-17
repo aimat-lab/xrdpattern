@@ -38,6 +38,7 @@ class TableSelector:
         region = self._get_lower_right_square()
         if region:
             region = self._get_upwards_expansion(region=region)
+            # print(f'region is {region}')
             region=  self._get_leftwards_expansion(region=region)
         return region
 
@@ -69,17 +70,17 @@ class TableSelector:
 
     def _get_lower_right_square(self) -> Optional[Region]:
         upper_left = None
-        new_upper_left = self.table.get_lower_right_index()
-        while True:
-            partial_row = self.table.get_row(new_upper_left.row, new_upper_left.col)
+        square_upper_left = self.table.get_lower_right_index()
+        while True and square_upper_left.row>0 and square_upper_left.col>0:
+            partial_row = self.table.get_row(square_upper_left.row, square_upper_left.col)
             failed_on_row = not all([self.discriminator(x) for x in partial_row])
 
-            partial_col = self.table.get_col(new_upper_left.col, new_upper_left.row)
+            partial_col = self.table.get_col(square_upper_left.col, square_upper_left.row)
             failed_on_col = not all([self.discriminator(x) for x in partial_col])
             if not failed_on_row and not failed_on_col:
-                upper_left = Index(row=new_upper_left.row,col=new_upper_left.col)
-                new_upper_left.row -= 1
-                new_upper_left.col -= 1
+                upper_left = Index(row=square_upper_left.row,col=square_upper_left.col)
+                square_upper_left.row -= 1
+                square_upper_left.col -= 1
             else:
                 break
 
