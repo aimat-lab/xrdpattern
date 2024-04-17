@@ -24,7 +24,7 @@ class Parser:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
         self.default_format : Optional[XrdFormat] = parser_options.default_format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
-        self.default_csv_reader : Optional[CsvReader] = CsvReader(parser_options.csv_scheme)
+        self.default_csv_reader : Optional[CsvReader] = None
 
     # -------------------------------------------
     # pattern
@@ -89,7 +89,9 @@ class Parser:
             csv_reader = self.default_csv_reader
         if not csv_reader:
             print(f'No CSV scheme specified in either argument or as default value of xrdparser.'
-                  f'Please specify csv scheme for {fpath} manually:')
+                  f'Please specify csv scheme for {fpath} manually\n'
+                  f'- XAxisType: Whether x-axis is TwoTheta values or Q values\n'
+                  f'- Orientation: Along which axis different patterns are listed:')
             csv_reader = CsvReader(CsvScheme.from_manual())
         return csv_reader.read_csv(fpath=fpath)
 

@@ -82,4 +82,7 @@ class TestParserDatabase(ParserBaseTest):
 
 
 if __name__ == "__main__":
-    TestParserDatabase.execute_all(manual_mode=False)
+    # TestParserDatabase.execute_all(manual_mode=False)
+
+    PatternDB.load(datafolder_path=PatternBaseTest.get_example_folderpath())
+

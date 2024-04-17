@@ -16,8 +16,6 @@ class PatternInfo(JsonDataclass):
             wavelength = self.metadata.primary
         else:
             wavelength = self.metadata.secondary
-        if wavelength is None:
-            raise ValueError(f"Wavelength is None")
 
         return wavelength
 
