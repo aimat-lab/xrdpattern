@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from hollarek.fsys import SaveManager
 from ..core import PatternInfo, Metadata, XrdIntensities, XAxisType
 from .data_files import XrdFormat, Formats, get_xylib_repr
-from .csv import CsvScheme, CsvReader
+from .csv import CsvScheme, CsvParser
 
 # -------------------------------------------
 
@@ -24,7 +24,7 @@ class Parser:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
         self.default_format : Optional[XrdFormat] = parser_options.default_format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
-        self.default_csv_reader : Optional[CsvReader] = None
+        self.default_csv_reader : Optional[CsvParser] = None
 
     # -------------------------------------------
     # pattern
@@ -83,8 +83,10 @@ class Parser:
 
     def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[PatternInfo]:
         csv_reader = None
+        if CsvParser.has_two_columns(fpath=fpath):
+            csv_reader = CsvParser.single_reader()
         if csv_scheme:
-            csv_reader = CsvReader(csv_scheme)
+            csv_reader = CsvParser(csv_scheme)
         if self.default_csv_reader:
             csv_reader = self.default_csv_reader
         if not csv_reader:
@@ -92,6 +94,6 @@ class Parser:
                   f'Please specify csv scheme for {fpath} manually\n'
                   f'- XAxisType: Whether x-axis is TwoTheta values or Q values\n'
                   f'- Orientation: Along which axis different patterns are listed:')
-            csv_reader = CsvReader(CsvScheme.from_manual())
+            csv_reader = CsvParser(CsvScheme.from_manual())
         return csv_reader.read_csv(fpath=fpath)
 

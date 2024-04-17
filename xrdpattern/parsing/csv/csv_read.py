@@ -4,7 +4,7 @@ from hollarek.abstract import SelectableEnum
 
 from xrdpattern.core import XAxisType, XrdIntensities, Metadata, PatternInfo
 from .table_selector import TableSelector, TextTable, NumericalTable
-
+import csv
 # -------------------------------------------
 
 class Orientation(SelectableEnum):
@@ -41,11 +41,16 @@ class CsvScheme:
         return CsvScheme(x_axis_type=x_axis_type, pattern_dimension=pattern_dimension, seperator=seperator)
 
 
-class CsvReader:
+class CsvParser:
     def __init__(self, csv_scheme : CsvScheme):
         self.csv_scheme : CsvScheme = csv_scheme
 
-    def as_horiztontal_table(self, fpath : str) -> NumericalTable:
+    @classmethod
+    def single_reader(cls) -> CsvParser:
+        scheme = CsvScheme(pattern_dimension=Orientation.VERTICAL, x_axis_type=XAxisType.TwoTheta, seperator=Seperator.COMMA)
+        return cls(csv_scheme=scheme)
+
+    def as_matrix(self, fpath : str) -> NumericalTable:
         data = []
         with open(fpath, 'r', newline='') as infile:
             for line in infile:
@@ -61,9 +66,9 @@ class CsvReader:
 
 
     def read_csv(self, fpath: str) -> list[PatternInfo]:
-        numerical_table = self.as_horiztontal_table(fpath=fpath)
-        x_axis_row = numerical_table.get_data(row=0)
-        data_rows = [numerical_table.get_data(row=row) for row in range(1, numerical_table.get_row_count())]
+        matrix = self.as_matrix(fpath=fpath)
+        x_axis_row = matrix.get_data(row=0)
+        data_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
 
         if len(data_rows) == 0:
             return []
@@ -79,3 +84,11 @@ class CsvReader:
             patterns.append(new)
         return patterns
 
+    @classmethod
+    def has_two_columns(cls, fpath : str) -> bool:
+        with open(fpath, newline='') as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                if len(row) != 2:
+                    return False
+            return True
