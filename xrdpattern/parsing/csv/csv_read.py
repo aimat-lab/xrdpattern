@@ -53,7 +53,7 @@ class CsvParser:
                 if row and any(item for item in row):
                     data.append(row)
 
-        if self.csv_scheme.pattern_dimension == Orientation.HORIZONTAL:
+        if self.csv_scheme.pattern_dimension == Orientation.VERTICAL:
             data = [list(col) for col in zip(*data)]
         table = TextTable(data)
         print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
