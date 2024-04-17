@@ -75,7 +75,7 @@ class PatternDB:
                       f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
                       f"-> Traceback: \n{traceback.format_exc()}", level=logging.ERROR)
 
-        database_report = DatabaseReport(failed_files=failed_fpath, source_files=data_fpaths, pattern_reports=parsing_reports)
+        database_report = DatabaseReport(failed_files=failed_fpath, source_files=data_fpaths, pattern_reports=parsing_reports, data_dirpath=datafolder_path)
         return PatternDB(patterns=patterns, database_report=database_report)
 
     # -------------------------------------------
@@ -100,6 +100,7 @@ class PatternDB:
 
 @dataclass
 class DatabaseReport:
+    data_dirpath : str
     failed_files : list[str]
     source_files : list[str]
     pattern_reports: list[PatternReport]
@@ -117,12 +118,12 @@ class DatabaseReport:
         num_attempted_files = len(self.source_files)
         num_parsed_patterns = len(self.pattern_reports)
 
-        summary_str = f'\n----- Finished creating database -----'
+        summary_str = f'\n----- Finished creating database from data root \"{self.data_dirpath}\" -----\n'
         if num_failed > 0:
-            summary_str += f'\n{num_failed}/{num_attempted_files} files could not be parsed'
+            summary_str += f'{num_failed}/{num_attempted_files} files could not be parsed'
         else:
-            summary_str += (f'All pattern were successfully parsed\n'
-                            f'- Processed {num_attempted_files} files to extract {num_parsed_patterns} patterns')
+            summary_str += f'All pattern were successfully parsed'
+        summary_str += f'\n- Processed {num_attempted_files} files to extract {num_parsed_patterns} patterns'
         summary_str += f'\n- {self.num_crit}/{num_parsed_patterns} patterns had had critical error(s)'
         summary_str += f'\n- {self.num_err}/{num_parsed_patterns} patterns had error(s)'
         summary_str += f'\n- {self.num_warn}/{num_parsed_patterns} patterns had warning(s)'

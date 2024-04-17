@@ -56,23 +56,29 @@ class TestParseStoe(PatternBaseTest):
     def get_fpath(self) -> str:
         return self.get_stoe_fpath()
 
+    def test_parse_stoe(self):
+        pattern = XrdPattern.load(fpath=self.get_fpath())
+        self.assertIsInstance(pattern, XrdPattern)
+        print(f'serialized pattern')
+        print(f'{pattern.to_str()[:1000]} + {pattern.to_str()[-1000:]}')
+
+
 from unittest.mock import patch
 class TestParserDatabase(ParserBaseTest):
+    bruker_only_db = None
+    all_example_db = None
 
     @patch('builtins.input', lambda *args, **kwargs : 'VERTICAL')
     def test_db_parsing_ok(self):
-        import logging
-        logger_dict = logging.root.manager.loggerDict
-        # logger =  list(logger_dict.keys())
-        # print(f'logger {logger}')
-
         with self.assertNoLogs(level=0):
-            self.bruker_only_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
-            self.all_example_db = PatternDB.load(datafolder_path=self.get_example_folderpath())
+            TestParserDatabase.bruker_only_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
+            TestParserDatabase.all_example_db = PatternDB.load(datafolder_path=self.get_example_folderpath())
 
         for db in [self.bruker_only_db, self.all_example_db]:
             self.assertIsInstance(db, PatternDB)
 
+
+    def test_db_report_ok(self):
         for db in [self.bruker_only_db, self.all_example_db]:
             report = db.database_report
             as_str = report.get_str()

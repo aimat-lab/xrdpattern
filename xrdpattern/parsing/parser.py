@@ -88,13 +88,12 @@ class Parser:
         if CsvParser.has_two_columns(fpath=fpath):
             orientation = Orientation.VERTICAL
         else:
-            print(f'Please specify along which the data of individual patterns is oriented in {fpath}'
-                  f'E.g. in the below example the data is oriented vertically'
-                  f'     x y'
-                  f'     5 1000'
-                  f'     10 2000'
-                  f'     15 1500'
-                  f'')
+            print(f'''Please specify along which the data of individual patterns is oriented in {fpath}'
+                  E.g. in the below example the data is oriented vertically
+                       x y
+                       5 1000
+                       10 2000
+                       15 1500''')
             orientation = Orientation.from_manual_query()
 
         csv_parser = CsvParser(pattern_data_axis=orientation)
