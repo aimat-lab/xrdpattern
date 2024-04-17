@@ -1,5 +1,4 @@
 from __future__ import annotations
-from dataclasses import dataclass
 from hollarek.abstract import SelectableEnum
 
 from xrdpattern.core import XAxisType, XrdIntensities, Metadata, PatternInfo
@@ -11,49 +10,29 @@ class Orientation(SelectableEnum):
     VERTICAL = 'vertical'
     HORIZONTAL = 'horizontal'
 
-
     @classmethod
     def from_manual_query(cls) -> Orientation:
         return super().from_manual_query()
 
 
-class Seperator(SelectableEnum):
-    COMMA = ','
-    SEMICOLON = ';'
-    TAB = '\t'
-
-    @classmethod
-    def from_manual_query(cls) -> Seperator:
-        return super().from_manual_query()
-
-@dataclass
-class CsvScheme:
-    pattern_dimension : Orientation
-    x_axis_type: XAxisType = XAxisType.TwoTheta
-    seperator: Seperator = Seperator.COMMA
-
-    @classmethod
-    def from_manual(cls) -> CsvScheme:
-        print(f'Please specify csv scheme')
-        x_axis_type = XAxisType.from_manual_query()
-        pattern_dimension = Orientation.from_manual_query()
-        seperator = Seperator.from_manual_query()
-        return CsvScheme(x_axis_type=x_axis_type, pattern_dimension=pattern_dimension, seperator=seperator)
-
-
 class CsvParser:
-    def __init__(self, csv_scheme : CsvScheme):
-        self.csv_scheme : CsvScheme = csv_scheme
+    MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr
+                     # Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
+
+    def __init__(self, orientation : Orientation):
+        self.pattern_dimension : Orientation = orientation
 
     def as_matrix(self, fpath : str) -> NumericalTable:
         data = []
+        seperator = self.get_separator(fpath=fpath)
+
         with open(fpath, 'r', newline='') as infile:
             for line in infile:
-                row = [item.strip() for item in line.strip().split(self.csv_scheme.seperator.value)]
+                row = [item.strip() for item in line.strip().split(seperator)]
                 if row and any(item for item in row):
                     data.append(row)
 
-        if self.csv_scheme.pattern_dimension == Orientation.VERTICAL:
+        if self.pattern_dimension == Orientation.VERTICAL:
             data = [list(col) for col in zip(*data)]
         table = TextTable(data)
         print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
@@ -72,9 +51,12 @@ class CsvParser:
             raise ValueError(f"X-axis row length {len(x_axis_row)} does not match data row length {len(data_rows[0])}")
 
         patterns = []
+        is_qvalues = max(x_axis_row) < CsvParser.MAX_Q_VALUE
+        x_axis_type = XAxisType.QValues if is_qvalues else XAxisType.TwoTheta
+
         for row in data_rows:
             data = {x : y for (x,y) in zip(x_axis_row, row)}
-            intensity_map = XrdIntensities(data=data, x_axis_type=self.csv_scheme.x_axis_type)
+            intensity_map = XrdIntensities(data=data, x_axis_type=x_axis_type)
             new = PatternInfo(xrd_intensities=intensity_map, metadata=Metadata.make_empty())
             patterns.append(new)
         return patterns
@@ -87,3 +69,11 @@ class CsvParser:
                 if len(row) != 2:
                     return False
             return True
+
+    @staticmethod
+    def get_separator(fpath: str) -> str:
+        with open(fpath, newline='') as csvfile:
+            content = csvfile.read()
+            sniffer = csv.Sniffer()
+            dialect = sniffer.sniff(content)
+            return str(dialect.delimiter)
