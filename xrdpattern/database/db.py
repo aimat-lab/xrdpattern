@@ -7,7 +7,7 @@ import traceback
 from dataclasses import dataclass
 
 from hollarek.fsys import FsysNode
-from xrdpattern.parsing import ParserOptions, Parser,CsvScheme, XrdFormat
+from xrdpattern.parsing import ParserOptions, Parser, XrdFormat, Orientation
 from xrdpattern.pattern import XrdPattern, PatternReport
 
 # -------------------------------------------
@@ -44,12 +44,13 @@ class PatternDB:
     def load(cls, datafolder_path : str, select_suffixes : Optional[list[str]] = None,
              default_format : Optional[XrdFormat] = None,
              default_wavelength : Optional[float] = None,
-             csv_scheme : Optional[CsvScheme] = None):
+             csv_pattern_axis : Orientation = Orientation.VERTICAL):
 
 
         options = ParserOptions(select_suffixes=select_suffixes,
                                 default_format_hint=default_format,
-                                default_wavelength_angstr=default_wavelength, csv_scheme=csv_scheme)
+                                default_wavelength_angstr=default_wavelength,
+                                csv_pattern_dimension=csv_pattern_axis)
 
         datafolder_path = os.path.normpath(path=datafolder_path)
 

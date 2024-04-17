@@ -1,7 +1,5 @@
-import unittest
 import os
-from xrdpattern.parsing.csv import CsvParser, Orientation, CsvScheme
-from xrdpattern.core import XAxisType
+from xrdpattern.parsing.csv import Orientation, CsvParser
 from hollarek.devtools import Unittest
 
 class TestCsvReader(Unittest):
@@ -27,9 +25,8 @@ class TestCsvReader(Unittest):
         self.read_csv_and_test(Orientation.VERTICAL, self.single_csv_path)
 
 
-    def read_csv_and_test(self, orientation, csv_path :str):
-        scheme = CsvScheme(pattern_dimension=orientation, x_axis_type=XAxisType.QValues)
-        reader = CsvParser(scheme)
+    def read_csv_and_test(self, pattern_axis : Orientation, csv_path : str):
+        reader = CsvParser(pattern_axis=pattern_axis)
         table = reader.as_matrix(fpath=csv_path)
         expected_set = set(self.single_first_row) if csv_path==self.single_csv_path else set(self.multi_first_row)
         actual_set = set(table.data[0])

@@ -1,2 +1,1 @@
-from .parser import Parser, ParserOptions, XrdFormat
-from .csv import CsvScheme, Seperator, Orientation
+from .parser import Parser, ParserOptions, XrdFormat, Orientation

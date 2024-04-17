@@ -19,8 +19,8 @@ class CsvParser:
     MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr
                      # Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
 
-    def __init__(self, orientation : Orientation):
-        self.pattern_dimension : Orientation = orientation
+    def __init__(self, pattern_axis : Orientation):
+        self.pattern_dimension : Orientation = pattern_axis
 
     def as_matrix(self, fpath : str) -> NumericalTable:
         data = []
@@ -60,6 +60,7 @@ class CsvParser:
             new = PatternInfo(xrd_intensities=intensity_map, metadata=Metadata.make_empty())
             patterns.append(new)
         return patterns
+
 
     @classmethod
     def has_two_columns(cls, fpath : str) -> bool:

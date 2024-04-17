@@ -4,18 +4,18 @@ import os.path
 from typing import Optional
 from dataclasses import dataclass
 from hollarek.fsys import SaveManager
-from ..core import PatternInfo, Metadata, XrdIntensities, XAxisType
+from xrdpattern.core import PatternInfo, Metadata, XrdIntensities, XAxisType
 from .data_files import XrdFormat, Formats, get_xylib_repr
-from .csv import CsvScheme, CsvParser
+from .csv import CsvParser, Orientation
 
 # -------------------------------------------
 
 @dataclass
 class ParserOptions:
     select_suffixes : Optional[list[str]] = None
-    csv_scheme : Optional[CsvScheme] = None
     default_format_hint : Optional[XrdFormat] = None
     default_wavelength_angstr : Optional[float] = None
+    csv_pattern_dimension : Orientation = Orientation.VERTICAL
 
 
 class Parser:
@@ -24,7 +24,6 @@ class Parser:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
         self.default_format : Optional[XrdFormat] = parser_options.default_format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
-        self.default_csv_reader : Optional[CsvParser] = None
 
     # -------------------------------------------
     # pattern
@@ -81,17 +80,16 @@ class Parser:
         return PatternInfo(xrd_intensities=intensity_map, metadata=metadata)
 
 
-    def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[PatternInfo]:
-        csv_reader = None
-        if csv_scheme:
-            csv_reader = CsvParser(csv_scheme)
-        if self.default_csv_reader:
-            csv_reader = self.default_csv_reader
-        if not csv_reader:
-            print(f'No CSV scheme specified in either argument or as default value of xrdparser.'
-                  f'Please specify csv scheme for {fpath} manually\n'
-                  f'- XAxisType: Whether x-axis is TwoTheta values or Q values\n'
-                  f'- Orientation: Along which axis different patterns are listed:')
-            csv_reader = CsvParser(CsvScheme.from_manual())
-        return csv_reader.read_csv(fpath=fpath)
+    @staticmethod
+    def from_csv(fpath : str) -> list[PatternInfo]:
+        if CsvParser.has_two_columns(fpath=fpath):
+            orientation = Orientation.VERTICAL
+        else:
+            print(f'Please specify along which axis different patterns are listed in {fpath}')
+            orientation = Orientation.from_manual_query()
+
+        csv_parser = CsvParser(pattern_axis=orientation)
+        pattern_infos = csv_parser.read_csv(fpath=fpath)
+
+        return pattern_infos
 
