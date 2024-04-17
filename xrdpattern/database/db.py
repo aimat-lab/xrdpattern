@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import logging
 import os
 from typing import Optional
 import traceback
@@ -10,6 +12,9 @@ from xrdpattern.parsing import ParserOptions, Parser,CsvScheme, XrdFormat
 from xrdpattern.pattern import XrdPattern, PatternReport
 
 # -------------------------------------------
+
+from logging import getLogger
+logger = getLogger(name='xrdpattern')
 
 @dataclass
 class PatternDB:
@@ -71,9 +76,9 @@ class PatternDB:
                 parsing_reports += new_reports
             except Exception as e:
                 failed_fpath.append(fpath)
-                print(f"Could not import pattern from file {fpath}\n"
+                logger.log(msg=f"Could not import pattern from file {fpath}\n"
                       f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
-                      f"-> Traceback: \n{traceback.format_exc()}")
+                      f"-> Traceback: \n{traceback.format_exc()}", level=logging.ERROR)
 
         database_report = DatabaseReport(failed_files=failed_fpath, source_files=data_fpaths, pattern_reports=parsing_reports)
         return PatternDB(patterns=patterns, database_report=database_report)

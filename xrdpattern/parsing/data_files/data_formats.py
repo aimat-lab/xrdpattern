@@ -25,7 +25,8 @@ class Formats:
     rigaku_dat = XrdFormat("rigaku_dat", "dat")
     specsxy = XrdFormat("specsxy", "specsxy")
     spectra = XrdFormat("spectra", "spectra")
-    text = XrdFormat("text", "txt")
+    text = XrdFormat("text", "txt"
+                     )
     uxd = XrdFormat("uxd", "uxd")
     vamas = XrdFormat("vamas", "vms")
     winspec_spe = XrdFormat("winspec_spe", "spe")

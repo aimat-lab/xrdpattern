@@ -51,26 +51,35 @@ class TestParserPattern(PatternBaseTest):
     def save(self):
         self.pattern.save(fpath='/home/daniel/local/misc/example_files/aimat.json')
 
-class TestParserDatabase(ParserBaseTest):
-    def setUp(self):
-        self.pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
-
-    def test_obj_ok(self):
-        self.assertIsInstance(self.pattern_db, PatternDB)
-
-    def test_report_ok(self):
-        report = self.pattern_db.database_report
-        as_str = report.get_str()
-        print(f'Parsing report: {as_str}')
-
-        self.assertIsInstance(obj=as_str, cls=str)
-        self.assertTrue(len(report.pattern_reports) > 0)
-
 
 class TestParseStoe(PatternBaseTest):
     def get_fpath(self) -> str:
         return self.get_stoe_fpath()
 
+
+from hollarek.core.logging import LogLevel
+class TestParserDatabase(ParserBaseTest):
+    def test_db_ok(self):
+        import logging
+        logger_dict = logging.root.manager.loggerDict
+        logger =  list(logger_dict.keys())
+        print(f'logger {logger}')
+
+        with self.assertNoLogs(level=0):
+            self.bruker_only_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
+            self.all_example_db = PatternDB.load(datafolder_path=self.get_example_folderpath())
+
+        for db in [self.bruker_only_db, self.all_example_db]:
+            self.assertIsInstance(db, PatternDB)
+
+        for db in [self.bruker_only_db, self.all_example_db]:
+            report = db.database_report
+            as_str = report.get_str()
+            print(f'Parsing report: {as_str[:300]}')
+
+            self.assertIsInstance(obj=as_str, cls=str)
+            self.assertTrue(len(report.pattern_reports) > 0)
+
+
 if __name__ == "__main__":
-    TestParserPattern.execute_all(manual_mode=False)
     TestParserDatabase.execute_all(manual_mode=False)
