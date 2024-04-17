@@ -83,8 +83,6 @@ class Parser:
 
     def from_csv(self, fpath : str, csv_scheme : Optional[CsvScheme] = None) -> list[PatternInfo]:
         csv_reader = None
-        if CsvParser.has_two_columns(fpath=fpath):
-            csv_reader = CsvParser.single_reader()
         if csv_scheme:
             csv_reader = CsvParser(csv_scheme)
         if self.default_csv_reader:

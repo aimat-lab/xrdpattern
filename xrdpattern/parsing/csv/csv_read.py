@@ -45,11 +45,6 @@ class CsvParser:
     def __init__(self, csv_scheme : CsvScheme):
         self.csv_scheme : CsvScheme = csv_scheme
 
-    @classmethod
-    def single_reader(cls) -> CsvParser:
-        scheme = CsvScheme(pattern_dimension=Orientation.VERTICAL, x_axis_type=XAxisType.TwoTheta, seperator=Seperator.COMMA)
-        return cls(csv_scheme=scheme)
-
     def as_matrix(self, fpath : str) -> NumericalTable:
         data = []
         with open(fpath, 'r', newline='') as infile:
