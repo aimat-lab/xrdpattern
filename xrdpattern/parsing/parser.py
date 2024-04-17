@@ -15,7 +15,7 @@ class ParserOptions:
     select_suffixes : Optional[list[str]] = None
     default_format_hint : Optional[XrdFormat] = None
     default_wavelength_angstr : Optional[float] = None
-    csv_pattern_dimension : Orientation = Orientation.VERTICAL
+    pattern_data_orientation : Orientation = Orientation.VERTICAL
 
 
 class Parser:
@@ -85,11 +85,16 @@ class Parser:
         if CsvParser.has_two_columns(fpath=fpath):
             orientation = Orientation.VERTICAL
         else:
-            print(f'Please specify along which axis different patterns are listed in {fpath}')
+            print(f'Please specify along which the data of individual patterns is oriented in {fpath}'
+                  f'E.g. in the below example the data is oriented vertically'
+                  f'     x y'
+                  f'     5 1000'
+                  f'     10 2000'
+                  f'     15 1500'
+                  f'')
             orientation = Orientation.from_manual_query()
 
-        csv_parser = CsvParser(pattern_axis=orientation)
+        csv_parser = CsvParser(pattern_data_axis=orientation)
         pattern_infos = csv_parser.read_csv(fpath=fpath)
-
         return pattern_infos
 
