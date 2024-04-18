@@ -5,7 +5,7 @@ from uuid import uuid4
 from typing import Optional
 from hollarek.fsys import SaveManager
 
-from xrdpattern.parsing import Parser, XrdFormat, ParserOptions
+from xrdpattern.parsing import Parser, ParserOptions
 from xrdpattern.core import XrdIntensities, XAxisType, PatternInfo
 from .pattern_report import PatternReport
 # -------------------------------------------
@@ -35,8 +35,8 @@ class XrdPattern(PatternInfo):
     # -------------------------------------------
 
     @classmethod
-    def load(cls, fpath : str, format_hint : Optional[XrdFormat] = None, wavelength : Optional[float] = None) -> XrdPattern:
-        options = ParserOptions(default_format_hint=format_hint,default_wavelength_angstr=wavelength)
+    def load(cls, fpath : str, wavelength : Optional[float] = None) -> XrdPattern:
+        options = ParserOptions(default_wavelength_angstr=wavelength)
         parser = Parser(parser_options=options)
         pattern_list = parser.get_pattern_info_list(fpath=fpath)
         if len(pattern_list) > 1:

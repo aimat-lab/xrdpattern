@@ -13,7 +13,6 @@ from xrdpattern.parsing.stoe import StoeReader
 @dataclass
 class ParserOptions:
     select_suffixes : Optional[list[str]] = None
-    default_format_hint : Optional[XrdFormat] = None
     default_wavelength_angstr : Optional[float] = None
     pattern_data_orientation : Orientation = Orientation.VERTICAL
 
@@ -22,7 +21,6 @@ class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
         if parser_options.select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
-        self.default_format : Optional[XrdFormat] = parser_options.default_format_hint
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
         self.stoe_reader : StoeReader = StoeReader()
 
@@ -35,11 +33,8 @@ class Parser:
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
         if suffix:
             the_format = Formats.get_format(fpath)
-        elif not self.default_format is None:
-            the_format = self.default_format
         else:
-            raise ValueError(f"Could not determine file format of \"{fpath}\" since not default format"
-                             f"was specified and file does not have suffix indicating format")
+            raise ValueError(f"Could not determine file format of \"{fpath}\": Invalid suffix {suffix}")
 
         if the_format == Formats.aimat_json:
             pattern_infos = [self.from_json(fpath=fpath)]
