@@ -5,6 +5,30 @@ The data file import functionalities are largely built on the C++ library  [xyli
 - A C++ compiler and standard library
 - A C++ to python bridge (Swig)
 
+## Setup
+
+### System level requirements
+For Ubuntu 22.04:
+```
+sudo apt install build-essential	# GNU C++ compiler
+sudo apt install libboost-all-dev       # C++ libraries provided by Boost
+sudo apt install swig 			# python -> C++ bridge
+```
+
+For Windows >10 you may try the following in PowerShell (requires [Chocolatey](https://chocolatey.org/)):
+```
+choco install mingw  # C++ compiler and std library
+choco install swig   # python -> C++ bridge
+```
+### Python library
+Once the system level requirements are installed, the library can be installed using pip:
+```
+pip install xrdpattern
+```
+
+
+## Supported formats
+
 Loading Diffractogram patterns from the following data formats is supported:
 - Siemens/Bruker RAW ver. 1/2/3/4 (.raw)
 - Stoe RAW (.raw) (! In progress)
@@ -26,24 +50,3 @@ Loading Diffractogram patterns from the following data formats is supported:
 - χPLOT CHI (.chi)
 - Bruker SPC (.spc)
 - XrdPattern json (.json)
-
-## Setup
-
-### System level requirements
-For Ubuntu 22.04:
-```
-sudo apt install build-essential	# GNU C++ compiler
-sudo apt install libboost-all-dev       # C++ libraries provided by Boost
-sudo apt install swig 			# python -> C++ bridge
-```
-
-For Windows >10 you may try the following in PowerShell (requires [Chocolatey](https://chocolatey.org/)):
-```
-choco install mingw  # C++ compiler and std library
-choco install swig   # python -> C++ bridge
-```
-### Python library
-Once the system level requirements are installed, the library can be installed using pip:
-```
-pip install xrdpattern
-```
