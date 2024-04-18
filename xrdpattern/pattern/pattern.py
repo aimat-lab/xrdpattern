@@ -35,7 +35,7 @@ class XrdPattern(PatternInfo):
     # -------------------------------------------
 
     @classmethod
-    def load(cls, fpath : str, format_hint : Optional[XrdFormat] = None, wavelength : Optional[float] = None):
+    def load(cls, fpath : str, format_hint : Optional[XrdFormat] = None, wavelength : Optional[float] = None) -> XrdPattern:
         options = ParserOptions(default_format_hint=format_hint,default_wavelength_angstr=wavelength)
         parser = Parser(parser_options=options)
         pattern_list = parser.get_pattern_info_list(fpath=fpath)

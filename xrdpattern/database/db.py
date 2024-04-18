@@ -44,7 +44,7 @@ class PatternDB:
     def load(cls, datafolder_path : str, select_suffixes : Optional[list[str]] = None,
              default_format : Optional[XrdFormat] = None,
              default_wavelength : Optional[float] = None,
-             pattern_data_orientation : Orientation = Orientation.VERTICAL):
+             pattern_data_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
 
 
         options = ParserOptions(select_suffixes=select_suffixes,
