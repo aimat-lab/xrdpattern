@@ -104,7 +104,7 @@ class XrdPattern(PatternInfo):
 
     @classmethod
     def get_std_num_entries(cls) -> int:
-        return 2000
+        return 2048
 
     @classmethod
     def get_std_range(cls) -> (float, float):
