@@ -2,7 +2,7 @@ import os.path
 
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
-from tests.base import PatternBaseTest, ParserBaseTest
+from tests.base_tests import PatternBaseTest, ParserBaseTest
 
 
 class TestParserPattern(PatternBaseTest):
@@ -49,7 +49,7 @@ class TestParserPattern(PatternBaseTest):
             self.check_data_ok(data=data)
 
     def save(self):
-        self.pattern.save(fpath='/home/daniel/local/misc/example_files/aimat.json')
+        self.pattern.save(fpath='/home/daniel/local/misc/examples/aimat.json')
 
 
 class TestParseStoe(PatternBaseTest):
@@ -72,7 +72,7 @@ class TestParserDatabase(ParserBaseTest):
     def test_db_parsing_ok(self):
         with self.assertNoLogs(level=0):
             TestParserDatabase.bruker_only_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
-            TestParserDatabase.all_example_db = PatternDB.load(datafolder_path=self.get_example_folderpath())
+            TestParserDatabase.all_example_db = PatternDB.load(datafolder_path=self.get_example_dirpath())
 
         for db in [self.bruker_only_db, self.all_example_db]:
             self.assertIsInstance(db, PatternDB)

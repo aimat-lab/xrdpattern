@@ -1,3 +1,5 @@
+import os.path
+
 from xrdpattern.core import XrdIntensities
 from xrdpattern.pattern import XrdPattern
 from holytools.devtools import Unittest
@@ -18,31 +20,33 @@ class ParserBaseTest(Unittest):
 
     @classmethod
     def get_stoe_fpath(cls) -> str:
-        return cls.get_example_folderpath() + 'stoe.raw'
+        return cls.get_example_dirpath() + 'stoe.raw'
 
     @classmethod
     def get_bruker_fpath(cls) -> str:
-        return cls.get_example_folderpath() + 'bruker.raw'
+        return cls.get_example_dirpath() + 'bruker.raw'
 
     @classmethod
     def get_single_csv_fpath(cls) -> str:
-        return cls.get_example_folderpath() + 'single.csv'
+        return cls.get_example_dirpath() + 'single.csv'
 
     @classmethod
     def get_multi_csv_fpath(cls) -> str:
-        return cls.get_example_folderpath() + 'multi.csv'
+        return cls.get_example_dirpath() + 'multi.csv'
 
     @classmethod
     def get_aimat_json_fpath(cls) -> str:
-        return cls.get_example_folderpath() + 'aimat.json'
+        return cls.get_example_dirpath() + 'aimat.json'
 
     @classmethod
     def get_datafolder_fpath(cls) -> str:
-        return cls.get_example_folderpath() + 'datafolder'
+        return cls.get_example_dirpath() + 'datafolder'
 
     @staticmethod
-    def get_example_folderpath() -> str:
-        return '/home/daniel/pxrd/examples/'
+    def get_example_dirpath() -> str:
+        dirpath = os.path.dirname(__file__)
+        example_dirpath = os.path.join(dirpath, 'examples')
+        return example_dirpath
 
 class PatternBaseTest(ParserBaseTest):
     @classmethod
