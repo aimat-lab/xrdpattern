@@ -17,30 +17,29 @@ class ParserBaseTest(Unittest):
             self.assertIsInstance(key, float)
             self.assertIsInstance(value, float)
 
-
     @classmethod
     def get_stoe_fpath(cls) -> str:
-        return cls.get_example_dirpath() + 'stoe.raw'
+        return os.path.join(cls.get_example_dirpath(), 'stoe.raw')
 
     @classmethod
     def get_bruker_fpath(cls) -> str:
-        return cls.get_example_dirpath() + 'bruker.raw'
+        return os.path.join(cls.get_example_dirpath(), 'bruker.raw')
 
     @classmethod
     def get_single_csv_fpath(cls) -> str:
-        return cls.get_example_dirpath() + 'single.csv'
+        return os.path.join(cls.get_example_dirpath(), 'single.csv')
 
     @classmethod
     def get_multi_csv_fpath(cls) -> str:
-        return cls.get_example_dirpath() + 'multi.csv'
+        return os.path.join(cls.get_example_dirpath(), 'multi.csv')
 
     @classmethod
     def get_aimat_json_fpath(cls) -> str:
-        return cls.get_example_dirpath() + 'aimat.json'
+        return os.path.join(cls.get_example_dirpath(), 'aimat.json')
 
     @classmethod
     def get_datafolder_fpath(cls) -> str:
-        return cls.get_example_dirpath() + 'datafolder'
+        return os.path.join(cls.get_example_dirpath(), 'datafolder')
 
     @staticmethod
     def get_example_dirpath() -> str:
