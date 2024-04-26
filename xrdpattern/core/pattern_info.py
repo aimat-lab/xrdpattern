@@ -1,4 +1,4 @@
-from hollarek.abstract import JsonDataclass
+from holytools.abstract import JsonDataclass
 from dataclasses import dataclass
 from typing import Optional
 from .xrd_intensities import XrdIntensities

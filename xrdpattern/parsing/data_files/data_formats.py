@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from hollarek.fsys import SaveManager
+from holytools.fsys import SaveManager
 from xrdpattern.parsing.stoe import StoeReader
 
 @dataclass

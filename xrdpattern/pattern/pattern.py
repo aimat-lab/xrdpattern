@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import os
 from uuid import uuid4
 from typing import Optional
-from hollarek.fsys import SaveManager
+from holytools.fsys import SaveManager
 
 from xrdpattern.parsing import Parser, ParserOptions
 from xrdpattern.core import XrdIntensities, XAxisType, PatternInfo

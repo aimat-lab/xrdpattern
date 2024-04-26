@@ -1,6 +1,6 @@
 import os
 from xrdpattern.parsing.csv import Orientation, CsvParser
-from hollarek.devtools import Unittest
+from holytools.devtools import Unittest
 
 class TestCsvReader(Unittest):
 

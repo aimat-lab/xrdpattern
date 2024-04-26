@@ -1,5 +1,5 @@
 from __future__ import annotations
-from hollarek.abstract import SelectableEnum
+from holytools.abstract import SelectableEnum
 
 from xrdpattern.core import XAxisType, XrdIntensities, Metadata, PatternInfo
 from .table_selector import TableSelector, TextTable, NumericalTable

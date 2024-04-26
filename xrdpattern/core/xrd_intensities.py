@@ -5,7 +5,7 @@ import numpy as np
 from copy import copy
 from dataclasses import dataclass
 from scipy.interpolate import CubicSpline
-from hollarek.abstract import SelectableEnum, JsonDataclass
+from holytools.abstract import SelectableEnum, JsonDataclass
 # -------------------------------------------
 
 class XAxisType(SelectableEnum):

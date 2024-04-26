@@ -1,6 +1,6 @@
 from xrdpattern.core import XrdIntensities
 from xrdpattern.pattern import XrdPattern
-from hollarek.devtools import Unittest
+from holytools.devtools import Unittest
 from abc import abstractmethod
 
 class ParserBaseTest(Unittest):

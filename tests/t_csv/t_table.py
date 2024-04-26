@@ -1,5 +1,5 @@
 from xrdpattern.parsing.csv import TextTable, TableSelector
-from hollarek.devtools import Unittest
+from holytools.devtools import Unittest
 
 from xrdpattern.parsing.csv.tables import Region, Index
 

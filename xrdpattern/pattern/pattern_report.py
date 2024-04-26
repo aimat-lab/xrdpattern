@@ -1,4 +1,4 @@
-from hollarek.abstract import JsonDataclass
+from holytools.abstract import JsonDataclass
 from dataclasses import dataclass, field
 from typing import Optional
 # -------------------------------------------

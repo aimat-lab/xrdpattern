@@ -3,7 +3,7 @@ from __future__ import annotations
 import os.path
 from typing import Optional
 from dataclasses import dataclass
-from hollarek.fsys import SaveManager
+from holytools.fsys import SaveManager
 from xrdpattern.core import PatternInfo, Metadata, XrdIntensities, XAxisType
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation

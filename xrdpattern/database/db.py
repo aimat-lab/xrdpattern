@@ -6,7 +6,7 @@ from typing import Optional
 import traceback
 from dataclasses import dataclass
 
-from hollarek.fsys import FsysNode
+from holytools.fsys import FsysNode
 from xrdpattern.parsing import ParserOptions, Parser, Orientation
 from xrdpattern.pattern import XrdPattern, PatternReport
 
