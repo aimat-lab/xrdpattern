@@ -40,6 +40,11 @@ class TestXrdPattern(PatternBaseTest):
         for data in [raw_data, std_data]:
             self.check_data_ok(data=data)
 
+    def test_from_angle_data(self):
+        angles = [1.0, 2.0, 3.0]
+        intensities = [10.0, 20.0, 100.0]
+        pattern = XrdPattern.from_angle_map(angles=angles, intensities=intensities)
+        self.check_data_ok(data=pattern.xrd_intensities)
 
 if __name__ == "__main__":
     TestXrdPattern.execute_all(manual_mode=False)
