@@ -6,7 +6,7 @@ from typing import Optional
 from holytools.fsys import SaveManager
 
 from xrdpattern.parsing import Parser, ParserOptions
-from xrdpattern.core import XrdIntensities, XAxisType, PatternInfo
+from xrdpattern.core import XrdIntensities, XAxisType, PatternInfo, Metadata
 from .pattern_report import PatternReport
 # -------------------------------------------
 
@@ -53,14 +53,21 @@ class XrdPattern(PatternInfo):
         with open(fpath, 'w') as f:
             f.write(self.to_str())
 
+    @classmethod
+    def from_angle_map(cls, angles: list[float], intensities: list[float]) -> XrdPattern:
+        twotheta_map = dict(zip(angles, intensities))
+        xrd_intensities = XrdIntensities.from_angle_data(twotheta_map=twotheta_map)
+        metadata = Metadata.make_empty()
+
+        return XrdPattern(xrd_intensities=xrd_intensities, metadata=metadata)
     # -------------------------------------------
     # get
 
     def get_parsing_report(self, datafile_fpath : str) -> PatternReport:
         pattern_health = PatternReport(datafile_fpath=datafile_fpath)
-        if len(self.xrd_intensities.data) == 0:
+        if len(self.xrd_intensities.mapping) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.xrd_intensities.data) < 10:
+        elif len(self.xrd_intensities.mapping) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
         if self.get_wavelength(primary=True) is None:
             pattern_health.add_error('Primary wavelength missing!')

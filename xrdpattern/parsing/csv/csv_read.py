@@ -56,7 +56,7 @@ class CsvParser:
 
         for row in data_rows:
             data = {x : y for (x,y) in zip(x_axis_row, row)}
-            intensity_map = XrdIntensities(data=data, x_axis_type=x_axis_type)
+            intensity_map = XrdIntensities(mapping=data, x_axis_type=x_axis_type)
             new = PatternInfo(xrd_intensities=intensity_map, metadata=Metadata.make_empty())
             pattern_infos.append(new)
 

@@ -24,14 +24,14 @@ class TestXrdPattern(PatternBaseTest):
     def test_standardize(self):
         pattern = self.pattern
         intensity_map =pattern.get_data(apply_standardization=True)
-        self.assertTrue(len(intensity_map.data) == XrdPattern.get_std_num_entries())
+        self.assertTrue(len(intensity_map.mapping) == XrdPattern.get_std_num_entries())
 
     def test_convert_axis(self):
         wavelength = 1.54
         pattern = self.pattern
         new_data = pattern.xrd_intensities.as_qvalues_map(wavelength=wavelength)
         # print(new_data.to_str())
-        print(len(new_data.data))
+        print(len(new_data.mapping))
         self.check_data_ok(data=new_data)
 
     def test_data_ok(self):

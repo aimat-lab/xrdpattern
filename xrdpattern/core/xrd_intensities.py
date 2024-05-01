@@ -15,20 +15,20 @@ class XAxisType(SelectableEnum):
 
 @dataclass
 class XrdIntensities(JsonDataclass):
-    data : dict[float, float]
+    mapping : dict[float, float]
     x_axis_type : XAxisType
 
     @classmethod
-    def angle_data(cls, data : dict[float, float]):
-        return cls(data=data, x_axis_type=XAxisType.TwoTheta)
+    def from_angle_data(cls, twotheta_map : dict[float, float]):
+        return cls(mapping=twotheta_map, x_axis_type=XAxisType.TwoTheta)
 
     def get_standardized(self, start_val : float, stop_val : float, num_entries : int) -> XrdIntensities:
-        x_values = list(self.data.keys())
+        x_values = list(self.mapping.keys())
         start, end = x_values[0], x_values[-1]
         std_angles = np.linspace(start=start_val, stop=stop_val, num=num_entries)
 
-        x = np.array(list(self.data.keys()))
-        y = np.array(list(self.data.values()))
+        x = np.array(list(self.mapping.keys()))
+        y = np.array(list(self.mapping.values()))
         min_val = min(y)
         y = y - min_val
 
@@ -44,7 +44,7 @@ class XrdIntensities(JsonDataclass):
                 mapping[angle] = float(0)
             else:
                 mapping[angle] = cs(angle) / normalization_factor
-        return XrdIntensities(data=mapping, x_axis_type=self.x_axis_type)
+        return XrdIntensities(mapping=mapping, x_axis_type=self.x_axis_type)
 
 
     def as_qvalues_map(self, wavelength: float) -> XrdIntensities:
@@ -63,11 +63,11 @@ class XrdIntensities(JsonDataclass):
             convert = lambda val : self._q_to_twotheta(val, wavelength)
 
         new_data = {}
-        for old_val, intensity in self.data.items():
+        for old_val, intensity in self.mapping.items():
             new_val = convert(old_val)
             new_data[new_val] = intensity
 
-        return XrdIntensities(data=new_data, x_axis_type=target_axis_type)
+        return XrdIntensities(mapping=new_data, x_axis_type=target_axis_type)
 
     # -------------------------------------------
 
@@ -85,8 +85,8 @@ class XrdIntensities(JsonDataclass):
 
 
     def as_list_pair(self) -> (list[float], list[float]):
-        x_values = list(self.data.keys())
-        y_values = list(self.data.values())
+        x_values = list(self.mapping.keys())
+        y_values = list(self.mapping.values())
         return x_values, y_values
 
 
@@ -94,7 +94,7 @@ class XrdIntensities(JsonDataclass):
         if not isinstance(other, XrdIntensities):
             return False
 
-        return self.data == other.data and self.x_axis_type == other.x_axis_type
+        return self.mapping == other.mapping and self.x_axis_type == other.x_axis_type
 
 if __name__ == '__main__':
     this = XAxisType.TwoTheta

@@ -74,7 +74,7 @@ class Parser:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
             two_theta_to_intensity[deg] = intensity
-        intensity_map = XrdIntensities(data=two_theta_to_intensity, x_axis_type=XAxisType.TwoTheta)
+        intensity_map = XrdIntensities(mapping=two_theta_to_intensity, x_axis_type=XAxisType.TwoTheta)
         return PatternInfo(xrd_intensities=intensity_map, metadata=metadata)
 
 

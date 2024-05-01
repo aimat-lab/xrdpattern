@@ -44,7 +44,7 @@ class StoeReader(BinaryReader):
         angle_values = self._get_x_values()
         float_intensities = self._get_y_values()
         data = {angle: intensity for angle, intensity in zip(angle_values, float_intensities)}
-        intensities = XrdIntensities.angle_data(data=data)
+        intensities = XrdIntensities.from_angle_data(twotheta_map=data)
 
         return PatternInfo(metadata=metadata, xrd_intensities=intensities)
 
