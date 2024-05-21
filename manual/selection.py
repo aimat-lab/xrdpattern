@@ -55,7 +55,7 @@ if __name__ == "__main__":
     while j < len(patterns):
         pattern_batch = patterns[j:j + batch_size]
         fpath_batch = fpaths[j:j + batch_size]
-        names = [os.path.basename(fpath) for fpath in fpaths]
+        names = [os.path.basename(fpath) for fpath in fpath_batch]
         print(f'Len of fpath, labels = {len(fpaths)}, {len(names)}')
         multiplot(patterns=pattern_batch, labels=names)
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
             nums = excluded_patterns_str.split(',')
             print(f'Nums = {nums}')
             nums = [int(s) for s in nums]
-            selected_fpaths = [fpath for i, fpath in enumerate(fpaths) if i not in nums]
+            selected_fpaths = [fpath for i, fpath in enumerate(fpath_batch) if i not in nums]
             for p in selected_fpaths:
                 shutil.copy(p, os.path.join(output_dir, os.path.basename(p)))
             j += batch_size
