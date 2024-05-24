@@ -1,19 +1,15 @@
 import os
 import shutil
-from xrdpattern.core import XAxisType
 from xrdpattern.pattern import XrdPattern
 import matplotlib.pyplot as plt
 
-def multiplot(patterns, labels):
+def multiplot(patterns_to_ploat, labels):
     fig, axes = plt.subplots(4, 8, figsize=(20, 10))
-    for i, pattern in enumerate(patterns):
+    for i, pattern in enumerate(patterns_to_ploat):
         ax = axes[i // 8, i % 8]
         intensity_map = pattern.get_data(apply_standardization=False)
         x_values, intensities = intensity_map.as_list_pair()
-        if intensity_map.x_axis_type == XAxisType.TwoTheta:
-            ax.set_xlabel(r'$2\theta$ (Degrees)')
-        else:
-            ax.set_xlabel(r'Q ($\AA^{-1}$)')
+        ax.set_xlabel(r'$2\theta$ (Degrees)')
         ax.plot(x_values, intensities, label='Interpolated Intensity')
         ax.set_ylabel('Intensity')
         ax.set_title(f'({i}){labels[i][:20]}')
@@ -57,7 +53,7 @@ if __name__ == "__main__":
         fpath_batch = fpaths[j:j + batch_size]
         names = [os.path.basename(fpath) for fpath in fpath_batch]
         print(f'Len of fpath, labels = {len(fpaths)}, {len(names)}')
-        multiplot(patterns=pattern_batch, labels=names)
+        multiplot(patterns_to_ploat=pattern_batch, labels=names)
 
         excluded_patterns_str = input(f'Enter patterns to be excluded')
         try:

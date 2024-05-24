@@ -6,7 +6,7 @@ from typing import Optional
 from holytools.fsys import SaveManager
 
 from xrdpattern.parsing import Parser, ParserOptions
-from xrdpattern.core import XrdIntensities, XAxisType, PatternInfo, Metadata
+from xrdpattern.core import XrdIntensities, PatternInfo, Metadata
 from .pattern_report import PatternReport
 # -------------------------------------------
 
@@ -23,10 +23,7 @@ class XrdPattern(PatternInfo):
         else:
             label = 'Original Intensity'
 
-        if intensity_map.x_axis_type == XAxisType.TwoTheta:
-            plt.xlabel(r'$2\theta$ (Degrees)')
-        else:
-            plt.xlabel(r'Q ($\AA^{-1}$)')
+        plt.xlabel(r'$2\theta$ (Degrees)')
 
         plt.plot(x_values, intensities, label=label)
         plt.legend()
@@ -65,9 +62,9 @@ class XrdPattern(PatternInfo):
 
     def get_parsing_report(self, datafile_fpath : str) -> PatternReport:
         pattern_health = PatternReport(datafile_fpath=datafile_fpath)
-        if len(self.xrd_intensities.mapping) == 0:
+        if len(self.xrd_intensities.twotheta_mapping) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.xrd_intensities.mapping) < 10:
+        elif len(self.xrd_intensities.twotheta_mapping) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
         if self.get_wavelength(primary=True) is None:
             pattern_health.add_error('Primary wavelength missing!')
@@ -93,14 +90,11 @@ class XrdPattern(PatternInfo):
         return filename
 
 
-    def get_data(self, apply_standardization = True, x_axis_type : XAxisType = XAxisType.TwoTheta) -> XrdIntensities:
+    def get_data(self, apply_standardization = True) -> XrdIntensities:
         """
         :param apply_standardization: Standardization pads missing values, scales intensity into [0,1] range and makes x-step size uniform
-        :param x_axis_type: Specifies the type of x-axis values, defaults to XAxisType.TwoTheta. This determines how the x-axis is interpreted and processed.
         :return: A mapping from the specified x-axis type to intensity
         """
-        if x_axis_type == XAxisType.QValues:
-            raise NotImplementedError
 
         intensity_map = self.xrd_intensities
         if apply_standardization:

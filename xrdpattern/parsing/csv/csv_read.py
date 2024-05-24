@@ -1,8 +1,10 @@
 from __future__ import annotations
 from holytools.abstract import SelectableEnum
 
-from xrdpattern.core import XAxisType, XrdIntensities, Metadata, PatternInfo
+from xrdpattern.core import XrdIntensities, Metadata, PatternInfo
 from .table_selector import TableSelector, TextTable, NumericalTable
+import numpy as np
+from numpy.typing import NDArray
 import csv
 # -------------------------------------------
 
@@ -41,7 +43,7 @@ class CsvParser:
 
     def read_csv(self, fpath: str) -> list[PatternInfo]:
         matrix = self.as_matrix(fpath=fpath)
-        x_axis_row = matrix.get_data(row=0)
+        x_axis_row = np.array(matrix.get_data(row=0))
         data_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
 
         if len(data_rows) == 0:
@@ -52,16 +54,20 @@ class CsvParser:
 
         pattern_infos = []
         is_qvalues = max(x_axis_row) < CsvParser.MAX_Q_VALUE
-        x_axis_type = XAxisType.QValues if is_qvalues else XAxisType.TwoTheta
+        if is_qvalues:
+            two_theta_degs = qvalues_to_angles(qvalues=x_axis_row)
+        else:
+            two_theta_degs = x_axis_row
 
-        for row in data_rows:
-            data = {x : y for (x,y) in zip(x_axis_row, row)}
-            intensity_map = XrdIntensities(mapping=data, x_axis_type=x_axis_type)
+        for intensities in data_rows:
+            data = {x : y for (x,y) in zip(two_theta_degs, intensities)}
+            intensity_map = XrdIntensities(twotheta_mapping=data)
             new = PatternInfo(xrd_intensities=intensity_map, metadata=Metadata.make_empty())
             pattern_infos.append(new)
 
+        x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'
         print(f'\nThe format of the csv file {fpath} was automatically recognized as:'
-              f'\n- XAxisType: \"{pattern_infos[0].xrd_intensities.x_axis_type}\"'
+              f'\n- XAxisType: \"{x_axis_type}\"'
               f'\n- Csv Seperator : \"{CsvParser.get_separator(fpath=fpath)}\"')
 
         return pattern_infos
@@ -83,3 +89,13 @@ class CsvParser:
             sniffer = csv.Sniffer()
             dialect = sniffer.sniff(content)
             return str(dialect.delimiter)
+
+
+#TODO replace this with copper wavelength from physical constants
+copper_wavelength = 1.54
+
+def qvalues_to_angles(qvalues : NDArray) -> NDArray:
+    theta_values_rad = np.arcsin(qvalues * copper_wavelength / (4 * np.pi))
+    two_theta_degs = 2 * np.degrees(theta_values_rad)
+
+    return two_theta_degs

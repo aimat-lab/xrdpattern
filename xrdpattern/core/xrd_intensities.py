@@ -1,34 +1,30 @@
 from __future__ import annotations
 
-import math
-import numpy as np
-from copy import copy
 from dataclasses import dataclass
-from scipy.interpolate import CubicSpline
-from holytools.abstract import SelectableEnum, JsonDataclass
-# -------------------------------------------
 
-class XAxisType(SelectableEnum):
-    TwoTheta = 'TwoTheta'
-    QValues = 'QValues'
+import numpy as np
+from holytools.abstract import JsonDataclass
+from scipy.interpolate import CubicSpline
+
+
+# -------------------------------------------
 
 
 @dataclass
 class XrdIntensities(JsonDataclass):
-    mapping : dict[float, float]
-    x_axis_type : XAxisType
+    twotheta_mapping : dict[float, float]
 
     @classmethod
     def from_angle_data(cls, twotheta_map : dict[float, float]):
-        return cls(mapping=twotheta_map, x_axis_type=XAxisType.TwoTheta)
+        return cls(twotheta_mapping=twotheta_map)
 
     def get_standardized(self, start_val : float, stop_val : float, num_entries : int) -> XrdIntensities:
-        x_values = list(self.mapping.keys())
+        x_values = list(self.twotheta_mapping.keys())
         start, end = x_values[0], x_values[-1]
         std_angles = np.linspace(start=start_val, stop=stop_val, num=num_entries)
 
-        x = np.array(list(self.mapping.keys()))
-        y = np.array(list(self.mapping.values()))
+        x = np.array(list(self.twotheta_mapping.keys()))
+        y = np.array(list(self.twotheta_mapping.values()))
         min_val = min(y)
         y = y - min_val
 
@@ -44,49 +40,12 @@ class XrdIntensities(JsonDataclass):
                 mapping[angle] = float(0)
             else:
                 mapping[angle] = cs(angle) / normalization_factor
-        return XrdIntensities(mapping=mapping, x_axis_type=self.x_axis_type)
-
-
-    def as_qvalues_map(self, wavelength: float) -> XrdIntensities:
-        return self._convert_axis(target_axis_type=XAxisType.QValues, wavelength=wavelength)
-
-    def as_twotheta_map(self, wavelength: float) -> XrdIntensities:
-        return self._convert_axis(target_axis_type=XAxisType.TwoTheta, wavelength=wavelength)
-
-    def _convert_axis(self, target_axis_type: XAxisType, wavelength: float) -> XrdIntensities:
-        if self.x_axis_type == target_axis_type:
-            return copy(self)
-
-        if target_axis_type == XAxisType.QValues:
-            convert = lambda val : self._twotheta_to_q(val, wavelength)
-        else:
-            convert = lambda val : self._q_to_twotheta(val, wavelength)
-
-        new_data = {}
-        for old_val, intensity in self.mapping.items():
-            new_val = convert(old_val)
-            new_data[new_val] = intensity
-
-        return XrdIntensities(mapping=new_data, x_axis_type=target_axis_type)
-
-    # -------------------------------------------
-
-    @staticmethod
-    def _q_to_twotheta(q: float, wavelength: float) -> float:
-        theta = math.asin(q * wavelength / (4 * math.pi))
-        two_theta = 2 * math.degrees(theta)
-        return two_theta
-
-    @staticmethod
-    def _twotheta_to_q(two_theta: float, wavelength: float) -> float:
-        theta_rad = math.radians(two_theta / 2)
-        q = (4 * math.pi * math.sin(theta_rad)) / wavelength
-        return q
+        return XrdIntensities(twotheta_mapping=mapping)
 
 
     def as_list_pair(self) -> (list[float], list[float]):
-        x_values = list(self.mapping.keys())
-        y_values = list(self.mapping.values())
+        x_values = list(self.twotheta_mapping.keys())
+        y_values = list(self.twotheta_mapping.values())
         return x_values, y_values
 
 
@@ -94,12 +53,7 @@ class XrdIntensities(JsonDataclass):
         if not isinstance(other, XrdIntensities):
             return False
 
-        return self.mapping == other.mapping and self.x_axis_type == other.x_axis_type
+        return self.twotheta_mapping == other.twotheta_mapping
 
 if __name__ == '__main__':
-    this = XAxisType.TwoTheta
-    from enum import Enum
-    print(isinstance(this, Enum))
-
-    import json
-    json.dumps(this)
+    pass
