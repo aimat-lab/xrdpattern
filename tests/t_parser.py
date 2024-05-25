@@ -46,7 +46,7 @@ class TestParserPattern(PatternBaseTest):
         raw_data = self.pattern.get_pattern_data(apply_standardization=False)
         std_data = self.pattern.get_pattern_data(apply_standardization=True)
         for data in [raw_data, std_data]:
-            self.check_data_ok(data=data)
+            self.check_data_ok(*data)
 
     def save(self):
         self.pattern.save(fpath='/home/daniel/local/misc/examples/aimat.json')

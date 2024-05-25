@@ -1,4 +1,4 @@
 numpy
 scipy
 matplotlib
-holytools
+holytools @ git+ssh://git@github.com/Somerandomguy10111/holytools
