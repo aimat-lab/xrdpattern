@@ -1,11 +1,14 @@
 from __future__ import annotations
+
+import csv
+import math
+
 from holytools.abstract import SelectableEnum
 
-from xrdpattern.core import XrdIntensities, Metadata, PatternInfo
+from xrdpattern.core import Metadata, PatternInfo
 from .table_selector import TableSelector, TextTable, NumericalTable
-import numpy as np
-from numpy.typing import NDArray
-import csv
+
+
 # -------------------------------------------
 
 class Orientation(SelectableEnum):
@@ -43,7 +46,7 @@ class CsvParser:
 
     def read_csv(self, fpath: str) -> list[PatternInfo]:
         matrix = self.as_matrix(fpath=fpath)
-        x_axis_row = np.array(matrix.get_data(row=0))
+        x_axis_row = matrix.get_data(row=0)
         data_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
 
         if len(data_rows) == 0:
@@ -60,9 +63,7 @@ class CsvParser:
             two_theta_degs = x_axis_row
 
         for intensities in data_rows:
-            data = {x : y for (x,y) in zip(two_theta_degs, intensities)}
-            intensity_map = XrdIntensities(twotheta_mapping=data)
-            new = PatternInfo(xrd_intensities=intensity_map, metadata=Metadata.make_empty())
+            new = PatternInfo(two_theta_values=two_theta_degs, intensities=intensities, metadata=Metadata.make_empty())
             pattern_infos.append(new)
 
         x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'
@@ -94,8 +95,8 @@ class CsvParser:
 #TODO replace this with copper wavelength from physical constants
 copper_wavelength = 1.54
 
-def qvalues_to_angles(qvalues : NDArray) -> NDArray:
-    theta_values_rad = np.arcsin(qvalues * copper_wavelength / (4 * np.pi))
-    two_theta_degs = 2 * np.degrees(theta_values_rad)
+def qvalues_to_angles(qvalues : list[float]) -> list[float]:
+    theta_values_rad = [math.asin(q*copper_wavelength)/(4*math.pi) for q in qvalues]
+    two_theta_degs = [2*math.degrees(theta) for theta in theta_values_rad]
 
     return two_theta_degs

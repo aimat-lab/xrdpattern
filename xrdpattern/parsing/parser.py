@@ -4,7 +4,7 @@ import os.path
 from typing import Optional
 from dataclasses import dataclass
 from holytools.fsys import SaveManager
-from xrdpattern.core import PatternInfo, Metadata, XrdIntensities
+from xrdpattern.core import PatternInfo, Metadata
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
 from xrdpattern.parsing.stoe import StoeReader
@@ -68,14 +68,14 @@ class Parser:
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         metadata = Metadata.from_header_str(header_str=header)
 
-        two_theta_to_intensity = {}
+        angles, intensities= [], []
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
         for row in data_rows:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
-            two_theta_to_intensity[deg] = intensity
-        intensity_map = XrdIntensities(twotheta_mapping=two_theta_to_intensity)
-        return PatternInfo(xrd_intensities=intensity_map, metadata=metadata)
+            angles.append(deg)
+            intensities.append(intensity)
+        return PatternInfo(two_theta_values=angles,intensities=intensities,metadata=metadata)
 
 
     @staticmethod

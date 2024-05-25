@@ -4,7 +4,7 @@ import logging
 import os
 from typing import Optional
 import traceback
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 from holytools.fsys import FsysNode
 from xrdpattern.parsing import ParserOptions, Parser, Orientation
@@ -65,7 +65,7 @@ class PatternDB:
         for fpath in data_fpaths:
             try:
                 pattern_info_list = parser.get_pattern_info_list(fpath=fpath)
-                patterns += [XrdPattern(xrd_intensities=info.xrd_intensities, metadata=info.metadata, name=info.name) for info in pattern_info_list]
+                patterns += [XrdPattern(**asdict(info)) for info in pattern_info_list]
                 parsing_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in patterns]
             except Exception as e:
                 failed_fpath.append(fpath)

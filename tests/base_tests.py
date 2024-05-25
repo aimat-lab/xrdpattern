@@ -1,18 +1,18 @@
 import os.path
 
-from xrdpattern.core import XrdIntensities
+from xrdpattern.core import PatternInfo
 from xrdpattern.pattern import XrdPattern
 from holytools.devtools import Unittest
 from abc import abstractmethod
 
 class ParserBaseTest(Unittest):
-    def check_data_ok(self, data : XrdIntensities):
+    def check_data_ok(self, data : PatternInfo):
         data_view = str(data)[:100]+ '...' +  str(data)[-100:]
         print(f'data is {data_view}')
         data_str = data.to_str()
         self.assertIsInstance(data_str, str)
 
-        keys, values = data.as_list_pair()
+        keys, values = data.two_theta_values, data.intensities
         for key, value in zip(keys, values):
             self.assertIsInstance(key, float)
             self.assertIsInstance(value, float)

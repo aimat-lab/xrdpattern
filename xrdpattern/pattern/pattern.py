@@ -4,9 +4,10 @@ import os
 from uuid import uuid4
 from typing import Optional
 from holytools.fsys import SaveManager
+from dataclasses import asdict
 
 from xrdpattern.parsing import Parser, ParserOptions
-from xrdpattern.core import XrdIntensities, PatternInfo, Metadata
+from xrdpattern.core import PatternInfo, Metadata
 from .pattern_report import PatternReport
 # -------------------------------------------
 
@@ -39,7 +40,9 @@ class XrdPattern(PatternInfo):
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern_info = pattern_list[0]
-        return cls(xrd_intensities=pattern_info.xrd_intensities, metadata=pattern_info.metadata, name=pattern_info.name)
+
+        kwargs = asdict(pattern_info)
+        return cls(**kwargs)
 
 
     def save(self, fpath : str, force_overwrite : bool = False):
@@ -51,20 +54,18 @@ class XrdPattern(PatternInfo):
             f.write(self.to_str())
 
     @classmethod
-    def from_angle_map(cls, angles: list[float], intensities: list[float]) -> XrdPattern:
-        twotheta_map = dict(zip(angles, intensities))
-        xrd_intensities = XrdIntensities.from_angle_data(twotheta_map=twotheta_map)
+    def from_intensitiy_map(cls, angles: list[float], intensities: list[float]) -> XrdPattern:
         metadata = Metadata.make_empty()
+        return XrdPattern(two_theta_values=angles, intensities=intensities, metadata=metadata)
 
-        return XrdPattern(xrd_intensities=xrd_intensities, metadata=metadata)
     # -------------------------------------------
     # get
 
     def get_parsing_report(self, datafile_fpath : str) -> PatternReport:
         pattern_health = PatternReport(datafile_fpath=datafile_fpath)
-        if len(self.xrd_intensities.twotheta_mapping) == 0:
+        if len(self.two_theta_values) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.xrd_intensities.twotheta_mapping) < 10:
+        elif len(self.two_theta_values) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
         if self.get_wavelength(primary=True) is None:
             pattern_health.add_error('Primary wavelength missing!')
@@ -90,17 +91,18 @@ class XrdPattern(PatternInfo):
         return filename
 
 
-    def get_data(self, apply_standardization = True) -> XrdIntensities:
+    def get_data(self, apply_standardization = True) -> (list[float], list[float]):
         """
         :param apply_standardization: Standardization pads missing values, scales intensity into [0,1] range and makes x-step size uniform
         :return: A mapping from the specified x-axis type to intensity
         """
 
-        intensity_map = self.xrd_intensities
         if apply_standardization:
             start, stop = self.get_std_range()
             num_entries = self.get_std_num_entries()
-            intensity_map = intensity_map.get_standardized(start_val=start, stop_val=stop, num_entries=num_entries)
+            intensity_map = self.get_standardized_map(start_val=start, stop_val=stop, num_entries=num_entries)
+        else:
+            intensity_map = (self.two_theta_values, self.intensities)
         return intensity_map
 
     @classmethod
@@ -111,8 +113,4 @@ class XrdPattern(PatternInfo):
     def get_std_range(cls) -> (float, float):
         return 0, 90
 
-    def __eq__(self, other):
-        if not isinstance(other, XrdPattern):
-            return False
-        return self.xrd_intensities == other.xrd_intensities and self.metadata == other.metadata
 

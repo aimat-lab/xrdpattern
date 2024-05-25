@@ -1,4 +1,4 @@
-from xrdpattern.core import Metadata, PatternInfo, XrdIntensities
+from xrdpattern.core import Metadata, PatternInfo
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
 
 class BinaryReader:
@@ -41,12 +41,10 @@ class StoeReader(BinaryReader):
                             secondary=self.secondary_wavelength.get_value(),
                             ratio=self.ratio.get_value())
 
-        angle_values = self._get_x_values()
-        float_intensities = self._get_y_values()
-        data = {angle: intensity for angle, intensity in zip(angle_values, float_intensities)}
-        intensities = XrdIntensities.from_angle_data(twotheta_map=data)
+        two_theta_values = self._get_x_values()
+        intensities = self._get_y_values()
 
-        return PatternInfo(metadata=metadata, xrd_intensities=intensities)
+        return PatternInfo(metadata=metadata, two_theta_values=two_theta_values, intensities=intensities)
 
 
     def _get_x_values(self) -> list[float]:
