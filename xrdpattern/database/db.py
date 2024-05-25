@@ -41,14 +41,15 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, datafolder_path : str, select_suffixes : Optional[list[str]] = None,
+    def load(cls, datafolder_path : str,
+             select_suffixes : Optional[list[str]] = None,
              default_wavelength : Optional[float] = None,
-             pattern_data_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
+             csv_patterndata_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
 
 
         options = ParserOptions(select_suffixes=select_suffixes,
-                                default_wavelength_angstr=default_wavelength,
-                                pattern_data_orientation=pattern_data_orientation)
+                                default_wavelength=default_wavelength,
+                                pattern_data_orientation=csv_patterndata_orientation)
 
         datafolder_path = os.path.normpath(path=datafolder_path)
 
@@ -65,7 +66,7 @@ class PatternDB:
         for fpath in data_fpaths:
             try:
                 pattern_info_list = parser.get_pattern_info_list(fpath=fpath)
-                patterns += [XrdPattern(**asdict(info)) for info in pattern_info_list]
+                patterns += [XrdPattern(**info.to_dict()) for info in pattern_info_list]
                 parsing_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in patterns]
             except Exception as e:
                 failed_fpath.append(fpath)

@@ -34,14 +34,15 @@ class XrdPattern(PatternInfo):
 
     @classmethod
     def load(cls, fpath : str, wavelength : Optional[float] = None) -> XrdPattern:
-        options = ParserOptions(default_wavelength_angstr=wavelength)
+        options = ParserOptions(default_wavelength=wavelength)
         parser = Parser(parser_options=options)
         pattern_list = parser.get_pattern_info_list(fpath=fpath)
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern_info = pattern_list[0]
 
-        kwargs = asdict(pattern_info)
+
+        kwargs = pattern_info.to_dict()
         return cls(**kwargs)
 
 

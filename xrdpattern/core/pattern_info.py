@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 from scipy.interpolate import CubicSpline
 from holytools.abstract import JsonDataclass
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import Optional
 from .metadata import Metadata
 
@@ -25,6 +25,9 @@ class PatternInfo(JsonDataclass):
             self.metadata.primary = new_wavelength
         else:
             self.metadata.secondary = new_wavelength
+
+    def to_dict(self):
+        return {f.name: getattr(self, f.name) for f in fields(self)}
 
     def get_standardized_map(self, start_val : float, stop_val : float, num_entries : int) -> (list[float], list[float]):
         start, end = self.two_theta_values[0], self.two_theta_values[-1]

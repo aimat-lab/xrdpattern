@@ -13,7 +13,7 @@ from xrdpattern.parsing.stoe import StoeReader
 @dataclass
 class ParserOptions:
     select_suffixes : Optional[list[str]] = None
-    default_wavelength_angstr : Optional[float] = None
+    default_wavelength : Optional[float] = None
     pattern_data_orientation : Orientation = Orientation.VERTICAL
 
 
@@ -21,7 +21,7 @@ class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
         if parser_options.select_suffixes is None:
             self.select_formats : list[str] = Formats.get_allowed_suffixes()
-        self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength_angstr
+        self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength
         self.stoe_reader : StoeReader = StoeReader()
 
     # -------------------------------------------
