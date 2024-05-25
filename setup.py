@@ -2,7 +2,6 @@
 from glob import glob
 
 from setuptools import setup, find_packages, Extension
-import sys
 from distutils.command.build import build
 
 # -------------------------------------------
@@ -16,11 +15,6 @@ class CustomBuild(build):
 
 with open('requirements.txt','r') as f:
     reqs = f.read().split('\n')
-
-sources = [f for f in glob('xylib/*.cpp') if f != 'xylib_wrap.cpp'] + ['xylib.i']
-swig_opts = ['-c++', '-modern', '-modernargs']
-if sys.version_info[0] == 3:
-    swig_opts += ['-py3']
 
 # noinspection PyTypeChecker
 setup(name='xrdpattern',
@@ -39,9 +33,9 @@ setup(name='xrdpattern',
       license='LGPL2.1',
       url='https://github.com/aimat-lab/xrdpattern',
       ext_modules=[Extension('_xylib',
-                             sources=sources,
+                             sources=[f for f in glob('xylib/*.cpp') if f != 'xylib_wrap.cpp'] + ['xylib.i'],
                              language='c++',
-                             swig_opts=swig_opts,
+                             swig_opts=['-c++', '-modern', '-modernargs', '-py3'],
                              include_dirs=['.'],
                              libraries=[])],
       py_modules=['xylib'],
