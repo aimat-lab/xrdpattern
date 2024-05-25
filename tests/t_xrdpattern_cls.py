@@ -23,20 +23,20 @@ class TestXrdPattern(PatternBaseTest):
 
     def test_standardize(self):
         pattern = self.pattern
-        intensity_map =pattern.get_data(apply_standardization=True)
-        self.assertTrue(len(intensity_map.twotheta_mapping) == XrdPattern.get_std_num_entries())
+        two_theta_values, _ = pattern.get_pattern_data(apply_standardization=True)
+        self.assertTrue(len(two_theta_values) == XrdPattern.get_std_num_entries())
 
     def test_data_ok(self):
-        raw_data = self.pattern.get_data(apply_standardization=False)
-        std_data = self.pattern.get_data(apply_standardization=True)
+        raw_data = self.pattern.get_pattern_data(apply_standardization=False)
+        std_data = self.pattern.get_pattern_data(apply_standardization=True)
         for data in [raw_data, std_data]:
-            self.check_data_ok(data=data)
+            self.check_data_ok(*data)
 
     def test_from_angle_data(self):
         angles = [1.0, 2.0, 3.0]
         intensities = [10.0, 20.0, 100.0]
         pattern = XrdPattern.from_intensitiy_map(angles=angles, intensities=intensities)
-        self.check_data_ok(data=pattern)
+        self.check_data_ok(*pattern.get_pattern_data(apply_standardization=False))
 
 if __name__ == "__main__":
     TestXrdPattern.execute_all(manual_mode=False)

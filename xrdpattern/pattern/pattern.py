@@ -4,7 +4,6 @@ import os
 from uuid import uuid4
 from typing import Optional
 from holytools.fsys import SaveManager
-from dataclasses import asdict
 
 from xrdpattern.parsing import Parser, ParserOptions
 from xrdpattern.core import PatternInfo, Metadata
@@ -17,7 +16,7 @@ class XrdPattern(PatternInfo):
         plt.ylabel('Intensity')
         plt.title('XRD Pattern')
 
-        intensity_map = self.get_data(apply_standardization=apply_standardization)
+        intensity_map = self.get_pattern_data(apply_standardization=apply_standardization)
         x_values, intensities = intensity_map.as_list_pair()
         if apply_standardization:
             label = 'Interpolated Intensity'
@@ -92,7 +91,7 @@ class XrdPattern(PatternInfo):
         return filename
 
 
-    def get_data(self, apply_standardization = True) -> (list[float], list[float]):
+    def get_pattern_data(self, apply_standardization = True) -> tuple[list[float], list[float]]:
         """
         :param apply_standardization: Standardization pads missing values, scales intensity into [0,1] range and makes x-step size uniform
         :return: A mapping from the specified x-axis type to intensity

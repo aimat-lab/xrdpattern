@@ -43,8 +43,8 @@ class TestParserPattern(PatternBaseTest):
         self.assertIn(self.pattern.get_name(), original_name)
 
     def test_data_ok(self):
-        raw_data = self.pattern.get_data(apply_standardization=False)
-        std_data = self.pattern.get_data(apply_standardization=True)
+        raw_data = self.pattern.get_pattern_data(apply_standardization=False)
+        std_data = self.pattern.get_pattern_data(apply_standardization=True)
         for data in [raw_data, std_data]:
             self.check_data_ok(data=data)
 

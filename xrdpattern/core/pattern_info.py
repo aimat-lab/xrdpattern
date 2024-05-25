@@ -45,7 +45,7 @@ class PatternInfo(JsonDataclass):
 
         std_intensities = []
         for angle in std_angles:
-            I = cs(angle)/normalization_factor if start <= angle <= end else 0
+            I = cs(angle)/normalization_factor if start <= angle <= end else float(0)
             std_intensities.append(I)
 
         return std_angles,std_intensities
