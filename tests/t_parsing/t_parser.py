@@ -41,9 +41,6 @@ class TestParserPattern(PatternBaseTest):
         for data in [raw_data, std_data]:
             self.check_data_ok(*data)
 
-    def save(self):
-        self.pattern.save(fpath='/home/daniel/local/misc/examples/aimat.json')
-
 
 class TestParseStoe(PatternBaseTest):
     def get_fpath(self) -> str:
@@ -82,7 +79,8 @@ class TestParserDatabase(ParserBaseTest):
 
 
 if __name__ == "__main__":
-    TestParserDatabase.execute_all(manual_mode=False)
+    # TestParserDatabase.execute_all(manual_mode=False)
+    TestParserPattern.execute_all()
 
     # PatternDB.load(datafolder_path=PatternBaseTest.get_example_folderpath())
 

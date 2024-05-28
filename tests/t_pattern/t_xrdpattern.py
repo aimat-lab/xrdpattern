@@ -1,5 +1,6 @@
 import os.path
 from xrdpattern.pattern import XrdPattern
+from xrdpattern.parsing import Formats
 from tests.base_tests import PatternBaseTest
 
 import tempfile
@@ -7,11 +8,11 @@ import tempfile
 
 class TestXrdPattern(PatternBaseTest):
     def get_fpath(self) -> str:
-        return self.get_aimat_json_fpath()
+        return self.get_aimat_xrdpattern_fpath()
 
     def test_save_load_roundtrip(self):
         pattern = self.pattern
-        save_path = os.path.join(tempfile.mkdtemp(), 'pattern.json')
+        save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.xrdpattern.suffix}')
         pattern.save(fpath=save_path)
         pattern2 = XrdPattern.load(fpath=save_path)
         self.assertEqual(first=pattern, second=pattern2)

@@ -1,5 +1,6 @@
 import os.path
 
+from xrdpattern.parsing import Formats
 from xrdpattern.pattern import XrdPattern
 from holytools.devtools import Unittest
 from abc import abstractmethod
@@ -29,8 +30,8 @@ class ParserBaseTest(Unittest):
         return os.path.join(cls.get_example_dirpath(), 'multi.csv')
 
     @classmethod
-    def get_aimat_json_fpath(cls) -> str:
-        return os.path.join(cls.get_example_dirpath(), 'aimat.json')
+    def get_aimat_xrdpattern_fpath(cls) -> str:
+        return os.path.join(cls.get_example_dirpath(), f'aimat.{Formats.xrdpattern.suffix}')
 
     @classmethod
     def get_datafolder_fpath(cls) -> str:
@@ -42,11 +43,12 @@ class ParserBaseTest(Unittest):
         example_dirpath = os.path.join(dirpath, 'examples')
         return example_dirpath
 
+
 class PatternBaseTest(ParserBaseTest):
     @classmethod
     def setUpClass(cls):
         pattern_from_bruker = XrdPattern.load(fpath=cls.get_bruker_fpath())
-        pattern_from_bruker.save(fpath=cls.get_aimat_json_fpath(), force_overwrite=True)
+        pattern_from_bruker.save(fpath=cls.get_aimat_xrdpattern_fpath(), force_overwrite=True)
 
     def setUp(self):
         self.pattern : XrdPattern = XrdPattern.load(fpath=self.get_fpath())

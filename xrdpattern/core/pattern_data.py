@@ -1,16 +1,19 @@
 from __future__ import annotations
 
-import numpy as np
-from scipy.interpolate import CubicSpline
-from holytools.abstract import JsonDataclass
 from dataclasses import dataclass, fields
 from typing import Optional
+
+import numpy as np
+from scipy.interpolate import CubicSpline
+
+from holytools.abstract import Picklable
 from xrdpattern.core.labels import Labels
+
 
 # -------------------------------------------
 
 @dataclass
-class PatternData(JsonDataclass):
+class PatternData(Picklable):
     two_theta_values : list[float]
     intensities : list[float]
     label : Labels

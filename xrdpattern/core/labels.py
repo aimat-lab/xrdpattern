@@ -25,7 +25,7 @@ class QuantityRegion:
 
 
 @dataclass
-class Labels(Picklable):
+class Labels:
     powder : PowderProperties
     artifacts : Artifacts
     is_simulated : bool

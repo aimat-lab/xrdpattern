@@ -8,7 +8,7 @@ from logging import getLogger
 from typing import Optional
 
 from holytools.fsys import FsysNode
-from xrdpattern.parsing import ParserOptions, Parser, Orientation
+from xrdpattern.parsing import ParserOptions, Parser, Orientation, Formats
 from xrdpattern.pattern import XrdPattern, PatternReport
 
 # -------------------------------------------
@@ -29,7 +29,7 @@ class PatternDB:
 
         def get_path(basename : str, index : Optional[int] = None):
             conditional_index = '' if index is None else f'_{index}'
-            return os.path.join(dirpath, f'{basename}{conditional_index}.json')
+            return os.path.join(dirpath, f'{basename}{conditional_index}.{Formats.xrdpattern.suffix}')
 
         for pattern in self.patterns:
             fpath = get_path(basename=pattern.get_name())

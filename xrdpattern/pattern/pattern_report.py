@@ -1,10 +1,9 @@
-from holytools.abstract import JsonDataclass
 from dataclasses import dataclass, field
 from typing import Optional
 # -------------------------------------------
 
 @dataclass
-class PatternReport(JsonDataclass):
+class PatternReport:
     datafile_fpath: Optional[str]
     critical_errors: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)

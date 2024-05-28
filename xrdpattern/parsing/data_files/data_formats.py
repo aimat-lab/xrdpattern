@@ -29,12 +29,12 @@ class Formats:
     xfit_xdd = XrdFormat("xfit_xdd", "xdd")
     xrdml = XrdFormat("xrdml", "xrdml")
     xsyg = XrdFormat("xsyg", "xsyg")
-    aimat_json = XrdFormat("ajson","json")
+    xrdpattern = XrdFormat("pickle", "pkl")
 
 
     @classmethod
     def get_datafile_suffixes(cls):
-        return [xrd_format.suffix for xrd_format in cls.get_all_formats() if not xrd_format.suffix in ["json", "csv"]]
+        return [xrd_format.suffix for xrd_format in cls.get_all_formats() if not xrd_format.suffix in [Formats.xrdpattern.suffix, "csv"]]
 
     @classmethod
     def get_allowed_suffixes(cls) -> list[str]:

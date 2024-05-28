@@ -110,5 +110,6 @@ class TestCrystalCalculations(Unittest):
 if __name__ == '__main__':
     # TestCifParsing.execute_all()
     # TestPymatgenCompatibility.execute_all()
-    TestCrystalCalculations.execute_all()
+    # TestCrystalCalculations.execute_all()
+    TestPymatgenCompatibility.execute_all()
 

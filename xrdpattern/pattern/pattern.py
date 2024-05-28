@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData
-from xrdpattern.parsing import Parser, ParserOptions
+from xrdpattern.parsing import Parser, ParserOptions, Formats
 from .pattern_report import PatternReport
 
 
@@ -50,7 +50,8 @@ class XrdPattern(PatternData):
 
     def save(self, fpath : str, force_overwrite : bool = False):
         if not fpath.endswith(f'.json'):
-            fpath = SaveManager.ensure_suffix(fpath, suffix = 'json')
+            fpath = SaveManager.ensure_suffix(fpath=fpath, suffix = Formats.xrdpattern.suffix)
+            print(f'Fpath was automatically changed to \"{fpath}\" to comply with required suffix \"{Formats.xrdpattern.suffix}\"')
         if os.path.isfile(fpath) and not force_overwrite:
             raise ValueError(f'File {fpath} already exists')
         with open(fpath, 'w') as f:
