@@ -3,12 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterator, Tuple, Optional
 
-from torch import Tensor
-
+import torch
 from xrdpattern.powder.structure import CrystalStructure, CrystalBase, AtomicSite
-from .powder import Powder, Artifacts
-
 from xrdpattern.powder.structure import Angles, Lengths
+from .powder import Powder, Artifacts
 
 # ---------------------------------------------------------
 
@@ -67,41 +65,6 @@ class PowderExperiment:
         return region
 
 
-    @classmethod
-    def from_xylib_header(cls, header_str: str) -> PowderExperiment:
-        metadata_map = cls.get_key_value_dict(header_str=header_str)
-
-        def get_float(key: str) -> Optional[float]:
-            val = metadata_map.get(key)
-            if val:
-                val = float(val)
-            return val
-
-        experiment = cls.make_empty()
-        experiment.artifacts = Artifacts(
-            primary_wavelength=get_float('ALPHA1'),
-            secondary_wavelength=get_float('ALPHA2'),
-            secondary_to_primary=get_float('ALPHA_RATIO')
-        )
-        experiment.powder.temp_in_kelvin = get_float('TEMP_CELCIUS') + 273.15
-
-        return experiment
-
-    @classmethod
-    def get_key_value_dict(cls, header_str: str) -> dict:
-        key_value_dict = {}
-        for key, value in cls.get_key_value_pairs(header_str):
-            key_value_dict[key] = value
-        return key_value_dict
-
-    @staticmethod
-    def get_key_value_pairs(header_str: str) -> Iterator[Tuple[str, str]]:
-        commented_lines = [line for line in header_str.splitlines() if line.startswith('#')]
-        for line in commented_lines:
-            key_value = line[1:].split(':', 1)
-            if len(key_value) == 2:
-                yield key_value[0].strip(), key_value[1].strip()
-
     @staticmethod
     def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
         if len(base) > NUM_ATOMIC_SITES:
@@ -137,28 +100,12 @@ class PowderExperiment:
 
 
     def is_partial_label(self) -> bool:
-        powder_tensor = self.to_tensor()
+        powder_tensor = torch.tensor(self.list_repr)
         is_nan = powder_tensor != powder_tensor
         print(f'Powder tensor len = {len(powder_tensor)}')
         print(f'Nanvalues, non-nan values = {is_nan.sum()}, {is_nan.numel() - is_nan.sum()}')
 
         return any(is_nan.tolist())
-
-
-    # ---------------------------------------------------------
-    # torch
-
-    def to_tensor(self) -> PowderTensor:
-        tensor = Tensor(self.list_repr)
-        return PowderTensor(tensor)
-
-    @classmethod
-    def from_tensor(cls) -> PowderExperiment:
-        raise NotImplementedError
-
-    @classmethod
-    def get_length(cls):
-        return len(cls.make_empty().list_repr)
 
     # ---------------------------------------------------------
     # properties
@@ -186,49 +133,5 @@ class PowderExperiment:
     @property
     def secondary_wavelength(self) -> float:
         return self.artifacts.secondary_wavelength
-
-
-import torch
-
-class PowderTensor(Tensor):
-    example_powder_experiment: PowderExperiment = PowderExperiment.make_empty()
-
-    def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
-        dtype = dtype if dtype is not None else self.dtype
-        device = device if device is not None else self.device
-        return PowderTensor(torch.empty(*sizes, dtype=dtype, device=device, requires_grad=requires_grad))
-
-    @staticmethod
-    def __new__(cls, tensor) -> PowderTensor:
-        return torch.Tensor.as_subclass(tensor, cls)
-
-    #noinspection PyTypeChecker
-    def get_lattice_params(self) -> PowderTensor:
-        region = self.example_powder_experiment.lattice_param_region
-        return self[..., region.start:region.end]
-
-    # noinspection PyTypeChecker
-    def get_atomic_site(self, index: int) -> PowderTensor:
-        region = self.example_powder_experiment.atomic_site_regions[index]
-        return self[..., region.start:region.end]
-
-    # noinspection PyTypeChecker
-    def get_spacegroups(self) -> PowderTensor:
-        region = self.example_powder_experiment.spacegroup_region
-        return self[..., region.start:region.end]
-
-    # noinspection PyTypeChecker
-    def get_artifacts(self) -> PowderTensor:
-        region = self.example_powder_experiment.artifacts_region
-        return self[..., region.start:region.end]
-
-    # noinspection PyTypeChecker
-    def get_domain(self) -> PowderTensor:
-        region = self.example_powder_experiment.domain_region
-        return self[..., region.start:region.end]
-
-    # noinspection PyTypeChecker
-    def to_sample(self) -> PowderExperiment:
-        raise NotImplementedError
 
 

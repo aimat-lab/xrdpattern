@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import os.path
-from typing import Optional
+from typing import Optional, Iterator, Tuple
 from dataclasses import dataclass
 from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
 from xrdpattern.parsing.stoe import StoeReader
-from ..powder import PowderExperiment
+from ..powder import PowderExperiment, Artifacts
 
 
 # -------------------------------------------
@@ -69,7 +69,7 @@ class Parser:
     def from_data_file(fpath: str, format_hint : XrdFormat) -> PatternData:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
-        metadata = PowderExperiment.from_xylib_header(header_str=header)
+        metadata = Parser.parse_xylib_header(header_str=header)
 
         angles, intensities= [], []
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
@@ -98,3 +98,41 @@ class Parser:
         pattern_infos = csv_parser.read_csv(fpath=fpath)
         return pattern_infos
 
+
+    # -------------------------------------------
+    # parsing xylib header
+
+    @classmethod
+    def parse_xylib_header(cls, header_str: str) -> PowderExperiment:
+        metadata_map = cls.get_key_value_dict(header_str=header_str)
+
+        def get_float(key: str) -> Optional[float]:
+            val = metadata_map.get(key)
+            if val:
+                val = float(val)
+            return val
+
+        experiment = PowderExperiment.make_empty()
+        experiment.artifacts = Artifacts(
+            primary_wavelength=get_float('ALPHA1'),
+            secondary_wavelength=get_float('ALPHA2'),
+            secondary_to_primary=get_float('ALPHA_RATIO')
+        )
+        experiment.powder.temp_in_kelvin = get_float('TEMP_CELCIUS') + 273.15
+
+        return experiment
+
+    @staticmethod
+    def get_key_value_dict(header_str: str) -> dict:
+        key_value_dict = {}
+        for key, value in Parser.get_key_value_pairs(header_str):
+            key_value_dict[key] = value
+        return key_value_dict
+
+    @staticmethod
+    def get_key_value_pairs(header_str: str) -> Iterator[Tuple[str, str]]:
+        commented_lines = [line for line in header_str.splitlines() if line.startswith('#')]
+        for line in commented_lines:
+            key_value = line[1:].split(':', 1)
+            if len(key_value) == 2:
+                yield key_value[0].strip(), key_value[1].strip()
