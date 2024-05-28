@@ -7,6 +7,7 @@ from torch import Tensor
 
 from xrdpattern.core.structure import Angles, Lengths
 from xrdpattern.core.structure import CrystalStructure, CrystalBase, AtomicSite
+from holytools.abstract import JsonDataclass
 # ---------------------------------------------------------
 
 NUM_SPACEGROUPS = 230
@@ -23,7 +24,7 @@ class QuantityRegion:
 
 
 @dataclass
-class PatternLabel:
+class PatternLabel(JsonDataclass):
     powder : PowderProperties
     artifacts : Artifacts
     is_simulated : bool
@@ -106,7 +107,7 @@ class PatternLabel:
 
         return any(is_nan.tolist())
 
-    def to_tensor(self) -> Tensor:
+    def to_tensor(self) -> LabelTensor:
         tensor = torch.tensor(self.list_repr)
         return LabelTensor(tensor)
 
@@ -139,7 +140,7 @@ class PatternLabel:
 
 
 @dataclass
-class Artifacts:
+class Artifacts(JsonDataclass):
     primary_wavelength: float
     secondary_wavelength: float
     secondary_to_primary: float
@@ -150,7 +151,7 @@ class Artifacts:
 
 
 @dataclass
-class PowderProperties:
+class PowderProperties(JsonDataclass):
     crystal_structure: CrystalStructure
     crystallite_size: float = 500
     temp_in_kelvin : int = 293

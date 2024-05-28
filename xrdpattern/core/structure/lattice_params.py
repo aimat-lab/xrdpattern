@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from holytools.abstract import JsonDataclass
+
 LatticeParams = tuple[float,float,float,float,float,float]
 
 @dataclass(frozen=True)
-class Angles:
+class Angles(JsonDataclass):
     alpha: float
     beta: float
     gamma: float
@@ -22,7 +24,7 @@ class Angles:
 
 
 @dataclass(frozen=True)
-class Lengths:
+class Lengths(JsonDataclass):
     a: float
     b: float
     c: float
