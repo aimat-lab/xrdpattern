@@ -41,14 +41,6 @@ class AtomicSite:
             in_unit_interval = False
         return in_unit_interval
 
-    @staticmethod
-    def shift_into_unit(x : float):
-        if x >= 0:
-            n = int(x)
-        else:
-            n = int(x-1)
-        return x - n
-
     @classmethod
     def make_void(cls) -> AtomicSite:
         return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=0, species=Void())

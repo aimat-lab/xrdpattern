@@ -139,6 +139,11 @@ class Labels:
     def secondary_wavelength(self) -> float:
         return self.artifacts.secondary_wavelength
 
+    @classmethod
+    def get_length(cls):
+        empty = cls.make_empty()
+        return len(empty.list_repr)
+
 
 @dataclass
 class Artifacts:
