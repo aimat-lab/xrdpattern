@@ -2,17 +2,16 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Optional
 import traceback
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
+from logging import getLogger
+from typing import Optional
 
 from holytools.fsys import FsysNode
 from xrdpattern.parsing import ParserOptions, Parser, Orientation
 from xrdpattern.pattern import XrdPattern, PatternReport
 
 # -------------------------------------------
-
-from logging import getLogger
 logger = getLogger(name='xrdpattern')
 
 @dataclass

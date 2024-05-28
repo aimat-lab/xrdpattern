@@ -2,3 +2,5 @@ numpy
 scipy
 matplotlib
 holytools @ git+https://git@github.com/Somerandomguy10111/holytools.git
+pymatgen
+torch

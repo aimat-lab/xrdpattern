@@ -16,8 +16,7 @@ class XrdPattern(PatternInfo):
         plt.ylabel('Intensity')
         plt.title('XRD Pattern')
 
-        intensity_map = self.get_pattern_data(apply_standardization=apply_standardization)
-        x_values, intensities = intensity_map.as_list_pair()
+        x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization)
         if apply_standardization:
             label = 'Interpolated Intensity'
         else:
