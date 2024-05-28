@@ -1,5 +1,5 @@
 import os
-from xrdpattern.core import Labels, CrystalStructure, CrystalBase, Artifacts, PowderProperties
+from xrdpattern.core import Labels, CrystalStructure, CrystalBase, Artifacts, Powder
 
 cif_fpath = os.path.join(os.path.dirname(__file__), "test.cif")
 cif_fpath2 = os.path.join(os.path.dirname(__file__), 'test2.cif')
@@ -9,7 +9,7 @@ cif_fpath2 = os.path.join(os.path.dirname(__file__), 'test2.cif')
 class Examples:
     @staticmethod
     def get_sample():
-        sample = PowderProperties(crystal_structure=Examples.get_crystal(mute=True), crystallite_size=500)
+        sample = Powder(crystal_structure=Examples.get_crystal(mute=True), crystallite_size=500)
         artifact = Examples.get_artifacts()
         powder_sample = Labels(powder=sample, artifacts=artifact, is_simulated=True)
         return powder_sample

@@ -8,14 +8,14 @@ from scipy.interpolate import CubicSpline
 
 from holytools.abstract import Picklable
 from xrdpattern.core.labels import Labels
-
+from numpy.typing import NDArray
 
 # -------------------------------------------
 
 @dataclass
 class PatternData(Picklable):
-    two_theta_values : list[float]
-    intensities : list[float]
+    two_theta_values : list[float] | NDArray
+    intensities : list[float] | NDArray
     label : Labels
     name : Optional[str] = None
 

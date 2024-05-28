@@ -1,7 +1,7 @@
 import tempfile
 
 from holytools.devtools import Unittest
-from xrdpattern.core import Labels, PowderProperties, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
+from xrdpattern.core import Labels, Powder, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
     CrystalBase, Artifacts
 
 
@@ -72,7 +72,7 @@ class TestTensorRegions(Unittest):
         crystal_structure = CrystalStructure(lengths=primitives, angles=angles, base=base)
         crystal_structure.space_group = 120
 
-        powder = PowderProperties(crystal_structure=crystal_structure, crystallite_size=10.0)
+        powder = Powder(crystal_structure=crystal_structure, crystallite_size=10.0)
         artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
         return Labels(powder, artifacts, is_simulated=True)
 

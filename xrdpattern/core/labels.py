@@ -25,7 +25,7 @@ class QuantityRegion:
 
 @dataclass
 class Labels:
-    powder : PowderProperties
+    powder : Powder
     artifacts : Artifacts
     is_simulated : bool
 
@@ -90,7 +90,7 @@ class Labels:
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
         # print(f'Empty crystal structure spacegroups = {structure.space_group}')
-        sample = PowderProperties(crystallite_size=torch.nan, crystal_structure=structure)
+        sample = Powder(crystallite_size=torch.nan, crystal_structure=structure)
         artifacts = Artifacts(primary_wavelength=torch.nan,
                               secondary_wavelength=torch.nan,
                               secondary_to_primary=torch.nan,
@@ -156,7 +156,7 @@ class Artifacts:
 
 
 @dataclass
-class PowderProperties:
+class Powder:
     crystal_structure: CrystalStructure
     crystallite_size: float = 500
     temp_in_celcius : int = 20
