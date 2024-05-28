@@ -24,7 +24,7 @@ class QuantityRegion:
 
 
 @dataclass
-class PatternLabel(JsonDataclass):
+class PatternLabel:
     powder : PowderProperties
     artifacts : Artifacts
     is_simulated : bool
@@ -140,7 +140,7 @@ class PatternLabel(JsonDataclass):
 
 
 @dataclass
-class Artifacts(JsonDataclass):
+class Artifacts:
     primary_wavelength: float
     secondary_wavelength: float
     secondary_to_primary: float
@@ -151,7 +151,7 @@ class Artifacts(JsonDataclass):
 
 
 @dataclass
-class PowderProperties(JsonDataclass):
+class PowderProperties:
     crystal_structure: CrystalStructure
     crystallite_size: float = 500
     temp_in_kelvin : int = 293

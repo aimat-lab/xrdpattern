@@ -16,7 +16,7 @@ from .base import AtomicSite, CrystalBase
 # ---------------------------------------------------------
 
 @dataclass
-class CrystalStructure(JsonDataclass):
+class CrystalStructure:
     lengths : Lengths
     angles : Angles
     base : CrystalBase

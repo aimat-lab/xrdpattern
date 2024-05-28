@@ -7,7 +7,7 @@ from holytools.abstract import JsonDataclass
 LatticeParams = tuple[float,float,float,float,float,float]
 
 @dataclass(frozen=True)
-class Angles(JsonDataclass):
+class Angles:
     alpha: float
     beta: float
     gamma: float
@@ -24,7 +24,7 @@ class Angles(JsonDataclass):
 
 
 @dataclass(frozen=True)
-class Lengths(JsonDataclass):
+class Lengths:
     a: float
     b: float
     c: float
