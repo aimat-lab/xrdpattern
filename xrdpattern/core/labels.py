@@ -7,7 +7,6 @@ from torch import Tensor
 
 from xrdpattern.core.structure import Angles, Lengths
 from xrdpattern.core.structure import CrystalStructure, CrystalBase, AtomicSite
-from holytools.abstract import JsonDataclass, Picklable
 
 # ---------------------------------------------------------
 

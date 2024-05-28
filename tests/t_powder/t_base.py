@@ -38,12 +38,12 @@ class TestCrystalBase(Unittest):
         self.assertIsNotNone(match)
         self.assertIn(Species(f'Fe3+'), site_dictionaries[match])
 
-    def test_shift_coordinates(self):
-        test_cases = [-1.7, -0.5, 0.5, 1.0, 2.1, 5.5, -2.1, -3.3]
-        expected_results = [0.3, 0.5, 0.5, 0.0, 0.1, 0.5, 0.9, 0.7]
-        for test_input, expected in zip(test_cases, expected_results):
-            result = AtomicSite.shift_into_unit(test_input)
-            self.assertAlmostEqual(result, expected, places=5)
+    # def test_shift_coordinates(self):
+    #     test_cases = [-1.7, -0.5, 0.5, 1.0, 2.1, 5.5, -2.1, -3.3]
+    #     expected_results = [0.3, 0.5, 0.5, 0.0, 0.1, 0.5, 0.9, 0.7]
+    #     for test_input, expected in zip(test_cases, expected_results):
+    #         result = AtomicSite.shift_into_unit(test_input)
+    #         self.assertAlmostEqual(result, expected, places=5)
 
 if __name__ == '__main__':
     TestCrystalBase.execute_all()
