@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os.path
+
 from holytools.fsys import LocationManager as BaseManager
 
 class LocationManager(BaseManager):
@@ -49,3 +51,11 @@ class LocationManager(BaseManager):
     @classmethod
     def set_root(cls, root_dirpath: str = f'/home/daniel/Drive/data/workspace/'):
         return super().set_root(root_dirpath=root_dirpath)
+
+    @classmethod
+    def root_exists(cls) -> bool:
+        root = cls._root_dirpath
+        if root is None:
+            return False
+        else:
+            return os.path.isdir(cls._root_dirpath)

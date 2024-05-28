@@ -6,6 +6,9 @@ from tests.locations import LocationManager
 
 class TestPymatgenSpacegroup(Unittest):
     def test_spacegroup_calculation(self):
+        if not LocationManager.root_exists():
+            self.skipTest(reason="Root directory not set")
+
         cif_dirpath = LocationManager.cif_dirpath()
         cif_files = os.listdir(cif_dirpath)
         correct_count = 0
