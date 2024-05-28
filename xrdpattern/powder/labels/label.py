@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterator, Tuple, Optional
 
 import torch
-from xrdpattern.powder.structure import CrystalStructure, CrystalBase, AtomicSite
+
 from xrdpattern.powder.structure import Angles, Lengths
-from .sample_properties import SampleProperties, Artifacts
+from xrdpattern.powder.structure import CrystalStructure, CrystalBase, AtomicSite
 
 # ---------------------------------------------------------
 
@@ -25,7 +24,7 @@ class QuantityRegion:
 
 @dataclass
 class PatternLabel:
-    powder : SampleProperties
+    powder : PowderProperties
     artifacts : Artifacts
     is_simulated : bool
 
@@ -90,7 +89,7 @@ class PatternLabel:
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
         print(f'Empty crystal structure spacegroups = {structure.space_group}')
-        sample = SampleProperties(crystallite_size=torch.nan, crystal_structure=structure)
+        sample = PowderProperties(crystallite_size=torch.nan, crystal_structure=structure)
         artifacts = Artifacts(primary_wavelength=torch.nan,
                               secondary_wavelength=torch.nan,
                               secondary_to_primary=torch.nan,
@@ -134,4 +133,21 @@ class PatternLabel:
     def secondary_wavelength(self) -> float:
         return self.artifacts.secondary_wavelength
 
+
+@dataclass
+class Artifacts:
+    primary_wavelength: float
+    secondary_wavelength: float
+    secondary_to_primary: float
+    shape_factor : float = 0.9
+
+    def as_list(self) -> list[float]:
+        return [self.primary_wavelength, self.secondary_wavelength, self.secondary_to_primary, self.shape_factor]
+
+
+@dataclass
+class PowderProperties:
+    crystal_structure: CrystalStructure
+    crystallite_size: float = 500
+    temp_in_kelvin : int = 293
 
