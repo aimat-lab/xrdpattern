@@ -6,7 +6,7 @@ from typing import Iterator, Tuple, Optional
 import torch
 from xrdpattern.powder.structure import CrystalStructure, CrystalBase, AtomicSite
 from xrdpattern.powder.structure import Angles, Lengths
-from .powder import Powder, Artifacts
+from .sample_properties import SampleProperties, Artifacts
 
 # ---------------------------------------------------------
 
@@ -24,8 +24,8 @@ class QuantityRegion:
 
 
 @dataclass
-class PowderExperiment:
-    powder : Powder
+class PatternLabel:
+    powder : SampleProperties
     artifacts : Artifacts
     is_simulated : bool
 
@@ -83,14 +83,14 @@ class PowderExperiment:
 
 
     @classmethod
-    def make_empty(cls) -> PowderExperiment:
+    def make_empty(cls) -> PatternLabel:
         lengths = Lengths(a=torch.nan, b=torch.nan, c=torch.nan)
         angles= Angles(alpha=torch.nan, beta=torch.nan, gamma=torch.nan)
         base = CrystalBase()
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
         print(f'Empty crystal structure spacegroups = {structure.space_group}')
-        sample = Powder(crystallite_size=torch.nan, crystal_structure=structure)
+        sample = SampleProperties(crystallite_size=torch.nan, crystal_structure=structure)
         artifacts = Artifacts(primary_wavelength=torch.nan,
                               secondary_wavelength=torch.nan,
                               secondary_to_primary=torch.nan,

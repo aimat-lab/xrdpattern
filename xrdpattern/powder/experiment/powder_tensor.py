@@ -3,11 +3,11 @@ from __future__ import annotations
 import torch
 from torch import Tensor
 
-from xrdpattern.powder import PowderExperiment
+from xrdpattern.powder import PatternLabel
 
 
 class PowderTensor(Tensor):
-    example_powder_experiment: PowderExperiment = PowderExperiment.make_empty()
+    example_powder_experiment: PatternLabel = PatternLabel.make_empty()
 
     def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
         dtype = dtype if dtype is not None else self.dtype
@@ -44,5 +44,5 @@ class PowderTensor(Tensor):
         return self[..., region.start:region.end]
 
     # noinspection PyTypeChecker
-    def to_sample(self) -> PowderExperiment:
+    def to_sample(self) -> PatternLabel:
         raise NotImplementedError

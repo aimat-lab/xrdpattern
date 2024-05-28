@@ -1,5 +1,5 @@
 from holytools.devtools import Unittest
-from xrdpattern.powder import PowderExperiment, Powder, CrystalStructure, AtomicSite, PowderTensor, Lengths, Angles, \
+from xrdpattern.powder import PatternLabel, SampleProperties, CrystalStructure, AtomicSite, PowderTensor, Lengths, Angles, \
     CrystalBase, Artifacts
 
 
@@ -63,16 +63,16 @@ class TestTensorRegions(Unittest):
             self.assertEqual(t.__class__, PowderTensor)
 
     @staticmethod
-    def make_example_experiment() -> PowderExperiment:
+    def make_example_experiment() -> PatternLabel:
         primitives = Lengths(a=3, b=3, c=3)
         angles = Angles(alpha=90, beta=90, gamma=90)
         base = CrystalBase([AtomicSite.make_void()])
         crystal_structure = CrystalStructure(lengths=primitives, angles=angles, base=base)
         crystal_structure.space_group = 120
 
-        powder = Powder(crystal_structure=crystal_structure, crystallite_size=10.0)
+        powder = SampleProperties(crystal_structure=crystal_structure, crystallite_size=10.0)
         artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
-        return PowderExperiment(powder, artifacts, is_simulated=True)
+        return PatternLabel(powder, artifacts, is_simulated=True)
 
     @staticmethod
     def is_nan(value):

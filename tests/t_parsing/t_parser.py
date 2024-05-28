@@ -21,7 +21,7 @@ class TestParserPattern(PatternBaseTest):
         print(f'Parsing report: {as_str}')
 
     def test_metadata_ok(self):
-        metadata = self.pattern.experiment
+        metadata = self.pattern.label
         primary_wavelength = metadata.primary_wavelength
         secondary_wavelength = metadata.secondary_wavelength
         ratio = metadata.artifacts.secondary_to_primary

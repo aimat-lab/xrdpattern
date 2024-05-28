@@ -6,7 +6,7 @@ from holytools.abstract import JsonDataclass
 from dataclasses import dataclass, fields
 from typing import Optional
 
-from xrdpattern.powder import PowderExperiment
+from xrdpattern.powder import PatternLabel
 
 # -------------------------------------------
 
@@ -14,13 +14,13 @@ from xrdpattern.powder import PowderExperiment
 class PatternData(JsonDataclass):
     two_theta_values : list[float]
     intensities : list[float]
-    experiment : PowderExperiment
+    label : PatternLabel
     name : Optional[str] = None
 
     @classmethod
     def from_intensitiy_map(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
-        metadata = PowderExperiment.make_empty()
-        return cls(two_theta_values=two_theta_values, intensities=intensities, experiment=metadata)
+        metadata = PatternLabel.make_empty()
+        return cls(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}

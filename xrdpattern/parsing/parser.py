@@ -8,7 +8,7 @@ from xrdpattern.core import PatternData
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
 from xrdpattern.parsing.stoe import StoeReader
-from ..powder import PowderExperiment, Artifacts
+from ..powder import PatternLabel, Artifacts
 
 
 # -------------------------------------------
@@ -50,8 +50,8 @@ class Parser:
         else:
             raise ValueError(f"Format .{the_format} is not supported")
         for pattern in pattern_infos:
-            if pattern.experiment.primary_wavelength is None and self.default_wavelength_angstr:
-                pattern.experiment.artifacts.primary_wavelength = self.default_wavelength_angstr
+            if pattern.label.primary_wavelength is None and self.default_wavelength_angstr:
+                pattern.label.artifacts.primary_wavelength = self.default_wavelength_angstr
         for info in pattern_infos:
             info.name = os.path.basename(fpath)
         return pattern_infos
@@ -78,7 +78,7 @@ class Parser:
             deg, intensity = float(deg_str), float(intensity_str)
             angles.append(deg)
             intensities.append(intensity)
-        return PatternData(two_theta_values=angles, intensities=intensities, experiment=metadata)
+        return PatternData(two_theta_values=angles, intensities=intensities, label=metadata)
 
 
     @staticmethod
@@ -103,7 +103,7 @@ class Parser:
     # parsing xylib header
 
     @classmethod
-    def parse_xylib_header(cls, header_str: str) -> PowderExperiment:
+    def parse_xylib_header(cls, header_str: str) -> PatternLabel:
         metadata_map = cls.get_key_value_dict(header_str=header_str)
 
         def get_float(key: str) -> Optional[float]:
@@ -112,7 +112,7 @@ class Parser:
                 val = float(val)
             return val
 
-        experiment = PowderExperiment.make_empty()
+        experiment = PatternLabel.make_empty()
         experiment.artifacts = Artifacts(
             primary_wavelength=get_float('ALPHA1'),
             secondary_wavelength=get_float('ALPHA2'),

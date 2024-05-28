@@ -19,7 +19,7 @@ class Artifacts:
 
 
 @dataclass
-class Powder:
+class SampleProperties:
     crystal_structure: CrystalStructure
     crystallite_size: float = 500
     temp_in_kelvin : int = 293

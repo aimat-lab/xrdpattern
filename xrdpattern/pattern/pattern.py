@@ -66,9 +66,9 @@ class XrdPattern(PatternData):
         elif len(self.two_theta_values) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
 
-        if self.experiment.primary_wavelength is None:
+        if self.label.primary_wavelength is None:
             pattern_health.add_error('Primary wavelength missing!')
-        if self.experiment.secondary_wavelength is None:
+        if self.label.secondary_wavelength is None:
             pattern_health.add_warning('No secondary wavelength found')
 
         return pattern_health
@@ -107,4 +107,22 @@ class XrdPattern(PatternData):
     def get_std_range(cls) -> (float, float):
         return 0, 90
 
+    # -------------------------------------------
+    # view
 
+    def as_str(self) -> str:
+        crystal = self.label.crystal_structure
+        pattern_content = str(self.intensities)[:50] + '...'
+        as_str = (f'----> Sample \n'
+              f'- Crystal: {crystal.to_pymatgen()}\n'
+              f'- Metadata:\n'
+              f'    - Crystallite size: {self.label.crystallite_size}\n'
+              f'    - Temperature : {self.label.temp_in_celcius}\n'
+              f'- Pattern:\n'
+                  f'content: {pattern_content}\n'
+                  f'length: {len(self.intensities)}\n')
+        return as_str
+
+
+    def __str__(self):
+        return self.as_str()

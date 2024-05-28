@@ -1,3 +1,3 @@
-from .powder import Artifacts, Powder
-from .experiment import PowderExperiment
+from .sample_properties import Artifacts, SampleProperties
+from .experiment import PatternLabel
 from .powder_tensor import PowderTensor
