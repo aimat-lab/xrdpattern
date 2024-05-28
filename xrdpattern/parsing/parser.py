@@ -118,7 +118,7 @@ class Parser:
             secondary_wavelength=get_float('ALPHA2'),
             secondary_to_primary=get_float('ALPHA_RATIO')
         )
-        experiment.powder.temp_in_kelvin = get_float('TEMP_CELCIUS') + 273.15
+        experiment.powder.temp_in_celcius = get_float('TEMP_CELCIUS')
 
         return experiment
 

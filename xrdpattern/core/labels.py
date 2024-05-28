@@ -121,7 +121,7 @@ class Labels(Picklable):
 
     @property
     def temp_in_celcius(self) -> float:
-        return self.powder.temp_in_kelvin
+        return self.powder.temp_in_celcius
 
     @property
     def crystal_structure(self) -> CrystalStructure:
@@ -155,7 +155,7 @@ class Artifacts:
 class PowderProperties:
     crystal_structure: CrystalStructure
     crystallite_size: float = 500
-    temp_in_kelvin : int = 293
+    temp_in_celcius : int = 20
 
 
 class LabelTensor(Tensor):
