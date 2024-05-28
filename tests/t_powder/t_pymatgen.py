@@ -1,6 +1,6 @@
 import os
 
-from xrdpattern.powder import CrystalStructure
+from xrdpattern.core import CrystalStructure
 from holytools.devtools import Unittest
 from tests.locations import LocationManager
 

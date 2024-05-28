@@ -1,10 +1,10 @@
-from xrdpattern.powder import Lengths, AtomicSite, CrystalBase, Angles, Void
+from xrdpattern.core import Lengths, AtomicSite, CrystalBase, Angles, Void
 from pymatgen.core import Species
 from pymatgen.core.structure import Structure
 
 from holytools.devtools import Unittest
 from holytools.file import PlaintextFile
-from xrdpattern.powder import CrystalStructure
+from xrdpattern.core import CrystalStructure
 from tests.t_powder.examples import Examples
 
 # ---------------------------------------------------------

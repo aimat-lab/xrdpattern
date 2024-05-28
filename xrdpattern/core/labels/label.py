@@ -4,8 +4,8 @@ from dataclasses import dataclass
 
 import torch
 
-from xrdpattern.powder.structure import Angles, Lengths
-from xrdpattern.powder.structure import CrystalStructure, CrystalBase, AtomicSite
+from xrdpattern.core.structure import Angles, Lengths
+from xrdpattern.core.structure import CrystalStructure, CrystalBase, AtomicSite
 
 # ---------------------------------------------------------
 

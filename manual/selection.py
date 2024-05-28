@@ -41,7 +41,7 @@ def get_patterns_and_fpaths(root_dir : str):
 
 
 if __name__ == "__main__":
-    pattern_root_dir = '/home/daniel/Drive/Downloads/powder'
+    pattern_root_dir = '/home/daniel/Drive/Downloads/core'
     output_dir = '/home/daniel/Drive/Downloads/cleaned'
     patterns, fpaths = get_patterns_and_fpaths(root_dir=pattern_root_dir)
     batch_size = 32

@@ -5,8 +5,8 @@ from typing import Union, Optional
 
 import torch
 from pymatgen.core import Species
-from xrdpattern.powder.constants import PhysicalConstants, Void, UnknownSite
-from xrdpattern.powder.constants import ElementSymbol
+from xrdpattern.core.constants import PhysicalConstants, Void, UnknownSite
+from xrdpattern.core.constants import ElementSymbol
 import math
 # ---------------------------------------------------------
 

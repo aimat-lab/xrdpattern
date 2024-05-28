@@ -1,6 +1,6 @@
 from xrdpattern.core import PatternData
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
-from ...powder import Artifacts, PatternLabel
+from ...core import Artifacts, PatternLabel
 
 
 class BinaryReader:

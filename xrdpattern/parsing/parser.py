@@ -8,7 +8,7 @@ from xrdpattern.core import PatternData
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
 from xrdpattern.parsing.stoe import StoeReader
-from ..powder import PatternLabel, Artifacts
+from ..core import PatternLabel, Artifacts
 
 
 # -------------------------------------------

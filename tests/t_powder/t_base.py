@@ -1,5 +1,5 @@
 from holytools.devtools import Unittest
-from xrdpattern.powder import AtomicSite
+from xrdpattern.core import AtomicSite
 from tests.t_powder.examples import Examples
 from pymatgen.core import Species
 

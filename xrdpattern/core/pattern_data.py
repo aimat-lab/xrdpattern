@@ -5,8 +5,7 @@ from scipy.interpolate import CubicSpline
 from holytools.abstract import JsonDataclass
 from dataclasses import dataclass, fields
 from typing import Optional
-
-from xrdpattern.powder import PatternLabel
+from xrdpattern.core.labels import PatternLabel
 
 # -------------------------------------------
 

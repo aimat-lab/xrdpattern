@@ -1,12 +1,12 @@
 from holytools.devtools import Unittest
-from xrdpattern.powder import PatternLabel, SampleProperties, CrystalStructure, AtomicSite, PowderTensor, Lengths, Angles, \
+from xrdpattern.core import PatternLabel, PowderProperties, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
     CrystalBase, Artifacts
 
 
 class TestTensorRegions(Unittest):
     def setUp(self):
         self.label : PatternLabel = self.make_example_label()
-        self.label_tensor : PowderTensor = self.label.to_tensor()
+        self.label_tensor : LabelTensor = self.label.to_tensor()
         self.crystal_structure : CrystalStructure = self.label.powder.crystal_structure
 
 
@@ -60,7 +60,7 @@ class TestTensorRegions(Unittest):
         tensors = [self.label_tensor.get_atomic_site(0), self.label_tensor.get_lattice_params(), self.label_tensor.get_lattice_params()]
         for t in tensors:
             print(f'Type of {t} is {type(t)}')
-            self.assertEqual(t.__class__, PowderTensor)
+            self.assertEqual(t.__class__, LabelTensor)
 
     @staticmethod
     def make_example_label() -> PatternLabel:
@@ -70,7 +70,7 @@ class TestTensorRegions(Unittest):
         crystal_structure = CrystalStructure(lengths=primitives, angles=angles, base=base)
         crystal_structure.space_group = 120
 
-        powder = SampleProperties(crystal_structure=crystal_structure, crystallite_size=10.0)
+        powder = PowderProperties(crystal_structure=crystal_structure, crystallite_size=10.0)
         artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
         return PatternLabel(powder, artifacts, is_simulated=True)
 
