@@ -29,9 +29,17 @@ class AtomicSite:
         if not 0 <= self.occupancy <= 1:
             raise ValueError('Occupancy must be between 0 and 1')
 
-        # self.x = self.shift_into_unit(self.x)
-        # self.y = self.shift_into_unit(self.y)
-        # self.z = self.shift_into_unit(self.z)
+        for val in [self.x, self.y,self.z]:
+            if not self.in_unit_interval(val):
+                print(f'Warning: Fractional coordinate {val} is not in unit interval')
+
+    @staticmethod
+    def in_unit_interval(val : float) -> bool:
+        epsilon = 1e-6
+        in_unit_interval = True
+        if not (0 - epsilon < val < 1 +epsilon):
+            in_unit_interval = False
+        return in_unit_interval
 
     @staticmethod
     def shift_into_unit(x : float):
