@@ -106,6 +106,10 @@ class PatternLabel:
 
         return any(is_nan.tolist())
 
+    def to_tensor(self) -> Tensor:
+        tensor = torch.tensor(self.list_repr)
+        return LabelTensor(tensor)
+
     # ---------------------------------------------------------
     # properties
 
