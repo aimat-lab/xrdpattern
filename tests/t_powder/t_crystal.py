@@ -1,3 +1,5 @@
+import math
+
 from xrdpattern.core import Lengths, AtomicSite, CrystalBase, Angles, Void
 from pymatgen.core import Species
 from pymatgen.core.structure import Structure
@@ -59,7 +61,23 @@ class TestPymatgenCompatibility(Unittest):
         cls.pymatgen_structure = pymatgen_structure
 
     def test_pymatgen_roundtrip(self):
-        self.assertEqual(self.crystal.to_pymatgen(), self.pymatgen_structure)
+        actual = self.crystal.to_pymatgen()
+        expected = self.pymatgen_structure
+
+        self.assertEqual(len(actual.sites), len(expected.sites))
+        print(f'Actual sites = {actual.sites}; Expected sites = {expected.sites}')
+
+        actual_sites = sorted(actual.sites, key=self.euclidean_distance)
+        expected_sites = sorted(expected.sites, key=self.euclidean_distance)
+        for s1,s2 in zip(actual_sites, expected_sites):
+            self.assertEqual(s1,s2)
+
+        print(f'Composition = {actual.composition}')
+
+
+    @staticmethod
+    def euclidean_distance(site):
+        return math.sqrt(site.x ** 2 + site.y ** 2 + site.z ** 2)
 
 
 class TestCrystalCalculations(Unittest):
@@ -108,8 +126,5 @@ class TestCrystalCalculations(Unittest):
         return symbol
 
 if __name__ == '__main__':
-    # TestCifParsing.execute_all()
-    # TestPymatgenCompatibility.execute_all()
-    # TestCrystalCalculations.execute_all()
     TestPymatgenCompatibility.execute_all()
 

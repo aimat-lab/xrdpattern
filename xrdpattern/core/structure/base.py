@@ -29,9 +29,9 @@ class AtomicSite:
         if not 0 <= self.occupancy <= 1:
             raise ValueError('Occupancy must be between 0 and 1')
 
-        self.x = self.shift_into_unit(self.x)
-        self.y = self.shift_into_unit(self.y)
-        self.z = self.shift_into_unit(self.z)
+        # self.x = self.shift_into_unit(self.x)
+        # self.y = self.shift_into_unit(self.y)
+        # self.z = self.shift_into_unit(self.z)
 
     @staticmethod
     def shift_into_unit(x : float):

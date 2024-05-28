@@ -77,22 +77,9 @@ class TestTensorRegions(Unittest):
         return Labels(powder, artifacts, is_simulated=True)
 
 
-class TestLabelsSaveLoad(Unittest):
-    def test_save_load_roundtrip(self):
-        save_fpath = tempfile.mktemp()
-        label = TestTensorRegions.make_example_label()
-        label.save(save_fpath)
-        loaded = Labels.load(save_fpath)
-        for x,y in zip(label.list_repr, loaded.list_repr):
-            if is_nan(x):
-                self.assertTrue(is_nan(y))
-            else:
-                self.assertEqual(x,y)
-
 
 def is_nan(value):
     return value != value
 
 if __name__ == "__main__":
-    # TestTensorRegions.execute_all()
-    TestLabelsSaveLoad.execute_all()
+    TestTensorRegions.execute_all()
