@@ -5,7 +5,7 @@ from scipy.interpolate import CubicSpline
 from holytools.abstract import JsonDataclass
 from dataclasses import dataclass, fields
 from typing import Optional
-from xrdpattern.core.labels import PatternLabel
+from xrdpattern.core.labels import Labels
 
 # -------------------------------------------
 
@@ -13,12 +13,12 @@ from xrdpattern.core.labels import PatternLabel
 class PatternData(JsonDataclass):
     two_theta_values : list[float]
     intensities : list[float]
-    label : PatternLabel
+    label : Labels
     name : Optional[str] = None
 
     @classmethod
     def from_intensitiy_map(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
-        metadata = PatternLabel.make_empty()
+        metadata = Labels.make_empty()
         return cls(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
     def to_dict(self):

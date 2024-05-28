@@ -8,7 +8,7 @@ from xrdpattern.core import PatternData
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
 from xrdpattern.parsing.stoe import StoeReader
-from ..core import PatternLabel, Artifacts
+from ..core import Labels, Artifacts
 
 
 # -------------------------------------------
@@ -103,7 +103,7 @@ class Parser:
     # parsing xylib header
 
     @classmethod
-    def parse_xylib_header(cls, header_str: str) -> PatternLabel:
+    def parse_xylib_header(cls, header_str: str) -> Labels:
         metadata_map = cls.get_key_value_dict(header_str=header_str)
 
         def get_float(key: str) -> Optional[float]:
@@ -112,7 +112,7 @@ class Parser:
                 val = float(val)
             return val
 
-        experiment = PatternLabel.make_empty()
+        experiment = Labels.make_empty()
         experiment.artifacts = Artifacts(
             primary_wavelength=get_float('ALPHA1'),
             secondary_wavelength=get_float('ALPHA2'),

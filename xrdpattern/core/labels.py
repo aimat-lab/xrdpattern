@@ -7,7 +7,8 @@ from torch import Tensor
 
 from xrdpattern.core.structure import Angles, Lengths
 from xrdpattern.core.structure import CrystalStructure, CrystalBase, AtomicSite
-from holytools.abstract import JsonDataclass
+from holytools.abstract import JsonDataclass, Picklable
+
 # ---------------------------------------------------------
 
 NUM_SPACEGROUPS = 230
@@ -24,7 +25,7 @@ class QuantityRegion:
 
 
 @dataclass
-class PatternLabel:
+class Labels(Picklable):
     powder : PowderProperties
     artifacts : Artifacts
     is_simulated : bool
@@ -83,13 +84,13 @@ class PatternLabel:
 
 
     @classmethod
-    def make_empty(cls) -> PatternLabel:
+    def make_empty(cls) -> Labels:
         lengths = Lengths(a=torch.nan, b=torch.nan, c=torch.nan)
         angles= Angles(alpha=torch.nan, beta=torch.nan, gamma=torch.nan)
         base = CrystalBase()
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
-        print(f'Empty crystal structure spacegroups = {structure.space_group}')
+        # print(f'Empty crystal structure spacegroups = {structure.space_group}')
         sample = PowderProperties(crystallite_size=torch.nan, crystal_structure=structure)
         artifacts = Artifacts(primary_wavelength=torch.nan,
                               secondary_wavelength=torch.nan,
@@ -158,7 +159,7 @@ class PowderProperties:
 
 
 class LabelTensor(Tensor):
-    example_powder_experiment: PatternLabel = PatternLabel.make_empty()
+    example_powder_experiment: Labels = Labels.make_empty()
 
     def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
         dtype = dtype if dtype is not None else self.dtype
@@ -195,5 +196,5 @@ class LabelTensor(Tensor):
         return self[..., region.start:region.end]
 
     # noinspection PyTypeChecker
-    def to_sample(self) -> PatternLabel:
+    def to_sample(self) -> Labels:
         raise NotImplementedError

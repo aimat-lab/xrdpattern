@@ -1,11 +1,13 @@
+import tempfile
+
 from holytools.devtools import Unittest
-from xrdpattern.core import PatternLabel, PowderProperties, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
+from xrdpattern.core import Labels, PowderProperties, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
     CrystalBase, Artifacts
 
 
 class TestTensorRegions(Unittest):
     def setUp(self):
-        self.label : PatternLabel = self.make_example_label()
+        self.label : Labels = self.make_example_label()
         self.label_tensor : LabelTensor = self.label.to_tensor()
         self.crystal_structure : CrystalStructure = self.label.powder.crystal_structure
 
@@ -29,8 +31,8 @@ class TestTensorRegions(Unittest):
             # 3 coordinates, 8 scattering params, 1 occupancy
             self.assertEqual(len(actual), 3+8+1)
             for x,y, in zip(expected, actual):
-                if self.is_nan(x):
-                    self.assertTrue(self.is_nan(y))
+                if is_nan(x):
+                    self.assertTrue(is_nan(y))
                 else:
                     self.assertEqual(x,y)
 
@@ -63,7 +65,7 @@ class TestTensorRegions(Unittest):
             self.assertEqual(t.__class__, LabelTensor)
 
     @staticmethod
-    def make_example_label() -> PatternLabel:
+    def make_example_label() -> Labels:
         primitives = Lengths(a=3, b=3, c=3)
         angles = Angles(alpha=90, beta=90, gamma=90)
         base = CrystalBase([AtomicSite.make_void()])
@@ -72,11 +74,25 @@ class TestTensorRegions(Unittest):
 
         powder = PowderProperties(crystal_structure=crystal_structure, crystallite_size=10.0)
         artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
-        return PatternLabel(powder, artifacts, is_simulated=True)
+        return Labels(powder, artifacts, is_simulated=True)
 
-    @staticmethod
-    def is_nan(value):
-        return value != value
+
+class TestLabelsSaveLoad(Unittest):
+    def test_save_load_roundtrip(self):
+        save_fpath = tempfile.mktemp()
+        label = TestTensorRegions.make_example_label()
+        label.save(save_fpath)
+        loaded = Labels.load(save_fpath)
+        for x,y in zip(label.list_repr, loaded.list_repr):
+            if is_nan(x):
+                self.assertTrue(is_nan(y))
+            else:
+                self.assertEqual(x,y)
+
+
+def is_nan(value):
+    return value != value
 
 if __name__ == "__main__":
-    TestTensorRegions.execute_all()
+    # TestTensorRegions.execute_all()
+    TestLabelsSaveLoad.execute_all()
