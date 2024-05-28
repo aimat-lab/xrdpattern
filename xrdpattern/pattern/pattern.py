@@ -1,16 +1,20 @@
 from __future__ import annotations
-import matplotlib.pyplot as plt
-import os
-from uuid import uuid4
-from typing import Optional
-from holytools.fsys import SaveManager
 
+import os
+from typing import Optional
+from uuid import uuid4
+
+import matplotlib.pyplot as plt
+
+from holytools.fsys import SaveManager
+from xrdpattern.core import PatternData
 from xrdpattern.parsing import Parser, ParserOptions
-from xrdpattern.core import PatternInfo, Metadata
 from .pattern_report import PatternReport
+
+
 # -------------------------------------------
 
-class XrdPattern(PatternInfo):
+class XrdPattern(PatternData):
     def plot(self, apply_standardization=True):
         plt.figure(figsize=(10, 6))
         plt.ylabel('Intensity')
@@ -52,11 +56,6 @@ class XrdPattern(PatternInfo):
         with open(fpath, 'w') as f:
             f.write(self.to_str())
 
-    @classmethod
-    def from_intensitiy_map(cls, angles: list[float], intensities: list[float]) -> XrdPattern:
-        metadata = Metadata.make_empty()
-        return XrdPattern(two_theta_values=angles, intensities=intensities, metadata=metadata)
-
     # -------------------------------------------
     # get
 
@@ -66,15 +65,11 @@ class XrdPattern(PatternInfo):
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
         elif len(self.two_theta_values) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
-        if self.get_wavelength(primary=True) is None:
-            pattern_health.add_error('Primary wavelength missing!')
 
-        if self.get_wavelength(primary=False) is None:
+        if self.experiment.primary_wavelength is None:
+            pattern_health.add_error('Primary wavelength missing!')
+        if self.experiment.secondary_wavelength is None:
             pattern_health.add_warning('No secondary wavelength found')
-        if self.metadata.anode_material is None:
-            pattern_health.add_warning('No anode material found')
-        if self.metadata.measurement_date is None:
-            pattern_health.add_warning('No measurement datetime found')
 
         return pattern_health
 

@@ -5,26 +5,22 @@ from scipy.interpolate import CubicSpline
 from holytools.abstract import JsonDataclass
 from dataclasses import dataclass, fields
 from typing import Optional
-from .metadata import Metadata
+
+from xrdpattern.powder import PowderExperiment
 
 # -------------------------------------------
 
 @dataclass
-class PatternInfo(JsonDataclass):
+class PatternData(JsonDataclass):
     two_theta_values : list[float]
     intensities : list[float]
-    metadata: Metadata
+    experiment : PowderExperiment
     name : Optional[str] = None
 
-    def get_wavelength(self, primary : bool = True) -> Optional[float]:
-        wavelength = self.metadata.primary if primary else self.metadata.secondary
-        return wavelength
-
-    def set_wavelength(self, new_wavelength : float, primary : bool = True):
-        if primary:
-            self.metadata.primary = new_wavelength
-        else:
-            self.metadata.secondary = new_wavelength
+    @classmethod
+    def from_intensitiy_map(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
+        metadata = PowderExperiment.make_empty()
+        return cls(two_theta_values=two_theta_values, intensities=intensities, experiment=metadata)
 
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}
@@ -51,15 +47,14 @@ class PatternInfo(JsonDataclass):
         return std_angles,std_intensities
 
 
-    def __eq__(self, other : PatternInfo):
-        if not isinstance(other, PatternInfo):
+    def __eq__(self, other : PatternData):
+        if not isinstance(other, PatternData):
             return False
 
         angles_equal = self.two_theta_values == other.two_theta_values
         intensities_equal = self.intensities == other.intensities
-        metadata_equal = self.metadata == other.metadata
 
-        return angles_equal and intensities_equal and metadata_equal
+        return angles_equal and intensities_equal
 
 
 if __name__ == '__main__':

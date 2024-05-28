@@ -5,7 +5,7 @@ import math
 
 from holytools.abstract import SelectableEnum
 
-from xrdpattern.core import Metadata, PatternInfo
+from xrdpattern.core import PatternData
 from .table_selector import TableSelector, TextTable, NumericalTable
 
 
@@ -44,7 +44,7 @@ class CsvParser:
         return TableSelector.get_numerical_subtable(table=table)
 
 
-    def read_csv(self, fpath: str) -> list[PatternInfo]:
+    def read_csv(self, fpath: str) -> list[PatternData]:
         matrix = self.as_matrix(fpath=fpath)
         x_axis_row = matrix.get_data(row=0)
         data_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
@@ -63,7 +63,7 @@ class CsvParser:
             two_theta_degs = x_axis_row
 
         for intensities in data_rows:
-            new = PatternInfo(two_theta_values=two_theta_degs, intensities=intensities, metadata=Metadata.make_empty())
+            new = PatternData.from_intensitiy_map(two_theta_values=two_theta_degs, intensities=intensities)
             pattern_infos.append(new)
 
         x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'

@@ -4,10 +4,13 @@ import os.path
 from typing import Optional
 from dataclasses import dataclass
 from holytools.fsys import SaveManager
-from xrdpattern.core import PatternInfo, Metadata
+from xrdpattern.core import PatternData
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
 from xrdpattern.parsing.stoe import StoeReader
+from ..powder import PowderExperiment
+
+
 # -------------------------------------------
 
 @dataclass
@@ -27,7 +30,7 @@ class Parser:
     # -------------------------------------------
     # pattern
 
-    def get_pattern_info_list(self, fpath : str) -> list[PatternInfo]:
+    def get_pattern_info_list(self, fpath : str) -> list[PatternData]:
         suffix = SaveManager.get_suffix(fpath)
         if not suffix in Formats.get_allowed_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
@@ -47,26 +50,26 @@ class Parser:
         else:
             raise ValueError(f"Format .{the_format} is not supported")
         for pattern in pattern_infos:
-            if pattern.get_wavelength(primary=True) is None and self.default_wavelength_angstr:
-                pattern.set_wavelength(new_wavelength=self.default_wavelength_angstr)
+            if pattern.experiment.primary_wavelength is None and self.default_wavelength_angstr:
+                pattern.experiment.artifacts.primary_wavelength = self.default_wavelength_angstr
         for info in pattern_infos:
             info.name = os.path.basename(fpath)
         return pattern_infos
 
 
     @staticmethod
-    def from_json(fpath: str) -> PatternInfo:
+    def from_json(fpath: str) -> PatternData:
         with open(fpath, 'r') as file:
             data = file.read()
-            new_pattern = PatternInfo.from_str(json_str=data)
+            new_pattern = PatternData.from_str(json_str=data)
         return new_pattern
 
 
     @staticmethod
-    def from_data_file(fpath: str, format_hint : XrdFormat) -> PatternInfo:
+    def from_data_file(fpath: str, format_hint : XrdFormat) -> PatternData:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
-        metadata = Metadata.from_header_str(header_str=header)
+        metadata = PowderExperiment.from_xylib_header(header_str=header)
 
         angles, intensities= [], []
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
@@ -75,11 +78,11 @@ class Parser:
             deg, intensity = float(deg_str), float(intensity_str)
             angles.append(deg)
             intensities.append(intensity)
-        return PatternInfo(two_theta_values=angles,intensities=intensities,metadata=metadata)
+        return PatternData(two_theta_values=angles, intensities=intensities, experiment=metadata)
 
 
     @staticmethod
-    def from_csv(fpath : str) -> list[PatternInfo]:
+    def from_csv(fpath : str) -> list[PatternData]:
         if CsvParser.has_two_columns(fpath=fpath):
             orientation = Orientation.VERTICAL
         else:

@@ -21,17 +21,10 @@ class TestParserPattern(PatternBaseTest):
         print(f'Parsing report: {as_str}')
 
     def test_metadata_ok(self):
-        metadata = self.pattern.metadata
-        properties = [metadata.anode_material, metadata.measurement_date]
-        print(f'anode material {metadata.anode_material}')
-        print(f'measurement date {metadata.measurement_date}')
-
-        for prop in properties:
-            self.assertIsNotNone(obj=prop)
-
-        primary_wavelength = metadata.primary
-        secondary_wavelength = metadata.secondary
-        ratio = metadata.ratio
+        metadata = self.pattern.experiment
+        primary_wavelength = metadata.primary_wavelength
+        secondary_wavelength = metadata.secondary_wavelength
+        ratio = metadata.artifacts.secondary_to_primary
         print(f'prim, sec, ratio {primary_wavelength}, {secondary_wavelength}, {ratio}')
 
         for prop in [primary_wavelength, secondary_wavelength, ratio]:

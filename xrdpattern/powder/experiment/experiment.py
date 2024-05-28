@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Iterator, Tuple, Optional
+
 from torch import Tensor
 
 from xrdpattern.powder.structure import CrystalStructure, CrystalBase, AtomicSite
@@ -64,6 +66,41 @@ class PowderExperiment:
         self.list_repr += list_obj
         return region
 
+
+    @classmethod
+    def from_xylib_header(cls, header_str: str) -> PowderExperiment:
+        metadata_map = cls.get_key_value_dict(header_str=header_str)
+
+        def get_float(key: str) -> Optional[float]:
+            val = metadata_map.get(key)
+            if val:
+                val = float(val)
+            return val
+
+        experiment = cls.make_empty()
+        experiment.artifacts = Artifacts(
+            primary_wavelength=get_float('ALPHA1'),
+            secondary_wavelength=get_float('ALPHA2'),
+            secondary_to_primary=get_float('ALPHA_RATIO')
+        )
+        experiment.powder.temp_in_kelvin = get_float('TEMP_CELCIUS') + 273.15
+
+        return experiment
+
+    @classmethod
+    def get_key_value_dict(cls, header_str: str) -> dict:
+        key_value_dict = {}
+        for key, value in cls.get_key_value_pairs(header_str):
+            key_value_dict[key] = value
+        return key_value_dict
+
+    @staticmethod
+    def get_key_value_pairs(header_str: str) -> Iterator[Tuple[str, str]]:
+        commented_lines = [line for line in header_str.splitlines() if line.startswith('#')]
+        for line in commented_lines:
+            key_value = line[1:].split(':', 1)
+            if len(key_value) == 2:
+                yield key_value[0].strip(), key_value[1].strip()
 
     @staticmethod
     def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
@@ -135,16 +172,20 @@ class PowderExperiment:
         return self.powder.temp_in_kelvin
 
     @property
-    def primary_wavelength(self) -> float:
-        return self.artifacts.primary_wavelength
-
-    @property
     def crystal_structure(self) -> CrystalStructure:
         return self.powder.crystal_structure
 
     @property
     def domain(self) -> bool:
         return self.is_simulated
+
+    @property
+    def primary_wavelength(self) -> float:
+        return self.artifacts.primary_wavelength
+
+    @property
+    def secondary_wavelength(self) -> float:
+        return self.artifacts.secondary_wavelength
 
 
 import torch

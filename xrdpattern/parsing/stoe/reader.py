@@ -1,5 +1,7 @@
-from xrdpattern.core import Metadata, PatternInfo
+from xrdpattern.core import PatternData
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
+from ...powder import Artifacts, PowderExperiment
+
 
 class BinaryReader:
     def read(self, fpath : str):
@@ -35,16 +37,17 @@ class StoeReader(BinaryReader):
         super().read_bytes(byte_content=byte_content)
 
 
-    def get_pattern_info(self, fpath : str) -> PatternInfo:
+    def get_pattern_info(self, fpath : str) -> PatternData:
         self.read(fpath=fpath)
-        metadata = Metadata(primary=self.primary_wavelength.get_value(),
-                            secondary=self.secondary_wavelength.get_value(),
-                            ratio=self.ratio.get_value())
+        experiment = PowderExperiment.make_empty()
+        experiment.artifacts = Artifacts(primary_wavelength=self.primary_wavelength.get_value(),
+                                         secondary_wavelength=self.secondary_wavelength.get_value(),
+                                         secondary_to_primary=self.ratio.get_value())
 
         two_theta_values = self._get_x_values()
         intensities = self._get_y_values()
 
-        return PatternInfo(metadata=metadata, two_theta_values=two_theta_values, intensities=intensities)
+        return PatternData(two_theta_values=two_theta_values, intensities=intensities, experiment=experiment)
 
 
     def _get_x_values(self) -> list[float]:

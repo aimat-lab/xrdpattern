@@ -35,7 +35,7 @@ class TestXrdPattern(PatternBaseTest):
     def test_from_angle_data(self):
         angles = [1.0, 2.0, 3.0]
         intensities = [10.0, 20.0, 100.0]
-        pattern = XrdPattern.from_intensitiy_map(angles=angles, intensities=intensities)
+        pattern = XrdPattern.from_intensitiy_map(two_theta_values=angles, intensities=intensities)
         self.check_data_ok(*pattern.get_pattern_data(apply_standardization=False))
 
 if __name__ == "__main__":
