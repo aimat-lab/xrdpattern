@@ -4,15 +4,14 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Optional
 
-from holytools.abstract import JsonDataclass
 import numpy as np
-from pymatgen.symmetry.groups import SpaceGroup
 from pymatgen.core import Structure, Lattice
-from pymatgen.symmetry.groups import CrystalSystem
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
+from pymatgen.symmetry.groups import SpaceGroup
 
-from .lattice_params import Angles, Lengths
 from .base import AtomicSite, CrystalBase
+from .lattice_params import Angles, Lengths
+
 
 # ---------------------------------------------------------
 
@@ -26,7 +25,7 @@ class CrystalStructure:
     atomic_volume: Optional[float] = None
     num_atoms : Optional[int] = None
     wyckoff_symbols : Optional[list[str]] = None
-    crystal_system : Optional[CrystalSystem] = None
+    crystal_system : Optional[str] = None
 
     def calculate_properties(self):
         pymatgen_structure = self.to_pymatgen()
