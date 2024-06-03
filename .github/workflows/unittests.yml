@@ -1,33 +1,19 @@
-name: Run Unittests
+name: Tox Tests
 
 on: [push]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
       - name: Install dependencies
         run: |
-          sudo apt install build-essential	# GNU C++ compiler
-          sudo apt install libboost-all-dev       # C++ libraries provided by Boost
-          sudo apt install swig 			# python -> C++ bridge
-          python -m pip install --upgrade pip
-          pip install tox
-      - name: Run tox tests
-        run: |
-          TOX_FILE=$(find . -name tox.ini)
-          echo "-> Located tox file at $TOX_FILE"
-    
-          if [ -f "setup.py" ]; then
-              echo "-> Found setup.py, using tox.ini with pkg environment"
-              tox -c $TOX_FILE -e pkg $RECREATE_FLAG
-          else
-              echo "-> No setup.py found, using tox.ini with requirements environment"
-              tox -c $TOX_FILE -e req $RECREATE_FLAG
-          fi
+          sudo apt update
+          sudo apt install build-essential       # GNU C++ compiler
+          sudo apt install libboost-all-dev      # C++ libraries provided by Boost
+          sudo apt install swig                  # Python to C++ bridge
+
+      - name: Run Tox tests
+        uses: Somerandomguy10111/actions/toxtests@main
+        with:
+          python-version: '3.11'
