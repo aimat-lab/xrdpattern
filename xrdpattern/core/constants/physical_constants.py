@@ -19,7 +19,7 @@ class UnknownSite:
     def get_symbol(cls) -> str:
         return 'NaN'
 
-class Void:
+class EmptySite:
     @classmethod
     def get_symbol(cls) -> str:
         return '⊥'
@@ -77,8 +77,6 @@ class PhysicalConstants:
         print("Scattering parameters:", cls._scattering_params)
 
 PhysicalConstants.initialize()
-
-
 
 
 if __name__ == "__main__":

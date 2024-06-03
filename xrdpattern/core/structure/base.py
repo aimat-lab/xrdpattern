@@ -5,7 +5,7 @@ from typing import Union, Optional
 
 import torch
 from pymatgen.core import Species
-from xrdpattern.core.constants import PhysicalConstants, Void, UnknownSite
+from xrdpattern.core.constants import PhysicalConstants, EmptySite, UnknownSite
 from xrdpattern.core.constants import ElementSymbol
 import math
 # ---------------------------------------------------------
@@ -19,7 +19,7 @@ class AtomicSite:
     y: float
     z: float
     occupancy : float
-    species : Union[Species, Void, UnknownSite]
+    species : Union[Species, EmptySite, UnknownSite]
     wyckoff_letter : Optional[str] = None
 
     def __post_init__(self):
@@ -43,14 +43,14 @@ class AtomicSite:
 
     @classmethod
     def make_void(cls) -> AtomicSite:
-        return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=0, species=Void())
+        return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=0, species=EmptySite())
 
     @classmethod
     def make_placeholder(cls):
         return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=torch.nan, species=UnknownSite())
 
     def is_nonstandard(self) -> bool:
-        if isinstance(self.species, Void):
+        if isinstance(self.species, EmptySite):
             return True
         if isinstance(self.species, UnknownSite):
             return True
@@ -71,7 +71,7 @@ class AtomicSite:
     def get_scattering_params(self) -> ScatteringParams:
         if isinstance(self.species, Species):
             values = PhysicalConstants.get_scattering_params(species=self.species)
-        elif isinstance(self.species, Void):
+        elif isinstance(self.species, EmptySite):
             values = (0, 0), (0, 0), (0, 0), (0, 0)
         elif isinstance(self.species, UnknownSite):
             fnan = float('nan')
