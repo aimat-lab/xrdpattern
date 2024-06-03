@@ -1,7 +1,8 @@
 from holytools.devtools import Unittest
-from xrdpattern.core import AtomicSite
-from tests.t_powder.examples import Examples
 from pymatgen.core import Species
+
+from tests.t_powder.examples import Examples
+
 
 class TestCrystalBase(Unittest):
     def test_scattering_params(self):

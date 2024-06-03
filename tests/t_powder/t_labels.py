@@ -1,6 +1,5 @@
-import tempfile
-
 from holytools.devtools import Unittest
+
 from xrdpattern.core import Labels, Powder, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
     CrystalBase, Artifacts
 
