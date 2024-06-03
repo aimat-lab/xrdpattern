@@ -8,7 +8,9 @@ from holytools.abstract import SelectableEnum
 from xrdpattern.core import PatternData
 from .table_selector import TableSelector, TextTable, NumericalTable
 
+from xrdpattern.core import Anode
 
+copper_wavelength,_ = Anode.Cu.get_wavelengths()
 # -------------------------------------------
 
 class Orientation(SelectableEnum):
@@ -92,8 +94,6 @@ class CsvParser:
             return str(dialect.delimiter)
 
 
-#TODO replace this with copper wavelength from physical constants
-copper_wavelength = 1.54
 
 def qvalues_to_angles(qvalues : list[float]) -> list[float]:
     theta_values_rad = [math.asin(q*copper_wavelength)/(4*math.pi) for q in qvalues]
