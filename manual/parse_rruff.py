@@ -37,15 +37,126 @@ def extract_basename(fname):
     basename = "__".join(fname.split("__")[:2])
     return basename
 
-# TODO
 def to_int(rruff_spg : str) -> int:
-    pass
+    spg_number = None
+    if rruff_spg == "Fm3m":
+        rruff_spg = "Fm-3m"
+    elif rruff_spg == "Pncm":
+        spg_number = 53
+    elif rruff_spg == "C-1":
+        spg_number = 1
+    elif (
+            rruff_spg == "P21/n"
+            or rruff_spg == "P21/a"
+            or rruff_spg == "P21/b"
+    ):
+        spg_number = 14
+    elif (
+            rruff_spg == "Pbnm"
+            or rruff_spg == "Pcmn"
+            or rruff_spg == "Pnam"
+    ):
+        spg_number = 62
+    elif rruff_spg == "Amma":
+        spg_number = 63
+    elif rruff_spg == "Fd2d":
+        spg_number = 43
+    elif rruff_spg == "Fd3m":
+        rruff_spg = "Fd-3m"
+    elif (
+            rruff_spg == "A2/a"
+            or rruff_spg == "I2/a"
+            or rruff_spg == "I2/c"
+    ):
+        spg_number = 15
+    elif rruff_spg == "P4/n":
+        spg_number = 85
+    elif rruff_spg == "I41/acd":
+        spg_number = 142
+    elif rruff_spg == "I41/amd":
+        spg_number = 141
+    elif rruff_spg == "Pmcn":
+        spg_number = 62
+    elif rruff_spg == "I41/a":
+        spg_number = 88
+    elif rruff_spg == "Pbn21" or rruff_spg == "P21nb":
+        spg_number = 33
+    elif rruff_spg == "P2cm":
+        spg_number = 28
+    elif rruff_spg == "P4/nnc":
+        spg_number = 126
+    elif rruff_spg == "Pn21m":
+        spg_number = 31
+    elif rruff_spg == "B2/b":
+        spg_number = 15
+    elif rruff_spg == "Cmca":
+        spg_number = 64
+    elif rruff_spg == "I2/m" or rruff_spg == "A2/m":
+        spg_number = 12
+    elif rruff_spg == "Pcan":
+        spg_number = 60
+    elif rruff_spg == "Ia3d":
+        rruff_spg = "Ia-3d"
+    elif rruff_spg == "P4/nmm":
+        spg_number = 129
+    elif rruff_spg == "Pa3":
+        rruff_spg = "Pa-3"
+    elif rruff_spg == "P4/ncc":
+        spg_number = 130
+    elif rruff_spg == "Imam":
+        spg_number = 74
+    elif rruff_spg == "Pmmn":
+        spg_number = 59
+    elif rruff_spg == "Pncn" or rruff_spg == "Pbnn":
+        spg_number = 52
+    elif rruff_spg == "Bba2":
+        spg_number = 41
+    elif rruff_spg == "C1":
+        spg_number = 1
+    elif rruff_spg == "Pn3":
+        rruff_spg = "Pn-3"
+    elif rruff_spg == "Fddd":
+        spg_number = 70
+    elif rruff_spg == "Pcab":
+        spg_number = 61
+    elif rruff_spg == "P2/a":
+        spg_number = 13
+    elif rruff_spg == "Pmnb":
+        spg_number = 62
+    elif rruff_spg == "I-1":
+        spg_number = 2
+    elif rruff_spg == "Pmnb":
+        spg_number = 154
+    elif rruff_spg == "B2mb":
+        spg_number = 40
+    elif rruff_spg == "Im3":
+        rruff_spg = "Im-3"
+    elif rruff_spg == "Pn21a":
+        spg_number = 33
+    elif rruff_spg == "Pm2m":
+        spg_number = 25
+    elif rruff_spg == "Fd3":
+        rruff_spg = "Fd-3"
+    elif rruff_spg == "Im3m":
+        rruff_spg = "Im-3m"
+    elif rruff_spg == "Cmma":
+        spg_number = 67
+    elif rruff_spg == "Pn3m":
+        rruff_spg = "Pn-3m"
+    elif rruff_spg == "F2/m":
+        spg_number = 12
+    elif rruff_spg == "Pnm21":
+        spg_number = 31
 
+    if spg_number is None:
+        raise ValueError(f'Could not convert {rruff_spg} to space group number')
+
+    return spg_number
 
 if __name__ == "__main__":
-    pattern_dirpath = os.path.join(LocationManager.rruff_dirpath(),'patterns')
-    structures_dirpath = os.path.join(LocationManager.rruff_dirpath(),'structures')
-    output_dirpath = os.path.join(LocationManager.rruff_dirpath(),'lps')
+    pattern_dirpath = os.path.join(rruff_dirpath,'patterns')
+    structures_dirpath = os.path.join(rruff_dirpath,'structures')
+    output_dirpath = os.path.join(rruff_dirpath,'lps')
 
     STRUCTURE_NAME_FPATH_MAP = {}
     copper_wavelength = 1.541838
