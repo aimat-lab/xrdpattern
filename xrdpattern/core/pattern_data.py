@@ -20,7 +20,7 @@ class PatternData(Picklable):
     name : Optional[str] = None
 
     @classmethod
-    def from_intensitiy_map(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
+    def make_unlableed(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
         metadata = Labels.make_empty()
         return cls(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
