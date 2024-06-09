@@ -76,8 +76,10 @@ class AtomicSite(Serializable):
     # serialization
 
     def to_str(self) -> str:
+        print(f'Species = {self.species}')
+        print(f'Species symbol = {self.species.symbol}')
         the_dict = {'x': self.x, 'y': self.y, 'z': self.z, 'occupancy': self.occupancy,
-                    'species': self.species.get_symbol(),
+                    'species': self.species.symbol,
                     'wyckoff_letter': self.wyckoff_letter}
 
         return json.dumps(the_dict)
@@ -86,9 +88,9 @@ class AtomicSite(Serializable):
     def from_str(cls, s: str):
         the_dict = json.loads(s)
         species_symbol = the_dict['species']
-        if species_symbol == Void.get_symbol():
+        if species_symbol == Void.symbol:
             species = Void()
-        elif species_symbol == UnknownSite.get_symbol():
+        elif species_symbol == UnknownSite.symbol:
             species = UnknownSite()
         else:
             species = Species.from_str(species_symbol)

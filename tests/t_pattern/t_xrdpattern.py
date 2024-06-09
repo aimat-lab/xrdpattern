@@ -45,7 +45,6 @@ class TestXrdPattern(PatternBaseTest):
         pattern = XrdPattern.make_unlableed(two_theta_values=angles, intensities=intensities)
         self.check_data_ok(*pattern.get_pattern_data(apply_standardization=False))
 
-
     @staticmethod
     def save_and_load(pattern : XrdPattern):
         save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.xrdpattern.suffix}')

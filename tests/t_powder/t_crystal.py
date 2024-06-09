@@ -96,7 +96,7 @@ class TestCrystalCalculations(Unittest):
 
     def test_standardization(self):
         self.crystal.standardize()
-        expected_species_list = ['O', 'Si', Void.get_symbol()]
+        expected_species_list = ['O', 'Si', Void.symbol]
         acrual_species_list = [self.get_site_symbol(site) for site in self.crystal.base]
         self.assertEqual(acrual_species_list, expected_species_list)
 
@@ -120,7 +120,7 @@ class TestCrystalCalculations(Unittest):
     @staticmethod
     def get_site_symbol(site : AtomicSite):
         if isinstance(site.species, Void):
-            symbol = Void.get_symbol()
+            symbol = Void.symbol
         else:
             symbol = site.species.element.symbol
         return symbol

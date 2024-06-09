@@ -15,15 +15,10 @@ CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tet
 # ---------------------------------------------------------
 
 class UnknownSite:
-    @classmethod
-    def get_symbol(cls) -> str:
-        return 'NaN'
-
+    symbol = 'NaN'
 
 class Void:
-    @classmethod
-    def get_symbol(cls) -> str:
-        return '⊥'
+    symbol = '⊥'
 
 class PhysicalConstants:
     _vdw : dict[str, float] = {}
