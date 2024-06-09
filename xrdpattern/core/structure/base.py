@@ -1,58 +1,49 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
-from typing import Union, Optional
+from typing import Optional, Union
 
 import torch
 from pymatgen.core import Species
-from xrdpattern.core.constants import PhysicalConstants, EmptySite, UnknownSite
+
+from holytools.abstract import Serializable
+from xrdpattern.core.constants import PhysicalConstants, Void, UnknownSite
 from xrdpattern.core.constants import ElementSymbol
 import math
-# ---------------------------------------------------------
 
 ScatteringParams = tuple[float, float, float, float, float, float, float, float]
+# ---------------------------------------------------------
 
 @dataclass
-class AtomicSite:
+class AtomicSite(Serializable):
     """x,y,z are the coordinates of the site given in the basis of the lattice"""
     x: float
     y: float
     z: float
     occupancy : float
-    species : Union[Species, EmptySite, UnknownSite]
+    species : Union[Species, Void, UnknownSite]
     wyckoff_letter : Optional[str] = None
 
     def __post_init__(self):
         if self.is_nonstandard():
            return
 
+        print(f'Species = {self.species}')
+        print(f'Occupancy is {self.occupancy}')
         if not 0 <= self.occupancy <= 1:
             raise ValueError('Occupancy must be between 0 and 1')
 
-        # for val in [self.x, self.y,self.z]:
-        #     if not self.in_unit_interval(val):
-        #         print(f'Warning: Fractional coordinate {val} is not in unit interval')
-
-    @staticmethod
-    def in_unit_interval(val : float) -> bool:
-        epsilon = 1e-6
-        in_unit_interval = True
-        if not (0 - epsilon < val < 1 +epsilon):
-            in_unit_interval = False
-        return in_unit_interval
-
     @classmethod
     def make_void(cls) -> AtomicSite:
-        return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=0, species=EmptySite())
+        return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=0, species=Void())
 
     @classmethod
     def make_placeholder(cls):
         return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=torch.nan, species=UnknownSite())
 
     def is_nonstandard(self) -> bool:
-        if isinstance(self.species, EmptySite):
-            return True
-        if isinstance(self.species, UnknownSite):
+        if not isinstance(self.species, Species):
             return True
         return False
 
@@ -60,9 +51,7 @@ class AtomicSite:
     # get properties
 
     def as_list(self) -> list[float]:
-        a1,a2,a3,a4,b1,b2,b3,b4 = self.get_scattering_params()
-        x, y, z, occupancy = self.x, self.y, self.z, self.occupancy
-        site_arr = [a1, a2, a3, a4, b1, b2, b3, b4, x, y, z, occupancy]
+        site_arr = [*self.get_scattering_params(), self.x, self.y, self.z, self.occupancy]
         return site_arr
 
     # TODO: These are currently the scattering factors in pymat gen atomic_scattering_parmas.json
@@ -71,7 +60,7 @@ class AtomicSite:
     def get_scattering_params(self) -> ScatteringParams:
         if isinstance(self.species, Species):
             values = PhysicalConstants.get_scattering_params(species=self.species)
-        elif isinstance(self.species, EmptySite):
+        elif isinstance(self.species, Void):
             values = (0, 0), (0, 0), (0, 0), (0, 0)
         elif isinstance(self.species, UnknownSite):
             fnan = float('nan')
@@ -83,7 +72,71 @@ class AtomicSite:
         return a1, b1, a2, b2, a3, b3, a4, b4
 
 
-class CrystalBase(list[AtomicSite]):
+    # ---------------------------------------------------------
+    # serialization
+
+    def to_str(self) -> str:
+        the_dict = {'x': self.x, 'y': self.y, 'z': self.z, 'occupancy': self.occupancy,
+                    'species': self.species.get_symbol(),
+                    'wyckoff_letter': self.wyckoff_letter}
+
+        return json.dumps(the_dict)
+
+    @classmethod
+    def from_str(cls, s: str):
+        the_dict = json.loads(s)
+        species_symbol = the_dict['species']
+        if species_symbol == Void.get_symbol():
+            species = Void()
+        elif species_symbol == UnknownSite.get_symbol():
+            species = UnknownSite()
+        else:
+            species = Species.from_str(species_symbol)
+
+        return cls(x=the_dict['x'], y=the_dict['y'], z=the_dict['z'], occupancy=the_dict['occupancy'],
+                   species=species, wyckoff_letter=the_dict['wyckoff_letter'])
+
+
+
+class CrystalBase(Serializable):
+    def __init__(self, atomic_sites : Optional[list[AtomicSite]] = None):
+        super().__init__()
+        if not atomic_sites is None:
+            self.atomic_sites : list[AtomicSite] = atomic_sites
+        else:
+            self.atomic_sites : list[AtomicSite] = []
+
+    def to_str(self) -> str:
+        return json.dumps([site.to_str() for site in self])
+
+    @classmethod
+    def from_str(cls, s: str):
+        site_strs = json.loads(s)
+        return cls([AtomicSite.from_str(site_str) for site_str in site_strs])
+
+    def append(self, item : AtomicSite):
+        self.atomic_sites.append(item)
+
+    def __add__(self, other : list[AtomicSite]):
+        new_base = CrystalBase()
+        for site in self:
+            new_base.append(site)
+        for site in other:
+            new_base.append(site)
+        return new_base
+
+    def __iadd__(self, other):
+        for item in other:
+            self.append(item)
+        return self
+
+    def __iter__(self):
+        return iter(self.atomic_sites)
+
+    def __len__(self):
+        return len(self.atomic_sites)
+
+
     def calculate_atomic_volume(self) -> float:
         total_atomic_volume = 0
         for site in self.get_non_void_sites():
@@ -96,6 +149,7 @@ class CrystalBase(list[AtomicSite]):
             total_atomic_volume += atomic_volume * site.occupancy
 
         return total_atomic_volume
+
 
     def get_non_void_sites(self) -> list[AtomicSite]:
         return [site for site in self if not site.is_nonstandard()]
@@ -115,21 +169,6 @@ class CrystalBase(list[AtomicSite]):
 
     def is_empty(self) -> bool:
         return len(self) == 0
-
-
-    def __add__(self, other : list[AtomicSite]):
-        new_base = CrystalBase()
-        for site in self:
-            new_base.append(site)
-        for site in other:
-            new_base.append(site)
-        return new_base
-
-    def __iadd__(self, other):
-        for item in other:
-            self.append(item)
-        return self
-
 
     def get_wyckoffs(self) -> list[str]:
         wyckoff_symbols = [site.wyckoff_letter for site in self]

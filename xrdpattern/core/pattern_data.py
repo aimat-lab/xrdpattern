@@ -13,9 +13,9 @@ from numpy.typing import NDArray
 # -------------------------------------------
 
 @dataclass
-class PatternData(Serializable):
-    two_theta_values : list[float] | NDArray
-    intensities : list[float] | NDArray
+class PatternData(JsonDataclass):
+    two_theta_values : list[float]
+    intensities : list[float]
     label : Label
     name : Optional[str] = None
 
@@ -26,14 +26,6 @@ class PatternData(Serializable):
 
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}
-
-    def to_str(self) -> str:
-        pass
-
-    @classmethod
-    def from_str(cls, s: str):
-        pass
-
 
     def get_standardized_map(self, start_val : float, stop_val : float, num_entries : int) -> (list[float], list[float]):
         start, end = self.two_theta_values[0], self.two_theta_values[-1]

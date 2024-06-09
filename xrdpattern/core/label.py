@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from holytools.abstract import JsonDataclass
 import torch
 from torch import Tensor
 
@@ -24,7 +25,7 @@ class QuantityRegion:
 
 
 @dataclass
-class Label:
+class Label(JsonDataclass):
     powder : Powder
     artifacts : Artifacts
     is_simulated : bool
@@ -145,7 +146,7 @@ class Label:
 
 
 @dataclass
-class Artifacts:
+class Artifacts(JsonDataclass):
     primary_wavelength: float
     secondary_wavelength: float
     secondary_to_primary: float
@@ -156,7 +157,7 @@ class Artifacts:
 
 
 @dataclass
-class Powder:
+class Powder(JsonDataclass):
     crystal_structure: CrystalStructure
     crystallite_size: float = 500
     temp_in_celcius : int = 20

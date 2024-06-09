@@ -11,12 +11,12 @@ from pymatgen.symmetry.groups import SpaceGroup
 
 from .base import AtomicSite, CrystalBase
 from .lattice_params import Angles, Lengths
-
+from holytools.abstract import JsonDataclass
 
 # ---------------------------------------------------------
 
 @dataclass
-class CrystalStructure:
+class CrystalStructure(JsonDataclass):
     lengths : Lengths
     angles : Angles
     base : CrystalBase

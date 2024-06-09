@@ -47,12 +47,9 @@ class ParserBaseTest(Unittest):
 class PatternBaseTest(ParserBaseTest):
     @classmethod
     def setUpClass(cls):
-        pattern_from_bruker = XrdPattern.load(fpath=cls.get_bruker_fpath())
-        pattern_from_bruker.save(fpath=cls.get_aimat_xrdpattern_fpath(), force_overwrite=True)
+        cls.pattern: XrdPattern = XrdPattern.load(fpath=cls.get_bruker_fpath())
 
-    def setUp(self):
-        self.pattern : XrdPattern = XrdPattern.load(fpath=self.get_fpath())
-
+    @classmethod
     @abstractmethod
-    def get_fpath(self) -> str:
+    def get_fpath(cls) -> str:
         pass

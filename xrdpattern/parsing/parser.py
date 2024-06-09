@@ -40,7 +40,7 @@ class Parser:
             raise ValueError(f"Could not determine file format of \"{fpath}\": Invalid suffix {suffix}")
 
         if the_format == Formats.xrdpattern:
-            pattern_infos = [self.from_pkl(fpath=fpath)]
+            pattern_infos = [self.from_json(fpath=fpath)]
         elif the_format == Formats.stoe_raw:
             pattern_infos = [self.stoe_reader.get_pattern_info(fpath=fpath)]
         elif the_format.suffix in Formats.get_datafile_suffixes():
@@ -58,10 +58,10 @@ class Parser:
 
 
     @staticmethod
-    def from_pkl(fpath: str) -> PatternData:
+    def from_json(fpath: str) -> PatternData:
         with open(fpath, 'r') as file:
             data = file.read()
-            new_pattern = PatternData.from_str(s=data)
+            new_pattern = PatternData.from_str(json_str=data)
         return new_pattern
 
 

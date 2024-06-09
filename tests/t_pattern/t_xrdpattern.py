@@ -7,11 +7,13 @@ import tempfile
 
 
 class TestXrdPattern(PatternBaseTest):
-    def get_fpath(self) -> str:
-        return self.get_aimat_xrdpattern_fpath()
+    @classmethod
+    def get_fpath(cls) -> str:
+        return cls.get_aimat_xrdpattern_fpath()
 
     def test_save_load_roundtrip(self):
-        pattern = self.pattern
+        pattern = XrdPattern.load(fpath=self.get_bruker_fpath())
+        pattern_str = pattern.to_str()
         save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.xrdpattern.suffix}')
         pattern.save(fpath=save_path)
         pattern2 = XrdPattern.load(fpath=save_path)

@@ -6,8 +6,9 @@ from tests.base_tests import PatternBaseTest, ParserBaseTest
 
 
 class TestParserPattern(PatternBaseTest):
-    def get_fpath(self) -> str:
-        return self.get_bruker_fpath()
+    @classmethod
+    def get_fpath(cls) -> str:
+        return cls.get_bruker_fpath()
 
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern, XrdPattern)
@@ -43,8 +44,9 @@ class TestParserPattern(PatternBaseTest):
 
 
 class TestParseStoe(PatternBaseTest):
-    def get_fpath(self) -> str:
-        return self.get_stoe_fpath()
+    @classmethod
+    def get_fpath(cls) -> str:
+        return cls.get_stoe_fpath()
 
     def test_parse_stoe(self):
         pattern = XrdPattern.load(fpath=self.get_fpath())

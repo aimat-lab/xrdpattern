@@ -2,7 +2,7 @@ import json
 import os.path
 from typing import Literal
 
-from pymatgen.core import Species
+from pymatgen.core import Species, DummySpecies
 
 DIRPATH = os.path.dirname(__file__)
 SCATTERING_PARAMS_FILENAME = 'atomic_scattering_params.json'
@@ -19,7 +19,8 @@ class UnknownSite:
     def get_symbol(cls) -> str:
         return 'NaN'
 
-class EmptySite:
+
+class Void:
     @classmethod
     def get_symbol(cls) -> str:
         return '⊥'

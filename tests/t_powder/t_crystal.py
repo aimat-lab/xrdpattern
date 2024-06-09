@@ -1,6 +1,6 @@
 import math
 
-from xrdpattern.core import Lengths, AtomicSite, CrystalBase, Angles, EmptySite
+from xrdpattern.core import Lengths, AtomicSite, CrystalBase, Angles, Void
 from pymatgen.core import Species
 from pymatgen.core.structure import Structure
 
@@ -87,7 +87,7 @@ class TestCrystalCalculations(Unittest):
         self.base = CrystalBase([
             AtomicSite(x=0.5, y=0.5, z=0.5, occupancy=1.0, species=Species("Si")),
             AtomicSite(x=0.1, y=0.1, z=0.1, occupancy=1.0, species=Species("O")),
-            AtomicSite(x=0.9, y=0.9, z=0.9, occupancy=1.0, species=EmptySite())
+            AtomicSite(x=0.9, y=0.9, z=0.9, occupancy=1.0, species=Void())
         ])
         crystal = CrystalStructure(lengths=self.primitives, angles=self.angles, base=self.base)
         crystal.calculate_properties()
@@ -96,7 +96,7 @@ class TestCrystalCalculations(Unittest):
 
     def test_standardization(self):
         self.crystal.standardize()
-        expected_species_list = ['O', 'Si', EmptySite.get_symbol()]
+        expected_species_list = ['O', 'Si', Void.get_symbol()]
         acrual_species_list = [self.get_site_symbol(site) for site in self.crystal.base]
         self.assertEqual(acrual_species_list, expected_species_list)
 
@@ -119,8 +119,8 @@ class TestCrystalCalculations(Unittest):
 
     @staticmethod
     def get_site_symbol(site : AtomicSite):
-        if isinstance(site.species, EmptySite):
-            symbol = EmptySite.get_symbol()
+        if isinstance(site.species, Void):
+            symbol = Void.get_symbol()
         else:
             symbol = site.species.element.symbol
         return symbol

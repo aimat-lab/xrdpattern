@@ -29,7 +29,7 @@ class Formats:
     xfit_xdd = XrdFormat("xfit_xdd", "xdd")
     xrdml = XrdFormat("xrdml", "xrdml")
     xsyg = XrdFormat("xsyg", "xsyg")
-    xrdpattern = XrdFormat("pickle", "pkl")
+    xrdpattern = XrdFormat("pickle", "json")
 
 
     @classmethod
