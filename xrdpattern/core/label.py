@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Optional
 
 from holytools.abstract import JsonDataclass
 import torch
@@ -159,8 +160,8 @@ class Artifacts(JsonDataclass):
 @dataclass
 class Powder(JsonDataclass):
     crystal_structure: CrystalStructure
-    crystallite_size: float = 500
-    temp_in_celcius : int = 20
+    crystallite_size: Optional[float] = 500
+    temp_in_celcius : Optional[int] = 20
 
 
 class LabelTensor(Tensor):

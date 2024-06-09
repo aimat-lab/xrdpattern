@@ -123,8 +123,13 @@ class XrdPattern(PatternData):
     def get_info_as_str(self) -> str:
         crystal = self.label.crystal_structure
         pattern_content = str(self.intensities)[:50] + '...'
+        try:
+            crystal_data = str(crystal.to_pymatgen())
+        except:
+            crystal_data = 'No crystal data available'
+
         as_str = (f'----> Sample \n'
-              f'- Crystal: {crystal.to_pymatgen()}\n'
+              f'- Crystal: {crystal_data} \n'
               f'- Metadata:\n'
               f'    - Crystallite size: {self.label.crystallite_size}\n'
               f'    - Temperature : {self.label.temp_in_celcius}\n'
