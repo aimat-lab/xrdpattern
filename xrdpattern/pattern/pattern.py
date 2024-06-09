@@ -5,6 +5,7 @@ from typing import Optional
 from uuid import uuid4
 
 import matplotlib.pyplot as plt
+import torch
 
 from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData
@@ -56,6 +57,14 @@ class XrdPattern(PatternData):
             raise ValueError(f'File {fpath} already exists')
         with open(fpath, 'w') as f:
             f.write(self.to_str())
+
+
+    def to_tensor_pair(self) -> tuple[torch.Tensor, torch.Tensor]:
+        labels = self.label.to_tensor()
+        _, intensities = self.get_pattern_data()
+        intensities = torch.tensor(intensities)
+
+        return intensities, labels
 
     # -------------------------------------------
     # get
