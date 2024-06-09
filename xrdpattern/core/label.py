@@ -194,10 +194,12 @@ class LabelTensor(Tensor):
         region = self.example_powder_experiment.artifacts_region
         return self[..., region.start:region.end]
 
+    # domain = 1 : simulated
+    # domain = 0 : experimental
     # noinspection PyTypeChecker
     def get_domain(self) -> LabelTensor:
         region = self.example_powder_experiment.domain_region
-        return self[..., region.start:region.end]
+        return torch.sigmoid(self[..., region.start:region.end])
 
     # noinspection PyTypeChecker
     def to_sample(self) -> Label:
