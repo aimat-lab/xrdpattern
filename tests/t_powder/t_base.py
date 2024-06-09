@@ -1,12 +1,12 @@
 from holytools.devtools import Unittest
 from pymatgen.core import Species
 
-from tests.t_powder.examples import Examples
+from xrdpattern.core import LabelExamples
 
 
 class TestCrystalBase(Unittest):
     def test_scattering_params(self):
-        base = Examples.get_base()
+        base = LabelExamples.get_base()
         seen_species = set()
 
         for atomic_site in base:
@@ -20,7 +20,7 @@ class TestCrystalBase(Unittest):
 
 
     def test_site_dictionaries(self):
-        base = Examples.get_base(mute=False)
+        base = LabelExamples.get_base(mute=False)
         site_dictionaries = base.as_site_dictionaries()
 
         coordinates = list(site_dictionaries.keys())

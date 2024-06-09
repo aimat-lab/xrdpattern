@@ -2,7 +2,7 @@ import os
 
 from dataclasses import dataclass
 from xrdpattern.pattern import XrdPattern
-from xrdpattern.core import Labels, Powder, CrystalStructure, Lengths, Angles, CrystalBase, Artifacts
+from xrdpattern.core import Label, Powder, CrystalStructure, Lengths, Angles, CrystalBase, Artifacts
 
 rruff_dirpath = ''
 
@@ -193,7 +193,7 @@ if __name__ == "__main__":
             crystal_structure = CrystalStructure(lengths=lengths, angles=angles, space_group=spacegroup, base=CrystalBase())
             powder = Powder(crystal_structure=crystal_structure)
             artifacts = Artifacts(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength, secondary_to_primary=0)
-            pattern.label = Labels(powder=powder, artifacts=artifacts, is_simulated=False)
+            pattern.label = Label(powder=powder, artifacts=artifacts, is_simulated=False)
             pattern.save(fpath=os.path.join(output_dirpath, base_name))
 
         except Exception as e:

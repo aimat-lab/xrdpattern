@@ -7,14 +7,14 @@ from pymatgen.core.structure import Structure
 from holytools.devtools import Unittest
 from holytools.file import PlaintextFile
 from xrdpattern.core import CrystalStructure
-from tests.t_powder.examples import Examples
+from xrdpattern.core import LabelExamples
 
 # ---------------------------------------------------------
 
 class TestCifParsing(Unittest):
     @classmethod
     def setUpClass(cls):
-        cif_fpath = Examples.get_cif_fpath(secondary=True)
+        cif_fpath = LabelExamples.get_cif_fpath(secondary=True)
         print(f'Cif content from example: {PlaintextFile.get_text(cif_fpath)}')
         cls.pymatgen_structure = Structure.from_file(filename=cif_fpath)
         crystal = CrystalStructure.from_cif(fpath=cif_fpath)
@@ -56,7 +56,7 @@ class TestCifParsing(Unittest):
 class TestPymatgenCompatibility(Unittest):
     @classmethod
     def setUpClass(cls):
-        pymatgen_structure = Structure.from_file(Examples.get_cif_fpath(secondary=True))
+        pymatgen_structure = Structure.from_file(LabelExamples.get_cif_fpath(secondary=True))
         cls.crystal = CrystalStructure.from_pymatgen(pymatgen_structure=pymatgen_structure)
         cls.pymatgen_structure = pymatgen_structure
 
@@ -127,4 +127,5 @@ class TestCrystalCalculations(Unittest):
 
 if __name__ == '__main__':
     TestPymatgenCompatibility.execute_all()
+    TestCrystalCalculations.execute_all()
 

@@ -1,6 +1,6 @@
 from xrdpattern.core import PatternData
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
-from ...core import Artifacts, Labels
+from ...core import Artifacts, Label
 
 
 class BinaryReader:
@@ -39,7 +39,7 @@ class StoeReader(BinaryReader):
 
     def get_pattern_info(self, fpath : str) -> PatternData:
         self.read(fpath=fpath)
-        experiment = Labels.make_empty()
+        experiment = Label.make_empty()
         experiment.artifacts = Artifacts(primary_wavelength=self.primary_wavelength.get_value(),
                                          secondary_wavelength=self.secondary_wavelength.get_value(),
                                          secondary_to_primary=self.ratio.get_value())

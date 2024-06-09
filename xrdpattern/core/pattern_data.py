@@ -7,7 +7,7 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 
 from holytools.abstract import Picklable
-from xrdpattern.core.labels import Labels
+from xrdpattern.core.label import Label
 from numpy.typing import NDArray
 
 # -------------------------------------------
@@ -16,12 +16,12 @@ from numpy.typing import NDArray
 class PatternData(Picklable):
     two_theta_values : list[float] | NDArray
     intensities : list[float] | NDArray
-    label : Labels
+    label : Label
     name : Optional[str] = None
 
     @classmethod
     def make_unlableed(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
-        metadata = Labels.make_empty()
+        metadata = Label.make_empty()
         return cls(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
     def to_dict(self):

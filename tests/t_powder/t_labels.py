@@ -1,12 +1,12 @@
 from holytools.devtools import Unittest
 
-from xrdpattern.core import Labels, Powder, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
+from xrdpattern.core import Label, Powder, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
     CrystalBase, Artifacts
 
 
 class TestTensorRegions(Unittest):
     def setUp(self):
-        self.label : Labels = self.make_example_label()
+        self.label : Label = self.make_example_label()
         self.label_tensor : LabelTensor = self.label.to_tensor()
         self.crystal_structure : CrystalStructure = self.label.powder.crystal_structure
 
@@ -64,7 +64,7 @@ class TestTensorRegions(Unittest):
             self.assertEqual(t.__class__, LabelTensor)
 
     @staticmethod
-    def make_example_label() -> Labels:
+    def make_example_label() -> Label:
         primitives = Lengths(a=3, b=3, c=3)
         angles = Angles(alpha=90, beta=90, gamma=90)
         base = CrystalBase([AtomicSite.make_void()])
@@ -73,7 +73,7 @@ class TestTensorRegions(Unittest):
 
         powder = Powder(crystal_structure=crystal_structure, crystallite_size=10.0)
         artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
-        return Labels(powder, artifacts, is_simulated=True)
+        return Label(powder, artifacts, is_simulated=True)
 
 
 

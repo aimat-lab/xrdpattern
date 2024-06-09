@@ -24,7 +24,7 @@ class QuantityRegion:
 
 
 @dataclass
-class Labels:
+class Label:
     powder : Powder
     artifacts : Artifacts
     is_simulated : bool
@@ -83,7 +83,7 @@ class Labels:
 
 
     @classmethod
-    def make_empty(cls) -> Labels:
+    def make_empty(cls) -> Label:
         lengths = Lengths(a=torch.nan, b=torch.nan, c=torch.nan)
         angles= Angles(alpha=torch.nan, beta=torch.nan, gamma=torch.nan)
         base = CrystalBase()
@@ -163,7 +163,7 @@ class Powder:
 
 
 class LabelTensor(Tensor):
-    example_powder_experiment: Labels = Labels.make_empty()
+    example_powder_experiment: Label = Label.make_empty()
 
     def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
         dtype = dtype if dtype is not None else self.dtype
@@ -200,5 +200,5 @@ class LabelTensor(Tensor):
         return self[..., region.start:region.end]
 
     # noinspection PyTypeChecker
-    def to_sample(self) -> Labels:
+    def to_sample(self) -> Label:
         raise NotImplementedError
