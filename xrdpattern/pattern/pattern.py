@@ -120,7 +120,7 @@ class XrdPattern(PatternData):
     # -------------------------------------------
     # view
 
-    def as_str(self) -> str:
+    def get_info_as_str(self) -> str:
         crystal = self.label.crystal_structure
         pattern_content = str(self.intensities)[:50] + '...'
         as_str = (f'----> Sample \n'
@@ -133,6 +133,5 @@ class XrdPattern(PatternData):
                   f'length: {len(self.intensities)}\n')
         return as_str
 
-
     def __str__(self):
-        return self.as_str()
+        return self.get_info_as_str()

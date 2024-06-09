@@ -6,14 +6,14 @@ from typing import Optional
 import numpy as np
 from scipy.interpolate import CubicSpline
 
-from holytools.abstract import Picklable
+from holytools.abstract.serialization import Serializable, JsonDataclass
 from xrdpattern.core.label import Label
 from numpy.typing import NDArray
 
 # -------------------------------------------
 
 @dataclass
-class PatternData(Picklable):
+class PatternData(Serializable):
     two_theta_values : list[float] | NDArray
     intensities : list[float] | NDArray
     label : Label
@@ -26,6 +26,14 @@ class PatternData(Picklable):
 
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}
+
+    def to_str(self) -> str:
+        pass
+
+    @classmethod
+    def from_str(cls, s: str):
+        pass
+
 
     def get_standardized_map(self, start_val : float, stop_val : float, num_entries : int) -> (list[float], list[float]):
         start, end = self.two_theta_values[0], self.two_theta_values[-1]

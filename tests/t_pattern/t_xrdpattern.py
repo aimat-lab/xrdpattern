@@ -16,7 +16,7 @@ class TestXrdPattern(PatternBaseTest):
         pattern.save(fpath=save_path)
         pattern2 = XrdPattern.load(fpath=save_path)
         self.assertEqual(first=pattern, second=pattern2)
-        print(f'pattern after roundtrip {pattern.to_str()[:500]} + {pattern.to_str()[-500:]}')
+        print(f'pattern after roundtrip {pattern[:500]} + {pattern[-500:]}')
 
     def test_plot(self):
         if self.is_manual_mode:
