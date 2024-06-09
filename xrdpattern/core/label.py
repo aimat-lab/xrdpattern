@@ -28,7 +28,7 @@ class QuantityRegion:
 @dataclass
 class Label(JsonDataclass):
     powder : Powder
-    artifacts : Artifacts
+    artifacts : Optional[Artifacts]
     is_simulated : bool
 
     def __post_init__(self):
@@ -59,6 +59,12 @@ class Label(JsonDataclass):
         domain_list = [self.is_simulated]
         self.domain_region : QuantityRegion = self.add_region_quantity(domain_list)
 
+    @classmethod
+    def from_cif(cls, cif_fpath : str) -> Label:
+        structure = CrystalStructure.from_cif(cif_fpath)
+        powder = Powder(crystal_structure=structure)
+
+        return cls(powder=powder, artifacts=None, is_simulated=False)
 
     def add_region_quantity(self, list_obj : list) -> QuantityRegion:
         current_len = len(self.list_repr)

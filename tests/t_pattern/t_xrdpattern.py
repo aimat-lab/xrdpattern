@@ -2,7 +2,7 @@ import os.path
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
 from tests.base_tests import PatternBaseTest
-
+from xrdpattern.core import LabelExamples, Label
 import tempfile
 
 
@@ -12,12 +12,17 @@ class TestXrdPattern(PatternBaseTest):
         return cls.get_aimat_xrdpattern_fpath()
 
     def test_save_load_roundtrip(self):
-        pattern = XrdPattern.load(fpath=self.get_bruker_fpath())
-        save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.xrdpattern.suffix}')
-        pattern.save(fpath=save_path)
-        pattern2 = XrdPattern.load(fpath=save_path)
-        self.assertEqual(first=pattern, second=pattern2)
-        print(f'pattern after roundtrip \n:{pattern.get_info_as_str()[:500]} + {pattern.get_info_as_str()[-500:]}')
+        unlabeled_pattern = XrdPattern.load(fpath=self.get_bruker_fpath())
+        labeled_pattern = XrdPattern.load(fpath=self.get_bruker_fpath())
+        labeled_pattern.label = Label.from_cif(LabelExamples.get_cif_fpath())
+
+        reloaded_unlabeled = self.save_and_load(unlabeled_pattern)
+        reloaded_labeled = self.save_and_load(labeled_pattern)
+
+        self.assertEqual(unlabeled_pattern, reloaded_unlabeled)
+        self.assertEqual(labeled_pattern, reloaded_labeled)
+        print(f'labeled after roundtrip \n:{labeled_pattern.get_info_as_str()[:500]} + '
+              f'{labeled_pattern.get_info_as_str()[-500:]}')
 
     def test_plot(self):
         if self.is_manual_mode:
@@ -39,6 +44,14 @@ class TestXrdPattern(PatternBaseTest):
         intensities = [10.0, 20.0, 100.0]
         pattern = XrdPattern.make_unlableed(two_theta_values=angles, intensities=intensities)
         self.check_data_ok(*pattern.get_pattern_data(apply_standardization=False))
+
+
+    @staticmethod
+    def save_and_load(pattern : XrdPattern):
+        save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.xrdpattern.suffix}')
+        pattern.save(fpath=save_path)
+        reloaded_pattern = XrdPattern.load(fpath=save_path)
+        return reloaded_pattern
 
 if __name__ == "__main__":
     TestXrdPattern.execute_all(manual_mode=False)
