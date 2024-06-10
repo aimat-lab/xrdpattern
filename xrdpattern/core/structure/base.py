@@ -29,8 +29,8 @@ class AtomicSite(Serializable):
         if self.is_nonstandard():
            return
 
-        print(f'Species = {self.species}')
-        print(f'Occupancy is {self.occupancy}')
+        # print(f'Species = {self.species}')
+        # print(f'Occupancy is {self.occupancy}')
         if not 0 <= self.occupancy <= 1:
             raise ValueError('Occupancy must be between 0 and 1')
 

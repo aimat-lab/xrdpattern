@@ -60,7 +60,7 @@
 60	Pbcn	Pnca	Pbna	Pcnb	Pcan	Pnab Pcan
 61	Pbca	Pcab Pcab
 62	Pnma	Pbnm	Pmcn	Pnam	Pmnb	Pcmn Pbnm Pcmn Pnam Pmnb Pmcn
-62	Pnma	Pbnm	Pmcn	Pnam	Pmnb	Pcmn Pbnm Pcmn Pnam Pmnb Pmcn
+63	Cmcm	Cbnn	Amma	Ancn	Bbmm	Bnna	Bmmb	Bcnn	Ccmm	Cnan	Amam	Annb
 64	Cmca	Cbnb	Abma	Accn	Bbcm	Bnaa	Bmab	Bccn	Ccmb	Cnaa	Acam	Abnb	Bbam	Bmcb
 65	Cmmm	Cban	Ammm	Ancb	Bmmm	Bcna
 66	Cccm	Cnnn	Amaa	Annn	Bbmb	Bnnn
