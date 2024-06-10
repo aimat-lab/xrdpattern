@@ -3,6 +3,7 @@ import os
 from dataclasses import dataclass
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.core import Label, Powder, CrystalStructure, Lengths, Angles, CrystalBase, Artifacts
+import re
 
 delim = ' '
 with open('ruff_spgs.txt', 'r') as f:
@@ -10,7 +11,8 @@ with open('ruff_spgs.txt', 'r') as f:
 rows = content.split('\n')
 to_int_dict = {}
 for r in rows:
-    entries = r.split('\t')
+    entries = re.split('[\t ]+', r)
+    print(f'Entries are {entries}')
     try:
         i = int(entries[0])
         for s in entries[1:]:
@@ -52,7 +54,17 @@ def extract_basename(fname):
     basename = "__".join(fname.split("__")[:2])
     return basename
 
+
+not_found_spgs = set()
 def to_int(rruff_spg : str) -> int:
+    rruff_spg = rruff_spg.replace('-','')
+    rruff_spg = rruff_spg.replace('_', '')
+    # rruff_spg = rruff_spg.replace('/', '')
+    print(f'Rruff spg, found in dict = {rruff_spg}, {rruff_spg in to_int_dict}')
+    if not rruff_spg in to_int_dict:
+        not_found_spgs.add(rruff_spg)
+        print(f'Not found spgs = {not_found_spgs}')
+
     return to_int_dict[rruff_spg]
 
 
@@ -102,5 +114,5 @@ if __name__ == "__main__":
 
         except Exception as e:
             print(f'Error tryin to parse {base_name}: {e.__class__}')
-            raise e
 
+    print(f'Not found spgs are {not_found_spgs}')
