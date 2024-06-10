@@ -8,6 +8,7 @@ from logging import getLogger
 from typing import Optional
 
 from holytools.fsys import FsysNode
+from holytools.userIO import TrackedInt
 from xrdpattern.parsing import ParserOptions, Parser, Orientation, Formats
 from xrdpattern.pattern import XrdPattern, PatternReport
 
@@ -62,8 +63,10 @@ class PatternDB:
 
         failed_fpath = []
         parsing_reports = []
+        tracker = TrackedInt(start_value=0, max_value=len(data_fpaths))
         for fpath in data_fpaths:
             try:
+                tracker.increment(to_add=1)
                 pattern_info_list = parser.get_pattern_info_list(fpath=fpath)
                 patterns += [XrdPattern(**info.to_dict()) for info in pattern_info_list]
                 parsing_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in patterns]

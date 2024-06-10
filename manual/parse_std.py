@@ -1,31 +1,14 @@
-# import os
-
-# from server import XRDServer
-# from submit import Submission
-# from locations import PathProvider, setup_local_env
-# from xrdpattern.xrd_file_io import FormatSelector
+from xrdpattern.database import PatternDB
 
 # ---------------------------------------------------------
-#
-# setup_local_env()
-# testServer = XRDServer()
 
-#
-# def parse_all():
-#     storage_path = PathProvider().get_storage_path(backup=False)
-#     print(storage_path)
-#     dir_paths = [os.path.join(storage_path, name) for name in  os.listdir(path=storage_path)]
-#
-#     for path in dir_paths:
-#         parse_directory(dir_path=path)
 
-#
-# def parse_directory(dir_path : str):
-#     print(f'-> Processing directory {dir_path}')
-#     new_submission = Submission(src_data=dir_path)
-#     target_dir = PathProvider().get_storage_path(is_raw_data=False, backup=True)
-#     new_submission.write_parsed_dir(target_dir_path=target_dir)
-#
-#
-# if __name__ == "__main__":
-#     parse_directory(dir_path='/home/daniel/data/mirror/local/raw/Simon_Schweidler_Ben_Breitung_2024_01_31')
+def parse_directory(input_dirpath : str, output_dirpath : str):
+    pattern_db = PatternDB.load(datafolder_path=input_dirpath, select_suffixes=['.raw'])
+    pattern_db.save(dirpath=output_dirpath)
+
+
+if __name__ == "__main__":
+    out_dirpath = '/home/daniel/Drive/data/workspace/opxrd'
+    in_dirpath = '/home/daniel/Drive/data/opxrd/v0_backup/breitung_schweidler_0/data'
+    parse_directory(input_dirpath=in_dirpath, output_dirpath=out_dirpath)
