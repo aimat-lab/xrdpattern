@@ -1,0 +1,230 @@
+1	P1	A1	B1	C1	I1	F1
+2	P1	A1	B1	C1	I1	F1
+3	P2
+4	P21
+5	A2	A21	B2	B21	C2	C21
+6	Pm
+7	Pa	Pb	Pc
+8	Am	Ab	Ac	Bm	Ba	Bc	Cm	Ca	Cb
+9	Aa	An	Bb	Bn	Cc	Cn
+10	P2/m
+11	P21/m
+12	A2/m	A21/b	A21/c	B2/m	B21/a	B21/c	C2/m	C21/a	C21/b
+13	P2/a	P2/b	P2/c
+14	P21/a	P21/b	P21/c	P21/n
+15	A2/a	A21/n	B2/b	B21/n	C2/c	C21/n
+16	P222
+17	P2221	P2212	P2122
+18	P21212	P21221	P22121
+19	P212121
+20	A2122	B2212	C2221	A212121	B212121	C212121
+21	A222	B222	C222	A22121	B21221	C21212
+22	F222	F212121
+23	I222
+24	I212121
+25	P2mm	Pm2m	Pmm2
+26	Pmc21	P21ma	Pb21m	Pm21b	Pcm21	P21am
+27	Pcc2	P2aa	Pb2b
+28	Pma2	P2mb	Pc2m	Pm2a	Pbm2	P2cm
+29	Pca21	P21ab	Pc21b	Pb21a	Pbc21	P21ca
+30	Pnc2	P2na	Pb2n	Pn2b	Pcn2	P2an
+31	Pmn21	P21mn	Pn21m	Pm21n	Pnm21	P21nm
+32	Pba2	P2cb	Pc2a
+33	Pna21	P21nb	Pc21n	Pn21a	Pbn21	P21cn
+34	Pnn2	P2nn	Pn2n
+35	Cmm2	A2mm	Bm2m	Cba2	A2cb	Bc2a
+36	A21am	A21ma	A21cn	A21nb	Bb21m	Bm21b	Bn21a	Bc21n	Ccm21	Cmc21	Cbn21	Cna21
+37	A2aa	A2nn	Bb2b	Bn2n	Ccc2	Cnn2;
+38	Amm2	Am2m	Anc21	An21b	B2mm	Bmm2	B21na	Bcn21	C2mm	Cm2m	Cb21n	C21an
+39	Abm2	Ac2m	Acc21	Ab21b	B2cm	Bma2	B21aa	Bcc21	Cm2a	C2mb	Cb21b	C21aa
+40	Ama2	Am2a	Ann21	An21n	B2mb	Bbm2	B21nn	Bnn21	Cc2m	C2cm	Cn21n	C21nn
+41	Aba2	Ac2a	Acn21	Ab21n	B2cb	Bba2	B21an	Bnc21	Cc2a	C2cb	Cn21b	C21na
+42	Fmm2	Fbc21	Fca21	Fnn2	Fm2m	Fb21a	Fc21b	Fn2n
+43	Fdd2	Fdd21	F2dd	F21dd	Fd2d	Fd21d
+44	Imm2	Inn21	I2mm	I21nn	Im2m	In21n
+45	Iba2	Icc21	I2cb	I21aa	Ic2a	Ib21b
+46	Ima2	Inc21	I2mb	I21na	Ic2m	Ib21n	Im2a	In21b	Ibm2	Icn21	I2cm	I21an
+47	Pmmm
+48	Pnnn
+49	Pccm	Pmaa	Pbmb
+50	Pban	Pncb	Pcna
+51	Pmma	Pbmm	Pmcm	Pmam	Pmmb	Pcmm
+52	Pnna	Pbnn	Pncn	Pnan	Pnnb	Pcnn
+53	Pmna	Pbmn	Pncm	Pman	Pnmb	Pcnm
+54	Pcca	Pbaa	Pbcb	Pbab	Pccb	Pcaa
+55	Pbam	Pmcb	Pcma
+56	Pccn	Pnaa	Pbnb
+57	Pbcm	Pmca	Pbma	Pcmb	Pcam	Pmab
+58	Pnnm	Pmnn	Pnmn
+59	Pmmn	Pnmm	Pmnm
+60	Pbcn	Pnca	Pbna	Pcnb	Pcan	Pnab
+61	Pbca	Pcab
+62	Pnma	Pbnm	Pmcn	Pnam	Pmnb	Pcmn
+63	Cmcm	Cbnn	Amma	Ancn	Bbmm	Bnna	Bmmb	Bcnn	Ccmm	Cnan	Amam	Annb
+64	Cmca	Cbnb	Abma	Accn	Bbcm	Bnaa	Bmab	Bccn	Ccmb	Cnaa	Acam	Abnb	Bbam	Bmcb
+65	Cmmm	Cban	Ammm	Ancb	Bmmm	Bcna
+66	Cccm	Cnnn	Amaa	Annn	Bbmb	Bnnn
+67	Cmma	Cbab	Abmm	Accb	Bmcm	Bcaa	Bmam	Bcca	Cmmb	Cbaa	Acmm	Abcb
+68	Ccca	Cnnb	Abaa	Acnn	Bbcb	Anan	Bbab	Bncn	Cccb	Cnna	Acaa	Abnn
+69	Fmmm	Fbca	Fcab	Fnnn
+70	Fddd
+71	Immm	Innn
+72	Ibam	Iccn	Imcb	Inaa	Icma	Ibnb
+73	Ibca	Icab
+74	Imma	Innb	Ibmm	Icnn	Imcm	Inan	Imam	Incn	Immb	Inna	Icmm	Ibnn
+75	P4	C4
+76	P41	C41
+77	P42	C42
+78	P43	C43
+79	I4	F4
+80	I41	F41
+81	P4	C4
+82	I4	F4
+83	P4/m	C4/m
+84	P42/m	C42/m
+85	P4/n	C4/n
+86	P42/n	C42/n
+87	I4/m	F4/m
+88	I41/a	F41/a
+89	P422	C422
+90	P4212	C4221
+91	P4122	C4122
+92	P41212	C41221
+93	P4222	C4222
+94	P42212	C42221
+95	P4322	C4322
+96	P43212	C43221
+97	I422	F422
+98	I4122	F4122
+99	P4mm	C4mm
+100	P4bm	C4mb
+101	P42cm	C42mc
+102	P42nm	C42mn
+103	P4cc	C4cc
+104	P4nc	C4cn
+105	P42mc	C42cm
+106	P42bc	C42cb
+107	I4mm	F4mm
+108	I4cm	F4mc
+109	I41md	F41dm
+110	I41cd	F41dc
+111	P42m	C4m2
+112	P42c	C4c2
+113	P421m	C4m21
+114	P421c	C4c21
+115	P4m2	C42m
+116	P4c2	C42c
+117	P4bc	C42b
+118	P4n2	C42n
+119	I4m2	F42m
+120	I4c2	F42c
+121	I42m	F4m2
+122	I42d	F4d2
+123	P4/mmm	C4/mmm	P4/m2/m2/m	C4/m2/m2/m
+124	P4/mcc	C4/mcc	P4/m2/c2/c	C4/m2/c2/c
+125	P4/nbm	C4/nmb	P4/n2/b2/m	C4/n2/m2/b
+126	P4/nnc	C4/ncn	P4/n2/n2/c	C4/n2/c2/n
+127	P4/mbm	C4/mmb	P4/m21/b2/m	C4/m2/m21/b
+128	P4/mnc	C4/mcn	P4/m21/n2/c	C4/m2/c21/n
+129	P4/nmm	C4/nmm	P4/n21/m2/m	C4/n2/m21/m
+130	P4/ncc	C4/ncc	P4/n21/c2/c	C4/n2/c21/c
+131	P42/mmc	C42/mcm	P42/m2/m2/c	C42/m2/c2/m
+132	P42/mcm	C42/mmc	P42/m2/c2/m	C42/m2/m2/c
+133	P42/nbc	C42/ncb	P42/n2/b2/c	C42/n2/c2/b
+134	P42/nnm	C42/nmn	P42/n2/n2/m	C42/n2/m2/n
+135	P42/mbc	C42/mcb	P42/m21/b2/c	C42/m2/c21/b
+136	P42/mnm	C42/mmn	P42/m21/n2/m	C42/m2/m21/n
+137	P42/nmc	C42/ncm	P42/n21/m2/c	C42/n2/c21/m
+138	P42/ncm	C42/nmc	P42/n21/c2/m	C42/n2/m21/c
+139	I4/mmm	F4/mmm	I4/m2/m2/m	F4/m2/m2/m
+140	I4/mcm	F4/mmc	I4/m2/c2/m	F4/m2/m2/c
+141	I41/amd	F41/adm	I41/a2/m2/d	F41/a2/d2/m
+142	I41/acd	F41/adc	I41/a2/c2/d	F41/a2/d2/c
+143	P3
+144	P31
+145	P32
+146	R3
+147	P3
+148	R3
+149	P312
+150	P321
+151	P3112
+152	P3121
+153	P3212
+154	P3221
+155	R32
+156	P3m1
+157	P31m
+158	P3c1
+159	P31c
+160	R3m
+161	R3c
+162	P31m	P312/m
+163	P31c	P312/c
+164	P3m1	P32/m1
+165	P3c1	P32/c1
+166	R3m	R32/m
+167	R3c	R32/c
+168	P6
+169	P61
+170	P65
+171	P62
+172	P64
+173	P63
+174	P6
+175	P6/m
+176	P63/m
+177	P622
+178	P6122
+179	P6522
+180	P6222
+181	P6422
+182	P6322
+183	P6mm
+184	P6cc
+185	P63cm
+186	P63mc
+187	P6m2
+188	P6c2
+189	P62m
+190	P62c
+191	P6/mmm	P6/m2/m2/m
+192	P6/mcc	P6/m2/c2/c
+193	P63/mcm	P63/m2/c2/m
+194	P63/mmc	P63/m2/m2/c
+195	P23
+196	F23
+197	I23
+198	P213
+199	I213
+200	Pm3	P2/m3
+201	Pn3	P2/n3
+202	Fm3	F2/m3
+203	Fd3	F2/d3
+204	Im3	I2/m3
+205	Pa3	P21/a3
+206	Ia3	I21/a3
+207	P432
+208	P4232
+209	F432
+210	F4132
+211	I432
+212	P4332
+213	P4132
+214	I4132
+215	P43m
+216	F43m
+217	I43m
+218	P43n
+219	F43c
+220	I43d
+221	Pm3m	P4/m32/m
+222	Pn3n	P4/n32/n
+223	Pm3n	P41/m32/n
+224	Pn3m	P41/n32/m
+225	Fm3m	F4/m32/m
+226	Fm3c	F4/m32/c
+227	Fd3m	F41/d32/m
+228	Fd3c	F41/d32/c
+229	Im3m	I4/m32/m
+230	Ia3d	I41/a32/d	Ia3d
