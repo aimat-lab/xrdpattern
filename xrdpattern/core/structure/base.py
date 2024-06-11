@@ -1,104 +1,14 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
-from typing import Optional, Union
-
-import torch
-from pymatgen.core import Species
+from typing import Optional
 
 from holytools.abstract import Serializable
-from xrdpattern.core.constants import PhysicalConstants, Void, UnknownSite
-from xrdpattern.core.constants import ElementSymbol
+from xrdpattern.core.constants import PhysicalConstants, ElementSymbol
+from .atomic_site import AtomicSite
 import math
 
-ScatteringParams = tuple[float, float, float, float, float, float, float, float]
 # ---------------------------------------------------------
-
-@dataclass
-class AtomicSite(Serializable):
-    """x,y,z are the coordinates of the site given in the basis of the lattice"""
-    x: float
-    y: float
-    z: float
-    occupancy : float
-    species : Union[Species, Void, UnknownSite]
-    wyckoff_letter : Optional[str] = None
-
-    def __post_init__(self):
-        if self.is_nonstandard():
-           return
-
-        # print(f'Species = {self.species}')
-        # print(f'Occupancy is {self.occupancy}')
-        if not 0 <= self.occupancy <= 1:
-            raise ValueError('Occupancy must be between 0 and 1')
-
-    @classmethod
-    def make_void(cls) -> AtomicSite:
-        return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=0, species=Void())
-
-    @classmethod
-    def make_placeholder(cls):
-        return cls(x=torch.nan, y=torch.nan, z=torch.nan, occupancy=torch.nan, species=UnknownSite())
-
-    def is_nonstandard(self) -> bool:
-        if not isinstance(self.species, Species):
-            return True
-        return False
-
-    # ---------------------------------------------------------
-    # get properties
-
-    def as_list(self) -> list[float]:
-        site_arr = [*self.get_scattering_params(), self.x, self.y, self.z, self.occupancy]
-        return site_arr
-
-    # TODO: These are currently the scattering factors in pymat gen atomic_scattering_parmas.json
-    # These are *different* paramters from what you may commonly see e.g. here (https://lampz.tugraz.at/~hadley/ss1/crystaldiffraction/atomicformfactors/formfactors.php)
-    # since pymatgen uses a different formula to compute the form factor
-    def get_scattering_params(self) -> ScatteringParams:
-        if isinstance(self.species, Species):
-            values = PhysicalConstants.get_scattering_params(species=self.species)
-        elif isinstance(self.species, Void):
-            values = (0, 0), (0, 0), (0, 0), (0, 0)
-        elif isinstance(self.species, UnknownSite):
-            fnan = float('nan')
-            values = (fnan,fnan), (fnan,fnan), (fnan,fnan), (fnan,fnan)
-        else:
-            raise ValueError(f'Unknown species type: {self.species}')
-
-        (a1, b1), (a2, b2), (a3, b3), (a4, b4) = values
-        return a1, b1, a2, b2, a3, b3, a4, b4
-
-
-    # ---------------------------------------------------------
-    # serialization
-
-    def to_str(self) -> str:
-        # print(f'Species = {self.species}')
-        the_dict = {'x': self.x, 'y': self.y, 'z': self.z, 'occupancy': self.occupancy,
-                    'species': str(self.species),
-                    'wyckoff_letter': self.wyckoff_letter}
-
-        return json.dumps(the_dict)
-
-    @classmethod
-    def from_str(cls, s: str):
-        the_dict = json.loads(s)
-        species_symbol = the_dict['species']
-        if species_symbol == Void.symbol:
-            species = Void()
-        elif species_symbol == UnknownSite.symbol:
-            species = UnknownSite()
-        else:
-            # print(f'Species symbol = {species_symbol}')
-            species = Species.from_str(species_symbol)
-
-        return cls(x=the_dict['x'], y=the_dict['y'], z=the_dict['z'], occupancy=the_dict['occupancy'],
-                   species=species, wyckoff_letter=the_dict['wyckoff_letter'])
-
-
 
 class CrystalBase(Serializable):
     def __init__(self, atomic_sites : Optional[list[AtomicSite]] = None):
@@ -108,16 +18,45 @@ class CrystalBase(Serializable):
         else:
             self.atomic_sites : list[AtomicSite] = []
 
-    def to_str(self) -> str:
-        return json.dumps([site.to_str() for site in self])
+    def calculate_atomic_volume(self) -> float:
+        total_atomic_volume = 0
+        for site in self.get_non_void_sites():
+            element_symbol : ElementSymbol = site.species.element.symbol
+            covalent_radius  = PhysicalConstants.get_covalent(element_symbol=element_symbol)
+            vdw_radius = PhysicalConstants.get_vdw_radius(element_symbol=element_symbol)
 
-    def __getitem__(self, item):
-        return self.atomic_sites[item]
+            radius = (covalent_radius + vdw_radius) / 2
+            atomic_volume = 4 / 3 * math.pi * radius ** 3
+            total_atomic_volume += atomic_volume * site.occupancy
 
-    @classmethod
-    def from_str(cls, s: str):
-        site_strs = json.loads(s)
-        return cls([AtomicSite.from_str(site_str) for site_str in site_strs])
+        return total_atomic_volume
+
+    def get_non_void_sites(self) -> list[AtomicSite]:
+        return [site for site in self if not site.is_nonstandard()]
+
+    def as_site_dictionaries(self) -> dict:
+        coordinate_map = {}
+        for atom_site in self:
+            coords = (atom_site.x, atom_site.y, atom_site.z)
+            if not coords in coordinate_map:
+                coordinate_map[coords] = {}
+            coordinate_map[coords][atom_site.species] = atom_site.occupancy
+
+        print(f'Coordinate map = {coordinate_map}')
+        return coordinate_map
+
+    def is_empty(self) -> bool:
+        return len(self) == 0
+
+    def get_wyckoffs(self) -> list[str]:
+        wyckoff_symbols = [site.wyckoff_letter for site in self]
+        if None in wyckoff_symbols:
+            raise ValueError('Wyckoff symbols are not defined for all sites')
+
+        return wyckoff_symbols
+
+    # ---------------------------------------------------------
+    # list interface
 
     def append(self, item : AtomicSite):
         self.atomic_sites.append(item)
@@ -141,43 +80,16 @@ class CrystalBase(Serializable):
     def __len__(self):
         return len(self.atomic_sites)
 
+    def __getitem__(self, item):
+        return self.atomic_sites[item]
 
-    def calculate_atomic_volume(self) -> float:
-        total_atomic_volume = 0
-        for site in self.get_non_void_sites():
-            element_symbol : ElementSymbol = site.species.element.symbol
-            covalent_radius  = PhysicalConstants.get_covalent(element_symbol=element_symbol)
-            vdw_radius = PhysicalConstants.get_vdw_radius(element_symbol=element_symbol)
+    # ---------------------------------------------------------
+    # save/load
 
-            radius = (covalent_radius + vdw_radius) / 2
-            atomic_volume = 4 / 3 * math.pi * radius ** 3
-            total_atomic_volume += atomic_volume * site.occupancy
+    @classmethod
+    def from_str(cls, s: str):
+        site_strs = json.loads(s)
+        return cls([AtomicSite.from_str(site_str) for site_str in site_strs])
 
-        return total_atomic_volume
-
-
-    def get_non_void_sites(self) -> list[AtomicSite]:
-        return [site for site in self if not site.is_nonstandard()]
-
-
-    def as_site_dictionaries(self) -> dict:
-        coordinate_map = {}
-        for atom_site in self:
-            coords = (atom_site.x, atom_site.y, atom_site.z)
-            if not coords in coordinate_map:
-                coordinate_map[coords] = {}
-            coordinate_map[coords][atom_site.species] = atom_site.occupancy
-
-        print(f'Coordinate map = {coordinate_map}')
-        return coordinate_map
-
-
-    def is_empty(self) -> bool:
-        return len(self) == 0
-
-    def get_wyckoffs(self) -> list[str]:
-        wyckoff_symbols = [site.wyckoff_letter for site in self]
-        if None in wyckoff_symbols:
-            raise ValueError('Wyckoff symbols are not defined for all sites')
-
-        return wyckoff_symbols
+    def to_str(self) -> str:
+        return json.dumps([site.to_str() for site in self])

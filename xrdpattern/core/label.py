@@ -8,7 +8,8 @@ import torch
 from torch import Tensor
 
 from xrdpattern.core.structure import Angles, Lengths
-from xrdpattern.core.structure import CrystalStructure, CrystalBase, AtomicSite
+from xrdpattern.core.structure import CrystalStructure, CrystalBase
+from xrdpattern.core import AtomicSite
 
 # ---------------------------------------------------------
 

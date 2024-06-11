@@ -8,10 +8,11 @@ import numpy as np
 from pymatgen.core import Structure, Lattice
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.groups import SpaceGroup
-
-from .base import AtomicSite, CrystalBase
-from .lattice_params import Angles, Lengths
 from holytools.abstract import JsonDataclass
+
+from .base import CrystalBase
+from .atomic_site import AtomicSite
+from .lattice_params import Angles, Lengths
 
 # ---------------------------------------------------------
 
@@ -42,9 +43,7 @@ class CrystalStructure(JsonDataclass):
 
 
     def standardize(self):
-        """Permutes lattice primitives such that a <= b <=c and permutes lattice sites
-        such that i > j => d(i) > d(j) with d(i) = (x_i**2+y_i**2+z_i**2)
-        Note: d(i) is a not the Euclidean distance but nevertheless provides an unambiguous ordering"""
+        """Permutes lattice primitives such that a <= b <=c and permutes lattice sites such that i > j => d(i) > d(j) with d(i) = (x_i**2+y_i**2+z_i**2)"""
         a,b,c = self.lengths
         alpha, beta, gamma = self.angles
         sort_permutation = get_sorting_permutation(a,b,c)
