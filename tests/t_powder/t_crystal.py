@@ -17,7 +17,7 @@ class TestCifParsing(Unittest):
         cif_fpath = LabelExamples.get_cif_fpath(secondary=True)
         print(f'Cif content from example: {PlaintextFile.get_text(cif_fpath)}')
         cls.pymatgen_structure = Structure.from_file(filename=cif_fpath)
-        crystal = CrystalStructure.from_cif(fpath=cif_fpath)
+        crystal = CrystalStructure.from_file(fpath=cif_fpath)
         crystal.calculate_properties()
         cls.crystal = crystal
 

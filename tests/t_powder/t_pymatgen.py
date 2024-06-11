@@ -19,7 +19,7 @@ class TestPymatgenSpacegroup(Unittest):
                 break
             fpath = os.path.join(cif_dirpath, cif_file)
             try:
-                structure = CrystalStructure.from_cif(fpath=fpath)
+                structure = CrystalStructure.from_file(fpath=fpath)
                 structure.calculate_properties()
                 computed_sg = structure.space_group
                 print(f'Computed space group = {computed_sg}')

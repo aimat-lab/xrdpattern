@@ -4,24 +4,26 @@ from dataclasses import dataclass, fields
 from typing import Optional
 
 import numpy as np
+from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
 
-from holytools.abstract.serialization import Serializable, JsonDataclass
+from holytools.abstract.serialization import JsonDataclass
 from xrdpattern.core.label import Label
-from numpy.typing import NDArray
+
 
 # -------------------------------------------
 
 @dataclass
 class PatternData(JsonDataclass):
-    two_theta_values : list[float]
-    intensities : list[float]
+    two_theta_values : NDArray
+    intensities : NDArray
     label : Label
     name : Optional[str] = None
 
     @classmethod
     def make_unlableed(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
         metadata = Label.make_empty()
+        two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
         return cls(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
     def to_dict(self):

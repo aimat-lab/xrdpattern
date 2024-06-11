@@ -3,6 +3,9 @@ from __future__ import annotations
 import os.path
 from typing import Optional, Iterator, Tuple
 from dataclasses import dataclass
+
+import numpy as np
+
 from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData
 from .data_files import XrdFormat, Formats, get_xylib_repr
@@ -71,14 +74,16 @@ class Parser:
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         metadata = Parser.parse_xylib_header(header_str=header)
 
-        angles, intensities= [], []
+        two_theta_values, intensities= [], []
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
         for row in data_rows:
             deg_str, intensity_str = row.split()
             deg, intensity = float(deg_str), float(intensity_str)
-            angles.append(deg)
+            two_theta_values.append(deg)
             intensities.append(intensity)
-        return PatternData(two_theta_values=angles, intensities=intensities, label=metadata)
+
+        two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
+        return PatternData(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
 
     @staticmethod

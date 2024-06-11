@@ -14,7 +14,7 @@ class TestXrdPattern(PatternBaseTest):
     def test_save_load_roundtrip(self):
         unlabeled_pattern = XrdPattern.load(fpath=self.get_bruker_fpath())
         labeled_pattern = XrdPattern.load(fpath=self.get_bruker_fpath())
-        labeled_pattern.label = Label.from_cif(LabelExamples.get_cif_fpath())
+        labeled_pattern.label = Label.from_file(cif_fpath=LabelExamples.get_cif_fpath())
 
         reloaded_unlabeled = self.save_and_load(unlabeled_pattern)
         reloaded_labeled = self.save_and_load(labeled_pattern)

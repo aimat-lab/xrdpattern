@@ -60,7 +60,7 @@ class Label(JsonDataclass):
         self.domain_region : QuantityRegion = self.add_region_quantity(domain_list)
 
     @classmethod
-    def from_cif(cls, cif_fpath : str) -> Label:
+    def from_file(cls, cif_fpath : str) -> Label:
         structure = CrystalStructure.from_cif(cif_fpath)
         powder = Powder(crystal_structure=structure)
         artifacts = Artifacts(primary_wavelength=None,

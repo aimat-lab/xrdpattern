@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, asdict
 
-from holytools.abstract import JsonDataclass, Serializable
+from holytools.abstract import Serializable
 
 LatticeParams = tuple[float,float,float,float,float,float]
 

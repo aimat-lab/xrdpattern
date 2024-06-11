@@ -1,3 +1,5 @@
+import numpy as np
+
 from xrdpattern.core import PatternData
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
 from ...core import Artifacts, Label
@@ -47,6 +49,7 @@ class StoeReader(BinaryReader):
         two_theta_values = self._get_x_values()
         intensities = self._get_y_values()
 
+        two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
         return PatternData(two_theta_values=two_theta_values, intensities=intensities, label=experiment)
 
 

@@ -75,7 +75,6 @@ class CrystalStructure(JsonDataclass):
     @classmethod
     def from_file(cls, fpath : str) -> CrystalStructure:
         pymatgen_structure = Structure.from_file(fpath)
-        Structure.from_str()
         crystal_structure = cls.from_pymatgen(pymatgen_structure)
         return crystal_structure
 

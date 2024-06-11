@@ -111,6 +111,9 @@ class CrystalBase(Serializable):
     def to_str(self) -> str:
         return json.dumps([site.to_str() for site in self])
 
+    def __getitem__(self, item):
+        return self.atomic_sites[item]
+
     @classmethod
     def from_str(cls, s: str):
         site_strs = json.loads(s)

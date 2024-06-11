@@ -22,7 +22,7 @@ class LabelExamples:
 
     @staticmethod
     def get_crystal(mute : bool = False):
-        crystal_structure = CrystalStructure.from_cif(fpath=cif_fpath)
+        crystal_structure = CrystalStructure.from_file(fpath=cif_fpath)
         if not mute:
             print(f'--> Cif content:\n {open(cif_fpath).read()}')
             print(f'--> Crystal structure:\n {crystal_structure}')
