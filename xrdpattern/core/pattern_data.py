@@ -30,23 +30,6 @@ class PatternData(Serializable):
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}
 
-    def to_str(self) -> str:
-        data = {
-            'two_theta_values': self.two_theta_values.tolist(),
-            'intensities': self.intensities.tolist(),
-            'label': self.label.to_str(),
-            'name': self.name
-        }
-        return json.dumps(data)
-
-    @classmethod
-    def from_str(cls, json_str: str) -> PatternData:
-        data = json.loads(json_str)
-        two_theta_values = np.array(data['two_theta_values'])
-        intensities = np.array(data['intensities'])
-        label = Label.from_str(data['label'])
-        name = data['name']
-        return cls(two_theta_values=two_theta_values, intensities=intensities, label=label, name=name)
 
 
     def get_standardized_map(self, start_val : float, stop_val : float, num_entries : int) -> (list[float], list[float]):
@@ -71,14 +54,33 @@ class PatternData(Serializable):
         return std_angles,std_intensities
 
 
+    def to_str(self) -> str:
+        the_dict = {'two_theta_values' : self.two_theta_values.tolist(),
+                    'intensities' : self.intensities.tolist(),
+                    'label' : self.label.to_str(),
+                    'name' : str(self.name)}
+
+        return json.dumps(the_dict)
+
+    @classmethod
+    def from_str(cls, json_str: str) -> PatternData:
+        data = json.loads(json_str)
+        two_theta_values = np.array(data['two_theta_values'])
+        intensities = np.array(data['intensities'])
+        label = Label.from_str(data['label'])
+        name = data['name']
+        return cls(two_theta_values=two_theta_values, intensities=intensities, label=label, name=name)
+
+
     def __eq__(self, other : PatternData):
         if not isinstance(other, PatternData):
             return False
 
-        angles_equal = self.two_theta_values == other.two_theta_values
-        intensities_equal = self.intensities == other.intensities
+        angles_equal = np.array_equal(self.two_theta_values, other.two_theta_values)
+        intensities_equal = np.array_equal(self.intensities, other.intensities)
+        labels_equal = self.label.list_repr = other.label.list_repr
 
-        return angles_equal and intensities_equal
+        return angles_equal and intensities_equal and labels_equal
 
 
 if __name__ == '__main__':

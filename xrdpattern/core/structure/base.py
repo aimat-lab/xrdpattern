@@ -76,7 +76,7 @@ class AtomicSite(Serializable):
     # serialization
 
     def to_str(self) -> str:
-        print(f'Species = {self.species}')
+        # print(f'Species = {self.species}')
         the_dict = {'x': self.x, 'y': self.y, 'z': self.z, 'occupancy': self.occupancy,
                     'species': str(self.species),
                     'wyckoff_letter': self.wyckoff_letter}
@@ -92,7 +92,7 @@ class AtomicSite(Serializable):
         elif species_symbol == UnknownSite.symbol:
             species = UnknownSite()
         else:
-            print(f'Species symbol = {species_symbol}')
+            # print(f'Species symbol = {species_symbol}')
             species = Species.from_str(species_symbol)
 
         return cls(x=the_dict['x'], y=the_dict['y'], z=the_dict['z'], occupancy=the_dict['occupancy'],

@@ -59,22 +59,12 @@ class Label(JsonDataclass):
         domain_list = [self.is_simulated]
         self.domain_region : QuantityRegion = self.add_region_quantity(domain_list)
 
-    @classmethod
-    def from_file(cls, cif_fpath : str) -> Label:
-        structure = CrystalStructure.from_cif(cif_fpath)
-        powder = Powder(crystal_structure=structure)
-        artifacts = Artifacts(primary_wavelength=None,
-                              secondary_wavelength=None,
-                              secondary_to_primary=None)
-
-        return cls(powder=powder, artifacts=artifacts, is_simulated=False)
 
     def add_region_quantity(self, list_obj : list) -> QuantityRegion:
         current_len = len(self.list_repr)
         region = QuantityRegion(obj=list_obj, start=current_len, end=current_len + len(list_obj))
         self.list_repr += list_obj
         return region
-
 
     @staticmethod
     def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
@@ -93,22 +83,12 @@ class Label(JsonDataclass):
         return padded_base
 
 
-    @classmethod
-    def make_empty(cls) -> Label:
-        lengths = Lengths(a=torch.nan, b=torch.nan, c=torch.nan)
-        angles= Angles(alpha=torch.nan, beta=torch.nan, gamma=torch.nan)
-        base = CrystalBase()
+    def to_tensor(self) -> LabelTensor:
+        tensor = torch.tensor(self.list_repr)
+        return LabelTensor(tensor)
 
-        structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
-        # print(f'Empty crystal structure spacegroups = {structure.space_group}')
-        sample = Powder(crystallite_size=torch.nan, crystal_structure=structure)
-        artifacts = Artifacts(primary_wavelength=torch.nan,
-                              secondary_wavelength=torch.nan,
-                              secondary_to_primary=torch.nan,
-                              shape_factor=torch.nan)
-
-        return cls(sample, artifacts, is_simulated=False)
-
+    # ---------------------------------------------------------
+    # properties
 
     def is_partial_label(self) -> bool:
         powder_tensor = torch.tensor(self.list_repr)
@@ -117,13 +97,6 @@ class Label(JsonDataclass):
         print(f'Nanvalues, non-nan values = {is_nan.sum()}, {is_nan.numel() - is_nan.sum()}')
 
         return any(is_nan.tolist())
-
-    def to_tensor(self) -> LabelTensor:
-        tensor = torch.tensor(self.list_repr)
-        return LabelTensor(tensor)
-
-    # ---------------------------------------------------------
-    # properties
 
     @property
     def crystallite_size(self) -> float:
@@ -153,6 +126,35 @@ class Label(JsonDataclass):
     def get_length(cls):
         empty = cls.make_empty()
         return len(empty.list_repr)
+
+    # ---------------------------------------------------------
+    # save/load
+
+    @classmethod
+    def from_file(cls, cif_fpath: str) -> Label:
+        structure = CrystalStructure.from_file(cif_fpath)
+        powder = Powder(crystal_structure=structure)
+        artifacts = Artifacts(primary_wavelength=None,
+                              secondary_wavelength=None,
+                              secondary_to_primary=None)
+
+        return cls(powder=powder, artifacts=artifacts, is_simulated=False)
+
+    @classmethod
+    def make_empty(cls) -> Label:
+        lengths = Lengths(a=torch.nan, b=torch.nan, c=torch.nan)
+        angles = Angles(alpha=torch.nan, beta=torch.nan, gamma=torch.nan)
+        base = CrystalBase()
+
+        structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
+        # print(f'Empty crystal structure spacegroups = {structure.space_group}')
+        sample = Powder(crystallite_size=torch.nan, crystal_structure=structure)
+        artifacts = Artifacts(primary_wavelength=torch.nan,
+                              secondary_wavelength=torch.nan,
+                              secondary_to_primary=torch.nan,
+                              shape_factor=torch.nan)
+
+        return cls(sample, artifacts, is_simulated=False)
 
 
 @dataclass
