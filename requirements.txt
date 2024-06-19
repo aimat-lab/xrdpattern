@@ -1,4 +1,4 @@
-numpy
+numpy < 2.0.0
 scipy
 matplotlib
 holytools @ git+https://git@github.com/Somerandomguy10111/holytools.git
