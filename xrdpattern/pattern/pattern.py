@@ -102,19 +102,19 @@ class XrdPattern(PatternData):
         """
 
         if apply_standardization:
-            start, stop = self.get_std_range()
-            num_entries = self.get_std_num_entries()
+            start, stop = self.std_two_theta_range()
+            num_entries = self.std_num_entries()
             intensity_map = self.get_standardized_map(start_val=start, stop_val=stop, num_entries=num_entries)
         else:
             intensity_map = (self.two_theta_values, self.intensities)
         return intensity_map
 
     @classmethod
-    def get_std_num_entries(cls) -> int:
+    def std_num_entries(cls) -> int:
         return 2048
 
     @classmethod
-    def get_std_range(cls) -> (float, float):
+    def std_two_theta_range(cls) -> (float, float):
         return 0, 180
 
     # -------------------------------------------

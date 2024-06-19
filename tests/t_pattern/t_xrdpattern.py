@@ -31,7 +31,7 @@ class TestXrdPattern(PatternBaseTest):
     def test_standardize(self):
         pattern = self.pattern
         two_theta_values, _ = pattern.get_pattern_data(apply_standardization=True)
-        self.assertTrue(len(two_theta_values) == XrdPattern.get_std_num_entries())
+        self.assertTrue(len(two_theta_values) == XrdPattern.std_num_entries())
 
     def test_data_ok(self):
         raw_data = self.pattern.get_pattern_data(apply_standardization=False)
