@@ -2,7 +2,9 @@ import os.path
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
 from tests.base_tests import PatternBaseTest
-from xrdpattern.core import LabelExamples, Label
+
+from xrdpattern.examples import LabelExamples
+from xrdpattern.core import Label
 import tempfile
 
 

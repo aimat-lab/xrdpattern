@@ -1,8 +1,8 @@
 import os
 from xrdpattern.core import Label, CrystalStructure, CrystalBase, Artifacts, Powder
 
-cif_fpath = os.path.join(os.path.dirname(__file__), "test.cif")
-cif_fpath2 = os.path.join(os.path.dirname(__file__), 'test2.cif')
+cif_fpath = os.path.join(os.path.dirname(__file__), 'cifs', "test.cif")
+cif_fpath2 = os.path.join(os.path.dirname(__file__), 'cifs', 'test2.cif')
 
 # ---------------------------------------------------------
 

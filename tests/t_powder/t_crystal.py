@@ -7,7 +7,7 @@ from pymatgen.core.structure import Structure
 from holytools.devtools import Unittest
 from holytools.file import PlaintextFile
 from xrdpattern.core import CrystalStructure
-from xrdpattern.core import LabelExamples
+from xrdpattern.examples import LabelExamples
 
 # ---------------------------------------------------------
 

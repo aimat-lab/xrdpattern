@@ -1,5 +1,6 @@
 import os.path
 
+import xrdpattern.examples
 from xrdpattern.parsing import Formats
 from xrdpattern.pattern import XrdPattern
 from holytools.devtools import Unittest
@@ -39,9 +40,9 @@ class ParserBaseTest(Unittest):
 
     @staticmethod
     def get_example_dirpath() -> str:
-        dirpath = os.path.dirname(__file__)
-        example_dirpath = os.path.join(dirpath, 'examples')
-        return example_dirpath
+        dirpath = os.path.dirname(xrdpattern.examples.__file__)
+        xrd_examples_dirpath = os.path.join(dirpath, 'xrd_data')
+        return xrd_examples_dirpath
 
 
 class PatternBaseTest(ParserBaseTest):
