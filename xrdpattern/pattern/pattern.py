@@ -115,7 +115,7 @@ class XrdPattern(PatternData):
 
     @classmethod
     def get_std_range(cls) -> (float, float):
-        return 0, 90
+        return 0, 180
 
     # -------------------------------------------
     # view

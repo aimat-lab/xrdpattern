@@ -83,11 +83,11 @@ class CrystalStructure(JsonDataclass):
         crystal_structure = cls.from_pymatgen(pymatgen_structure)
         return crystal_structure
 
-
     @property
     def packing_density(self) -> float:
-        return self.base.calculate_atomic_volume() / self.volume_uc
-
+        volume_uc = self.volume_uc
+        atomic_volume = self.base.calculate_atomic_volume()
+        return atomic_volume/volume_uc
 
     def scale(self, target_density : float):
         volume_scaling = self.packing_density/target_density
