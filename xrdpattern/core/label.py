@@ -28,8 +28,8 @@ class QuantityRegion:
 
 @dataclass
 class Label(JsonDataclass):
-    powder : Powder
-    artifacts : Artifacts
+    powder : PowderSample
+    artifacts : ExperimentalArtifacts
     is_simulated : bool
 
     def __post_init__(self):
@@ -135,10 +135,10 @@ class Label(JsonDataclass):
     @classmethod
     def from_file(cls, cif_fpath: str) -> Label:
         structure = CrystalStructure.from_file(cif_fpath)
-        powder = Powder(crystal_structure=structure)
-        artifacts = Artifacts(primary_wavelength=None,
-                              secondary_wavelength=None,
-                              secondary_to_primary=None)
+        powder = PowderSample(crystal_structure=structure)
+        artifacts = ExperimentalArtifacts(primary_wavelength=None,
+                                          secondary_wavelength=None,
+                                          secondary_to_primary=None)
 
         return cls(powder=powder, artifacts=artifacts, is_simulated=False)
 
@@ -149,17 +149,17 @@ class Label(JsonDataclass):
         base = CrystalBase()
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
-        sample = Powder(crystallite_size=None, crystal_structure=structure, temp_in_celcius=None)
-        artifacts = Artifacts(primary_wavelength=None,
-                              secondary_wavelength=None,
-                              secondary_to_primary=None,
-                              shape_factor=None)
+        sample = PowderSample(crystallite_size=None, crystal_structure=structure, temp_in_celcius=None)
+        artifacts = ExperimentalArtifacts(primary_wavelength=None,
+                                          secondary_wavelength=None,
+                                          secondary_to_primary=None,
+                                          shape_factor=None)
 
         return cls(sample, artifacts, is_simulated=False)
 
 
 @dataclass
-class Artifacts(JsonDataclass):
+class ExperimentalArtifacts(JsonDataclass):
     primary_wavelength: Optional[float]
     secondary_wavelength: Optional[float]
     secondary_to_primary: Optional[float]
@@ -170,7 +170,7 @@ class Artifacts(JsonDataclass):
 
 
 @dataclass
-class Powder(JsonDataclass):
+class PowderSample(JsonDataclass):
     crystal_structure: CrystalStructure
     crystallite_size: Optional[float] = 500
     temp_in_celcius : Optional[float] = 20

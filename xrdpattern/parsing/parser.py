@@ -11,7 +11,7 @@ from xrdpattern.core import PatternData
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
 from xrdpattern.parsing.stoe import StoeReader
-from ..core import Label, Artifacts
+from ..core import Label, ExperimentalArtifacts
 
 
 # -------------------------------------------
@@ -123,7 +123,7 @@ class Parser:
             return val
 
         experiment = Label.make_empty()
-        experiment.artifacts = Artifacts(
+        experiment.artifacts = ExperimentalArtifacts(
             primary_wavelength=get_float('ALPHA1'),
             secondary_wavelength=get_float('ALPHA2'),
             secondary_to_primary=get_float('ALPHA_RATIO')

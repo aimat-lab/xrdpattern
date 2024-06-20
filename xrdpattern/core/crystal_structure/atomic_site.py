@@ -54,8 +54,6 @@ class AtomicSite(Serializable):
     # These are *different* paramters from what you may commonly see e.g. here (https://lampz.tugraz.at/~hadley/ss1/crystaldiffraction/atomicformfactors/formfactors.php)
     # since pymatgen uses a different formula to compute the form factor
     def get_scattering_params(self) -> ScatteringParams:
-        print(f'Type of species is {type(self.species)}')
-
         if isinstance(self.species, Species) or isinstance(self.species, Element):
             values = PhysicalConstants.get_scattering_params(species=self.species)
         elif isinstance(self.species, Void):
