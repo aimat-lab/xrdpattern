@@ -30,7 +30,7 @@ class TestXrdPattern(ParserBaseTest):
 
     def test_plot(self):
         if self.is_manual_mode:
-            self.skipTest(reason='Only available in manual mode')
+            self.skipTest(reason='Only available in manual_parsing mode')
 
     def test_standardize(self):
         pattern = self.pattern
