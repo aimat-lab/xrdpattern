@@ -70,6 +70,7 @@ class TestParserDatabase(ParserBaseTest):
 
         for db in [self.bruker_only_db, self.all_example_db]:
             self.assertIsInstance(db, PatternDB)
+        self.all_example_db.save(dirpath='/tmp/patterndb')
 
 
     def test_db_report_ok(self):

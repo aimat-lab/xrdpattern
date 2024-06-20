@@ -149,7 +149,7 @@ class Label(JsonDataclass):
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
         # print(f'Empty crystal crystal_structure spacegroups = {crystal_structure.space_group}')
-        sample = Powder(crystallite_size=torch.nan, crystal_structure=structure)
+        sample = Powder(crystallite_size=torch.nan, crystal_structure=structure, temp_in_celcius=torch.nan)
         artifacts = Artifacts(primary_wavelength=torch.nan,
                               secondary_wavelength=torch.nan,
                               secondary_to_primary=torch.nan,
@@ -173,7 +173,7 @@ class Artifacts(JsonDataclass):
 class Powder(JsonDataclass):
     crystal_structure: CrystalStructure
     crystallite_size: Optional[float] = 500
-    temp_in_celcius : Optional[int] = 20
+    temp_in_celcius : Optional[float] = 20
 
 
 class LabelTensor(Tensor):
