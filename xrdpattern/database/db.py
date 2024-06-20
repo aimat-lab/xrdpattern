@@ -47,7 +47,7 @@ class PatternDB:
              csv_patterndata_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
 
 
-        options = ParserOptions(select_suffixes=select_suffixes,
+        options = ParserOptions(selected_suffixes=select_suffixes,
                                 default_wavelength=default_wavelength,
                                 pattern_data_orientation=csv_patterndata_orientation)
 
@@ -59,7 +59,7 @@ class PatternDB:
 
         patterns : list[XrdPattern] = []
         data_fpaths = PatternDB.get_datafile_fpaths(datafolder_path=datafolder_path,
-                                                    select_formats=options.select_suffixes)
+                                                    select_formats=options.selected_suffixes)
 
         failed_fpath = []
         parsing_reports = []

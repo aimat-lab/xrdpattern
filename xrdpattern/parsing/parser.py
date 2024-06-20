@@ -18,16 +18,19 @@ from ..core import Label, Artifacts
 
 @dataclass
 class ParserOptions:
-    select_suffixes : Optional[list[str]] = None
+    selected_suffixes : Optional[list[str]] = None
     default_wavelength : Optional[float] = None
-    pattern_data_orientation : Orientation = Orientation.VERTICAL
+    manual_mode : bool = False
 
 
 class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
-        if parser_options.select_suffixes is None:
-            self.select_formats : list[str] = Formats.get_allowed_suffixes()
+        if parser_options.selected_suffixes is None:
+            self.allowed_suffixes : list[str] = Formats.get_allowed_suffixes()
+        else:
+            self.allowed_suffixes : list[str] = parser_options.selected_suffixes
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength
+        self.in_manual_mode : bool = parser_options.manual_mode
         self.stoe_reader : StoeReader = StoeReader()
 
     # -------------------------------------------
@@ -86,11 +89,10 @@ class Parser:
         return PatternData(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
 
-    @staticmethod
-    def from_csv(fpath : str) -> list[PatternData]:
+    def from_csv(self, fpath : str) -> list[PatternData]:
         if CsvParser.has_two_columns(fpath=fpath):
             orientation = Orientation.VERTICAL
-        else:
+        elif self.in_manual_mode:
             print(f'''Please specify along which the data of individual patterns is oriented in {fpath}'
                   E.g. in the below example the data is oriented vertically
                        x y
@@ -98,6 +100,8 @@ class Parser:
                        10 2000
                        15 1500''')
             orientation = Orientation.from_manual_query()
+        else:
+            raise ValueError(f"Could not determine orientation of data in csv file {fpath}")
 
         csv_parser = CsvParser(pattern_data_axis=orientation)
         pattern_infos = csv_parser.read_csv(fpath=fpath)

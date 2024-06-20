@@ -52,7 +52,7 @@ class TestParseStoe(PatternBaseTest):
         pattern = XrdPattern.load(fpath=self.get_fpath())
         self.assertIsInstance(pattern, XrdPattern)
         print(f'serialized pattern')
-        print(f'{pattern.to_str()[:1000]} + {pattern.to_str()[-1000:]}')
+        print(f'{pattern.to_str()[:1000]} ... {pattern.to_str()[-1000:]}')
 
 
 from unittest.mock import patch
@@ -82,7 +82,8 @@ class TestParserDatabase(ParserBaseTest):
 
 if __name__ == "__main__":
     # TestParserDatabase.execute_all(manual_mode=False)
-    TestParserPattern.execute_all()
+    # TestParserPattern.execute_all()
+    TestParseStoe.execute_all()
 
     # PatternDB.load(datafolder_path=PatternBaseTest.get_example_folderpath())
 
