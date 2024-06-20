@@ -30,6 +30,7 @@ class Formats:
     xrdml = XrdFormat("xrdml", "xrdml")
     xsyg = XrdFormat("xsyg", "xsyg")
     xrdpattern = XrdFormat("pickle", "json")
+    cif = XrdFormat('cif', 'cif')
 
 
     @classmethod

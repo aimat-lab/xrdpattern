@@ -1,8 +1,8 @@
 import json
 import os.path
-from typing import Literal
+from typing import Literal, Union
 
-from pymatgen.core import Species
+from pymatgen.core import Species, Element
 
 DIRPATH = os.path.dirname(__file__)
 SCATTERING_PARAMS_FILENAME = 'atomic_scattering_params.json'
@@ -62,8 +62,12 @@ class PhysicalConstants:
         return cls._covalent[element_symbol]
 
     @classmethod
-    def get_scattering_params(cls, species: Species) -> tuple:
-        symbol = str(species.element.symbol)
+    def get_scattering_params(cls, species: Union[Element,Species]) -> tuple:
+        if isinstance(species, Species):
+            symbol = str(species.element.symbol)
+        else:
+            symbol = species.symbol
+
         return cls._scattering_params[symbol]
 
     @classmethod

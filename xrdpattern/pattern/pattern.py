@@ -44,7 +44,6 @@ class XrdPattern(PatternData):
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern_info = pattern_list[0]
 
-
         kwargs = pattern_info.to_dict()
         return cls(**kwargs)
 

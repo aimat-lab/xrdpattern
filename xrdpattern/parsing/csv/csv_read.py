@@ -29,24 +29,7 @@ class CsvParser:
     def __init__(self, pattern_data_axis : Orientation):
         self.pattern_dimension : Orientation = pattern_data_axis
 
-    def as_matrix(self, fpath : str) -> NumericalTable:
-        data = []
-        seperator = self.get_separator(fpath=fpath)
-
-        with open(fpath, 'r', newline='') as infile:
-            for line in infile:
-                row = [item.strip() for item in line.strip().split(seperator)]
-                if row and any(item for item in row):
-                    data.append(row)
-
-        if self.pattern_dimension == Orientation.VERTICAL:
-            data = [list(col) for col in zip(*data)]
-        table = TextTable(data)
-        print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
-        return TableSelector.get_numerical_subtable(table=table)
-
-
-    def read_csv(self, fpath: str) -> list[PatternData]:
+    def extract_patterns(self, fpath: str) -> list[PatternData]:
         matrix = self.as_matrix(fpath=fpath)
         x_axis_row = matrix.get_data(row=0)
         data_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
@@ -79,6 +62,21 @@ class CsvParser:
 
         return pattern_infos
 
+    def as_matrix(self, fpath : str) -> NumericalTable:
+        data = []
+        seperator = self.get_separator(fpath=fpath)
+
+        with open(fpath, 'r', newline='') as infile:
+            for line in infile:
+                row = [item.strip() for item in line.strip().split(seperator)]
+                if row and any(item for item in row):
+                    data.append(row)
+
+        if self.pattern_dimension == Orientation.VERTICAL:
+            data = [list(col) for col in zip(*data)]
+        table = TextTable(data)
+        print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
+        return TableSelector.get_numerical_subtable(table=table)
 
     @classmethod
     def has_two_columns(cls, fpath : str) -> bool:

@@ -49,6 +49,8 @@ class Parser:
 
         if the_format == Formats.xrdpattern:
             pattern_infos = [self.from_json(fpath=fpath)]
+        elif the_format == Formats.cif:
+            pattern_infos = [self.from_cif(fpath=fpath)]
         elif the_format == Formats.stoe_raw:
             pattern_infos = [self.stoe_reader.get_pattern_info(fpath=fpath)]
         elif the_format.suffix in Formats.get_datafile_suffixes():
@@ -100,9 +102,12 @@ class Parser:
             raise ValueError(f"Could not determine orientation of data in csv file {fpath}")
 
         csv_parser = CsvParser(pattern_data_axis=orientation)
-        pattern_infos = csv_parser.read_csv(fpath=fpath)
+        pattern_infos = csv_parser.extract_patterns(fpath=fpath)
         return pattern_infos
 
+
+    def from_cif(self, fpath : str) -> PatternData:
+        raise NotImplementedError
 
     # -------------------------------------------
     # parsing xylib header
