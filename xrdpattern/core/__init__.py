@@ -1,4 +1,4 @@
 from .constants import *
-from .structure import *
+from .crystal_structure import *
 from .label import *
 from .pattern_data import PatternData

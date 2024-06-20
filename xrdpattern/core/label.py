@@ -7,8 +7,8 @@ from holytools.abstract import JsonDataclass
 import torch
 from torch import Tensor
 
-from xrdpattern.core.structure import Angles, Lengths
-from xrdpattern.core.structure import CrystalStructure, CrystalBase
+from xrdpattern.core.crystal_structure import Angles, Lengths
+from xrdpattern.core.crystal_structure import CrystalStructure, CrystalBase
 from xrdpattern.core import AtomicSite
 
 # ---------------------------------------------------------
@@ -148,7 +148,7 @@ class Label(JsonDataclass):
         base = CrystalBase()
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
-        # print(f'Empty crystal structure spacegroups = {structure.space_group}')
+        # print(f'Empty crystal crystal_structure spacegroups = {crystal_structure.space_group}')
         sample = Powder(crystallite_size=torch.nan, crystal_structure=structure)
         artifacts = Artifacts(primary_wavelength=torch.nan,
                               secondary_wavelength=torch.nan,
