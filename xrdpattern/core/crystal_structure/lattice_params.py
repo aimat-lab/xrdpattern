@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, asdict
+from typing import Optional
 
 from holytools.abstract import Serializable
 
@@ -9,9 +10,9 @@ LatticeParams = tuple[float,float,float,float,float,float]
 
 @dataclass(frozen=True)
 class Angles(Serializable):
-    alpha: float
-    beta: float
-    gamma: float
+    alpha: Optional[float]
+    beta: Optional[float]
+    gamma: Optional[float]
 
     @classmethod
     def make_example(cls) -> Angles:
@@ -35,9 +36,9 @@ class Angles(Serializable):
 
 @dataclass(frozen=True)
 class Lengths(Serializable):
-    a: float
-    b: float
-    c: float
+    a: Optional[float]
+    b: Optional[float]
+    c: Optional[float]
 
     def __hash__(self):
         return id(self)

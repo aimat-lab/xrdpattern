@@ -65,7 +65,9 @@ class CsvParser:
             two_theta_degs = x_axis_row
 
         for intensities in data_rows:
-            new = PatternData.make_unlableed(two_theta_values=two_theta_degs, intensities=intensities)
+            new = PatternData.make_unlabeled(two_theta_values=two_theta_degs, intensities=intensities)
+            if is_qvalues:
+                new.label.artifacts.primary_wavelength = copper_wavelength
             pattern_infos.append(new)
 
         x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'

@@ -39,32 +39,33 @@ class Label(JsonDataclass):
         a, b, c = structure.lengths
         alpha, beta, gamma = structure.angles
         lattice_params = [a, b, c, alpha, beta, gamma]
-        self.lattice_param_region : QuantityRegion = self.add_region_quantity(list_obj=lattice_params)
+        self.lattice_param_region : QuantityRegion = self.add_region(list_obj=lattice_params)
 
         self.atomic_site_regions : list[QuantityRegion] = []
         base = structure.base
         padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
         for atomic_site in padded_base:
-            region_obj = self.add_region_quantity(list_obj=atomic_site.as_list())
+            region_obj = self.add_region(list_obj=atomic_site.as_list())
             self.atomic_site_regions.append(region_obj)
 
         if structure.space_group is None:
             spacegroup_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
         else:
             spacegroup_list = [j + 1 == structure.space_group for j in range(NUM_SPACEGROUPS)]
-        self.spacegroup_region : QuantityRegion = self.add_region_quantity(list_obj=spacegroup_list)
+        self.spacegroup_region : QuantityRegion = self.add_region(list_obj=spacegroup_list)
 
         artifacts_list = self.artifacts.as_list()
-        self.artifacts_region : QuantityRegion = self.add_region_quantity(artifacts_list)
+        self.artifacts_region : QuantityRegion = self.add_region(artifacts_list)
 
         domain_list = [self.is_simulated]
-        self.domain_region : QuantityRegion = self.add_region_quantity(domain_list)
+        self.domain_region : QuantityRegion = self.add_region(domain_list)
 
 
-    def add_region_quantity(self, list_obj : list) -> QuantityRegion:
+    def add_region(self, list_obj : list) -> QuantityRegion:
         current_len = len(self.list_repr)
         region = QuantityRegion(obj=list_obj, start=current_len, end=current_len + len(list_obj))
-        self.list_repr += list_obj
+        to_add = [x if not x is None else torch.nan for x in list_obj]
+        self.list_repr += to_add
         return region
 
     @staticmethod
@@ -143,17 +144,16 @@ class Label(JsonDataclass):
 
     @classmethod
     def make_empty(cls) -> Label:
-        lengths = Lengths(a=torch.nan, b=torch.nan, c=torch.nan)
-        angles = Angles(alpha=torch.nan, beta=torch.nan, gamma=torch.nan)
+        lengths = Lengths(a=None, b=None, c=None)
+        angles = Angles(alpha=None, beta=None, gamma=None)
         base = CrystalBase()
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
-        # print(f'Empty crystal crystal_structure spacegroups = {crystal_structure.space_group}')
-        sample = Powder(crystallite_size=torch.nan, crystal_structure=structure, temp_in_celcius=torch.nan)
-        artifacts = Artifacts(primary_wavelength=torch.nan,
-                              secondary_wavelength=torch.nan,
-                              secondary_to_primary=torch.nan,
-                              shape_factor=torch.nan)
+        sample = Powder(crystallite_size=None, crystal_structure=structure, temp_in_celcius=None)
+        artifacts = Artifacts(primary_wavelength=None,
+                              secondary_wavelength=None,
+                              secondary_to_primary=None,
+                              shape_factor=None)
 
         return cls(sample, artifacts, is_simulated=False)
 
@@ -163,7 +163,7 @@ class Artifacts(JsonDataclass):
     primary_wavelength: Optional[float]
     secondary_wavelength: Optional[float]
     secondary_to_primary: Optional[float]
-    shape_factor : float = 0.9
+    shape_factor : Optional[float] = 0.9
 
     def as_list(self) -> list[float]:
         return [self.primary_wavelength, self.secondary_wavelength, self.secondary_to_primary, self.shape_factor]

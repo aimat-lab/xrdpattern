@@ -22,7 +22,7 @@ class PatternData(Serializable):
     name : Optional[str] = None
 
     @classmethod
-    def make_unlableed(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
+    def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
         metadata = Label.make_empty()
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
         return cls(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
