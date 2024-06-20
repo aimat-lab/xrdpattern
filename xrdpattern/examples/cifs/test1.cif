@@ -1,0 +1,73 @@
+data_1
+_chemical_formula_sum 'Ba0.2 Bi0.8 Fe0.8 O3 Ti0.2'
+_chemical_name_structure_type LiNbO3
+_exptl_crystal_density_diffrn 7.81
+_diffrn_ambient_temperature 293.
+
+
+_cell_length_a 5.60785(2)
+_cell_length_b 5.60785(2)
+_cell_length_c 13.90109(4)
+_cell_angle_alpha 90.
+_cell_angle_beta 90.
+_cell_angle_gamma 120.
+_cell_volume 378.59
+_cell_formula_units_Z 6
+_space_group_name_H-M_alt 'R 3 c H'
+_space_group_IT_number 161
+loop_
+_space_group_symop_id
+_space_group_symop_operation_xyz
+1 '-x+y, y, z+1/2'
+2 'x, x-y, z+1/2'
+3 '-y, -x, z+1/2'
+4 '-x+y, -x, z'
+5 '-y, x-y, z'
+6 'x, y, z'
+7 '-x+y+2/3, y+1/3, z+5/6'
+8 'x+2/3, x-y+1/3, z+5/6'
+9 '-y+2/3, -x+1/3, z+5/6'
+10 '-x+y+2/3, -x+1/3, z+1/3'
+11 '-y+2/3, x-y+1/3, z+1/3'
+12 'x+2/3, y+1/3, z+1/3'
+13 '-x+y+1/3, y+2/3, z+1/6'
+14 'x+1/3, x-y+2/3, z+1/6'
+15 '-y+1/3, -x+2/3, z+1/6'
+16 '-x+y+1/3, -x+2/3, z+2/3'
+17 '-y+1/3, x-y+2/3, z+2/3'
+18 'x+1/3, y+2/3, z+2/3'
+loop_
+_atom_type_symbol
+_atom_type_oxidation_number
+Bi3+ 3
+Ba2+ 2
+Fe3+ 3
+Ti4+ 4
+O2- -2
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_symmetry_multiplicity
+_atom_site_Wyckoff_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_B_iso_or_equiv
+_atom_site_occupancy
+Bi1 Bi3+ 6 a 0 0 0.2905(2) 2.3 0.8
+Ba1 Ba2+ 6 a 0 0 0.2905(2) 2.3 0.2
+Fe1 Fe3+ 6 a 0 0 0.0154(2) 0.57(4) 0.8
+Ti1 Ti4+ 6 a 0 0 0.0154(2) 0.57(4) 0.2
+O1 O2- 18 b 0.2130(3) 0.3454(3) 0 1.59 1.
+loop_
+_atom_site_aniso_label
+_atom_site_aniso_type_symbol
+_atom_site_aniso_beta_11
+_atom_site_aniso_beta_22
+_atom_site_aniso_beta_33
+_atom_site_aniso_beta_12
+_atom_site_aniso_beta_13
+_atom_site_aniso_beta_23
+Bi1 Bi3+ 0.0157(3) 0.0157(3) 0.0029(1) 0.0078(2) 0. 0.
+Ba1 Ba2+ 0.0157(3) 0.0157(3) 0.0029(1) 0.0078(2) 0. 0.
+O1 O2- 0.0209(7) 0.0118(5) 0.0021(1) 0.0076(1) -0.0026(3) -0.0023(2)
