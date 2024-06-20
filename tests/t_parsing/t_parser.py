@@ -66,7 +66,7 @@ class TestParserDatabase(ParserBaseTest):
         with self.assertNoLogs(level=0):
             TestParserDatabase.bruker_only_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
             TestParserDatabase.all_example_db = PatternDB.load(datafolder_path=self.get_example_dirpath(),
-                                                               default_csv_orientation=Orientation.VERTICAL)
+                                                               default_csv_orientation=Orientation.HORIZONTAL)
 
         for db in [self.bruker_only_db, self.all_example_db]:
             self.assertIsInstance(db, PatternDB)

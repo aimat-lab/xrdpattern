@@ -98,7 +98,7 @@ class CsvParser:
 
 
 def qvalues_to_angles(qvalues : list[float]) -> list[float]:
-    theta_values_rad = [math.asin(q*copper_wavelength)/(4*math.pi) for q in qvalues]
+    theta_values_rad = [math.asin(q*copper_wavelength/(4*math.pi)) for q in qvalues]
     two_theta_degs = [2*math.degrees(theta) for theta in theta_values_rad]
 
     return two_theta_degs
