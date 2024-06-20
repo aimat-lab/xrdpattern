@@ -1,21 +1,23 @@
 import os.path
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
-from tests.base_tests import PatternBaseTest
+from tests.base_tests import ParserBaseTest
 
-from xrdpattern.examples import LabelExamples
+from xrdpattern.examples import LabelExamples, DataExamples
 from xrdpattern.core import Label
 import tempfile
 
 
-class TestXrdPattern(PatternBaseTest):
+# ---------------------------------------------------------
+
+class TestXrdPattern(ParserBaseTest):
     @classmethod
     def get_fpath(cls) -> str:
-        return cls.get_aimat_xrdpattern_fpath()
+        return DataExamples.get_aimat_xrdpattern_fpath()
 
     def test_save_load_roundtrip(self):
-        unlabeled_pattern = XrdPattern.load(fpath=self.get_bruker_fpath())
-        labeled_pattern = XrdPattern.load(fpath=self.get_bruker_fpath())
+        unlabeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
+        labeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
         labeled_pattern.label = Label.from_file(cif_fpath=LabelExamples.get_cif_fpath())
 
         reloaded_unlabeled = self.save_and_load(unlabeled_pattern)

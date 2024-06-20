@@ -2,11 +2,14 @@ import tempfile
 import os, uuid
 from xrdpattern.database import PatternDB
 from tests.base_tests import ParserBaseTest
+from xrdpattern.examples import DataExamples
 
+
+# ---------------------------------------------------------
 
 class TestPatternDB(ParserBaseTest):
     def test_save_load_roundtrip(self):
-        pattern_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath(), select_suffixes=['.raw'])
+        pattern_db = PatternDB.load(datafolder_path=DataExamples.get_datafolder_fpath(), select_suffixes=['.raw'])
         tempdir_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
         pattern_db.save(dirpath=tempdir_path)
 
