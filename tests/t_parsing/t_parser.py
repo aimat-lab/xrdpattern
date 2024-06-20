@@ -1,5 +1,6 @@
 import os.path
 
+from xrdpattern.parsing import Orientation
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
 from tests.base_tests import PatternBaseTest, ParserBaseTest
@@ -64,7 +65,8 @@ class TestParserDatabase(ParserBaseTest):
     def test_db_parsing_ok(self):
         with self.assertNoLogs(level=0):
             TestParserDatabase.bruker_only_db = PatternDB.load(datafolder_path=self.get_datafolder_fpath())
-            TestParserDatabase.all_example_db = PatternDB.load(datafolder_path=self.get_example_dirpath())
+            TestParserDatabase.all_example_db = PatternDB.load(datafolder_path=self.get_example_dirpath(),
+                                                               default_csv_orientation=Orientation.VERTICAL)
 
         for db in [self.bruker_only_db, self.all_example_db]:
             self.assertIsInstance(db, PatternDB)
@@ -83,7 +85,6 @@ class TestParserDatabase(ParserBaseTest):
 if __name__ == "__main__":
     # TestParserDatabase.execute_all(manual_mode=False)
     # TestParserPattern.execute_all()
-    TestParseStoe.execute_all()
-
-    # PatternDB.load(datafolder_path=PatternBaseTest.get_example_folderpath())
+    # TestParseStoe.execute_all()
+    TestParserDatabase.execute_all()
 

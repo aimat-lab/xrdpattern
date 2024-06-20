@@ -20,8 +20,8 @@ from ..core import Label, Artifacts
 class ParserOptions:
     selected_suffixes : Optional[list[str]] = None
     default_wavelength : Optional[float] = None
+    default_csv_orientation : Optional[Orientation] = None
     manual_mode : bool = False
-
 
 class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
@@ -29,7 +29,9 @@ class Parser:
             self.allowed_suffixes : list[str] = Formats.get_allowed_suffixes()
         else:
             self.allowed_suffixes : list[str] = parser_options.selected_suffixes
+
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength
+        self.default_csv_orientation : Optional[Orientation] = parser_options.default_csv_orientation
         self.in_manual_mode : bool = parser_options.manual_mode
         self.stoe_reader : StoeReader = StoeReader()
 
@@ -92,14 +94,8 @@ class Parser:
     def from_csv(self, fpath : str) -> list[PatternData]:
         if CsvParser.has_two_columns(fpath=fpath):
             orientation = Orientation.VERTICAL
-        elif self.in_manual_mode:
-            print(f'''Please specify along which the data of individual patterns is oriented in {fpath}'
-                  E.g. in the below example the data is oriented vertically
-                       x y
-                       5 1000
-                       10 2000
-                       15 1500''')
-            orientation = Orientation.from_manual_query()
+        elif self.default_csv_orientation is not None:
+            orientation = self.default_csv_orientation
         else:
             raise ValueError(f"Could not determine orientation of data in csv file {fpath}")
 

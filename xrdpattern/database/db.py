@@ -43,11 +43,13 @@ class PatternDB:
     @classmethod
     def load(cls, datafolder_path : str,
              select_suffixes : Optional[list[str]] = None,
-             default_wavelength : Optional[float] = None,) -> PatternDB:
+             default_wavelength : Optional[float] = None,
+             default_csv_orientation : Optional[Orientation] = None) -> PatternDB:
 
 
-        options = ParserOptions(selected_suffixes=select_suffixes, default_wavelength=default_wavelength)
-
+        options = ParserOptions(selected_suffixes=select_suffixes,
+                                default_wavelength=default_wavelength,
+                                default_csv_orientation=default_csv_orientation)
         datafolder_path = os.path.normpath(path=datafolder_path)
 
         parser = Parser(parser_options=options)
