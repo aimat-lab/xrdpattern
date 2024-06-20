@@ -4,7 +4,7 @@ from xrdpattern.parsing import Formats
 from tests.base_tests import ParserBaseTest
 
 from xrdpattern.examples import LabelExamples, DataExamples
-from xrdpattern.core import Label
+from xrdpattern.core import PowderExperiment
 import tempfile
 
 
@@ -18,7 +18,7 @@ class TestXrdPattern(ParserBaseTest):
     def test_save_load_roundtrip(self):
         unlabeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
         labeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
-        labeled_pattern.label = Label.from_file(cif_fpath=LabelExamples.get_cif_fpath())
+        labeled_pattern.label = PowderExperiment.from_file(cif_fpath=LabelExamples.get_cif_fpath())
 
         reloaded_unlabeled = self.save_and_load(unlabeled_pattern)
         reloaded_labeled = self.save_and_load(labeled_pattern)

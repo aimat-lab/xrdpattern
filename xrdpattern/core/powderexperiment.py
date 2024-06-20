@@ -27,9 +27,9 @@ class QuantityRegion:
 
 
 @dataclass
-class Label(JsonDataclass):
+class PowderExperiment(JsonDataclass):
     powder : PowderSample
-    artifacts : ExperimentalArtifacts
+    artifacts : Artifacts
     is_simulated : bool
 
     def __post_init__(self):
@@ -133,33 +133,41 @@ class Label(JsonDataclass):
     # save/load
 
     @classmethod
-    def from_file(cls, cif_fpath: str) -> Label:
-        structure = CrystalStructure.from_file(cif_fpath)
+    def from_cif(cls, cif_content : str) -> PowderExperiment:
+        structure = CrystalStructure.from_cif(cif_content)
         powder = PowderSample(crystal_structure=structure)
-        artifacts = ExperimentalArtifacts(primary_wavelength=None,
-                                          secondary_wavelength=None,
-                                          secondary_to_primary=None)
+        artifacts = Artifacts(primary_wavelength=None,
+                              secondary_wavelength=None,
+                              secondary_to_primary=None)
 
         return cls(powder=powder, artifacts=artifacts, is_simulated=False)
 
+
     @classmethod
-    def make_empty(cls) -> Label:
+    def from_file(cls, cif_fpath: str) -> PowderExperiment:
+        with open(cif_fpath, 'r') as f:
+            content = f.read()
+        return cls.from_cif(content)
+
+
+    @classmethod
+    def make_empty(cls) -> PowderExperiment:
         lengths = Lengths(a=None, b=None, c=None)
         angles = Angles(alpha=None, beta=None, gamma=None)
         base = CrystalBase()
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
         sample = PowderSample(crystallite_size=None, crystal_structure=structure, temp_in_celcius=None)
-        artifacts = ExperimentalArtifacts(primary_wavelength=None,
-                                          secondary_wavelength=None,
-                                          secondary_to_primary=None,
-                                          shape_factor=None)
+        artifacts = Artifacts(primary_wavelength=None,
+                              secondary_wavelength=None,
+                              secondary_to_primary=None,
+                              shape_factor=None)
 
         return cls(sample, artifacts, is_simulated=False)
 
 
 @dataclass
-class ExperimentalArtifacts(JsonDataclass):
+class Artifacts(JsonDataclass):
     primary_wavelength: Optional[float]
     secondary_wavelength: Optional[float]
     secondary_to_primary: Optional[float]
@@ -177,7 +185,7 @@ class PowderSample(JsonDataclass):
 
 
 class LabelTensor(Tensor):
-    example_powder_experiment: Label = Label.make_empty()
+    example_powder_experiment: PowderExperiment = PowderExperiment.make_empty()
 
     def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
         dtype = dtype if dtype is not None else self.dtype
@@ -216,5 +224,5 @@ class LabelTensor(Tensor):
         return torch.sigmoid(self[..., region.start:region.end])
 
     # noinspection PyTypeChecker
-    def to_sample(self) -> Label:
+    def to_sample(self) -> PowderExperiment:
         raise NotImplementedError

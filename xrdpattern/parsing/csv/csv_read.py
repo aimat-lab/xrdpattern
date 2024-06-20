@@ -26,11 +26,8 @@ class CsvParser:
     MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr
                      # Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
 
-    def __init__(self, pattern_data_axis : Orientation):
-        self.pattern_dimension : Orientation = pattern_data_axis
-
-    def extract_patterns(self, fpath: str) -> list[PatternData]:
-        matrix = self.as_matrix(fpath=fpath)
+    def extract_patterns(self, fpath: str, pattern_dimension : Orientation) -> list[PatternData]:
+        matrix = self._as_matrix(fpath=fpath, pattern_orientation=pattern_dimension)
         x_axis_row = matrix.get_data(row=0)
         data_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
 
@@ -58,11 +55,11 @@ class CsvParser:
               f'\n- XAxisType: \"{x_axis_type}\"'
               f'\n- Csv Seperator : \"{CsvParser.get_separator(fpath=fpath)}\"'
               f'T\nThe orientation of the patterns was specified as follows:'
-              f'\n- Orientation {self.pattern_dimension.value}')
+              f'\n- Orientation {pattern_dimension.value}')
 
         return pattern_infos
 
-    def as_matrix(self, fpath : str) -> NumericalTable:
+    def _as_matrix(self, fpath : str, pattern_orientation : Orientation) -> NumericalTable:
         data = []
         seperator = self.get_separator(fpath=fpath)
 
@@ -72,11 +69,12 @@ class CsvParser:
                 if row and any(item for item in row):
                     data.append(row)
 
-        if self.pattern_dimension == Orientation.VERTICAL:
+        if pattern_orientation == Orientation.VERTICAL:
             data = [list(col) for col in zip(*data)]
         table = TextTable(data)
         print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
         return TableSelector.get_numerical_subtable(table=table)
+
 
     @classmethod
     def has_two_columns(cls, fpath : str) -> bool:

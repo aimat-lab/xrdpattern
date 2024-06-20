@@ -29,7 +29,7 @@ class TestCsvReader(Unittest):
 
     def read_as_matrix(self, pattern_data_axis : Orientation, csv_path : str):
         reader = CsvParser(pattern_data_axis=pattern_data_axis)
-        table = reader.as_matrix(fpath=csv_path)
+        table = reader._as_matrix(fpath=csv_path)
         expected_set = set(self.single_first_row) if csv_path==self.single_csv_path else set(self.multi_first_row)
         actual_set = set(table.data[0])
         print(f'Actual, expected row: \n{actual_set} \n{expected_set}')

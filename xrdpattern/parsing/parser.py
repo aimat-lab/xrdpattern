@@ -7,12 +7,12 @@ from dataclasses import dataclass
 import numpy as np
 
 from holytools.fsys import SaveManager
-from xrdpattern.core import PatternData
+from xrdpattern.core import PatternData, Artifacts, PowderExperiment
+
+from xrdpattern.parsing.stoe import StoeParser
+from .cif.cif_parser import CifParser
 from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
-from xrdpattern.parsing.stoe import StoeReader
-from ..core import Label, ExperimentalArtifacts
-
 
 # -------------------------------------------
 
@@ -21,7 +21,6 @@ class ParserOptions:
     selected_suffixes : Optional[list[str]] = None
     default_wavelength : Optional[float] = None
     default_csv_orientation : Optional[Orientation] = None
-    manual_mode : bool = False
 
 class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
@@ -32,8 +31,10 @@ class Parser:
 
         self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength
         self.default_csv_orientation : Optional[Orientation] = parser_options.default_csv_orientation
-        self.in_manual_mode : bool = parser_options.manual_mode
-        self.stoe_reader : StoeReader = StoeReader()
+
+        self.stoe_reader : StoeParser = StoeParser()
+        self.cif_parser : CifParser = CifParser()
+        self.csv_parser : CsvParser = CsvParser()
 
     # -------------------------------------------
     # pattern
@@ -101,19 +102,17 @@ class Parser:
         else:
             raise ValueError(f"Could not determine orientation of data in csv file {fpath}")
 
-        csv_parser = CsvParser(pattern_data_axis=orientation)
-        pattern_infos = csv_parser.extract_patterns(fpath=fpath)
+        pattern_infos = self.csv_parser.extract_patterns(fpath=fpath, pattern_dimension=orientation)
         return pattern_infos
 
-
     def from_cif(self, fpath : str) -> PatternData:
-        raise NotImplementedError
+        return self.cif_parser.extract_pattern(fpath=fpath)
 
     # -------------------------------------------
     # parsing xylib header
 
     @classmethod
-    def parse_xylib_header(cls, header_str: str) -> Label:
+    def parse_xylib_header(cls, header_str: str) -> PowderExperiment:
         metadata_map = cls.get_key_value_dict(header_str=header_str)
 
         def get_float(key: str) -> Optional[float]:
@@ -122,8 +121,8 @@ class Parser:
                 val = float(val)
             return val
 
-        experiment = Label.make_empty()
-        experiment.artifacts = ExperimentalArtifacts(
+        experiment = PowderExperiment.make_empty()
+        experiment.artifacts = Artifacts(
             primary_wavelength=get_float('ALPHA1'),
             secondary_wavelength=get_float('ALPHA2'),
             secondary_to_primary=get_float('ALPHA_RATIO')

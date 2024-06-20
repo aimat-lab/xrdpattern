@@ -1,7 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from holytools.fsys import SaveManager
-from xrdpattern.parsing.stoe import StoeReader
+from xrdpattern.parsing.stoe import StoeParser
 
 @dataclass
 class XrdFormat:
@@ -49,7 +49,7 @@ class Formats:
     def get_format(cls, fpath : str) -> XrdFormat:
         suffix = SaveManager.get_suffix(fpath)
         if suffix == 'raw':
-            xrd_format = Formats.stoe_raw if StoeReader.is_stoe(fpath) else Formats.bruker_raw
+            xrd_format = Formats.stoe_raw if StoeParser.is_stoe(fpath) else Formats.bruker_raw
         else:
             suffix_to_format_map = {xrd_format.suffix : xrd_format for xrd_format in cls.get_all_formats()}
             xrd_format = suffix_to_format_map.get(suffix)

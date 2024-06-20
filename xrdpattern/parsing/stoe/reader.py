@@ -2,7 +2,7 @@ import numpy as np
 
 from xrdpattern.core import PatternData
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
-from xrdpattern.core import ExperimentalArtifacts, Label
+from xrdpattern.core import Artifacts, PowderExperiment
 
 
 class BinaryReader:
@@ -17,7 +17,7 @@ class BinaryReader:
                 value.extract_value(byte_content)
 
 
-class StoeReader(BinaryReader):
+class StoeParser(BinaryReader):
     def __init__(self):
         self.primary_wavelength : FloatQuantity = FloatQuantity(start=326)
         self.secondary_wavelength : FloatQuantity = FloatQuantity(start=322)
@@ -41,10 +41,10 @@ class StoeReader(BinaryReader):
 
     def get_pattern_info(self, fpath : str) -> PatternData:
         self.read(fpath=fpath)
-        experiment = Label.make_empty()
-        experiment.artifacts = ExperimentalArtifacts(primary_wavelength=self.primary_wavelength.get_value(),
-                                                     secondary_wavelength=self.secondary_wavelength.get_value(),
-                                                     secondary_to_primary=self.ratio.get_value())
+        experiment = PowderExperiment.make_empty()
+        experiment.artifacts = Artifacts(primary_wavelength=self.primary_wavelength.get_value(),
+                                         secondary_wavelength=self.secondary_wavelength.get_value(),
+                                         secondary_to_primary=self.ratio.get_value())
 
         two_theta_values = self._get_x_values()
         intensities = self._get_y_values()
@@ -67,7 +67,7 @@ class StoeReader(BinaryReader):
     @classmethod
     def is_stoe(cls, fpath : str) -> bool:
         try:
-            reader = StoeReader()
+            reader = StoeParser()
             reader.read(fpath=fpath)
             angle_start, angle_end = reader.angle_start.get_value(), reader.angle_end.get_value()
             num_entries = reader.num_entries.get_value()

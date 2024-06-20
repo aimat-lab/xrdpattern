@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
 
 from holytools.abstract import Serializable
-from xrdpattern.core.label import Label
+from xrdpattern.core.powderexperiment import PowderExperiment
 
 
 # -------------------------------------------
@@ -18,12 +18,12 @@ from xrdpattern.core.label import Label
 class PatternData(Serializable):
     two_theta_values : NDArray
     intensities : NDArray
-    label : Label
+    label : PowderExperiment
     name : Optional[str] = None
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
-        metadata = Label.make_empty()
+        metadata = PowderExperiment.make_empty()
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
         return cls(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
@@ -67,7 +67,7 @@ class PatternData(Serializable):
         data = json.loads(json_str)
         two_theta_values = np.array(data['two_theta_values'])
         intensities = np.array(data['intensities'])
-        label = Label.from_str(data['label'])
+        label = PowderExperiment.from_str(data['label'])
         name = data['name']
         return cls(two_theta_values=two_theta_values, intensities=intensities, label=label, name=name)
 

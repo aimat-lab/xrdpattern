@@ -1,5 +1,5 @@
 import os
-from xrdpattern.core import Label, CrystalStructure, CrystalBase, ExperimentalArtifacts, PowderSample
+from xrdpattern.core import PowderExperiment, CrystalStructure, CrystalBase, Artifacts, PowderSample
 
 cif_fpath = os.path.join(os.path.dirname(__file__), 'cifs', "test1.cif")
 cif_fpath2 = os.path.join(os.path.dirname(__file__), 'cifs', 'test2.cif')
@@ -8,10 +8,10 @@ cif_fpath2 = os.path.join(os.path.dirname(__file__), 'cifs', 'test2.cif')
 
 class LabelExamples:
     @staticmethod
-    def get_label() -> Label:
+    def get_label() -> PowderExperiment:
         sample = PowderSample(crystal_structure=LabelExamples.get_crystal(mute=True), crystallite_size=500)
         artifact = LabelExamples.get_artifacts()
-        powder_sample = Label(powder=sample, artifacts=artifact, is_simulated=True)
+        powder_sample = PowderExperiment(powder=sample, artifacts=artifact, is_simulated=True)
         return powder_sample
 
     @staticmethod
@@ -29,8 +29,8 @@ class LabelExamples:
         return crystal_structure
 
     @staticmethod
-    def get_artifacts() -> ExperimentalArtifacts:
-        artifacts = ExperimentalArtifacts(primary_wavelength=1.54056, secondary_wavelength=1.54439, secondary_to_primary=0.5)
+    def get_artifacts() -> Artifacts:
+        artifacts = Artifacts(primary_wavelength=1.54056, secondary_wavelength=1.54439, secondary_to_primary=0.5)
         return artifacts
 
     @staticmethod

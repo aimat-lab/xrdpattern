@@ -1,12 +1,12 @@
 from holytools.devtools import Unittest
 
-from xrdpattern.core import Label, PowderSample, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
-    CrystalBase, ExperimentalArtifacts
+from xrdpattern.core import PowderExperiment, PowderSample, CrystalStructure, AtomicSite, LabelTensor, Lengths, Angles, \
+    CrystalBase, Artifacts
 
 
 class TestTensorRegions(Unittest):
     def setUp(self):
-        self.label : Label = self.make_example_label()
+        self.label : PowderExperiment = self.make_example_label()
         self.label_tensor : LabelTensor = self.label.to_tensor()
         self.crystal_structure : CrystalStructure = self.label.powder.crystal_structure
 
@@ -64,7 +64,7 @@ class TestTensorRegions(Unittest):
             self.assertEqual(t.__class__, LabelTensor)
 
     @staticmethod
-    def make_example_label() -> Label:
+    def make_example_label() -> PowderExperiment:
         primitives = Lengths(a=3, b=3, c=3)
         angles = Angles(alpha=90, beta=90, gamma=90)
         base = CrystalBase([AtomicSite.make_void()])
@@ -72,8 +72,8 @@ class TestTensorRegions(Unittest):
         crystal_structure.space_group = 120
 
         powder = PowderSample(crystal_structure=crystal_structure, crystallite_size=10.0)
-        artifacts = ExperimentalArtifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
-        return Label(powder, artifacts, is_simulated=True)
+        artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
+        return PowderExperiment(powder, artifacts, is_simulated=True)
 
 
 

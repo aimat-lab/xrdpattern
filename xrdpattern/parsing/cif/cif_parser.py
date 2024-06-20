@@ -1,14 +1,16 @@
+import tempfile
+
 import numpy as np
 # from xrdpattern.core import PatternData
 from gemmi import cif
 from numpy.typing import NDArray
 
-from xrdpattern.core import Label, PatternData
+from xrdpattern.core import PowderExperiment, PatternData
 
 
 class CifParser:
-    def extract_patterns(self, fpath : str) -> PatternData:
-        label = Label.from_file(cif_fpath=fpath)
+    def extract_pattern(self, fpath : str) -> PatternData:
+        label = PowderExperiment.from_cif(cif_content=fpath)
 
         doc = cif.read_file(fpath)
         if len(doc) != 1:
@@ -72,4 +74,4 @@ def get_values_as_array(block, name, minlength = 2):
 if __name__ == "__main__":
     example_fpath = '/home/daniel/Drive/data/workspace/cod/1101016.cif'
     parser = CifParser()
-    parser.extract_patterns(fpath=example_fpath)
+    parser.extract_pattern(fpath=example_fpath)
