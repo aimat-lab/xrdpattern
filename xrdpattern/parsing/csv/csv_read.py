@@ -8,9 +8,9 @@ from holytools.abstract import SelectableEnum
 from xrdpattern.core import PatternData
 from .table_selector import TableSelector, TextTable, NumericalTable
 
-from xrdpattern.core import Anode
+from xrdpattern.core import XrdAnode
 
-copper_wavelength,_ = Anode.Cu.get_wavelengths()
+copper_wavelength,_ = XrdAnode.Cu.get_wavelengths()
 # -------------------------------------------
 
 class Orientation(SelectableEnum):

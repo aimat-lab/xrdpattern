@@ -7,7 +7,7 @@ import xylib
 __version__ = xylib.xylib_get_version()
 
 import re
-from .data_formats import XrdFormat
+from xrdpattern.parsing.formats import XrdFormat
 from dataclasses import dataclass
 # -------------------------------------------
 

@@ -3,13 +3,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
+from CrystalStructure.atomic_site import AtomicSite
+from CrystalStructure.base import CrystalBase
+from CrystalStructure.crystal import CrystalStructure
+from CrystalStructure.lattice import Lengths, Angles
+
 from holytools.abstract import JsonDataclass
 import torch
 from torch import Tensor
-
-from xrdpattern.core.crystal_structure import Angles, Lengths
-from xrdpattern.core.crystal_structure import CrystalStructure, CrystalBase
-from xrdpattern.core import AtomicSite
 
 # ---------------------------------------------------------
 
