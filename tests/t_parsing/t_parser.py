@@ -65,8 +65,8 @@ class TestParserDatabase(ParserBaseTest):
     @patch('builtins.input', lambda *args, **kwargs : 'VERTICAL')
     def test_db_parsing_ok(self):
         with self.assertNoLogs(level=0):
-            TestParserDatabase.bruker_only_db = PatternDB.load(datafolder_path=DataExamples.get_datafolder_fpath())
-            TestParserDatabase.all_example_db = PatternDB.load(datafolder_path=DataExamples.get_example_dirpath(),
+            TestParserDatabase.bruker_only_db = PatternDB.load(dirpath=DataExamples.get_datafolder_fpath())
+            TestParserDatabase.all_example_db = PatternDB.load(dirpath=DataExamples.get_example_dirpath(),
                                                                default_csv_orientation=Orientation.HORIZONTAL)
 
         for db in [self.bruker_only_db, self.all_example_db]:

@@ -4,7 +4,7 @@ from xrdpattern.database import PatternDB
 
 
 def parse_directory(input_dirpath : str, output_dirpath : str):
-    pattern_db = PatternDB.load(datafolder_path=input_dirpath, select_suffixes=['.raw'])
+    pattern_db = PatternDB.load(dirpath=input_dirpath, selected_suffixes=['.raw'])
     pattern_db.save(dirpath=output_dirpath)
 
 

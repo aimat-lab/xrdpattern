@@ -9,7 +9,7 @@ from xrdpattern.examples import DataExamples
 
 class TestPatternDB(ParserBaseTest):
     def test_save_load_roundtrip(self):
-        pattern_db = PatternDB.load(datafolder_path=DataExamples.get_datafolder_fpath(), select_suffixes=['.raw'])
+        pattern_db = PatternDB.load(dirpath=DataExamples.get_datafolder_fpath(), selected_suffixes=['.raw'])
         tempdir_path = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()))
         pattern_db.save(dirpath=tempdir_path)
 

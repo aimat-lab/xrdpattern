@@ -9,11 +9,11 @@ from typing import Optional
 
 from holytools.fsys import FsysNode
 from holytools.userIO import TrackedInt
-from xrdpattern.parsing import ParserOptions, Parser, Orientation, Formats
+from xrdpattern.parsing import Parser, Orientation, Formats
 from xrdpattern.pattern import XrdPattern, PatternReport
+logger = getLogger(name='xrdpattern')
 
 # -------------------------------------------
-logger = getLogger(name='xrdpattern')
 
 @dataclass
 class PatternDB:
@@ -40,52 +40,55 @@ class PatternDB:
                 fpath = get_path(basename=pattern.get_name(), index=current_index)
             pattern.save(fpath=fpath)
 
+
     @classmethod
-    def load(cls, datafolder_path : str,
-             select_suffixes : Optional[list[str]] = None,
-             default_wavelength : Optional[float] = None,
-             default_csv_orientation : Optional[Orientation] = None) -> PatternDB:
+    def load(cls, dirpath : str, selected_suffixes : Optional[list[str]] = None,
+                  default_wavelength : Optional[float] = None,
+                  default_csv_orientation : Optional[Orientation] = None) -> PatternDB:
 
+        dirpath = os.path.normpath(path=dirpath)
+        if not os.path.isdir(dirpath):
+            raise ValueError(f"Given path {dirpath} is not a directory")
 
-        options = ParserOptions(selected_suffixes=select_suffixes,
-                                default_wavelength=default_wavelength,
-                                default_csv_orientation=default_csv_orientation)
-        datafolder_path = os.path.normpath(path=datafolder_path)
-
-        parser = Parser(parser_options=options)
-        if not os.path.isdir(datafolder_path):
-            raise ValueError(f"Given path {datafolder_path} is not a directory")
 
         patterns : list[XrdPattern] = []
-        data_fpaths = PatternDB.get_datafile_fpaths(datafolder_path=datafolder_path,
-                                                    select_formats=options.selected_suffixes)
-
+        parser = Parser(default_wavelength=default_wavelength, default_csv_orientation=default_csv_orientation)
         failed_fpath = []
         parsing_reports = []
+
+        data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=selected_suffixes)
         tracker = TrackedInt(start_value=0, max_value=len(data_fpaths))
         for fpath in data_fpaths:
             try:
-                tracker.increment(to_add=1)
-                pattern_info_list = parser.extract(fpath=fpath)
-                patterns += [XrdPattern(**info.to_dict()) for info in pattern_info_list]
+                patterns += [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath)]
                 parsing_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in patterns]
+                tracker.increment(to_add=1)
             except Exception as e:
                 failed_fpath.append(fpath)
                 logger.log(msg=f"Could not import pattern from file {fpath}\n"
                       f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
                       f"-> Traceback: \n{traceback.format_exc()}", level=logging.ERROR)
 
-        database_report = DatabaseReport(failed_files=failed_fpath, source_files=data_fpaths, pattern_reports=parsing_reports, data_dirpath=datafolder_path)
+        database_report = DatabaseReport(failed_files=failed_fpath,
+                                         source_files=data_fpaths,
+                                         pattern_reports=parsing_reports,
+                                         data_dirpath=dirpath)
         return PatternDB(patterns=patterns, database_report=database_report)
 
     # -------------------------------------------
     # pattern database
 
-    @classmethod
-    def get_datafile_fpaths(cls, datafolder_path : str, select_formats : Optional[list[str]] = None) -> list[str]:
-        root_node = FsysNode(path=datafolder_path)
-        xrd_files_nodes = root_node.get_file_subnodes(select_formats=select_formats)
-        return [node.get_path() for node in xrd_files_nodes]
+    @staticmethod
+    def get_xrd_fpaths(dirpath : str, selected_suffixes : Optional[list[str]] = None):
+        if selected_suffixes is None:
+            selected_suffixes = Formats.get_allowed_suffixes()
+        root_node = FsysNode(path=dirpath)
+        xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
+        data_fpaths = [node.get_path() for node in xrd_file_nodes]
+
+        return data_fpaths
+
+
 
     def __eq__(self, other):
         if not isinstance(other, PatternDB):
@@ -139,6 +142,4 @@ class DatabaseReport:
         summary_str += f'\n\n----------------------------------------{individual_reports}'
 
         return summary_str
-
-
 

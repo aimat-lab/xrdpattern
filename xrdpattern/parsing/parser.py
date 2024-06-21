@@ -2,37 +2,25 @@ from __future__ import annotations
 
 import os.path
 from typing import Optional, Iterator, Tuple
-from dataclasses import dataclass
 
 import numpy as np
 
 from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData, Artifacts, PowderExperiment
-
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
-from .data_files import XrdFormat, Formats, get_xylib_repr
 from .csv import CsvParser, Orientation
+from .data_files import XrdFormat, Formats, get_xylib_repr
+
 
 # -------------------------------------------
 
-@dataclass
-class ParserOptions:
-    selected_suffixes : Optional[list[str]] = None
-    default_wavelength : Optional[float] = None
-    default_csv_orientation : Optional[Orientation] = None
-
-
 
 class Parser:
-    def __init__(self, parser_options : ParserOptions = ParserOptions()):
-        if parser_options.selected_suffixes is None:
-            self.allowed_suffixes : list[str] = Formats.get_allowed_suffixes()
-        else:
-            self.allowed_suffixes : list[str] = parser_options.selected_suffixes
-
-        self.default_wavelength_angstr : Optional[float] = parser_options.default_wavelength
-        self.default_csv_orientation : Optional[Orientation] = parser_options.default_csv_orientation
+    def __init__(self, default_wavelength : Optional[float] = None,
+                 default_csv_orientation : Optional[Orientation] = None):
+        self.default_wavelength_angstr : Optional[float] = default_wavelength
+        self.default_csv_orientation : Optional[Orientation] = default_csv_orientation
 
         self.stoe_reader : StoeParser = StoeParser()
         self.cif_parser : CifParser = CifParser()
