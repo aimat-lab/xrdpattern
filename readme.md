@@ -30,23 +30,31 @@ pip install xrdpattern
 ## Supported formats
 
 Loading Diffractogram patterns from the following data formats is supported:
-- Siemens/Bruker RAW ver. 1/2/3/4 (.raw)
-- Stoe RAW (.raw) (! In progress)
-- Comma seperated values (.csv) (! In progress)
-- Plain text tab seperated values (.txt) (! In progress)
-- Crystallographic Information File for Powder Diffraction (.cif)
-- Siemens/Bruker UXD (.uxd)
-- Philips UDF (.udf)
-- Freiberg Instruments XSYG (.xysg)
-- Philips RD ver. 3/5 (.rd)
-- PANalytical XRDML (.xrdml)
-- Rigaku DAT (.dat)
-- Sietronics Sieray CPI (.cpi)
-- XFIT/Koalariet XDD (.xdd)
-- RIET7 DAT (.dat)
-- DBWS/DMPLOT data file (.dbw, .rit, .neu)
-- Canberra CNF (.cnf)
-- Canberra AccuSpec MCA (.mca)
-- χPLOT CHI (.chi)
-- Bruker SPC (.spc)
-- XrdPattern json (.json)
+
+- Plain Text Files
+    - Comma seperated values (.csv)
+    - Crystallographic Information File for Powder Diffraction (.cif)
+    - Custom XrdPattern json format (.json)
+    - Plain text tab seperated values (.txt) (! In progress)
+    - PANalytical XRDML (.xrdml)
+    - Freiberg Instruments XSYG (.xysg)
+
+- Binaries:
+  - Siemens/Bruker RAW ver. 1/2/3/4 (.raw)
+  - Stoe RAW (.raw) (! In progress)
+  - Siemens/Bruker UXD (.uxd)
+  - Philips UDF (.udf)
+  - Philips RD ver. 3/5 (.rd)
+  - Rigaku DAT (.dat)
+  - RIET7 DAT (.dat)
+  - Sietronics Sieray CPI (.cpi)
+  - XFIT/Koalariet XDD (.xdd)
+  - DBWS/DMPLOT data file (.dbw, .rit, .neu)
+  - Canberra CNF (.cnf)
+  - Canberra AccuSpec MCA (.mca)
+  - χPLOT CHI (.chi)
+  - Bruker SPC (.spc)
+
+When using Xrdpattern.load(fpath=xrdfile.suffix), the format will be automatically determined from the suffix unless
+there are are several formats with this format as with .raw and .dat. 
+In this case the format will need to be manually specified.
