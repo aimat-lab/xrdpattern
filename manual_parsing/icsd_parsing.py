@@ -27,9 +27,9 @@ for num, content in the_dict.items():
         tmp_fpath = tempfile.mktemp(suffix='.cif')
         with open(tmp_fpath, 'w') as f:
             f.write(content)
-            pattern = XrdPattern.load(fpath=tmp_fpath)
-            fpath = os.path.join(save_dir, str(uuid.uuid4()))
-            pattern.save(fpath=fpath)
+        pattern = XrdPattern.load(fpath=tmp_fpath)
+        fpath = os.path.join(save_dir, str(uuid.uuid4()))
+        pattern.save(fpath=fpath)
         print(f'Successfullly extracted pattern from cif and wrote information to {fpath}')
     except Exception as e:
         print(f'An error occured during extraction: {e}')

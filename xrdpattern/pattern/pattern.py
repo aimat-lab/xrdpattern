@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from typing import Optional
 from uuid import uuid4
 
 import matplotlib.pyplot as plt
@@ -37,7 +36,7 @@ class XrdPattern(PatternData):
 
     @classmethod
     def load(cls, fpath : str) -> XrdPattern:
-        pattern_list = parser.get_pattern_info_list(fpath=fpath)
+        pattern_list = parser.extract(fpath=fpath)
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern_info = pattern_list[0]

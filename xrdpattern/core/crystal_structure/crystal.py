@@ -73,6 +73,8 @@ class CrystalStructure(JsonDataclass):
 
     @classmethod
     def from_cif(cls, cif_content : str) -> CrystalStructure:
+        print(f'Cif content is {cif_content}')
+
         pymatgen_structure = Structure.from_str(cif_content, fmt='cif')
         crystal_structure = cls.from_pymatgen(pymatgen_structure)
         return crystal_structure

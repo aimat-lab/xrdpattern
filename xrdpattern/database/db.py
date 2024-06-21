@@ -66,7 +66,7 @@ class PatternDB:
         for fpath in data_fpaths:
             try:
                 tracker.increment(to_add=1)
-                pattern_info_list = parser.get_pattern_info_list(fpath=fpath)
+                pattern_info_list = parser.extract(fpath=fpath)
                 patterns += [XrdPattern(**info.to_dict()) for info in pattern_info_list]
                 parsing_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in patterns]
             except Exception as e:

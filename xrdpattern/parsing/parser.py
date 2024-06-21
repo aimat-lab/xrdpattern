@@ -22,6 +22,8 @@ class ParserOptions:
     default_wavelength : Optional[float] = None
     default_csv_orientation : Optional[Orientation] = None
 
+
+
 class Parser:
     def __init__(self, parser_options : ParserOptions = ParserOptions()):
         if parser_options.selected_suffixes is None:
@@ -39,7 +41,7 @@ class Parser:
     # -------------------------------------------
     # pattern
 
-    def get_pattern_info_list(self, fpath : str) -> list[PatternData]:
+    def extract(self, fpath : str) -> list[PatternData]:
         suffix = SaveManager.get_suffix(fpath)
         if not suffix in Formats.get_allowed_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
