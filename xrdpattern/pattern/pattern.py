@@ -9,10 +9,10 @@ import torch
 
 from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData
-from xrdpattern.parsing import Parser, ParserOptions, Formats
+from xrdpattern.parsing import Parser, Formats
 from .pattern_report import PatternReport
 
-
+parser = Parser()
 # -------------------------------------------
 
 class XrdPattern(PatternData):
@@ -36,9 +36,7 @@ class XrdPattern(PatternData):
     # -------------------------------------------
 
     @classmethod
-    def load(cls, fpath : str, wavelength : Optional[float] = None) -> XrdPattern:
-        options = ParserOptions(default_wavelength=wavelength)
-        parser = Parser(parser_options=options)
+    def load(cls, fpath : str) -> XrdPattern:
         pattern_list = parser.get_pattern_info_list(fpath=fpath)
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
