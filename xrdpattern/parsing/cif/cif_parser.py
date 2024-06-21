@@ -40,13 +40,8 @@ class CifParser:
 
         rmin = block.find_value("_pd_meas_2theta_range_min")
         rmax = block.find_value("_pd_meas_2theta_range_max")
-        npt = block.find_value("_pd_meas_number_of_points")
-        npt = cif.as_int(npt)
-
         if None in [rmin, rmax]:
             raise ValueError("Could not find 2theta range")
-        if not npt == len(y):
-            raise ValueError("Number of points in 2theta range does not match number of intensities")
 
         rmin = cif.as_number(rmin)
         rmax = cif.as_number(rmax)

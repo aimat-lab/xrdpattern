@@ -25,6 +25,9 @@ for num, content in the_dict.items():
 
     try:
         tmp_fpath = tempfile.mktemp(suffix='.cif')
+        lines = content.split('\n')
+        content = '\n'.join(lines[1:])
+
         with open(tmp_fpath, 'w') as f:
             f.write(content)
         pattern = XrdPattern.load(fpath=tmp_fpath)
