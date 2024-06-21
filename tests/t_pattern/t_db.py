@@ -2,7 +2,7 @@ import tempfile
 import os, uuid
 from xrdpattern.database import PatternDB
 from tests.base_tests import ParserBaseTest
-from xrdpattern.examples import DataExamples
+from xrdpattern.parsing import DataExamples
 
 
 # ---------------------------------------------------------

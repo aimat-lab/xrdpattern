@@ -3,13 +3,13 @@ from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
 from tests.base_tests import ParserBaseTest
 
-from xrdpattern.examples import LabelExamples, DataExamples
+from xrdpattern.parsing import DataExamples
 from xrdpattern.core import PowderExperiment
 import tempfile
 
-
 # ---------------------------------------------------------
 
+# TODO: Fix LabelExamples
 class TestXrdPattern(ParserBaseTest):
     @classmethod
     def get_fpath(cls) -> str:

@@ -10,7 +10,8 @@ from xrdpattern.core import PatternData, Artifacts, PowderExperiment
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
 from .csv import CsvParser, Orientation
-from .data_files import XrdFormat, Formats, get_xylib_repr
+from .formats import XrdFormat, Formats
+from .xylib import get_xylib_repr
 
 
 # -------------------------------------------

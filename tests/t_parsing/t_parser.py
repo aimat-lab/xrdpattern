@@ -1,7 +1,6 @@
 import os.path
 
-from xrdpattern.examples import DataExamples
-from xrdpattern.parsing import Orientation
+from xrdpattern.parsing import Orientation, DataExamples
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.database import PatternDB
 from tests.base_tests import ParserBaseTest
