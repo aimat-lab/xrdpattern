@@ -33,7 +33,7 @@ class TestTensorRegions(Unittest):
             # 3 coordinates, 8 scattering params, 1 occupancy
             self.assertEqual(len(actual), 3+8+1)
             for x,y, in zip(expected, actual):
-                if is_nan(x):
+                if x is None:
                     self.assertTrue(is_nan(y))
                 else:
                     self.assertEqual(x,y)
