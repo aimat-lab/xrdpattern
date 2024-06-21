@@ -1,23 +1,23 @@
 import math
 
-from xrdpattern.core import Lengths, AtomicSite, CrystalBase, Angles, Void
 from pymatgen.core import Species
 from pymatgen.core.structure import Structure
 
 from holytools.devtools import Unittest
-from holytools.file import PlaintextFile
 from xrdpattern.core import CrystalStructure
+from xrdpattern.core import Lengths, AtomicSite, CrystalBase, Angles, Void
 from xrdpattern.examples import LabelExamples
+
 
 # ---------------------------------------------------------
 
 class TestCifParsing(Unittest):
     @classmethod
     def setUpClass(cls):
-        cif_fpath = LabelExamples.get_cif_fpath(secondary=True)
-        print(f'Cif content from example: {PlaintextFile.get_text(cif_fpath)}')
-        cls.pymatgen_structure = Structure.from_file(filename=cif_fpath)
-        crystal = CrystalStructure.from_file(fpath=cif_fpath)
+        cif_content = LabelExamples.get_cif_content(secondary=True)
+        print(f'Cif content from example: {cif_content}')
+        cls.pymatgen_structure = Structure.from_str(input_string=cif_content, fmt='cif')
+        crystal = CrystalStructure.from_cif(cif_content=LabelExamples.get_cif_content(secondary=True))
         crystal.calculate_properties()
         cls.crystal = crystal
 
@@ -56,7 +56,7 @@ class TestCifParsing(Unittest):
 class TestPymatgenCompatibility(Unittest):
     @classmethod
     def setUpClass(cls):
-        pymatgen_structure = Structure.from_file(LabelExamples.get_cif_fpath(secondary=True))
+        pymatgen_structure = Structure.from_str(LabelExamples.get_cif_content(secondary=True), fmt='cif')
         cls.crystal = CrystalStructure.from_pymatgen(pymatgen_structure=pymatgen_structure)
         cls.pymatgen_structure = pymatgen_structure
 

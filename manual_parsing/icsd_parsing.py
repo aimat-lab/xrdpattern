@@ -3,7 +3,6 @@ import os
 import tempfile
 import uuid
 
-from xrdpattern.core import PowderExperiment
 from xrdpattern.pattern import XrdPattern
 
 icsd_json_path = '/home/daniel/Drive/data/workspace/icsd/dataset.json'
@@ -14,8 +13,6 @@ with open(icsd_json_path, 'r') as f:
     the_dict = json.loads(f.read())
 print(f'Loaded icsd dataset')
 
-
-the_label = PowderExperiment.from_file()
 
 for num, content in the_dict.items():
     lower_content = content.lower()

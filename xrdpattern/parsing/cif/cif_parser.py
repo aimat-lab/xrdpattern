@@ -1,5 +1,3 @@
-import tempfile
-
 import numpy as np
 # from xrdpattern.core import PatternData
 from gemmi import cif
@@ -10,7 +8,9 @@ from xrdpattern.core import PowderExperiment, PatternData
 
 class CifParser:
     def extract_pattern(self, fpath : str) -> PatternData:
-        label = PowderExperiment.from_cif(cif_content=fpath)
+        with open(fpath, 'r') as f:
+            cif_content = f.read()
+        label = PowderExperiment.from_cif(cif_content=cif_content)
 
         doc = cif.read_file(fpath)
         if len(doc) != 1:

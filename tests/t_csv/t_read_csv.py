@@ -28,8 +28,8 @@ class TestCsvReader(Unittest):
         self.read_as_pattern_info(Orientation.VERTICAL, self.single_csv_path)
 
     def read_as_matrix(self, pattern_data_axis : Orientation, csv_path : str):
-        reader = CsvParser(pattern_data_axis=pattern_data_axis)
-        table = reader._as_matrix(fpath=csv_path)
+        reader = CsvParser()
+        table = reader._as_matrix(fpath=csv_path, pattern_orientation=pattern_data_axis)
         expected_set = set(self.single_first_row) if csv_path==self.single_csv_path else set(self.multi_first_row)
         actual_set = set(table.data[0])
         print(f'Actual, expected row: \n{actual_set} \n{expected_set}')
@@ -38,8 +38,8 @@ class TestCsvReader(Unittest):
 
     @staticmethod
     def read_as_pattern_info(pattern_data_axis : Orientation, csv_path : str):
-        reader = CsvParser(pattern_data_axis=pattern_data_axis)
-        reader.extract_patterns(fpath=csv_path)
+        reader = CsvParser()
+        reader.extract_patterns(fpath=csv_path, pattern_dimension=pattern_data_axis)
 
 
 if __name__ == '__main__':

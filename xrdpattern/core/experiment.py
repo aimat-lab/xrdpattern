@@ -144,13 +144,6 @@ class PowderExperiment(JsonDataclass):
 
 
     @classmethod
-    def from_file(cls, cif_fpath: str) -> PowderExperiment:
-        with open(cif_fpath, 'r') as f:
-            content = f.read()
-        return cls.from_cif(content)
-
-
-    @classmethod
     def make_empty(cls) -> PowderExperiment:
         lengths = Lengths(a=None, b=None, c=None)
         angles = Angles(alpha=None, beta=None, gamma=None)

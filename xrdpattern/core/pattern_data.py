@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
 
 from holytools.abstract import Serializable
-from xrdpattern.core.powderexperiment import PowderExperiment
+from xrdpattern.core.experiment import PowderExperiment
 
 
 # -------------------------------------------
