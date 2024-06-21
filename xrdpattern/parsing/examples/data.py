@@ -30,6 +30,4 @@ class DataExamples:
 
     @staticmethod
     def get_example_dirpath() -> str:
-        dirpath = os.path.dirname(__file__)
-        xrd_examples_dirpath = os.path.join(dirpath, 'examples')
-        return xrd_examples_dirpath
+        return os.path.dirname(__file__)
