@@ -1,7 +1,4 @@
-from CrystalStructure.atomic_site import AtomicSite
-from CrystalStructure.base import CrystalBase
-from CrystalStructure.crystal import CrystalStructure
-from CrystalStructure.lattice import Lengths, Angles
+from CrystalStructure.crystal import CrystalStructure, Lengths, Angles, CrystalBase, AtomicSite
 
 from holytools.devtools import Unittest
 from xrdpattern.core import PowderExperiment, PowderSample, Artifacts, LabelTensor

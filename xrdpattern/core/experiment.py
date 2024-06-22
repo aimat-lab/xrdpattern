@@ -2,15 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Optional
-
-from CrystalStructure.atomic_site import AtomicSite
-from CrystalStructure.base import CrystalBase
-from CrystalStructure.crystal import CrystalStructure
-from CrystalStructure.lattice import Lengths, Angles
-
-from holytools.abstract import JsonDataclass
 import torch
 from torch import Tensor
+
+from CrystalStructure.crystal import CrystalStructure, CrystalBase, AtomicSite, Lengths, Angles
+from holytools.abstract import JsonDataclass
 
 # ---------------------------------------------------------
 
