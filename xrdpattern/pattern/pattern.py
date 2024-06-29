@@ -5,9 +5,10 @@ from uuid import uuid4
 
 import matplotlib.pyplot as plt
 import torch
+from CrystalStructure.crystal import CrystalStructure
 
 from holytools.fsys import SaveManager
-from xrdpattern.core import PatternData
+from xrdpattern.core import PatternData, Artifacts
 from xrdpattern.parsing import Parser, Formats
 from .pattern_report import PatternReport
 
@@ -33,6 +34,7 @@ class XrdPattern(PatternData):
         plt.show()
 
     # -------------------------------------------
+    # save/load
 
     @classmethod
     def load(cls, fpath : str) -> XrdPattern:
@@ -54,6 +56,25 @@ class XrdPattern(PatternData):
         with open(fpath, 'w') as f:
             f.write(self.to_str())
 
+    # -------------------------------------------
+    # get
+
+
+    @property
+    def crystal_structure(self) -> CrystalStructure:
+        return self.label.crystal_structure
+
+    @property
+    def powder(self):
+        return self.label.powder
+
+    @property
+    def artifacts(self) -> Artifacts:
+        return self.label.artifacts
+
+    @property
+    def is_simulated(self) -> bool:
+        return self.label.is_simulated
 
     def to_tensor_pair(self) -> tuple[torch.Tensor, torch.Tensor]:
         labels = self.label.to_tensor()
@@ -61,9 +82,6 @@ class XrdPattern(PatternData):
         intensities = torch.tensor(intensities)
 
         return intensities, labels
-
-    # -------------------------------------------
-    # get
 
     def get_parsing_report(self, datafile_fpath : str) -> PatternReport:
         pattern_health = PatternReport(datafile_fpath=datafile_fpath)
@@ -112,9 +130,6 @@ class XrdPattern(PatternData):
     @classmethod
     def std_two_theta_range(cls) -> (float, float):
         return 0, 180
-
-    # -------------------------------------------
-    # view
 
     def get_info_as_str(self) -> str:
         crystal = self.label.crystal_structure
