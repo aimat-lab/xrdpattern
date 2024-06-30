@@ -16,10 +16,10 @@ parser = Parser()
 # -------------------------------------------
 
 class XrdPattern(PatternData):
-    def plot(self, apply_standardization=True):
+    def plot(self, title: str ='Xrd Pattern', apply_standardization=True):
         plt.figure(figsize=(10, 6))
         plt.ylabel('Intensity')
-        plt.title('XRD Pattern')
+        plt.title(title)
 
         x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization)
         if apply_standardization:
@@ -58,7 +58,6 @@ class XrdPattern(PatternData):
 
     # -------------------------------------------
     # get
-
 
     @property
     def crystal_structure(self) -> CrystalStructure:
