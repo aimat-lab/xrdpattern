@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import Optional
 from uuid import uuid4
 
 import matplotlib.pyplot as plt
@@ -16,7 +17,7 @@ parser = Parser()
 # -------------------------------------------
 
 class XrdPattern(PatternData):
-    def plot(self, title: str ='Xrd Pattern', apply_standardization=True):
+    def plot(self, title: str ='Xrd Pattern', save_fpath : Optional[str] = None, apply_standardization=True):
         plt.figure(figsize=(10, 6))
         plt.ylabel('Intensity')
         plt.title(title)
@@ -28,9 +29,13 @@ class XrdPattern(PatternData):
             label = 'Original Intensity'
 
         plt.xlabel(r'$2\theta$ (Degrees)')
-
         plt.plot(x_values, intensities, label=label)
         plt.legend()
+
+        if save_fpath:
+            plt.savefig(save_fpath)
+            print(f"Plot saved to \"{save_fpath}\"")
+
         plt.show()
 
     # -------------------------------------------
@@ -128,7 +133,7 @@ class XrdPattern(PatternData):
 
     @classmethod
     def std_two_theta_range(cls) -> (float, float):
-        return 0, 180
+        return 0, 90
 
     def get_info_as_str(self) -> str:
         crystal = self.label.crystal_structure
