@@ -57,7 +57,7 @@ class PatternDB:
         parsing_reports = []
 
         data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=selected_suffixes)
-        tracker = TrackedInt(start_value=0, max_value=len(data_fpaths))
+        tracker = TrackedInt(start_value=0, finish_value=len(data_fpaths))
         for fpath in data_fpaths:
             try:
                 patterns += [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath)]

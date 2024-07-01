@@ -170,8 +170,8 @@ class Artifacts(JsonDataclass):
 @dataclass
 class PowderSample(JsonDataclass):
     crystal_structure: CrystalStructure
-    crystallite_size: Optional[float]
-    temp_in_celcius : Optional[float]
+    crystallite_size: Optional[float] = None
+    temp_in_celcius : Optional[float] = None
 
 
 class LabelTensor(Tensor):
