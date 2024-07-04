@@ -209,9 +209,9 @@ class LabelTensor(Tensor):
     # domain = 1 : simulated
     # domain = 0 : experimental
     # noinspection PyTypeChecker
-    def get_domain(self) -> LabelTensor:
+    def get_issimulated_probability(self) -> LabelTensor:
         region = self.example_powder_experiment.domain_region
-        return torch.sigmoid(self[..., region.start:region.end])
+        return self[..., region.start:region.end]
 
     # noinspection PyTypeChecker
     def to_sample(self) -> PowderExperiment:
