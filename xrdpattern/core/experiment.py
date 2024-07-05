@@ -45,10 +45,10 @@ class PowderExperiment(JsonDataclass):
             region_obj = self.add_region(list_obj=atomic_site.as_list())
             self.atomic_site_regions.append(region_obj)
 
-        if structure.space_group is None:
+        if structure.spacegroup is None:
             spacegroup_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
         else:
-            spacegroup_list = [j + 1 == structure.space_group for j in range(NUM_SPACEGROUPS)]
+            spacegroup_list = [j + 1 == structure.spacegroup for j in range(NUM_SPACEGROUPS)]
         self.spacegroup_region : QuantityRegion = self.add_region(list_obj=spacegroup_list)
 
         artifacts_list = self.artifacts.as_list()

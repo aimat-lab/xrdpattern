@@ -36,7 +36,7 @@ class TestTensorRegions(Unittest):
                     self.assertEqual(x,y)
 
     def test_spacegroups(self):
-        expected = [j ==  self.crystal_structure.space_group for j in range(1,231)]
+        expected = [j ==  self.crystal_structure.spacegroup for j in range(1,231)]
         actual = self.label_tensor.get_spacegroups().tolist()
         print(f'Tensor spacegroups are {actual}; \nSpacegroups tensor length = {len(actual)}')
         self.assertEqual(actual, expected, f'Expected: {expected}, Actual: {actual}')
@@ -69,7 +69,7 @@ class TestTensorRegions(Unittest):
         angles = Angles(alpha=90, beta=90, gamma=90)
         base = CrystalBase([AtomicSite.make_void()])
         crystal_structure = CrystalStructure(lengths=primitives, angles=angles, base=base)
-        crystal_structure.space_group = 120
+        crystal_structure.spacegroup = 120
 
         powder = PowderSample(crystal_structure=crystal_structure, crystallite_size=10.0)
         artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)

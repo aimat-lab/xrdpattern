@@ -25,13 +25,13 @@ for r in rows:
 
 @dataclass
 class RRUFFLabels:
-    space_group: str
+    spacegroup: str
     lattice_parameters: list
     wavelength: float
 
 
 def extract_labels(fpath : str) -> RRUFFLabels:
-    space_group = None
+    spacegroup = None
     lattice_parameters = None
     wavelength = None
 
@@ -42,12 +42,12 @@ def extract_labels(fpath : str) -> RRUFFLabels:
         if "CELL PARAMETERS:" in line:
             lattice_parameters = list(map(float, line.split(':')[1].strip().split()))
         elif "SPACE GROUP:" in line:
-            space_group = line.split(':')[1].strip()
+            spacegroup = line.split(':')[1].strip()
         elif "X-RAY WAVELENGTH:" in line:
             wavelength = float(line.split(':')[1].strip())
 
-    print(f'Cell params, space group, wavelength = {lattice_parameters, space_group, wavelength}')
-    return RRUFFLabels(space_group=space_group, lattice_parameters=lattice_parameters, wavelength=wavelength)
+    print(f'Cell params, space group, wavelength = {lattice_parameters, spacegroup, wavelength}')
+    return RRUFFLabels(spacegroup=spacegroup, lattice_parameters=lattice_parameters, wavelength=wavelength)
 
 
 def extract_basename(fname):
@@ -93,7 +93,7 @@ if __name__ == "__main__":
             struct_fpath = STRUCTURE_NAME_FPATH_MAP[base_name]
             print(f'\nExtracting labels from path: {struct_fpath}')
             labels = extract_labels(fpath=struct_fpath)
-            spacegroup = to_int(labels.space_group)
+            spacegroup = to_int(labels.spacegroup)
 
             pattern = XrdPattern.load(fpath=pattern_fpath)
             for p in labels.lattice_parameters:
@@ -106,7 +106,7 @@ if __name__ == "__main__":
             lengths = Lengths(a=a, b=b, c=c)
             angles = Angles(alpha=alpha, beta=beta, gamma=gamma)
 
-            crystal_structure = CrystalStructure(lengths=lengths, angles=angles, space_group=spacegroup, base=CrystalBase())
+            crystal_structure = CrystalStructure(lengths=lengths, angles=angles, spacegroup=spacegroup, base=CrystalBase())
             powder = PowderSample(crystal_structure=crystal_structure)
             artifacts = Artifacts(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength, secondary_to_primary=0)
             pattern.label = PowderExperiment(powder=powder, artifacts=artifacts, is_simulated=False)
