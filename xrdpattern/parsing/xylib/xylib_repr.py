@@ -19,9 +19,7 @@ class XYLibPattern:
     def __post_init__(self):
         column_pattern = r'# column_1\tcolumn_2'
         matches = re.findall(pattern=column_pattern, string=self.content)
-
         if not matches:
-            print(f'Self content = {self.content}')
             raise ValueError(f"Could not find header matching pattern \"{column_pattern}\" in file {self.fpath}")
 
         self.header_str, self.data_str = self.content.split(matches[0])

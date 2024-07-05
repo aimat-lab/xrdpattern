@@ -11,7 +11,9 @@ from holytools.fsys import FsysNode
 from holytools.userIO import TrackedInt
 from xrdpattern.parsing import Parser, Orientation, Formats
 from xrdpattern.pattern import XrdPattern, PatternReport
-logger = getLogger(name='xrdpattern')
+from holytools.logging import LoggerFactory
+
+logger = LoggerFactory.make_logger(name=__name__)
 
 # -------------------------------------------
 
@@ -67,7 +69,7 @@ class PatternDB:
                 failed_fpath.append(fpath)
                 logger.log(msg=f"Could not import pattern from file {fpath}\n"
                       f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
-                      f"-> Traceback: \n{traceback.format_exc()}", level=logging.ERROR)
+                      f"-> Traceback: \n{traceback.format_exc()}", level=logging.WARNING)
 
         database_report = DatabaseReport(failed_files=failed_fpath,
                                          source_files=data_fpaths,
