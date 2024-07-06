@@ -6,11 +6,11 @@ from CrystalStructure.crystal import CrystalStructure
 from xrdpattern.core import PowderExperiment, Artifacts, PowderSample
 from xrdpattern.pattern import XrdPattern
 
-with open('/home/daniel/Drive/data/workspace/opxrd/cod/cod_extracted_data.json', 'r') as f:
+with open('/home/daniel/Drive/data/workspace/extracted_data.json', 'r') as f:
     content = f.read()
 
 the_dict = json.loads(content)
-print('done')
+print('done reading json')
 base_url = 'https://www.crystallography.net/cod'
 
 for cod_id, value in the_dict.items():

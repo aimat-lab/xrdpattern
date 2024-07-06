@@ -8,10 +8,10 @@ from torch import Tensor
 from CrystalStructure.crystal import CrystalStructure, CrystalBase, AtomicSite, Lengths, Angles
 from holytools.abstract import JsonDataclass
 
-# ---------------------------------------------------------
-
 NUM_SPACEGROUPS = 230
-NUM_ATOMIC_SITES = 100
+MAX_ATOMIC_SITES = 1000
+
+# ---------------------------------------------------------
 
 @dataclass
 class QuantityRegion:
@@ -30,6 +30,9 @@ class PowderExperiment(JsonDataclass):
     is_simulated : bool
 
     def __post_init__(self):
+        if len(self.crystal_structure.base) > MAX_ATOMIC_SITES:
+            raise ValueError(f"Too many atomic sites in base: {len(self.crystal_structure.base)}")
+
         self.list_repr = []
         structure = self.crystal_structure
 
@@ -67,9 +70,6 @@ class PowderExperiment(JsonDataclass):
 
     @staticmethod
     def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
-        if len(base) > NUM_ATOMIC_SITES:
-            raise ValueError(f"Too many atomic sites in base: {len(base)}")
-
         def make_padding_site():
             if nan_padding:
                 site = AtomicSite.make_placeholder()
@@ -77,7 +77,7 @@ class PowderExperiment(JsonDataclass):
                 site = AtomicSite.make_void()
             return site
 
-        delta = NUM_ATOMIC_SITES - len(base)
+        delta = MAX_ATOMIC_SITES - len(base)
         padded_base = base + [make_padding_site() for _ in range(delta)]
         return padded_base
 
@@ -136,6 +136,7 @@ class PowderExperiment(JsonDataclass):
         artifacts = Artifacts(primary_wavelength=None,
                               secondary_wavelength=None,
                               secondary_to_primary=None)
+        structure.calculate_properties()
 
         return cls(powder=powder, artifacts=artifacts, is_simulated=False)
 
