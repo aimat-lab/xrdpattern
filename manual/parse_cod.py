@@ -30,7 +30,10 @@ for cod_id, value in the_dict.items():
         name = f"COD_{value['id']}"
 
         pattern = XrdPattern(two_theta_values=two_thetas, intensities=intensities, label=label, name=name)
-        pattern.save(fpath=f'/home/daniel/Drive/data/workspace/opxrd/cod/{name}.json', force_overwrite=True)
+        fpath = f'/home/daniel/Drive/data/workspace/opxrd/cod/{name}.json'
+        pattern.save(fpath=fpath, force_overwrite=True)
+        print(f'Successfully parsed structure number {value["id"]} and saved file at {fpath}')
+
     except BaseException as e:
         print(f'Failed to extract COD pattern due to error {e}')
 
