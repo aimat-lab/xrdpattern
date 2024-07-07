@@ -4,14 +4,14 @@ import logging
 import os
 import traceback
 from dataclasses import dataclass
-from logging import getLogger
 from typing import Optional
 
 from holytools.fsys import FsysNode
+from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedInt
+
 from xrdpattern.parsing import Parser, Orientation, Formats
 from xrdpattern.pattern import XrdPattern, PatternReport
-from holytools.logging import LoggerFactory
 
 logger = LoggerFactory.make_logger(name=__name__)
 

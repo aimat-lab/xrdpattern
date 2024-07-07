@@ -49,16 +49,16 @@ class PowderExperiment(JsonDataclass):
             self.atomic_site_regions.append(region_obj)
 
         if structure.spacegroup is None:
-            spacegroup_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
+            spg_logits_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
         else:
-            spacegroup_list = [j + 1 == structure.spacegroup for j in range(NUM_SPACEGROUPS)]
-        self.spacegroup_region : QuantityRegion = self.add_region(list_obj=spacegroup_list)
+            spg_logits_list = [1000 if j + 1 == structure.spacegroup else 0 for j in range(NUM_SPACEGROUPS)]
+        self.spacegroup_region : QuantityRegion = self.add_region(list_obj=spg_logits_list)
 
         artifacts_list = self.artifacts.as_list()
         self.artifacts_region : QuantityRegion = self.add_region(artifacts_list)
 
-        domain_list = [self.is_simulated]
-        self.domain_region : QuantityRegion = self.add_region(domain_list)
+        is_simulated = [self.is_simulated]
+        self.domain_region : QuantityRegion = self.add_region(is_simulated)
 
 
     def add_region(self, list_obj : list) -> QuantityRegion:
@@ -176,7 +176,12 @@ class PowderSample(JsonDataclass):
 
 
 class LabelTensor(Tensor):
-    example_powder_experiment: PowderExperiment = PowderExperiment.make_empty()
+    example_experiment: PowderExperiment = PowderExperiment.make_empty()
+    lattice_param_region : QuantityRegion = example_experiment.lattice_param_region
+    atomic_site_regions : list[QuantityRegion] = example_experiment.atomic_site_regions
+    spacegroup_region : QuantityRegion = example_experiment.spacegroup_region
+    artifacts_region : QuantityRegion = example_experiment.artifacts_region
+    domain_region : QuantityRegion = example_experiment.domain_region
 
     def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
         dtype = dtype if dtype is not None else self.dtype
@@ -189,30 +194,28 @@ class LabelTensor(Tensor):
 
     #noinspection PyTypeChecker
     def get_lattice_params(self) -> LabelTensor:
-        region = self.example_powder_experiment.lattice_param_region
-        return self[..., region.start:region.end]
+        return self[..., self.spacegroup_region.start:self.spacegroup_region.end]
 
     # noinspection PyTypeChecker
     def get_atomic_site(self, index: int) -> LabelTensor:
-        region = self.example_powder_experiment.atomic_site_regions[index]
+        region = self.atomic_site_regions[index]
         return self[..., region.start:region.end]
 
     # noinspection PyTypeChecker
-    def get_spacegroups(self) -> LabelTensor:
-        region = self.example_powder_experiment.spacegroup_region
-        return self[..., region.start:region.end]
+    def get_spg_logits(self) -> LabelTensor:
+        return self[..., self.spacegroup_region.start:self.spacegroup_region.end]
+
+    def get_spg_probabilities(self):
+        logits = self.get_spg_logits()
+        return torch.softmax(logits, dim=1)
 
     # noinspection PyTypeChecker
     def get_artifacts(self) -> LabelTensor:
-        region = self.example_powder_experiment.artifacts_region
-        return self[..., region.start:region.end]
+        return self[..., self.artifacts_region.start:self.artifacts_region.end]
 
-    # domain = 1 : simulated
-    # domain = 0 : experimental
     # noinspection PyTypeChecker
-    def get_issimulated_probability(self) -> LabelTensor:
-        region = self.example_powder_experiment.domain_region
-        return self[..., region.start:region.end]
+    def get_simulated_probability(self) -> LabelTensor:
+        return self[..., self.domain_region.start:self.domain_region.end]
 
     # noinspection PyTypeChecker
     def to_sample(self) -> PowderExperiment:

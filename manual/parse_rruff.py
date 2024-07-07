@@ -31,7 +31,7 @@ class RRUFFLabels:
 
 
 def extract_labels(fpath : str) -> RRUFFLabels:
-    spacegroup = None
+    spg = None
     lattice_parameters = None
     wavelength = None
 
@@ -42,12 +42,12 @@ def extract_labels(fpath : str) -> RRUFFLabels:
         if "CELL PARAMETERS:" in line:
             lattice_parameters = list(map(float, line.split(':')[1].strip().split()))
         elif "SPACE GROUP:" in line:
-            spacegroup = line.split(':')[1].strip()
+            spg = line.split(':')[1].strip()
         elif "X-RAY WAVELENGTH:" in line:
             wavelength = float(line.split(':')[1].strip())
 
-    print(f'Cell params, space group, wavelength = {lattice_parameters, spacegroup, wavelength}')
-    return RRUFFLabels(spacegroup=spacegroup, lattice_parameters=lattice_parameters, wavelength=wavelength)
+    print(f'Cell params, space group, wavelength = {lattice_parameters, spg, wavelength}')
+    return RRUFFLabels(spacegroup=spg, lattice_parameters=lattice_parameters, wavelength=wavelength)
 
 
 def extract_basename(fname):
