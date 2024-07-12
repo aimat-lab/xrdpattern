@@ -9,7 +9,7 @@ from CrystalStructure.crystal import CrystalStructure, CrystalBase, AtomicSite, 
 from holytools.abstract import JsonDataclass
 
 NUM_SPACEGROUPS = 230
-MAX_ATOMIC_SITES = 1000
+MAX_ATOMIC_SITES = 100
 
 # ---------------------------------------------------------
 
