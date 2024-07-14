@@ -13,7 +13,7 @@ from holytools.userIO import TrackedInt
 from xrdpattern.parsing import Parser, Orientation, Formats
 from xrdpattern.pattern import XrdPattern, PatternReport
 
-logger = LoggerFactory.make_logger(name=__name__)
+logger = LoggerFactory.get_logger(name=__name__)
 
 # -------------------------------------------
 
