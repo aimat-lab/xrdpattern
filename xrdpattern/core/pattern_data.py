@@ -29,29 +29,23 @@ class PatternData(Serializable):
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}
 
-
-
     def get_standardized_map(self, start_val : float, stop_val : float, num_entries : int) -> (list[float], list[float]):
         start, end = self.two_theta_values[0], self.two_theta_values[-1]
         std_angles = np.linspace(start=start_val, stop=stop_val, num=num_entries)
 
         x = np.array(self.two_theta_values)
         y = np.array(self.intensities)
-        min_val = min(y)
-        y = y - min_val
 
         cs = CubicSpline(x, y)
-        interpolated_intensities = [cs(angle) for angle in std_angles if start <= angle <= end]
-        max_intensity = max(interpolated_intensities)
-        normalization_factor = max_intensity if max_intensity != 0 else 1
+        mask = (std_angles >= start) & (std_angles <= end)
+        std_intensities = cs(std_angles)
+        std_intensities = std_intensities * mask
 
-        std_intensities = []
-        for angle in std_angles:
-            I = cs(angle)/normalization_factor if start <= angle <= end else float(0)
-            std_intensities.append(I)
+        max_intensity = np.max(std_intensities)
+        normalization_factor = max_intensity if max_intensity > 0 else 1
+        std_intensities = (std_intensities-np.min(std_intensities))/normalization_factor
 
-        return std_angles,std_intensities
-
+        return std_angles, std_intensities
 
     def to_str(self) -> str:
         the_dict = {'two_theta_values' : self.two_theta_values.tolist(),

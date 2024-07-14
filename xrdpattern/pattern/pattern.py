@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import Optional
 from uuid import uuid4
 
@@ -88,9 +89,14 @@ class XrdPattern(PatternData):
         return self.label.is_simulated
 
     def to_tensor_pair(self) -> tuple[torch.Tensor, torch.Tensor]:
+        now = time.time()
+
         labels = self.label.to_tensor()
         _, intensities = self.get_pattern_data()
         intensities = torch.tensor(intensities)
+
+        time_taken = time.time() - now
+        print(f'Time taken = {time_taken}')
 
         return intensities, labels
 
