@@ -140,6 +140,10 @@ class XrdPattern(PatternData):
             angles, intensities = copy.copy(self.two_theta_values), copy.copy(self.intensities)
         if apply_autocorrelation:
             intensities = np.correlate(intensities, intensities, mode='full')
+            max_intensity = np.max(intensities)
+            normalization_factor = max_intensity if max_intensity > 0 else 1
+            intensities = intensities / normalization_factor
+
             angles = np.linspace(0, 2 * angles[-1], len(intensities))
         return angles, intensities
 
