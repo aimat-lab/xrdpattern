@@ -150,8 +150,11 @@ class XrdPattern(PatternData):
             n = len(intensities)
             integral_areas = np.concatenate((np.arange(1, n + 1), np.arange(n - 1, 0, -1)))
 
+            intensities = intensities-np.sum(intensities)/len(intensities)
             intensities = np.correlate(intensities, intensities, mode='full')
             intensities = intensities / integral_areas
+            intensities -= np.min(intensities)
+
             max_intensity = np.max(intensities)
             normalization_factor = max_intensity if max_intensity > 0 else 1
             intensities = intensities / normalization_factor
