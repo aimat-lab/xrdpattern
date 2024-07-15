@@ -2,6 +2,7 @@ import os.path
 
 from CrystalStructure.examples import CrystalExamples
 
+
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
 from tests.base_tests import ParserBaseTest
@@ -12,7 +13,6 @@ import tempfile
 
 # ---------------------------------------------------------
 
-# TODO: Fix LabelExamples
 class TestXrdPattern(ParserBaseTest):
     @classmethod
     def get_fpath(cls) -> str:
@@ -60,7 +60,25 @@ class TestXrdPattern(ParserBaseTest):
         return reloaded_pattern
 
 if __name__ == "__main__":
-    TestXrdPattern.execute_all(manual_mode=False)
+    this_pattern = XrdPattern.load(fpath=DataExamples.get_aimat_xrdpattern_fpath())
+    print(this_pattern)
+    this_pattern.plot()
 
-
-
+    #
+    # from matplotlib import pyplot as plt
+    # plt.figure(figsize=(10, 6))
+    # plt.ylabel('Intensity')
+    # plt.title(f'Autocorrellated plot')
+    #
+    # x_values, intensities = this_pattern.get_pattern_data(autocorrelate=True)
+    #
+    # plt.xlabel(r'$2\theta$ (Degrees)')
+    # plt.plot(x_values, intensities)
+    # plt.legend()
+    #
+    #
+    # plt.show()
+    #
+    #
+    #
+    #

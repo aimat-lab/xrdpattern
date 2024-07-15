@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import copy
 import os
 import time
 from typing import Optional
 from uuid import uuid4
 
 import matplotlib.pyplot as plt
+import numpy as np
 import torch
 from CrystalStructure.crystal import CrystalStructure
 
@@ -42,6 +44,7 @@ class XrdPattern(PatternData):
     # -------------------------------------------
     # save/load
 
+    # TODO: This is the correct loading mechanism but currently disabled due to incompatibbility of xylib with horeka
     # @classmethod
     # def load(cls, fpath : str) -> XrdPattern:
     #     pattern_list = parser.extract(fpath=fpath)
@@ -88,11 +91,11 @@ class XrdPattern(PatternData):
     def is_simulated(self) -> bool:
         return self.label.is_simulated
 
-    def to_tensor_pair(self) -> tuple[torch.Tensor, torch.Tensor]:
+    def to_tensor_pair(self, autocorrelate : bool = False) -> tuple[torch.Tensor, torch.Tensor]:
         # now = time.time()
 
         labels = self.label.to_tensor()
-        _, intensities = self.get_pattern_data()
+        _, intensities = self.get_pattern_data(autocorrelate=autocorrelate)
         intensities = torch.tensor(intensities)
 
         # print(f'Time taken = {time.time() - now} seconds')
@@ -125,19 +128,17 @@ class XrdPattern(PatternData):
         return filename
 
 
-    def get_pattern_data(self, apply_standardization = True) -> tuple[list[float], list[float]]:
-        """
-        :param apply_standardization: Standardization pads missing values, scales intensity into [0,1] range and makes x-step size uniform
-        :return: A mapping from the specified x-axis type to intensity
-        """
-
+    def get_pattern_data(self, apply_standardization : bool = True, autocorrelate : bool = False) -> tuple[list[float], list[float]]:
         if apply_standardization:
             start, stop = self.std_two_theta_range()
             num_entries = self.std_num_entries()
-            intensity_map = self.get_standardized_map(start_val=start, stop_val=stop, num_entries=num_entries)
+            angles, intensities = self.get_standardized_map(start_val=start, stop_val=stop, num_entries=num_entries)
         else:
-            intensity_map = (self.two_theta_values, self.intensities)
-        return intensity_map
+            angles, intensities = copy.copy(self.two_theta_values), copy.copy(self.intensities)
+        if autocorrelate:
+            intensities = np.correlate(intensities, intensities, mode='full')
+            angles = np.linspace(0, 2 * angles[-1], len(intensities))
+        return angles, intensities
 
     @classmethod
     def std_num_entries(cls) -> int:

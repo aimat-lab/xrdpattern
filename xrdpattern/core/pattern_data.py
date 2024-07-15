@@ -35,6 +35,7 @@ class PatternData(Serializable):
 
         x = np.array(self.two_theta_values)
         y = np.array(self.intensities)
+        y -= np.min(y)
 
         cs = CubicSpline(x, y)
         mask = (std_angles >= start) & (std_angles <= end)
@@ -43,7 +44,7 @@ class PatternData(Serializable):
 
         max_intensity = np.max(std_intensities)
         normalization_factor = max_intensity if max_intensity > 0 else 1
-        std_intensities = (std_intensities-np.min(std_intensities))/normalization_factor
+        std_intensities = std_intensities/normalization_factor
 
         return std_angles, std_intensities
 
