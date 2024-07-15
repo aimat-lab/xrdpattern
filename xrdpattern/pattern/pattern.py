@@ -44,6 +44,14 @@ class XrdPattern(PatternData):
 
         plt.show()
 
+    @classmethod
+    def mk_zero_intensities(cls) -> XrdPattern:
+        start, stop = cls.std_two_theta_range()
+        two_theta_values = np.linspace(start=start, stop=stop, num=cls.std_num_entries()).tolist()
+        intensities = np.zeros(shape=(len(two_theta_values),)).tolist()
+        return cls.make_unlabeled(two_theta_values=two_theta_values, intensities=intensities)
+
+
     # -------------------------------------------
     # save/load
 
