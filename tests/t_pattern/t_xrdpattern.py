@@ -62,23 +62,10 @@ class TestXrdPattern(ParserBaseTest):
 if __name__ == "__main__":
     this_pattern = XrdPattern.load(fpath=DataExamples.get_aimat_xrdpattern_fpath())
     print(this_pattern)
-    this_pattern.plot()
+    # this_pattern.plot(apply_standardization=True)
 
-    #
-    # from matplotlib import pyplot as plt
-    # plt.figure(figsize=(10, 6))
-    # plt.ylabel('Intensity')
-    # plt.title(f'Autocorrellated plot')
-    #
-    # x_values, intensities = this_pattern.get_pattern_data(autocorrelate=True)
-    #
-    # plt.xlabel(r'$2\theta$ (Degrees)')
-    # plt.plot(x_values, intensities)
-    # plt.legend()
-    #
-    #
-    # plt.show()
-    #
-    #
-    #
-    #
+
+
+
+
+

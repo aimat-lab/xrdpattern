@@ -16,20 +16,22 @@ from xrdpattern.core import PatternData, Artifacts
 # from xrdpattern.parsing import Formats
 from .pattern_report import PatternReport
 
+# TODO: This is the correct loading mechanism but currently disabled due to incompatibbility of xylib with horeka
 # parser = Parser()
 # -------------------------------------------
 
 class XrdPattern(PatternData):
-    def plot(self, title: str ='Xrd Pattern', save_fpath : Optional[str] = None, apply_standardization=True):
+    def plot(self, title: str ='Xrd Pattern', save_fpath : Optional[str] = None,
+             apply_standardization : bool =True,
+             apply_autocorrelation : bool = False):
         plt.figure(figsize=(10, 6))
         plt.ylabel('Intensity')
         plt.title(title)
 
         x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization)
-        if apply_standardization:
-            label = 'Interpolated Intensity'
-        else:
-            label = 'Original Intensity'
+        quantity_qualifer = 'Interpolated' if apply_standardization else 'Original'
+        quantity = 'autocorrelated intensities' if apply_autocorrelation else 'intensitites'
+        label = f'{quantity_qualifer} {quantity}'
 
         plt.xlabel(r'$2\theta$ (Degrees)')
         plt.plot(x_values, intensities, label=label)
