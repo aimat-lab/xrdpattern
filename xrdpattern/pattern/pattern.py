@@ -21,18 +21,19 @@ from .pattern_report import PatternReport
 # -------------------------------------------
 
 class XrdPattern(PatternData):
-    def plot(self, title: str ='Xrd Pattern', save_fpath : Optional[str] = None,
+    def plot(self, title: Optional[str] = None, save_fpath : Optional[str] = None,
              apply_standardization : bool =True,
              apply_autocorrelation : bool = False):
-        plt.figure(figsize=(10, 6))
-        plt.ylabel('Intensity')
-        plt.title(title)
+        title = title or self.name or 'XrdPattern'
 
-        x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization)
+        x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization, apply_autocorrelation=apply_autocorrelation)
         quantity_qualifer = 'Interpolated' if apply_standardization else 'Original'
         quantity = 'autocorrelated intensities' if apply_autocorrelation else 'intensitites'
         label = f'{quantity_qualifer} {quantity}'
 
+        plt.figure(figsize=(10, 6))
+        plt.title(title)
+        plt.ylabel(f'{quantity}')
         plt.xlabel(r'$2\theta$ (Degrees)')
         plt.plot(x_values, intensities, label=label)
         plt.legend()
@@ -97,7 +98,7 @@ class XrdPattern(PatternData):
         # now = time.time()
 
         labels = self.label.to_tensor()
-        _, intensities = self.get_pattern_data(autocorrelate=autocorrelate)
+        _, intensities = self.get_pattern_data(apply_autocorrelation=autocorrelate)
         intensities = torch.tensor(intensities)
 
         # print(f'Time taken = {time.time() - now} seconds')
@@ -130,14 +131,14 @@ class XrdPattern(PatternData):
         return filename
 
 
-    def get_pattern_data(self, apply_standardization : bool = True, autocorrelate : bool = False) -> tuple[list[float], list[float]]:
+    def get_pattern_data(self, apply_standardization : bool = True, apply_autocorrelation : bool = False) -> tuple[list[float], list[float]]:
         if apply_standardization:
             start, stop = self.std_two_theta_range()
             num_entries = self.std_num_entries()
             angles, intensities = self.get_standardized_map(start_val=start, stop_val=stop, num_entries=num_entries)
         else:
             angles, intensities = copy.copy(self.two_theta_values), copy.copy(self.intensities)
-        if autocorrelate:
+        if apply_autocorrelation:
             intensities = np.correlate(intensities, intensities, mode='full')
             angles = np.linspace(0, 2 * angles[-1], len(intensities))
         return angles, intensities

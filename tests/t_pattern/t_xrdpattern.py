@@ -62,6 +62,7 @@ class TestXrdPattern(ParserBaseTest):
 if __name__ == "__main__":
     this_pattern = XrdPattern.load(fpath=DataExamples.get_aimat_xrdpattern_fpath())
     print(this_pattern)
+    this_pattern.plot(apply_autocorrelation=True)
     # this_pattern.plot(apply_standardization=True)
 
 
