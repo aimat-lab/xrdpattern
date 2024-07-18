@@ -2,19 +2,19 @@ from __future__ import annotations
 
 import copy
 import os
-import time
 from typing import Optional
 from uuid import uuid4
 
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from CrystalStructure.crystal import CrystalStructure
 
+from CrystalStructure.crystal import CrystalStructure
 # from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData, Artifacts
 # from xrdpattern.parsing import Formats
 from .pattern_report import PatternReport
+
 
 # TODO: This is the correct loading mechanism but currently disabled due to incompatibbility of xylib with horeka
 # parser = Parser()
@@ -85,6 +85,14 @@ class XrdPattern(PatternData):
 
     # -------------------------------------------
     # get
+
+    @property
+    def startval(self):
+        return self.two_theta_values[0]
+
+    @property
+    def endval(self):
+        return self.two_theta_values[-1]
 
     @property
     def crystal_structure(self) -> CrystalStructure:
