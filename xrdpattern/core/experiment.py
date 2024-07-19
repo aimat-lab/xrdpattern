@@ -142,7 +142,7 @@ class PowderExperiment(JsonDataclass):
 
 
     @classmethod
-    def make_empty(cls) -> PowderExperiment:
+    def make_empty(cls, is_simulated : bool = False) -> PowderExperiment:
         lengths = Lengths(a=None, b=None, c=None)
         angles = Angles(alpha=None, beta=None, gamma=None)
         base = CrystalBase()
@@ -154,7 +154,7 @@ class PowderExperiment(JsonDataclass):
                               secondary_to_primary=None,
                               shape_factor=None)
 
-        return cls(sample, artifacts, is_simulated=False)
+        return cls(sample, artifacts, is_simulated=is_simulated)
 
 
 @dataclass
