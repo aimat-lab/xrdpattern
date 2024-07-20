@@ -3,8 +3,11 @@ from __future__ import annotations
 import logging
 import os
 import traceback
+from collections import Counter
 from dataclasses import dataclass
 from typing import Optional
+
+from matplotlib import pyplot as plt
 
 from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
@@ -13,7 +16,7 @@ from holytools.userIO import TrackedInt
 from xrdpattern.parsing import Parser, Orientation, Formats
 from xrdpattern.pattern import XrdPattern, PatternReport
 
-logger = LoggerFactory.get_logger(name=__name__)
+patterdb_logger = LoggerFactory.get_logger(name=__name__)
 
 # -------------------------------------------
 
@@ -67,7 +70,7 @@ class PatternDB:
                 tracker.increment(to_add=1)
             except Exception as e:
                 failed_fpath.append(fpath)
-                logger.log(msg=f"Could not import pattern from file {fpath}\n"
+                patterdb_logger.log(msg=f"Could not import pattern from file {fpath}\n"
                       f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
                       f"-> Traceback: \n{traceback.format_exc()}", level=logging.WARNING)
 
@@ -101,6 +104,43 @@ class PatternDB:
             if self_pattern != other_pattern:
                 return False
         return True
+
+    def plot_quantity(self, attr : str = 'crystal_structure.spacegroup'):
+        quantity_list = []
+        for j,pattern in enumerate(self.patterns):
+            try:
+                spg = nested_getattr(pattern, attr)
+                quantity_list.append(spg)
+            except:
+                patterdb_logger.log(msg=f'Could not extract attribute \"{attr}\" from file {pattern.get_name()}',
+                                    level=logging.WARNING)
+        if not quantity_list:
+            raise ValueError(f'No data found for attribute {attr}')
+
+        counts = Counter(quantity_list)
+        sorted_items = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+        keys, values = zip(*sorted_items)
+        if len(keys) > 30:
+            keys = keys[:30]
+            values = values[:30]
+
+        keys = [str(key) for key in keys]
+        print(f'Number of data patterns with spg label = {len(quantity_list)}')
+
+        plt.figure(figsize=(10, 5))
+        plt.bar(keys, values)
+        plt.xlabel(attr)
+        plt.ylabel('Counts')
+        plt.title(f'Count distribution of {attr} in Dataset')
+        plt.xticks(rotation=90)
+        plt.show()
+
+
+def nested_getattr(obj: object, attr_string):
+    attr_names = attr_string.split('.')
+    for name in attr_names:
+        obj = getattr(obj, name)
+    return obj
 
 
 @dataclass
