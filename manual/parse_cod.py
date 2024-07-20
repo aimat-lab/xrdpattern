@@ -18,8 +18,16 @@ for cod_id, value in the_dict.items():
         num = cod_id.split('/')[-1]
         request_url = f'{base_url}/{num}.cif'
         cif_content = requests.get(url=request_url).content.decode()
+        spg_keyword = f'_space_group_IT_number'
+        spg = None
+        for line in cif_content.split(f'\n'):
+            if spg_keyword in line:
+                _, spg = line.split()
+        if not spg is None:
+            spg = int(spg)
 
         structure = CrystalStructure.from_cif(cif_content=cif_content)
+        structure.spacegroup = spg
         artifacts = Artifacts(primary_wavelength=None, secondary_wavelength=None, secondary_to_primary=None)
         powder_sample = PowderSample(structure, crystallite_size=None, temp_in_celcius=None)
 
