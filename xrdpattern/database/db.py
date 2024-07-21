@@ -105,7 +105,7 @@ class PatternDB:
                 return False
         return True
 
-    def plot_quantity(self, attr : str = 'crystal_structure.spacegroup'):
+    def plot_quantity(self, attr : str = 'crystal_structure.spacegroup', print_counts : bool = False):
         quantity_list = []
         for j,pattern in enumerate(self.patterns):
             try:
@@ -118,8 +118,14 @@ class PatternDB:
             raise ValueError(f'No data found for attribute {attr}')
 
         counts = Counter(quantity_list)
-        sorted_items = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-        keys, values = zip(*sorted_items)
+        sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+
+        if print_counts:
+            print(f'-> Count distribution of {attr} in Dataset:')
+            for key, value in sorted_counts:
+                print(f'- {key} : {value}')
+
+        keys, values = zip(*sorted_counts)
         if len(keys) > 30:
             keys = keys[:30]
             values = values[:30]

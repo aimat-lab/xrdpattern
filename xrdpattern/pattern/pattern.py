@@ -110,12 +110,12 @@ class XrdPattern(PatternData):
     def is_simulated(self) -> bool:
         return self.label.is_simulated
 
-    def to_tensor_pair(self, autocorrelate : bool = False) -> tuple[torch.Tensor, torch.Tensor]:
+    def to_tensor_pair(self, dtype : torch.dtype, device : torch.device) -> tuple[torch.Tensor, torch.Tensor]:
         # now = time.time()
 
-        labels = self.label.to_tensor()
-        _, intensities = self.get_pattern_data(apply_autocorrelation=autocorrelate)
-        intensities = torch.tensor(intensities)
+        labels = self.label.to_tensor(dtype=dtype, device=device)
+        _, intensities = self.get_pattern_data()
+        intensities = torch.tensor(intensities, dtype=dtype, device=device)
 
         # print(f'Time taken = {time.time() - now} seconds')
 

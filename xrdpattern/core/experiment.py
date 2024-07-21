@@ -82,7 +82,7 @@ class PowderExperiment(JsonDataclass):
         return padded_base
 
 
-    def to_tensor(self) -> LabelTensor:
+    def to_tensor(self, dtype : torch.dtype, device : torch.device) -> LabelTensor:
         tensor = torch.tensor(self.list_repr)
         return LabelTensor(tensor)
 
