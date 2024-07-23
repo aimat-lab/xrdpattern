@@ -194,7 +194,7 @@ class LabelTensor(Tensor):
 
     #noinspection PyTypeChecker
     def get_lattice_params(self) -> LabelTensor:
-        return self[..., self.spacegroup_region.start:self.spacegroup_region.end]
+        return self[..., self.lattice_param_region.start:self.lattice_param_region.end]
 
     # noinspection PyTypeChecker
     def get_atomic_site(self, index: int) -> LabelTensor:
