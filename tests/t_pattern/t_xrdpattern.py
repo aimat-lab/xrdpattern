@@ -60,9 +60,9 @@ class TestXrdPattern(ParserBaseTest):
         return reloaded_pattern
 
 if __name__ == "__main__":
-    this_pattern = XrdPattern.load(fpath=DataExamples.get_aimat_xrdpattern_fpath())
+    this_pattern = XrdPattern.load(fpath=f'/home/daniel/Drive/data/workspace/rruff/Actinolite__R060045-1.json')
     print(this_pattern)
-    this_pattern.plot(apply_autocorrelation=True)
+    this_pattern.plot(title=f'CuNi_12_04_23.raw', apply_standardization=True)
     # this_pattern.plot(apply_standardization=True)
 
 

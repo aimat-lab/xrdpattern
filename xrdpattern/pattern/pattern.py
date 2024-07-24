@@ -10,6 +10,8 @@ import numpy as np
 import torch
 
 from CrystalStructure.crystal import CrystalStructure
+from numpy._typing import NDArray
+
 # from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData, Artifacts
 # from xrdpattern.parsing import Formats
@@ -27,14 +29,14 @@ class XrdPattern(PatternData):
         title = title or self.name or 'XrdPattern'
 
         x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization, apply_autocorrelation=apply_autocorrelation)
-        quantity_qualifer = 'Interpolated' if apply_standardization else 'Original'
+        quantity_qualifer = 'Relative' if apply_standardization else 'Original'
         quantity = 'autocorrelated intensities' if apply_autocorrelation else 'intensitites'
         label = f'{quantity_qualifer} {quantity}'
 
         plt.figure(figsize=(10, 6))
         plt.title(title)
-        plt.ylabel(f'{quantity}')
-        plt.xlabel(r'$2\theta$ (Degrees)')
+        plt.ylabel(f'{label}')
+        plt.xlabel(r'$2\theta$ [°]')
         plt.plot(x_values, intensities, label=label)
         plt.legend()
 
@@ -147,7 +149,7 @@ class XrdPattern(PatternData):
         return filename
 
 
-    def get_pattern_data(self, apply_standardization : bool = True, apply_autocorrelation : bool = False) -> tuple[list[float], list[float]]:
+    def get_pattern_data(self, apply_standardization : bool = True, apply_autocorrelation : bool = False) -> tuple[NDArray, NDArray]:
         if apply_standardization:
             start, stop = self.std_two_theta_range()
             num_entries = self.std_num_entries()
