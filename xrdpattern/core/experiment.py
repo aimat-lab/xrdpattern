@@ -177,10 +177,10 @@ class PowderSample(JsonDataclass):
 
 class LabelTensor(Tensor):
     example_experiment: PowderExperiment = PowderExperiment.make_empty()
-    lattice_param_region : QuantityRegion = example_experiment.lattice_param_region
-    atomic_site_regions : list[QuantityRegion] = example_experiment.atomic_site_regions
+    # lattice_param_region : QuantityRegion = example_experiment.lattice_param_region
+    # atomic_site_regions : list[QuantityRegion] = example_experiment.atomic_site_regions
     spacegroup_region : QuantityRegion = example_experiment.spacegroup_region
-    artifacts_region : QuantityRegion = example_experiment.artifacts_region
+    # artifacts_region : QuantityRegion = example_experiment.artifacts_region
     domain_region : QuantityRegion = example_experiment.domain_region
 
     def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
@@ -192,14 +192,14 @@ class LabelTensor(Tensor):
     def __new__(cls, tensor) -> LabelTensor:
         return torch.Tensor.as_subclass(tensor, cls)
 
-    #noinspection PyTypeChecker
-    def get_lattice_params(self) -> LabelTensor:
-        return self[..., self.lattice_param_region.start:self.lattice_param_region.end]
-
-    # noinspection PyTypeChecker
-    def get_atomic_site(self, index: int) -> LabelTensor:
-        region = self.atomic_site_regions[index]
-        return self[..., region.start:region.end]
+    # #noinspection PyTypeChecker
+    # def get_lattice_params(self) -> LabelTensor:
+    #     return self[..., self.lattice_param_region.start:self.lattice_param_region.end]
+    #
+    # # noinspection PyTypeChecker
+    # def get_atomic_site(self, index: int) -> LabelTensor:
+    #     region = self.atomic_site_regions[index]
+    #     return self[..., region.start:region.end]
 
     # noinspection PyTypeChecker
     def get_spg_logits(self) -> LabelTensor:
@@ -209,9 +209,9 @@ class LabelTensor(Tensor):
         logits = self.get_spg_logits()
         return torch.softmax(logits, dim=1)
 
-    # noinspection PyTypeChecker
-    def get_artifacts(self) -> LabelTensor:
-        return self[..., self.artifacts_region.start:self.artifacts_region.end]
+    # # noinspection PyTypeChecker
+    # def get_artifacts(self) -> LabelTensor:
+    #     return self[..., self.artifacts_region.start:self.artifacts_region.end]
 
     # noinspection PyTypeChecker
     def get_simulated_probability(self) -> LabelTensor:
