@@ -36,17 +36,17 @@ class PowderExperiment(JsonDataclass):
         self.list_repr = []
         structure = self.crystal_structure
 
-        a, b, c = structure.lengths
-        alpha, beta, gamma = structure.angles
-        lattice_params = [a, b, c, alpha, beta, gamma]
-        self.lattice_param_region : QuantityRegion = self.add_region(list_obj=lattice_params)
+        # a, b, c = structure.lengths
+        # alpha, beta, gamma = structure.angles
+        # lattice_params = [a, b, c, alpha, beta, gamma]
+        # self.lattice_param_region : QuantityRegion = self.add_region(list_obj=lattice_params)
 
-        self.atomic_site_regions : list[QuantityRegion] = []
-        base = structure.base
-        padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
-        for atomic_site in padded_base:
-            region_obj = self.add_region(list_obj=atomic_site.as_list())
-            self.atomic_site_regions.append(region_obj)
+        # self.atomic_site_regions : list[QuantityRegion] = []
+        # base = structure.base
+        # padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
+        # for atomic_site in padded_base:
+        #     region_obj = self.add_region(list_obj=atomic_site.as_list())
+        #     self.atomic_site_regions.append(region_obj)
 
         if structure.spacegroup is None:
             spg_logits_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
@@ -54,8 +54,8 @@ class PowderExperiment(JsonDataclass):
             spg_logits_list = [1000 if j + 1 == structure.spacegroup else 0 for j in range(NUM_SPACEGROUPS)]
         self.spacegroup_region : QuantityRegion = self.add_region(list_obj=spg_logits_list)
 
-        artifacts_list = self.artifacts.as_list()
-        self.artifacts_region : QuantityRegion = self.add_region(artifacts_list)
+        # artifacts_list = self.artifacts.as_list()
+        # self.artifacts_region : QuantityRegion = self.add_region(artifacts_list)
 
         is_simulated = [self.is_simulated]
         self.domain_region : QuantityRegion = self.add_region(is_simulated)
