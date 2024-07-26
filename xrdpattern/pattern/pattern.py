@@ -141,7 +141,6 @@ class XrdPattern(PatternData):
             low, high = zero_mask_outside
             mask = (angles >= low) & (angles <= high)
             intensities = mask * intensities
-            return intensities
 
         return angles, intensities
 
