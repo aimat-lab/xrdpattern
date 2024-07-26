@@ -10,7 +10,7 @@ import numpy as np
 import torch
 
 from CrystalStructure.crystal import CrystalStructure
-from numpy._typing import NDArray
+from numpy.typing import NDArray
 
 # from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData, Artifacts
@@ -23,14 +23,12 @@ from .pattern_report import PatternReport
 # -------------------------------------------
 
 class XrdPattern(PatternData):
-    def plot(self, title: Optional[str] = None, save_fpath : Optional[str] = None,
-             apply_standardization : bool =True,
-             apply_autocorrelation : bool = False):
+    def plot(self, title: Optional[str] = None, save_fpath : Optional[str] = None, apply_standardization : bool =True):
         title = title or self.name or 'XrdPattern'
 
-        x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization, apply_autocorrelation=apply_autocorrelation)
+        x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization)
         quantity_qualifer = 'Relative' if apply_standardization else 'Original'
-        quantity = 'autocorrelated intensities' if apply_autocorrelation else 'intensitites'
+        quantity = 'intensitites'
         label = f'{quantity_qualifer} {quantity}'
 
         plt.figure(figsize=(10, 6))
