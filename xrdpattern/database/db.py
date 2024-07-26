@@ -5,7 +5,7 @@ import os
 import traceback
 from collections import Counter
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Any
 
 from matplotlib import pyplot as plt
 
@@ -130,14 +130,20 @@ class PatternDB:
             keys = keys[:30]
             values = values[:30]
 
-        if all([type(x)==float for x in keys]):
-            keys = [round(key, 2) for key in keys]
+        def attempt_round(val : Any):
+            if type(val) == int:
+                return val
+            try:
+                rounded_val = round(val,2)
+            except:
+                rounded_val = val
+            return rounded_val
 
-        keys = [str(key) for key in keys]
+        rounded_keys = [str(attempt_round(key)) for key in keys]
         print(f'Number of data patterns with label {attr} = {len(quantity_list)}')
 
         plt.figure(figsize=(10, 5))
-        plt.bar(keys, values)
+        plt.bar(rounded_keys, values)
         plt.xlabel(attr)
         plt.ylabel('Counts')
         plt.title(f'Count distribution of {attr} in Dataset')
