@@ -60,9 +60,6 @@ class XrdPattern(PatternData):
         return cls(**kwargs)
 
     def save(self, fpath : str, force_overwrite : bool = False):
-        # if not fpath.endswith(f'.{Formats.xrdpattern.suffix}'):
-        #     fpath = SaveManager.ensure_suffix(fpath=fpath, suffix = Formats.xrdpattern.suffix)
-        #     print(f'Fpath was automatically changed to \"{fpath}\" to comply with required suffix \"{Formats.xrdpattern.suffix}\"')
         if os.path.isfile(fpath) and not force_overwrite:
             raise ValueError(f'File {fpath} already exists')
         with open(fpath, 'w') as f:
