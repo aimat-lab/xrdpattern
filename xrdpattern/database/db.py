@@ -130,8 +130,11 @@ class PatternDB:
             keys = keys[:30]
             values = values[:30]
 
+        if all([type(x)==float for x in keys]):
+            keys = [round(key, 2) for key in keys]
+
         keys = [str(key) for key in keys]
-        print(f'Number of data patterns with spg label = {len(quantity_list)}')
+        print(f'Number of data patterns with label {attr} = {len(quantity_list)}')
 
         plt.figure(figsize=(10, 5))
         plt.bar(keys, values)
