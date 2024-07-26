@@ -24,6 +24,7 @@ patterdb_logger = LoggerFactory.get_logger(name=__name__)
 class PatternDB:
     patterns : list[XrdPattern]
     database_report : Optional[DatabaseReport] = None
+    name : str = ''
 
     # -------------------------------------------
     # save/load
