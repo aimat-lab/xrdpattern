@@ -12,14 +12,10 @@ import torch
 from CrystalStructure.crystal import CrystalStructure
 from numpy.typing import NDArray
 
-# from holytools.fsys import SaveManager
 from xrdpattern.core import PatternData, Artifacts
-# from xrdpattern.parsing import Formats
 from .pattern_report import PatternReport
 
 
-# TODO: This is the correct loading mechanism but currently disabled due to incompatibbility of xylib with horeka
-# parser = Parser()
 # -------------------------------------------
 
 class XrdPattern(PatternData):
@@ -54,17 +50,6 @@ class XrdPattern(PatternData):
 
     # -------------------------------------------
     # save/load
-
-    # TODO: This is the correct loading mechanism but currently disabled due to incompatibbility of xylib with horeka
-    # @classmethod
-    # def load(cls, fpath : str) -> XrdPattern:
-    #     pattern_list = parser.extract(fpath=fpath)
-    #     if len(pattern_list) > 1:
-    #         raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
-    #     pattern_info = pattern_list[0]
-    #
-    #     kwargs = pattern_info.to_dict()
-    #     return cls(**kwargs)
 
     @classmethod
     def load(cls, fpath : str) -> XrdPattern:
