@@ -149,13 +149,20 @@ class XrdPattern(PatternData):
         return filename
 
 
-    def get_pattern_data(self, apply_standardization : bool = True) -> tuple[NDArray, NDArray]:
+    def get_pattern_data(self, apply_standardization : bool = True,
+                         zero_mask_outside : Optional[tuple[float, float]] = None) -> tuple[NDArray, NDArray]:
         if apply_standardization:
             start, stop = self.std_two_theta_range()
             num_entries = self.std_num_entries()
             angles, intensities = self.get_standardized_map(start_val=start, stop_val=stop, num_entries=num_entries)
         else:
             angles, intensities = copy.deepcopy(self.two_theta_values), copy.copy(self.intensities)
+        if not zero_mask_outside is None:
+            low, high = zero_mask_outside
+            mask = (angles >= low) & (angles <= high)
+            intensities = mask * intensities
+            return intensities
+
         return angles, intensities
 
     @classmethod
