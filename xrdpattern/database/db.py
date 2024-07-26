@@ -147,7 +147,7 @@ class PatternDB:
         plt.bar(rounded_keys, values)
         plt.xlabel(attr)
         plt.ylabel('Counts')
-        plt.title(f'Count distribution of {attr} in Dataset')
+        plt.title(f'Count distribution of {attr} in Dataset {self.name}')
         plt.xticks(rotation=90)
         plt.show()
 
