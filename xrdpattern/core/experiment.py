@@ -29,6 +29,13 @@ class PowderExperiment(JsonDataclass):
     artifacts : Artifacts
     is_simulated : bool
 
+    @classmethod
+    def from_structure(cls, structure : CrystalStructure, crystallite_size : float, is_simulated : bool):
+        powder = PowderSample(crystal_structure=structure, crystallite_size=crystallite_size)
+        artifacts = Artifacts.mk_empty()
+        return cls(powder=powder, artifacts=artifacts, is_simulated=is_simulated)
+
+
     def __post_init__(self):
         if len(self.crystal_structure.base) > MAX_ATOMIC_SITES:
             raise ValueError(f"Too many atomic sites in base: {len(self.crystal_structure.base)}")
@@ -149,10 +156,7 @@ class PowderExperiment(JsonDataclass):
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
         sample = PowderSample(crystallite_size=None, crystal_structure=structure, temp_in_celcius=None)
-        artifacts = Artifacts(primary_wavelength=None,
-                              secondary_wavelength=None,
-                              secondary_to_primary=None,
-                              shape_factor=None)
+        artifacts = Artifacts.mk_empty()
 
         return cls(sample, artifacts, is_simulated=is_simulated)
 
@@ -163,6 +167,10 @@ class Artifacts(JsonDataclass):
     secondary_wavelength: Optional[float]
     secondary_to_primary: Optional[float]
     shape_factor : Optional[float] = 0.9
+
+    @classmethod
+    def mk_empty(cls):
+        return cls(primary_wavelength=None, secondary_wavelength=None, secondary_to_primary=None, shape_factor=None)
 
     def as_list(self) -> list[float]:
         return [self.primary_wavelength, self.secondary_wavelength, self.secondary_to_primary, self.shape_factor]
