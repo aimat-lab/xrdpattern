@@ -14,7 +14,9 @@ from numpy.typing import NDArray
 
 from xrdpattern.core import PatternData, Artifacts
 from .pattern_report import PatternReport
+from xrdpattern.parsing import Parser
 
+parser = Parser()
 
 # -------------------------------------------
 
@@ -53,10 +55,12 @@ class XrdPattern(PatternData):
 
     @classmethod
     def load(cls, fpath : str) -> XrdPattern:
-        with open(fpath, 'r') as file:
-            data = file.read()
-            new_pattern = PatternData.from_str(json_str=data)
-        kwargs = new_pattern.to_dict()
+        pattern_list = parser.extract(fpath=fpath)
+        if len(pattern_list) > 1:
+            raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
+        pattern_info = pattern_list[0]
+
+        kwargs = pattern_info.to_dict()
         return cls(**kwargs)
 
     def save(self, fpath : str, force_overwrite : bool = False):
