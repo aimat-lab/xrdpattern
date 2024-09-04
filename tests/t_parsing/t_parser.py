@@ -90,4 +90,7 @@ if __name__ == "__main__":
     # TestParserPattern.execute_all()
     # pattern = XrdPattern.load(fpath='/home/daniel/Drive/data/opxrd/v0_backup/breitung_schweidler_0/data/Yanyan/HEALF/CoCrFeMnNi.raw')
 
-    _ = PatternDB.load(dirpath='/home/daniel/Drive/data/opxrd/v0_backup/breitung_schweidler_0/')
+    # _ = PatternDB.load(dirpath='/home/daniel/Drive/data/opxrd/v0_backup/breitung_schweidler_0/')
+    TestParserDatabase.execute_all()
+    TestParseStoe.execute_all()
+    TestParserPattern.execute_all()
