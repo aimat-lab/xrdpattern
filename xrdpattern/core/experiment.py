@@ -43,17 +43,17 @@ class PowderExperiment(JsonDataclass):
         self.list_repr = []
         structure = self.crystal_structure
 
-        # a, b, c = structure.lengths
-        # alpha, beta, gamma = structure.angles
-        # lattice_params = [a, b, c, alpha, beta, gamma]
-        # self.lattice_param_region : QuantityRegion = self.add_region(list_obj=lattice_params)
+        a, b, c = structure.lengths
+        alpha, beta, gamma = structure.angles
+        lattice_params = [a, b, c, alpha, beta, gamma]
+        self.lattice_param_region : QuantityRegion = self.add_region(list_obj=lattice_params)
 
-        # self.atomic_site_regions : list[QuantityRegion] = []
-        # base = structure.base
-        # padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
-        # for atomic_site in padded_base:
-        #     region_obj = self.add_region(list_obj=atomic_site.as_list())
-        #     self.atomic_site_regions.append(region_obj)
+        self.atomic_site_regions : list[QuantityRegion] = []
+        base = structure.base
+        padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
+        for atomic_site in padded_base:
+            region_obj = self.add_region(list_obj=atomic_site.as_list())
+            self.atomic_site_regions.append(region_obj)
 
         if structure.spacegroup is None:
             spg_logits_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
@@ -61,8 +61,8 @@ class PowderExperiment(JsonDataclass):
             spg_logits_list = [1000 if j + 1 == structure.spacegroup else 0 for j in range(NUM_SPACEGROUPS)]
         self.spacegroup_region : QuantityRegion = self.add_region(list_obj=spg_logits_list)
 
-        # artifacts_list = self.artifacts.as_list()
-        # self.artifacts_region : QuantityRegion = self.add_region(artifacts_list)
+        artifacts_list = self.artifacts.as_list()
+        self.artifacts_region : QuantityRegion = self.add_region(artifacts_list)
 
         is_simulated = [self.is_simulated]
         self.domain_region : QuantityRegion = self.add_region(is_simulated)
@@ -185,10 +185,10 @@ class PowderSample(JsonDataclass):
 
 class LabelTensor(Tensor):
     example_experiment: PowderExperiment = PowderExperiment.make_empty()
-    # lattice_param_region : QuantityRegion = example_experiment.lattice_param_region
-    # atomic_site_regions : list[QuantityRegion] = example_experiment.atomic_site_regions
+    lattice_param_region : QuantityRegion = example_experiment.lattice_param_region
+    atomic_site_regions : list[QuantityRegion] = example_experiment.atomic_site_regions
     spacegroup_region : QuantityRegion = example_experiment.spacegroup_region
-    # artifacts_region : QuantityRegion = example_experiment.artifacts_region
+    artifacts_region : QuantityRegion = example_experiment.artifacts_region
     domain_region : QuantityRegion = example_experiment.domain_region
 
     def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
@@ -200,14 +200,14 @@ class LabelTensor(Tensor):
     def __new__(cls, tensor) -> LabelTensor:
         return torch.Tensor.as_subclass(tensor, cls)
 
-    # #noinspection PyTypeChecker
-    # def get_lattice_params(self) -> LabelTensor:
-    #     return self[..., self.lattice_param_region.start:self.lattice_param_region.end]
-    #
-    # # noinspection PyTypeChecker
-    # def get_atomic_site(self, index: int) -> LabelTensor:
-    #     region = self.atomic_site_regions[index]
-    #     return self[..., region.start:region.end]
+    #noinspection PyTypeChecker
+    def get_lattice_params(self) -> LabelTensor:
+        return self[..., self.lattice_param_region.start:self.lattice_param_region.end]
+
+    # noinspection PyTypeChecker
+    def get_atomic_site(self, index: int) -> LabelTensor:
+        region = self.atomic_site_regions[index]
+        return self[..., region.start:region.end]
 
     # noinspection PyTypeChecker
     def get_spg_logits(self) -> LabelTensor:
@@ -217,9 +217,9 @@ class LabelTensor(Tensor):
         logits = self.get_spg_logits()
         return torch.softmax(logits, dim=1)
 
-    # # noinspection PyTypeChecker
-    # def get_artifacts(self) -> LabelTensor:
-    #     return self[..., self.artifacts_region.start:self.artifacts_region.end]
+    # noinspection PyTypeChecker
+    def get_artifacts(self) -> LabelTensor:
+        return self[..., self.artifacts_region.start:self.artifacts_region.end]
 
     # noinspection PyTypeChecker
     def get_simulated_probability(self) -> LabelTensor:
