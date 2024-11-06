@@ -2,7 +2,7 @@ import json
 
 import numpy as np
 import requests
-from CrystalStructure.crystal import CrystalStructure
+from xrdpattern.crystal import CrystalStructure
 from xrdpattern.core import PowderExperiment, Artifacts, PowderSample
 from xrdpattern.pattern import XrdPattern
 

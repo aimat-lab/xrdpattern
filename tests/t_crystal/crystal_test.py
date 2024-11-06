@@ -1,7 +1,7 @@
 from holytools.devtools import Unittest
 from pymatgen.core import Structure
 
-from CrystalStructure.crystal import CrystalStructure
+from xrdpattern.crystal import CrystalStructure
 from CrystalStructure.examples import CrystalExamples
 
 

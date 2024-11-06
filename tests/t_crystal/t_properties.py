@@ -5,7 +5,7 @@ import numpy as np
 from pymatgen.core import Lattice, Structure, Composition, PeriodicSite, Site, Species, Element
 
 import tests.t_crystal.crystal_test as BaseTest
-from CrystalStructure.crystal import AtomicSite, CrystalStructure
+from xrdpattern.crystal import AtomicSite, CrystalStructure
 
 
 # ---------------------------------------------------------

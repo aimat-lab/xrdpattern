@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-from CrystalStructure.crystal import CrystalStructure
+from xrdpattern.crystal import CrystalStructure
 from numpy.typing import NDArray
 
 from xrdpattern.core import PatternData, Artifacts

@@ -1,7 +1,7 @@
 from holytools.devtools import Unittest
 
-from CrystalStructure.crystal import CrystalBase, AtomicSite
-from CrystalStructure.crystal.atomic_site import AtomType
+from xrdpattern.crystal import CrystalBase, AtomicSite
+from xrdpattern.crystal.atomic_site import AtomType
 from CrystalStructure.examples import CrystalExamples
 
 

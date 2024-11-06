@@ -5,7 +5,7 @@ from typing import Optional
 import torch
 from torch import Tensor
 
-from CrystalStructure.crystal import CrystalStructure, CrystalBase, AtomicSite, Lengths, Angles
+from xrdpattern.crystal import CrystalStructure, CrystalBase, AtomicSite, Lengths, Angles
 from holytools.abstract import JsonDataclass
 
 NUM_SPACEGROUPS = 230
