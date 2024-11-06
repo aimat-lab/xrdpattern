@@ -6,7 +6,7 @@ from xrdpattern.parsing import Formats
 from tests.base_tests import ParserBaseTest
 
 from xrdpattern.parsing import DataExamples
-from xrdpattern.core import PowderExperiment
+from xrdpattern.xrd import PowderExperiment
 import tempfile
 
 # ---------------------------------------------------------

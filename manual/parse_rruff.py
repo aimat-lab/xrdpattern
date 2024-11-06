@@ -2,7 +2,7 @@ import os
 
 from dataclasses import dataclass
 from xrdpattern.pattern import XrdPattern
-from xrdpattern.core import PowderExperiment, PowderSample, CrystalStructure, Lengths, Angles, CrystalBase, Artifacts
+from xrdpattern.xrd import PowderExperiment, PowderSample, CrystalStructure, Lengths, Angles, CrystalBase, Artifacts
 import re
 
 delim = ' '

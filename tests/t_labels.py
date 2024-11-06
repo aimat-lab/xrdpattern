@@ -1,6 +1,6 @@
 from xrdpattern.crystal import CrystalStructure, Lengths, Angles, CrystalBase, AtomicSite
 from holytools.devtools import Unittest
-from xrdpattern.core import PowderExperiment, PowderSample, Artifacts, LabelTensor
+from xrdpattern.xrd import PowderExperiment, PowderSample, Artifacts, LabelTensor
 
 
 class TestTensorRegions(Unittest):

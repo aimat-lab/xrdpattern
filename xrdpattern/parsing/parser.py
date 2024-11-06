@@ -6,7 +6,7 @@ from typing import Optional, Iterator, Tuple
 import numpy as np
 
 from holytools.fsys import SaveManager
-from xrdpattern.core import PatternData, Artifacts, PowderExperiment
+from xrdpattern.xrd import PatternData, Artifacts, PowderExperiment
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
 from .csv import CsvParser, Orientation

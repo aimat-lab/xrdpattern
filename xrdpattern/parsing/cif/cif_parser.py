@@ -1,9 +1,9 @@
 import numpy as np
-# from xrdpattern.core import PatternData
+# from xrdpattern.xrd import PatternData
 from gemmi import cif
 from numpy.typing import NDArray
 
-from xrdpattern.core import PowderExperiment, PatternData
+from xrdpattern.xrd import PowderExperiment, PatternData
 
 
 class CifParser:

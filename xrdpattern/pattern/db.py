@@ -14,7 +14,7 @@ from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedInt
 
 from xrdpattern.parsing import Parser, Orientation, Formats
-from xrdpattern.pattern import XrdPattern, PatternReport
+from .pattern import XrdPattern, PatternReport
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
 

@@ -12,7 +12,7 @@ import torch
 from xrdpattern.crystal import CrystalStructure
 from numpy.typing import NDArray
 
-from xrdpattern.core import PatternData, Artifacts
+from xrdpattern.xrd import PatternData, Artifacts
 from .pattern_report import PatternReport
 from xrdpattern.parsing import Parser
 

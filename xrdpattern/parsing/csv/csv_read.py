@@ -5,10 +5,10 @@ import math
 
 from holytools.abstract import SelectableEnum
 
-from xrdpattern.core import PatternData
+from xrdpattern.xrd import PatternData
 from .table_selector import TableSelector, TextTable, NumericalTable
 
-from xrdpattern.core import XrdAnode
+from xrdpattern.xrd import XrdAnode
 
 copper_wavelength,_ = XrdAnode.Cu.get_wavelengths()
 # -------------------------------------------

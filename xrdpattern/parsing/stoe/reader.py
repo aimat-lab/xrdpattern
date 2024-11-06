@@ -1,8 +1,8 @@
 import numpy as np
 
-from xrdpattern.core import PatternData
+from xrdpattern.xrd import PatternData
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
-from xrdpattern.core import Artifacts, PowderExperiment
+from xrdpattern.xrd import Artifacts, PowderExperiment
 
 
 class BinaryReader:

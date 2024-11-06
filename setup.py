@@ -40,6 +40,6 @@ setup(name='xrdpattern',
                              libraries=[])],
       py_modules=['xylib'],
       cmdclass={'build': CustomBuild},
-      package_data = {'xrdpattern.core.constants': ['*'],
+      package_data = {'xrdpattern.xrd.constants': ['*'],
                       'xrdpattern.parsing.examples': ['*', 'datafolder/*']}
 )

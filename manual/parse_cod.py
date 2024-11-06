@@ -3,7 +3,7 @@ import json
 import numpy as np
 import requests
 from xrdpattern.crystal import CrystalStructure
-from xrdpattern.core import PowderExperiment, Artifacts, PowderSample
+from xrdpattern.xrd import PowderExperiment, Artifacts, PowderSample
 from xrdpattern.pattern import XrdPattern
 
 with open('/home/daniel/Drive/data/workspace/extracted_data.json', 'r') as f:
