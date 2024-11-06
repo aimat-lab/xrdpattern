@@ -1,8 +1,6 @@
 import os.path
 
-from CrystalStructure.examples import CrystalExamples
-
-
+from xrdpattern.crystal import CrystalExamples
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
 from tests.base_tests import ParserBaseTest

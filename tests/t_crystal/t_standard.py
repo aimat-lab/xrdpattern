@@ -1,8 +1,6 @@
 from holytools.devtools import Unittest
 
-from xrdpattern.crystal import CrystalStructure, AtomicSite, Lengths, Angles, CrystalBase
-from xrdpattern.crystal.atomic_site import AtomType
-
+from xrdpattern.crystal import CrystalStructure, AtomicSite, Lengths, Angles, CrystalBase, AtomType
 
 # ---------------------------------------------------------
 
@@ -17,7 +15,7 @@ class TestCrystalStandardization(Unittest):
         ])
         crystal = CrystalStructure(lengths=primitives, angles=mock_angles, base=mock_base)
         crystal.calculate_properties()
-        crystal.standardize()
+        crystal.get_standardized()
 
         self.mock_crystal = crystal
 
@@ -33,7 +31,7 @@ class TestCrystalStandardization(Unittest):
 
 
     def test_standardization(self):
-        self.mock_crystal.standardize()
+        self.mock_crystal.get_standardized()
         expected_species_str_list = ['O0+', 'Si0+', AtomType.void_symbol]
         actual_specie_str_list = [site.species_str for site in self.mock_crystal.base]
         self.assertEqual(actual_specie_str_list, expected_species_str_list)

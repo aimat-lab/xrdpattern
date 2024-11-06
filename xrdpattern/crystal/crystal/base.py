@@ -6,7 +6,7 @@ from typing import Optional, Iterable
 
 from holytools.abstract import Serializable
 
-from CrystalStructure.atomic_constants import AtomicConstants
+from xrdpattern.crystal import AtomicConstants
 from .atomic_site import AtomicSite
 
 

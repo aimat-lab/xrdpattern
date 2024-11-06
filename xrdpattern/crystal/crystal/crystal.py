@@ -4,7 +4,6 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Optional, Literal
 
-import numpy as np
 from holytools.abstract import JsonDataclass
 from pymatgen.core import Structure, Lattice, Species, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer

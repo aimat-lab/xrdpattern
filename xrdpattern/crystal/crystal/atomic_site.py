@@ -7,7 +7,7 @@ from typing import Optional
 from pymatgen.core import Species
 from pymatgen.util.typing import SpeciesLike
 
-from CrystalStructure.atomic_constants.atomic_constants import AtomicConstants
+from xrdpattern.crystal import AtomicConstants
 from holytools.abstract import Serializable
 
 ScatteringParams = tuple[float, float, float, float, float, float, float, float]
