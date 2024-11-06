@@ -89,7 +89,7 @@ class PowderExperiment(JsonDataclass):
         return padded_base
 
 
-    def to_tensor(self, dtype : torch.dtype, device : torch.device) -> LabelTensor:
+    def to_tensor(self, dtype : torch.dtype = torch.get_default_dtype(), device : torch.device = torch.get_default_device()) -> LabelTensor:
         tensor = torch.tensor(self.list_repr, dtype=dtype, device=device)
         return LabelTensor(tensor)
 
@@ -215,7 +215,7 @@ class LabelTensor(Tensor):
 
     def get_spg_probabilities(self):
         logits = self.get_spg_logits()
-        return torch.softmax(logits, dim=1)
+        return torch.softmax(logits, dim=-1)
 
     # noinspection PyTypeChecker
     def get_artifacts(self) -> LabelTensor:

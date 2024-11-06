@@ -35,8 +35,8 @@ class TestTensorRegions(Unittest):
                     self.assertEqual(x,y)
 
     def test_spacegroups(self):
-        expected = [j ==  self.crystal_structure.spacegroup for j in range(1,231)]
-        actual = self.label_tensor.get_spacegroups().tolist()
+        expected = [1.0 if j ==  self.crystal_structure.spacegroup else 0.0 for j in range(1,231)]
+        actual = self.label_tensor.get_spg_probabilities().tolist()
         print(f'Tensor spacegroups are {actual}; \nSpacegroups tensor length = {len(actual)}')
         self.assertEqual(actual, expected, f'Expected: {expected}, Actual: {actual}')
         self.assertEqual(len(actual), 230)
@@ -73,7 +73,6 @@ class TestTensorRegions(Unittest):
         powder = PowderSample(crystal_structure=crystal_structure, crystallite_size=10.0)
         artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
         return PowderExperiment(powder, artifacts, is_simulated=True)
-
 
 
 def is_nan(value):
