@@ -1,0 +1,48 @@
+data_222
+_chemical_formula_structural     'Pb (Zr0.6 Ti0.4) O3'
+_chemical_formula_sum            'O3 Pb Ti0.4 Zr0.6'
+_space_group_IT_number           160
+_space_group_name_Hall           'P 3* -2'
+_space_group_name_H-M_alt        'R 3 m :R'
+_symmetry_Int_Tables_number      160
+_symmetry_space_group_name_H-M   'R 3 m :R'
+_cell_angle_alpha                89.676(3)
+_cell_angle_beta                 89.676(3)
+_cell_angle_gamma                89.676(3)
+_cell_formula_units_Z            1
+_cell_length_a                   4.0809(4)
+_cell_length_b                   4.0809(4)
+_cell_length_c                   4.0809(4)
+_cell_measurement_temperature    295
+_cell_volume                     67.959(12)
+_refine_ls_R_factor_all          0.111
+_cod_data_source_file            PbZr0_6Ti0_4O3_R3m_Amin_DC298.cif
+_cod_data_source_block           Chateigner
+_cod_original_cell_volume        67.96
+_cod_original_sg_symbol_H-M      'R 3 m R'
+_cod_original_formula_sum        'O3 Pb1 Ti0.4 Zr0.6'
+_cod_database_code               1560386
+loop_
+_symmetry_equiv_pos_site_id
+_symmetry_equiv_pos_as_xyz
+1 'z, y, x'
+2 'z, x, y'
+3 'x, z, y'
+4 'y, z, x'
+5 'y, x, z'
+6 'x, y, z'
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_symmetry_multiplicity
+_atom_site_Wyckoff_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_attached_hydrogens
+_atom_site_B_iso_or_equiv
+Pb1 Pb 1 a 0.5620(8) 0.562 0.562 1. 0 1.9(1)
+Zr1 Zr 1 a 0.0216(14) 0.0216 0.0216 0.6 0 1.10(17)
+Ti1 Ti 1 a 0.0216(14) 0.0216 0.0216 0.4 0 1.10(17)
+O1 O 3 b -.0046(2) 0.5092(4) -.0046(2) 1. 0 1.57(7)
