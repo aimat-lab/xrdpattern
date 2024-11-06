@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
             crystal_structure = CrystalStructure(lengths=lengths, angles=angles, spacegroup=spacegroup, base=CrystalBase())
             powder = PowderSample(crystal_structure=crystal_structure)
-            artifacts = Artifacts(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength, secondary_to_primary=0)
+            artifacts = Artifacts(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength)
             pattern.label = PowderExperiment(powder=powder, artifacts=artifacts, is_simulated=False)
             pattern.save(fpath=os.path.join(output_dirpath, base_name))
 

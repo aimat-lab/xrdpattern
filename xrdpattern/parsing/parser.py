@@ -116,7 +116,6 @@ class Parser:
         experiment.artifacts = Artifacts(
             primary_wavelength=get_float('ALPHA1'),
             secondary_wavelength=get_float('ALPHA2'),
-            secondary_to_primary=get_float('ALPHA_RATIO')
         )
         experiment.powder.temp_in_celcius = get_float('TEMP_CELCIUS')
 

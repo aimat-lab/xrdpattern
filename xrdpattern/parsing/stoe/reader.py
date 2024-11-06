@@ -43,8 +43,7 @@ class StoeParser(BinaryReader):
         self.read(fpath=fpath)
         experiment = PowderExperiment.make_empty()
         experiment.artifacts = Artifacts(primary_wavelength=self.primary_wavelength.get_value(),
-                                         secondary_wavelength=self.secondary_wavelength.get_value(),
-                                         secondary_to_primary=self.ratio.get_value())
+                                         secondary_wavelength=self.secondary_wavelength.get_value())
 
         two_theta_values = self._get_x_values()
         intensities = self._get_y_values()

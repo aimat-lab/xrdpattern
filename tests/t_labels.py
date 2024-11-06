@@ -71,7 +71,7 @@ class TestTensorRegions(Unittest):
         crystal_structure.spacegroup = 120
 
         powder = PowderSample(crystal_structure=crystal_structure, crystallite_size=10.0)
-        artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54, secondary_to_primary=0.5)
+        artifacts = Artifacts(primary_wavelength=1.54, secondary_wavelength=1.54)
         return PowderExperiment(powder, artifacts, is_simulated=True)
 
 

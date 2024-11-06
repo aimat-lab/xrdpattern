@@ -1,4 +1,4 @@
-from xrdpattern.database import PatternDB
+from xrdpattern.pattern import PatternDB
 
 # ---------------------------------------------------------
 

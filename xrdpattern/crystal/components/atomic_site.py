@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import Optional
 
 from pymatgen.core import Species
-from pymatgen.util.typing import SpeciesLike
 
 from holytools.abstract import Serializable
 

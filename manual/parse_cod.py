@@ -28,11 +28,11 @@ for cod_id, value in the_dict.items():
 
         structure = CrystalStructure.from_cif(cif_content=cif_content)
         structure.spacegroup = spg
-        artifacts = Artifacts(primary_wavelength=None, secondary_wavelength=None, secondary_to_primary=None)
+        artifacts = Artifacts(primary_wavelength=None, secondary_wavelength=None)
         powder_sample = PowderSample(structure, crystallite_size=None, temp_in_celcius=None)
 
         label = PowderExperiment(powder=PowderSample(crystal_structure=structure, crystallite_size=None, temp_in_celcius=None),
-                                 artifacts=Artifacts(None, None, None), is_simulated=False)
+                                 artifacts=Artifacts(primary_wavelength=None,secondary_wavelength=None), is_simulated=False)
         two_thetas = np.array(value['x'])
         intensities = np.array(value['y'])
         name = f"COD_{value['id']}"
