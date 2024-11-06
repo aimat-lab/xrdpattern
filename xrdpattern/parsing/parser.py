@@ -113,10 +113,7 @@ class Parser:
             return val
 
         experiment = PowderExperiment.make_empty()
-        experiment.artifacts = Artifacts(
-            primary_wavelength=get_float('ALPHA1'),
-            secondary_wavelength=get_float('ALPHA2'),
-        )
+        experiment.artifacts = Artifacts(primary_wavelength=get_float('ALPHA1'),secondary_wavelength=get_float('ALPHA2'))
         experiment.powder.temp_in_celcius = get_float('TEMP_CELCIUS')
 
         return experiment

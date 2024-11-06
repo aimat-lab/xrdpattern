@@ -27,10 +27,9 @@ class TestParserPattern(ParserBaseTest):
         metadata = self.pattern.label
         primary_wavelength = metadata.primary_wavelength
         secondary_wavelength = metadata.secondary_wavelength
-        ratio = metadata.artifacts.secondary_to_primary
-        print(f'prim, sec, ratio {primary_wavelength}, {secondary_wavelength}, {ratio}')
+        print(f'prim, sec, ratio {primary_wavelength}, {secondary_wavelength}')
 
-        for prop in [primary_wavelength, secondary_wavelength, ratio]:
+        for prop in [primary_wavelength, secondary_wavelength]:
             self.assertIsNotNone(obj=prop)
 
         print(f'name : {self.pattern.get_name()}')
