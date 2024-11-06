@@ -7,14 +7,13 @@ from uuid import uuid4
 
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy.typing import NDArray
 import torch
 
 from xrdpattern.crystal import CrystalStructure
-from numpy.typing import NDArray
-
 from xrdpattern.xrd import PatternData, Artifacts
+from xrdpattern.parsing import Parser, Formats
 from .pattern_report import PatternReport
-from xrdpattern.parsing import Parser
 
 parser = Parser()
 
@@ -66,6 +65,9 @@ class XrdPattern(PatternData):
     def save(self, fpath : str, force_overwrite : bool = False):
         if os.path.isfile(fpath) and not force_overwrite:
             raise ValueError(f'File {fpath} already exists')
+        if not fpath.endswith(f'.{Formats.aimat_xrdpattern.suffix}'):
+            print(f'[Warning]: Saved xrd files should end with ".{Formats.aimat_xrdpattern.suffix}" suffix. '
+                  f'Given filename is {os.path.basename(fpath)}')
         with open(fpath, 'w') as f:
             f.write(self.to_str())
 
@@ -161,7 +163,7 @@ class XrdPattern(PatternData):
         try:
             crystal_data = str(crystal.to_pymatgen())
         except:
-            crystal_data = 'No crystal data available'
+            crystal_data = 'No components data available'
 
         as_str = (f'----> Sample \n'
               f'- Crystal: {crystal_data} \n'

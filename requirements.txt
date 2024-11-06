@@ -5,4 +5,3 @@ pymatgen
 torch
 gemmi
 holytools @ git+https://git@github.com/Somerandomguy10111/holytools.git
-CrystalStructure @ git+https://git@github.com/aimat-lab/CrystalStructure.git

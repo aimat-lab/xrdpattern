@@ -36,7 +36,7 @@ class PatternDB:
 
         def get_path(basename : str, index : Optional[int] = None):
             conditional_index = '' if index is None else f'_{index}'
-            return os.path.join(dirpath, f'{basename}{conditional_index}.{Formats.xrdpattern.suffix}')
+            return os.path.join(dirpath, f'{basename}{conditional_index}.{Formats.aimat_xrdpattern.suffix}')
 
         for pattern in self.patterns:
             fpath = get_path(basename=pattern.get_name())

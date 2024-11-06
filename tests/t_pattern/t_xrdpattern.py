@@ -52,7 +52,7 @@ class TestXrdPattern(ParserBaseTest):
 
     @staticmethod
     def save_and_load(pattern : XrdPattern):
-        save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.xrdpattern.suffix}')
+        save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.aimat_xrdpattern.suffix}')
         pattern.save(fpath=save_path)
         reloaded_pattern = XrdPattern.load(fpath=save_path)
         return reloaded_pattern

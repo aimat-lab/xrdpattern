@@ -39,7 +39,7 @@ class Parser:
         else:
             raise ValueError(f"Could not determine file format of \"{fpath}\": Invalid suffix {suffix}")
 
-        if the_format == Formats.xrdpattern:
+        if the_format == Formats.aimat_xrdpattern:
             pattern_infos = [self.from_json(fpath=fpath)]
         elif the_format == Formats.cif:
             pattern_infos = [self.from_cif(fpath=fpath)]

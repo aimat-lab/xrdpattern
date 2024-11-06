@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-import json
+import json, os
 from dataclasses import dataclass
 from typing import Optional
 
 from pymatgen.core import Species
 from pymatgen.util.typing import SpeciesLike
 
-from xrdpattern.crystal import AtomicConstants
 from holytools.abstract import Serializable
+
 
 ScatteringParams = tuple[float, float, float, float, float, float, float, float]
 #---------------------------------------------------------
@@ -25,7 +25,7 @@ class AtomicSite(Serializable):
     wyckoff_letter : Optional[str] = None
 
     def __post_init__(self):
-        self.atom_type : AtomType = AtomType(symbol=self.species_str)
+        self.atom_type : AtomLike = AtomLike(symbol=self.species_str)
 
     @property
     def pymatgen_species(self) -> SpeciesLike:
@@ -37,14 +37,14 @@ class AtomicSite(Serializable):
 
     @classmethod
     def make_void(cls) -> AtomicSite:
-        return cls(x=None, y=None, z=None, occupancy=0.0, species_str=AtomType.void_symbol)
+        return cls(x=None, y=None, z=None, occupancy=0.0, species_str=AtomLike.void_symbol)
 
     @classmethod
     def make_placeholder(cls):
-        return cls(x=None, y=None, z=None, occupancy=None, species_str=AtomType.placeholder_symbol)
+        return cls(x=None, y=None, z=None, occupancy=None, species_str=AtomLike.placeholder_symbol)
 
     def is_nonstandard(self) -> bool:
-        if self.species_str == AtomType.void_symbol or self.species_str == AtomType.placeholder_symbol:
+        if self.species_str == AtomLike.void_symbol or self.species_str == AtomLike.placeholder_symbol:
             return True
         return False
 
@@ -81,7 +81,7 @@ class AtomicSite(Serializable):
                    wyckoff_letter=the_dict['wyckoff_letter'])
 
 
-class AtomType:
+class AtomLike:
     void_symbol = '⊥'
     placeholder_symbol = '*'
 
@@ -94,6 +94,8 @@ class AtomType:
         pymatgen_type = Species.from_str(species_string=self.symbol) if is_standard else None
         return pymatgen_type
 
+    # -------------------------------
+
     @property
     def scattering_params(self) -> ScatteringParams:
         if self.symbol == self.void_symbol:
@@ -105,7 +107,34 @@ class AtomType:
             # TODO: This casting only currently exists beacuse the scattering param table only has values for (unoxidized) elements, not ions
             # TODO: Normally would simply be species_symbol=str(self.species_like)
             species_symbol = self.pymatgen_type.element.symbol
-            values = AtomicConstants.get_scattering_params(species_symbol=species_symbol)
+            values = scattering_params[species_symbol]
 
         (a1, b1), (a2, b2), (a3, b3), (a4, b4) = values
         return a1, b1, a2, b2, a3, b3, a4, b4
+
+    def get_vdw_radius(self) -> float:
+        return vdw_radii[self.symbol]
+
+    def get_covalent(self) -> float:
+        return covalent_radii[self.symbol]
+
+
+
+def load_constants_json(fname: str) -> dict:
+    script_dirpath = os.path.dirname(__file__)
+    crystal_dirpath = os.path.dirname(script_dirpath)
+    constants_dirpath = os.path.join(crystal_dirpath, 'atomic_constants')
+    fpath = os.path.join(constants_dirpath, fname)
+    with open(fpath) as file:
+        return json.load(file, parse_float=float, parse_int=float)
+
+
+SCATTERING_PARAMS_FILENAME = 'atomic_scattering_params.json'
+COVALENT_RADI_FILENAME = 'covalent_radius.json'
+VDW_FILENAME = 'vdw_radius.json'
+
+vdw_radii : dict[str, float] = load_constants_json(fname=VDW_FILENAME)
+covalent_radii : dict[str, float] = load_constants_json(fname=COVALENT_RADI_FILENAME)
+scattering_params : dict[str, tuple] = load_constants_json(fname=SCATTERING_PARAMS_FILENAME)
+
+
