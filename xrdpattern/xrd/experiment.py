@@ -140,9 +140,7 @@ class PowderExperiment(JsonDataclass):
     def from_cif(cls, cif_content : str) -> PowderExperiment:
         structure = CrystalStructure.from_cif(cif_content)
         powder = PowderSample(crystal_structure=structure)
-        artifacts = Artifacts(primary_wavelength=None,
-                              secondary_wavelength=None,
-                              secondary_to_primary=None)
+        artifacts = Artifacts(primary_wavelength=None, secondary_wavelength=None)
         structure.calculate_properties()
 
         return cls(powder=powder, artifacts=artifacts, is_simulated=False)
@@ -155,7 +153,7 @@ class PowderExperiment(JsonDataclass):
         base = CrystalBase()
 
         structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
-        sample = PowderSample(crystallite_size=None, crystal_structure=structure, temp_in_celcius=None)
+        sample = PowderSample(crystal_structure=structure,crystallite_size=None, temp_in_celcius=None)
         artifacts = Artifacts.mk_empty()
 
         return cls(sample, artifacts, is_simulated=is_simulated)
@@ -165,15 +163,13 @@ class PowderExperiment(JsonDataclass):
 class Artifacts(JsonDataclass):
     primary_wavelength: Optional[float]
     secondary_wavelength: Optional[float]
-    secondary_to_primary: Optional[float]
-    shape_factor : Optional[float] = 0.9
 
     @classmethod
     def mk_empty(cls):
-        return cls(primary_wavelength=None, secondary_wavelength=None, secondary_to_primary=None, shape_factor=None)
+        return cls(primary_wavelength=None, secondary_wavelength=None)
 
     def as_list(self) -> list[float]:
-        return [self.primary_wavelength, self.secondary_wavelength, self.secondary_to_primary, self.shape_factor]
+        return [self.primary_wavelength, self.secondary_wavelength]
 
 
 @dataclass
@@ -181,6 +177,7 @@ class PowderSample(JsonDataclass):
     crystal_structure: CrystalStructure
     crystallite_size: Optional[float] = None
     temp_in_celcius : Optional[float] = None
+    shape_factor : Optional[float] = 0.9
 
 
 class LabelTensor(Tensor):
