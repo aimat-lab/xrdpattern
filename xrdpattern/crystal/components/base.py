@@ -6,7 +6,6 @@ from typing import Optional, Iterable
 
 from holytools.abstract import Serializable
 
-from xrdpattern.crystal import AtomicConstants
 from .atomic_site import AtomicSite
 
 
@@ -23,9 +22,8 @@ class CrystalBase(Serializable):
     def calculate_atomic_volume(self) -> float:
         total_atomic_volume = 0
         for site in self.get_non_void_sites():
-            element_symbol : str = site.element_symbol
-            covalent_radius  = AtomicConstants.get_covalent(element_symbol=element_symbol)
-            vdw_radius = AtomicConstants.get_vdw_radius(element_symbol=element_symbol)
+            covalent_radius = site.atom.get_covalent()
+            vdw_radius = site.atom.get_vdw_radius()
 
             radius = (covalent_radius + vdw_radius) / 2
             atomic_volume = 4 / 3 * math.pi * radius ** 3

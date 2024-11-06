@@ -110,7 +110,7 @@ class CrystalStructure(JsonDataclass):
         lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
 
         non_void_sites = self.base.get_non_void_sites()
-        atoms = [site.atom_type.pymatgen_type for site in non_void_sites]
+        atoms = [site.atom.as_pymatgen for site in non_void_sites]
         positions = [(site.x, site.y, site.z) for site in non_void_sites]
 
         if len(atoms) == 0:

@@ -1,6 +1,6 @@
 import os
 
-from .crystal import CrystalStructure, CrystalBase
+from .components import CrystalStructure, CrystalBase
 
 # ---------------------------------------------------------
 
