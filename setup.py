@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from glob import glob
 
 from setuptools import setup, find_packages, Extension
@@ -13,15 +12,19 @@ class CustomBuild(build):
                     ('build_scripts', build.has_scripts)]
 
 
-with open('requirements.txt','r') as f:
-    reqs = f.read().split('\n')
-
 # noinspection PyTypeChecker
 setup(name='xrdpattern',
       version='0.4.0',
       description='Python library for XrdPatterns including file import, file export and postprocessing functionalities',
-      install_requires=reqs,
-      long_description=("Python library for XrdPatterns including import from data files, "
+      install_requires=[
+          'numpy < 2.0.0',
+          'scipy',
+          'matplotlib',
+          'pymatgen',
+          'torch',
+          'gemmi',
+          'holytools @ git+https://git@github.com/Somerandomguy10111/holytools.git'
+      ],      long_description=("Python library for XrdPatterns including import from data files, "
                         "export as json file and postprocessing functionalities. The data file "
                         "import functionalities are built on C++ library xylib so beyond a standard "
                         "python install, this library also requires: "
@@ -33,9 +36,9 @@ setup(name='xrdpattern',
       license='LGPL2.1',
       url='https://github.com/aimat-lab/xrdpattern',
       ext_modules=[Extension('_xylib',
-                             sources=[f for f in glob('xylib/*.cpp') if f != 'xylib_wrap.cpp'] + ['xylib.i'],
+                             sources=glob('xylib/*.cpp') + ['xylib.i'],
                              language='c++',
-                             swig_opts=['-c++', '-modern', '-modernargs', '-py3'],
+                             swig_opts=['-c++', '-py3'],
                              include_dirs=['.'],
                              libraries=[])],
       py_modules=['xylib'],
