@@ -23,7 +23,7 @@ setup(name='xrdpattern',
           'pymatgen',
           'torch',
           'gemmi',
-          'holytools @ git+https://git@github.com/Somerandomguy10111/holytools.git'
+          'holytools'
       ],      long_description=("Python library for XrdPatterns including import from data files, "
                         "export as json file and postprocessing functionalities. The data file "
                         "import functionalities are built on C++ library xylib so beyond a standard "
