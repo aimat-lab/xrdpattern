@@ -163,6 +163,7 @@ class PowderExperiment(JsonDataclass):
 class Artifacts(JsonDataclass):
     primary_wavelength: Optional[float]
     secondary_wavelength: Optional[float]
+    secondary_to_primary : float = 0.5
 
     @classmethod
     def mk_empty(cls):
