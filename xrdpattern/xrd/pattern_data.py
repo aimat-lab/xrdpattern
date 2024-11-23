@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, fields
-from typing import Optional
+from typing import Optional, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -10,6 +10,9 @@ from scipy.interpolate import CubicSpline
 
 from holytools.abstract import Serializable
 from xrdpattern.xrd.experiment import PowderExperiment
+
+
+Tag = Literal['in-situ', 'high-temperature', 'thin-film', 'time-series']
 
 # -------------------------------------------
 
@@ -75,6 +78,15 @@ class PatternData(Serializable):
         labels_equal = self.label.list_repr = other.label.list_repr
 
         return angles_equal and intensities_equal and labels_equal
+
+
+@dataclass
+class OriginMetadata:
+    institution : str
+    contributor_name : str
+    file_format : str
+    tags : list[Tag]
+    measurement_date: Optional[str] = None
 
 
 if __name__ == '__main__':
