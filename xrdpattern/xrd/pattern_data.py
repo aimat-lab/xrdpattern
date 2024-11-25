@@ -1,14 +1,14 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, fields, field
+from dataclasses import dataclass, fields, field, asdict
 from typing import Optional
 
 import numpy as np
 from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
 
-from holytools.abstract import Serializable
+from holytools.abstract import Serializable, JsonDataclass
 from xrdpattern.xrd.experiment import PowderExperiment
 
 
@@ -52,7 +52,8 @@ class PatternData(Serializable):
     def to_str(self) -> str:
         the_dict = {'two_theta_values' : self.two_theta_values.tolist(),
                     'intensities' : self.intensities.tolist(),
-                    'label' : self.label.to_str()}
+                    'label' : self.label.to_str(),
+                    'metadata' : self.metadata.to_str()}
 
         return json.dumps(the_dict)
 
@@ -62,7 +63,9 @@ class PatternData(Serializable):
         two_theta_values = np.array(data['two_theta_values'])
         intensities = np.array(data['intensities'])
         label = PowderExperiment.from_str(data['label'])
-        return cls(two_theta_values=two_theta_values, intensities=intensities, label=label)
+        metadata = OriginMetadata.from_str(data['metadata'])
+
+        return cls(two_theta_values=two_theta_values, intensities=intensities, label=label, metadata=metadata)
 
 
     def __eq__(self, other : PatternData):
@@ -71,10 +74,8 @@ class PatternData(Serializable):
             if isinstance(v1, np.ndarray):
                 is_ok = np.array_equal(v1, v2)
             elif isinstance(v1, PowderExperiment):
-                print(f'v1 list repr: {v1.list_repr}')
-                print(f'v2 list repr: {v2.list_repr}')
-                is_ok = [x==y for x,y in zip(v1.list_repr, v2.list_repr)]
-                print(f'is_okk = {is_ok}')
+                objs_equal = [str(x)==str(y) for x,y in zip(v1.get_list_repr(), v2.get_list_repr())]
+                is_ok = all(objs_equal)
             else:
                 is_ok = v1 == v2
 
@@ -85,13 +86,16 @@ class PatternData(Serializable):
 
 
 @dataclass
-class OriginMetadata:
+class OriginMetadata(JsonDataclass):
     institution : str = ''
     contributor_name : str = ''
     file_format : str = ''
     tags: list[str] = field(default_factory=list)
     measurement_date: Optional[str] = None
 
+    def __eq__(self, other : OriginMetadata):
+        s1, s2 = self.to_str(), other.to_str()
+        return s1 == s2
 
 if __name__ == '__main__':
     pass

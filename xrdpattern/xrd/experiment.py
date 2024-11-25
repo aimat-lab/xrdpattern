@@ -48,34 +48,23 @@ class PowderExperiment(JsonDataclass):
         a, b, c = structure.lengths
         alpha, beta, gamma = structure.angles
         lattice_params = [a, b, c, alpha, beta, gamma]
-        self.add_region(list_obj=lattice_params)
+        list_repr += lattice_params
 
-        atomic_site_regions: list[QuantityRegion] = []
         base = structure.base
         padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
         for atomic_site in padded_base:
-            region_obj = self.add_region(list_obj=atomic_site.as_list())
-            atomic_site_regions.append(region_obj)
+            list_repr += atomic_site.as_list()
 
         if structure.spacegroup is None:
             spg_logits_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
         else:
             spg_logits_list = [1000 if j + 1 == structure.spacegroup else 0 for j in range(NUM_SPACEGROUPS)]
-        self.add_region(list_obj=spg_logits_list)
+        list_repr += spg_logits_list
 
-        self.add_region(self.artifacts.as_list())
-        self.add_region([self.is_simulated])
+        list_repr += self.artifacts.as_list()
+        list_repr += [self.is_simulated]
 
         return list_repr
-
-
-    @staticmethod
-    def add_region(list_obj: list) -> QuantityRegion:
-        current_len = len(list_obj)
-        region = QuantityRegion(obj=list_obj, start=current_len, end=current_len + len(list_obj))
-        to_add = [x if not x is None else torch.nan for x in list_obj]
-        list_obj += to_add
-        return region
 
     @staticmethod
     def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
