@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import os
 from typing import Optional
-from uuid import uuid4
 
 import matplotlib.pyplot as plt
 import numpy as np

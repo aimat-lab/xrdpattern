@@ -45,14 +45,15 @@ class PatternDB:
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
 
+        data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath)
+        if len(data_fpaths) == 0:
+            raise ValueError(
+                f"No data files matching suffixes {Formats.get_allowed_suffixes()} found in directory {dirpath}")
+
         patterns : list[XrdPattern] = []
         parser = Parser(default_csv_orientation=default_csv_orientation)
         failed_fpath = []
         parsing_reports = []
-
-        data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath)
-        if len(data_fpaths) == 0:
-            raise ValueError(f"No data files matching suffixes {Formats.get_allowed_suffixes()} found in directory {dirpath}")
 
         tracker = TrackedInt(start_value=0, finish_value=len(data_fpaths))
         for fpath in data_fpaths:
@@ -66,10 +67,7 @@ class PatternDB:
                       f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
                       f"-> Traceback: \n{traceback.format_exc()}", level=logging.WARNING)
 
-        database_report = DatabaseReport(failed_files=failed_fpath,
-                                         source_files=data_fpaths,
-                                         pattern_reports=parsing_reports,
-                                         data_dirpath=dirpath)
+        database_report = DatabaseReport(failed_files=failed_fpath,source_files=data_fpaths,pattern_reports=parsing_reports,data_dirpath=dirpath)
         return PatternDB(patterns=patterns, database_report=database_report)
 
     @staticmethod
