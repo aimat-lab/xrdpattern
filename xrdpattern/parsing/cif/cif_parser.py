@@ -3,24 +3,31 @@ import numpy as np
 from gemmi import cif
 from numpy.typing import NDArray
 
-from xrdpattern.xrd import PowderExperiment, PatternData
+from xrdpattern.xrd import PowderExperiment, PatternData, OriginMetadata, Artifacts
 
 
 class CifParser:
     def extract_pattern(self, fpath : str) -> PatternData:
         with open(fpath, 'r') as f:
             cif_content = f.read()
-        label = PowderExperiment.from_cif(cif_content=cif_content)
+        experiment_info = PowderExperiment.from_cif(cif_content=cif_content)
 
         doc = cif.read_file(fpath)
         if len(doc) != 1:
             raise ValueError("Could not find pattern data in .cif located at {fpath}")
-
         block = doc.sole_block()
         x,y = self.extract_pattern_from_block(block)
-        pattern_data = PatternData(intensities=y, two_theta_values=x,label=label)
 
+        metadata = OriginMetadata()
+        lines = cif_content.split('\n')
+        for l in lines:
+            if '$Date' in l:
+                parts = l.split()
+                metadata.measurement_date = parts[1]
+
+        pattern_data = PatternData(intensities=y, two_theta_values=x, label=experiment_info, metadata=metadata)
         return pattern_data
+
 
     @staticmethod
     def extract_pattern_from_block(block) -> tuple[NDArray, NDArray]:
@@ -45,7 +52,7 @@ class CifParser:
 
         rmin = cif.as_number(rmin)
         rmax = cif.as_number(rmax)
-        x = np.linspace(rmin, rmax, len(y)).tolist()
+        x = np.linspace(rmin, rmax, len(y))
         y = np.array(y)
 
         return x,y

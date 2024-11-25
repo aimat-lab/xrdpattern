@@ -36,11 +36,6 @@ class PowderExperiment(JsonDataclass):
         return cls(powder=powder, artifacts=artifacts, is_simulated=is_simulated)
 
 
-    def __post_init__(self):
-        if len(self.crystal_structure.base) > MAX_ATOMIC_SITES:
-            raise ValueError(f"Too many atomic sites in base: {len(self.crystal_structure.base)}")
-
-        
     def get_list_repr(self) -> list:
         list_repr = []
         structure = self.crystal_structure
@@ -76,6 +71,9 @@ class PowderExperiment(JsonDataclass):
             return site
 
         delta = MAX_ATOMIC_SITES - len(base)
+        if delta < 0:
+            raise ValueError(f'Base is too large! Size = {len(base)} exceeds MAX_ATOMIC_SITES = {MAX_ATOMIC_SITES}')
+
         padded_base = base + [make_padding_site() for _ in range(delta)]
         return padded_base
 
@@ -131,8 +129,15 @@ class PowderExperiment(JsonDataclass):
     def from_cif(cls, cif_content : str) -> PowderExperiment:
         structure = CrystalStructure.from_cif(cif_content)
         powder = PowderSample(crystal_structure=structure)
-        artifacts = Artifacts(primary_wavelength=None, secondary_wavelength=None)
         structure.calculate_properties()
+
+        artifacts = Artifacts.mk_empty()
+        lines = cif_content.split('\n')
+        for l in lines:
+            if '_diffrn_radiation_wavelength' in l:
+                parts = l.split()
+                if len(parts) > 1:
+                    artifacts.primary_wavelength = float(parts[-1])
 
         return cls(powder=powder, artifacts=artifacts, is_simulated=False)
 
@@ -154,7 +159,6 @@ class PowderExperiment(JsonDataclass):
 class Artifacts(JsonDataclass):
     primary_wavelength: Optional[float]
     secondary_wavelength: Optional[float]
-    secondary_to_primary : float = 0.5
 
     @classmethod
     def mk_empty(cls):
@@ -163,6 +167,9 @@ class Artifacts(JsonDataclass):
     def as_list(self) -> list[float]:
         return [self.primary_wavelength, self.secondary_wavelength]
 
+    @staticmethod
+    def default_ratio(self) -> float:
+        return 0.5
 
 @dataclass
 class PowderSample(JsonDataclass):

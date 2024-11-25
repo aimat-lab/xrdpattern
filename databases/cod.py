@@ -1,11 +1,11 @@
 import json
 import os
 
-import numpy as np
 import requests
-from xrdpattern.crystal import CrystalStructure
-from xrdpattern.xrd import PowderExperiment, Artifacts, PowderSample
-from xrdpattern.pattern import XrdPattern
+
+from holytools.fsys import SaveManager
+from xrdpattern.parsing.cif.cif_parser import CifParser
+
 
 # -------------------------------------------------
 
@@ -18,35 +18,22 @@ def write_cod(json_fpath : str, out_dirpath : str):
     base_url = 'https://www.crystallography.net/cod'
 
     for cod_id, value in the_dict.items():
-        try:
-            num = cod_id.split('/')[-1]
-            request_url = f'{base_url}/{num}.cif'
-            cif_content = requests.get(url=request_url).content.decode()
-            spg_keyword = f'_space_group_IT_number'
-            spg = None
-            for line in cif_content.split(f'\n'):
-                if spg_keyword in line:
-                    _, spg = line.split()
-            if not spg is None:
-                spg = int(spg)
+        num = cod_id.split('/')[-1]
+        request_url = f'{base_url}/{num}.cif'
+        cif_content = requests.get(url=request_url).content.decode()
 
-            structure = CrystalStructure.from_cif(cif_content=cif_content)
-            structure.spacegroup = spg
-            artifacts = Artifacts(primary_wavelength=None, secondary_wavelength=None)
-            powder_sample = PowderSample(structure, crystallite_size=None, temp_in_celcius=None)
+        temp_fpath = SaveManager.get_temp_fpath()
+        with open(temp_fpath, 'w') as f:
+            f.write(cif_content)
 
-            label = PowderExperiment(powder=powder_sample,artifacts=artifacts, is_simulated=False)
-            two_thetas = np.array(value['x'])
-            intensities = np.array(value['y'])
-            name = f"COD_{value['id']}"
+        cif_parser = CifParser()
+        pattern = cif_parser.extract_pattern(fpath=temp_fpath)
 
-            pattern = XrdPattern(two_theta_values=two_thetas, intensities=intensities, label=label)
-            fpath = os.path.join(out_dirpath, f'{name}.json')
-            pattern.save(fpath=fpath, force_overwrite=True)
-            print(f'Successfully parsed structure number {value["id"]} and saved file at {fpath}')
+        fname = f"COD_{value['id']}"
+        save_fpath = os.path.join(out_dirpath, f'{fname}.json')
+        pattern.save(fpath=save_fpath, force_overwrite=True)
+        print(f'Successfully parsed structure number {value["id"]} and saved file at {save_fpath}')
 
-        except BaseException as e:
-            print(f'Failed to extract COD pattern due to error {e}')
 
 
 if __name__ == "__main__":
@@ -54,3 +41,14 @@ if __name__ == "__main__":
     out_dirpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/'
     write_cod(json_fpath=j_fpath, out_dirpath=out_dirpath)
     print(f'done')
+
+    # spg_keyword = f'_space_group_IT_number'
+    # spg = None
+    # for line in cif_content.split(f'\n'):
+    #     if spg_keyword in line:
+    #         _, spg = line.split()
+    # if not spg is None:
+    #     spg = int(spg)
+    #
+    # structure = CrystalStructure.from_cif(cif_content=cif_content)
+    # structure.spacegroup = spg
