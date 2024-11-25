@@ -7,11 +7,13 @@ import numpy as np
 
 from holytools.fsys import SaveManager
 from xrdpattern.xrd import PatternData, Artifacts, PowderExperiment
+from xrdpattern.xrd.pattern_data import OriginMetadata
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
 from .csv import CsvParser, Orientation
 from .formats import XrdFormat, Formats
 from .xylib import get_xylib_repr
+
 
 
 # -------------------------------------------
@@ -71,7 +73,8 @@ class Parser:
     def load_data_file(fpath: str, format_hint : XrdFormat) -> PatternData:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
-        metadata = Parser.parse_xylib_header(header_str=header)
+        powder_experiment = Parser.parse_experiment_params(header_str=header)
+        metadata = Parser.parse_metadata(header_str=header)
 
         two_theta_values, intensities= [], []
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
@@ -82,7 +85,7 @@ class Parser:
             intensities.append(intensity)
 
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
-        return PatternData(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
+        return PatternData(two_theta_values=two_theta_values, intensities=intensities, label=powder_experiment, metadata=metadata)
 
 
     def load_csv(self, fpath : str) -> list[PatternData]:
@@ -103,7 +106,7 @@ class Parser:
     # parsing xylib header
 
     @classmethod
-    def parse_xylib_header(cls, header_str: str) -> PowderExperiment:
+    def parse_experiment_params(cls, header_str: str) -> PowderExperiment:
         metadata_map = cls.get_key_value_dict(header_str=header_str)
 
         def get_float(key: str) -> Optional[float]:
@@ -117,6 +120,12 @@ class Parser:
         experiment.powder.temp_in_celcius = get_float('TEMP_CELCIUS')
 
         return experiment
+
+    @classmethod
+    def parse_metadata(cls, header_str : str) -> OriginMetadata:
+        metadata_map = cls.get_key_value_dict(header_str=header_str)
+        metadata = OriginMetadata(measurement_date=metadata_map.get('MEASURE_DATE'))
+        return metadata
 
     @staticmethod
     def get_key_value_dict(header_str: str) -> dict:
@@ -132,3 +141,5 @@ class Parser:
             key_value = line[1:].split(':', 1)
             if len(key_value) == 2:
                 yield key_value[0].strip(), key_value[1].strip()
+
+
