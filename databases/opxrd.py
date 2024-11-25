@@ -20,7 +20,7 @@ class DatabaseProcessor:
         info = self.get_contributor_info(contribution_dirpath=contribution_dirpath)
 
         data_dirpath = os.path.join(contribution_dirpath, 'data')
-        pattern_db = PatternDB.load(dirpath=data_dirpath, select_suffixes=['raw'])
+        pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=['raw'])
         for p in pattern_db.patterns:
             p.metadata.contributor_name = info.name_advisor
             p.metadata.institution = info.institution
