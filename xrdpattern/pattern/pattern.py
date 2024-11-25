@@ -21,7 +21,7 @@ parser = Parser()
 
 class XrdPattern(PatternData):
     def plot(self, title: Optional[str] = None, save_fpath : Optional[str] = None, apply_standardization : bool =True):
-        title = title or self.name or 'XrdPattern'
+        title = title or 'XrdPattern'
 
         x_values, intensities = self.get_pattern_data(apply_standardization=apply_standardization)
         quantity_qualifer = 'Relative' if apply_standardization else 'Original'
@@ -122,17 +122,6 @@ class XrdPattern(PatternData):
             pattern_health.add_warning('No secondary wavelength found')
 
         return pattern_health
-
-
-    def get_name(self) -> str:
-        filename = self.name
-        if filename:
-            parts = self.name.split('.')
-            if len(parts) == 2:
-                filename = parts[0]
-        else:
-            filename = f'unnamed_file_{uuid4()}'
-        return filename
 
 
     def get_pattern_data(self, apply_standardization : bool = True,

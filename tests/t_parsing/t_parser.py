@@ -32,11 +32,6 @@ class TestParserPattern(ParserBaseTest):
         for prop in [primary_wavelength, secondary_wavelength]:
             self.assertIsNotNone(obj=prop)
 
-        print(f'name : {self.pattern.get_name()}')
-        self.assertIsNotNone(obj=self.pattern.get_name())
-        original_name = os.path.basename(self.get_fpath())
-        self.assertIn(self.pattern.get_name(), original_name)
-
     def test_data_ok(self):
         raw_data = self.pattern.get_pattern_data(apply_standardization=False)
         std_data = self.pattern.get_pattern_data(apply_standardization=True)
