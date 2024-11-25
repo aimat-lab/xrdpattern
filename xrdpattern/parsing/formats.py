@@ -21,7 +21,7 @@ class Formats:
     cpi = XrdFormat("cpi", ["cpi"])
     csv = XrdFormat("csv", ["csv"])
     dbws = XrdFormat("dbws", ["dbw"])
-    pdcif = XrdFormat("pdcif", ["cif"])
+    pdcif = XrdFormat("pdCIF", ["cif"])
     philips_rd = XrdFormat("philips_rd", ["rd"])
     philips_udf = XrdFormat("philips_udf", ["udf"])
     riet7 = XrdFormat("riet7", ["dat"])
@@ -32,7 +32,6 @@ class Formats:
     xrdml = XrdFormat("xrdml", ["xrdml"])
     xsyg = XrdFormat("xsyg", ["xsyg"])
     aimat_xrdpattern = XrdFormat("aimat", ['json'])
-    cif = XrdFormat('cif', ['cif'])
 
     @classmethod
     def aimat_suffix(cls) -> str:

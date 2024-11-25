@@ -17,7 +17,7 @@ from .xylib import get_xylib_repr
 # -------------------------------------------
 
 
-class Parser:
+class MasterParser:
     def __init__(self, default_csv_orientation : Optional[Orientation] = None):
         self.default_csv_orientation : Optional[Orientation] = default_csv_orientation
 
@@ -39,7 +39,7 @@ class Parser:
 
         if the_format == Formats.aimat_xrdpattern:
             pattern_infos = [self.load_json(fpath=fpath)]
-        elif the_format == Formats.cif:
+        elif the_format == Formats.pdcif:
             pattern_infos = [self.load_cif(fpath=fpath)]
         elif the_format == Formats.stoe_raw:
             pattern_infos = [self.stoe_reader.get_pattern_info(fpath=fpath)]
@@ -51,6 +51,9 @@ class Parser:
             raise ValueError(f"Format .{the_format} is not supported")
         for info in pattern_infos:
             info.name = os.path.basename(fpath)
+
+        for p in pattern_infos:
+            p.metadata.file_format = f'{the_format.name} (.{suffix})'
         return pattern_infos
 
 
@@ -66,8 +69,8 @@ class Parser:
     def load_data_file(fpath: str, format_hint : XrdFormat) -> PatternData:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
-        powder_experiment = Parser.parse_experiment_params(header_str=header)
-        metadata = Parser.parse_metadata(header_str=header)
+        powder_experiment = MasterParser.parse_experiment_params(header_str=header)
+        metadata = MasterParser.parse_metadata(header_str=header)
 
         two_theta_values, intensities= [], []
         data_rows = [row for row in data_str.split('\n') if not row.strip() == '']
@@ -123,7 +126,7 @@ class Parser:
     @staticmethod
     def get_key_value_dict(header_str: str) -> dict:
         key_value_dict = {}
-        for key, value in Parser.get_key_value_pairs(header_str):
+        for key, value in MasterParser.get_key_value_pairs(header_str):
             key_value_dict[key] = value
         return key_value_dict
 

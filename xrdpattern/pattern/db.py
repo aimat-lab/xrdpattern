@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedInt
-from xrdpattern.parsing import Parser, Formats
+from xrdpattern.parsing import MasterParser, Formats
 from .pattern import XrdPattern
 from .reports import DatabaseReport
 
@@ -51,7 +51,7 @@ class PatternDB:
             raise ValueError(f"No data files matching suffixes {Formats.get_all_suffixes()} found in directory {dirpath}")
 
         patterns : list[XrdPattern] = []
-        parser = Parser()
+        parser = MasterParser()
         failed_fpath = []
         parsing_reports = []
 

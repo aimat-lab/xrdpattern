@@ -11,10 +11,10 @@ import torch
 
 from xrdpattern.crystal import CrystalStructure
 from xrdpattern.xrd import PatternData, Artifacts
-from xrdpattern.parsing import Parser, Formats
+from xrdpattern.parsing import MasterParser, Formats
 from .reports import PatternReport
 
-parser = Parser()
+parser = MasterParser()
 
 # -------------------------------------------
 
