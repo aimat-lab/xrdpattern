@@ -50,6 +50,9 @@ class CifParser:
         if None in [rmin, rmax]:
             raise ValueError("Could not find 2theta range")
 
+        if x is None or y is None:
+            raise ValueError("Could not find 2theta or intensity values")
+
         rmin = cif.as_number(rmin)
         rmax = cif.as_number(rmax)
         x = np.linspace(rmin, rmax, len(y))
