@@ -42,14 +42,3 @@ if __name__ == "__main__":
     out_dirpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/'
     write_cod(json_fpath=j_fpath, out_dirpath=out_dirpath)
     print(f'done')
-
-    # spg_keyword = f'_space_group_IT_number'
-    # spg = None
-    # for line in cif_content.split(f'\n'):
-    #     if spg_keyword in line:
-    #         _, spg = line.split()
-    # if not spg is None:
-    #     spg = int(spg)
-    #
-    # structure = CrystalStructure.from_cif(cif_content=cif_content)
-    # structure.spacegroup = spg

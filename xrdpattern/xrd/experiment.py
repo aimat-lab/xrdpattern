@@ -139,6 +139,14 @@ class PowderExperiment(JsonDataclass):
                 if len(parts) > 1:
                     artifacts.primary_wavelength = float(parts[-1])
 
+        blocks = cif_content.split(f'loop_')
+        for b in blocks:
+            if '_diffrn_radiation_wavelength_wt' in b:
+                b = b.strip()
+                b_lines = b.split('\n')
+                artifacts.primary_wavelength = float(b_lines[-2].split()[0])
+                artifacts.secondary_wavelength = float(b_lines[-1].split()[0])
+
         return cls(powder=powder, artifacts=artifacts, is_simulated=False)
 
 
@@ -168,7 +176,7 @@ class Artifacts(JsonDataclass):
         return [self.primary_wavelength, self.secondary_wavelength]
 
     @staticmethod
-    def default_ratio(self) -> float:
+    def default_ratio() -> float:
         return 0.5
 
 @dataclass
