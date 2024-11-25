@@ -39,7 +39,7 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, dirpath : str, selected_suffixes : Optional[list[str]] = None) -> PatternDB:
+    def load(cls, dirpath : str, store_filenames : bool = False, selected_suffixes : Optional[list[str]] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
@@ -51,7 +51,7 @@ class PatternDB:
             raise ValueError(f"No data files matching suffixes {Formats.get_all_suffixes()} found in directory {dirpath}")
 
         patterns : list[XrdPattern] = []
-        parser = MasterParser()
+        parser = MasterParser(store_filename=store_filenames)
         failed_fpath = []
         parsing_reports = []
 
