@@ -31,8 +31,23 @@ def write_cod(json_fpath : str, out_dirpath : str):
 
 def parse_cod_cif(num : int) -> XrdPattern:
     base_url = 'https://www.crystallography.net/cod'
-    request_url = f'{base_url}/{num}.cif'
-    cif_content = requests.get(url=request_url).content.decode()
+    cif_request_url = f'{base_url}/{num}.cif'
+    cif_content = requests.get(url=cif_request_url).content.decode()
+
+    try:
+        hkl_request_url = f'{base_url}/{num}.hkl'
+        hkl_content = requests.get(url=hkl_request_url).content.decode()
+        loops = hkl_content.split(f'loop_')
+        xfields = ["_pd_proc_2theta_corrected", "_pd_meas_2theta_scan", "_pd_meas_2theta"]
+
+        for l in loops:
+            l = l.strip()
+            if any([x in l for x in xfields]):
+                cif_content += f'loop_\n{l}'
+    except:
+        pass
+
+    print(f'cif content = {cif_content}')
 
     temp_fpath = SaveManager.get_tmp_fpath(suffix='.cif')
     with open(temp_fpath, 'w') as f:
