@@ -28,6 +28,10 @@ class TestPatternDB(ParserBaseTest):
             old_pattern = old_pattern_map[pattern_name]
             new_pattern = new_pattern_map.get(pattern_name)
             self.assertIsNotNone(new_pattern)
+            if old_pattern != new_pattern:
+                print(f'p1 = {old_pattern.to_str()}')
+                print(f'p2 = {new_pattern.to_str()}')
+
             self.assertEqual(old_pattern, new_pattern)
 
 

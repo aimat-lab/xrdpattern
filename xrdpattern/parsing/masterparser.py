@@ -53,7 +53,8 @@ class MasterParser:
             info.name = os.path.basename(fpath)
 
         for p in pattern_infos:
-            p.metadata.file_format = f'{the_format.name} (.{suffix})'
+            if not the_format == Formats.aimat_xrdpattern:
+                p.metadata.original_file_format = f'{the_format.name} (.{suffix})'
             if self.store_filename:
                 p.metadata.filename = os.path.basename(fpath)
         return pattern_infos

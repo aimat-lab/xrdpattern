@@ -2,7 +2,7 @@ import numpy as np
 from gemmi import cif
 from numpy.typing import NDArray
 
-from xrdpattern.xrd import PowderExperiment, PatternData, OriginMetadata, Artifacts
+from xrdpattern.xrd import PowderExperiment, PatternData, OriginMetadata
 
 
 class CifParser:

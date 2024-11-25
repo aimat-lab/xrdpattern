@@ -11,7 +11,7 @@ class OriginMetadata(JsonDataclass):
     filename : Optional[str] = None
     institution : Optional[str] = None
     contributor_name : Optional[str] = None
-    file_format : Optional[str] = None
+    original_file_format : Optional[str] = None
     measurement_date: Optional[str] = None
     tags: list[str] = field(default_factory=list)
 
