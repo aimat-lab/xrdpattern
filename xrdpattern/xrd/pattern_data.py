@@ -87,9 +87,9 @@ class PatternData(Serializable):
 
 @dataclass
 class OriginMetadata(JsonDataclass):
-    institution : str = ''
-    contributor_name : str = ''
-    file_format : str = ''
+    institution : Optional[str] = None
+    contributor_name : Optional[str] = None
+    file_format : Optional[str] = None
     tags: list[str] = field(default_factory=list)
     measurement_date: Optional[str] = None
 

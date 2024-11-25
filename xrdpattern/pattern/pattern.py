@@ -155,9 +155,12 @@ class XrdPattern(PatternData):
 
         as_str = (f'----> Sample \n'
               f'- Crystal: {crystal_data} \n'
-              f'- Metadata:\n'
-              f'    - Crystallite size: {self.label.crystallite_size}\n'
+              f'- Experiment Parameters:\n'
+              f'    - Primary wavelength: {self.artifacts.primary_wavelength}\n'
               f'    - Temperature : {self.label.temp_in_celcius}\n'
+              f'- Origin Metadata:\n'
+                f'    - Contributor: {self.metadata.contributor_name}\n'
+                f'    - Institution: {self.metadata.institution}\n'
               f'- Pattern:\n'
                   f'content: {pattern_content}\n'
                   f'length: {len(self.intensities)}\n')
