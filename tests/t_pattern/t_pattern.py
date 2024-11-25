@@ -14,7 +14,7 @@ import tempfile
 class TestXrdPattern(ParserBaseTest):
     @classmethod
     def get_fpath(cls) -> str:
-        return DataExamples.get_aimat_xrdpattern_fpath()
+        return DataExamples.get_aimat_fpath()
 
     def test_save_load_roundtrip(self):
         unlabeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
