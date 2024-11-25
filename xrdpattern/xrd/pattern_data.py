@@ -21,6 +21,7 @@ class PatternData(Serializable):
     two_theta_values : NDArray
     intensities : NDArray
     label : PowderExperiment
+    metadata : Optional[OriginMetadata] = None
     name : Optional[str] = None
 
     @classmethod
