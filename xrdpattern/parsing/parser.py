@@ -20,9 +20,7 @@ from .xylib import get_xylib_repr
 
 
 class Parser:
-    def __init__(self, default_wavelength : Optional[float] = None,
-                 default_csv_orientation : Optional[Orientation] = None):
-        self.default_wavelength_angstr : Optional[float] = default_wavelength
+    def __init__(self, default_csv_orientation : Optional[Orientation] = None):
         self.default_csv_orientation : Optional[Orientation] = default_csv_orientation
 
         self.stoe_reader : StoeParser = StoeParser()
@@ -53,9 +51,6 @@ class Parser:
             pattern_infos = self.load_csv(fpath=fpath)
         else:
             raise ValueError(f"Format .{the_format} is not supported")
-        for pattern in pattern_infos:
-            if pattern.label.primary_wavelength is None and self.default_wavelength_angstr:
-                pattern.label.artifacts.primary_wavelength = self.default_wavelength_angstr
         for info in pattern_infos:
             info.name = os.path.basename(fpath)
         return pattern_infos

@@ -14,7 +14,7 @@ from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedInt
 
 from xrdpattern.parsing import Parser, Orientation, Formats
-from .pattern import XrdPattern, PatternReport
+from .pattern import XrdPattern
 from .reports import DatabaseReport
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
@@ -39,27 +39,20 @@ class PatternDB:
             fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_xrdpattern.suffix}')
             pattern.save(fpath=fpath)
 
-
     @classmethod
-    def load(cls, dirpath : str, selected_suffixes : Optional[list[str]] = None,
-                  default_wavelength : Optional[float] = None,
-                  default_csv_orientation : Optional[Orientation] = None) -> PatternDB:
-
+    def load(cls, dirpath : str, default_csv_orientation : Optional[Orientation] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
 
-
         patterns : list[XrdPattern] = []
-        parser = Parser(default_wavelength=default_wavelength, default_csv_orientation=default_csv_orientation)
+        parser = Parser(default_csv_orientation=default_csv_orientation)
         failed_fpath = []
         parsing_reports = []
 
-        if selected_suffixes is None:
-            selected_suffixes = Formats.get_allowed_suffixes()
-        data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=selected_suffixes)
+        data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath)
         if len(data_fpaths) == 0:
-            raise ValueError(f"No data files matching suffixes {selected_suffixes} found in directory {dirpath}")
+            raise ValueError(f"No data files matching suffixes {Formats.get_allowed_suffixes()} found in directory {dirpath}")
 
         tracker = TrackedInt(start_value=0, finish_value=len(data_fpaths))
         for fpath in data_fpaths:
@@ -79,19 +72,16 @@ class PatternDB:
                                          data_dirpath=dirpath)
         return PatternDB(patterns=patterns, database_report=database_report)
 
-    # -------------------------------------------
-    # pattern database
-
     @staticmethod
-    def get_xrd_fpaths(dirpath : str, selected_suffixes : list[str]):
+    def get_xrd_fpaths(dirpath: str):
         root_node = FsysNode(path=dirpath)
-        xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
+        xrd_file_nodes = root_node.get_file_subnodes(select_formats=Formats.get_allowed_suffixes())
         data_fpaths = [node.get_path() for node in xrd_file_nodes]
-
 
         return data_fpaths
 
-
+    # -------------------------------------------
+    # attributes
 
     def __eq__(self, other):
         if not isinstance(other, PatternDB):
@@ -154,5 +144,3 @@ def nested_getattr(obj: object, attr_string):
     for name in attr_names:
         obj = getattr(obj, name)
     return obj
-
-
