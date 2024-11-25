@@ -15,6 +15,7 @@ from holytools.userIO import TrackedInt
 
 from xrdpattern.parsing import Parser, Orientation, Formats
 from .pattern import XrdPattern, PatternReport
+from .reports import DatabaseReport
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
 
@@ -34,16 +35,8 @@ class PatternDB:
             raise ValueError(f'Path \"{dirpath}\" is occupied by file')
         os.makedirs(dirpath, exist_ok=True)
 
-        def get_path(basename : str, index : Optional[int] = None):
-            conditional_index = '' if index is None else f'_{index}'
-            return os.path.join(dirpath, f'{basename}{conditional_index}.{Formats.aimat_xrdpattern.suffix}')
-
-        for pattern in self.patterns:
-            fpath = get_path(basename=pattern.get_name())
-            current_index = 0
-            while os.path.isfile(path=fpath):
-                current_index += 1
-                fpath = get_path(basename=pattern.get_name(), index=current_index)
+        for j, pattern in enumerate(self.patterns):
+            fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_xrdpattern.suffix}')
             pattern.save(fpath=fpath)
 
 
@@ -117,7 +110,7 @@ class PatternDB:
                 spg = nested_getattr(pattern, attr)
                 quantity_list.append(spg)
             except:
-                patterdb_logger.log(msg=f'Could not extract attribute \"{attr}\" from file {pattern.get_name()}',
+                patterdb_logger.log(msg=f'Could not extract attribute \"{attr}\" from pattern {pattern.get_info_as_str()}',
                                     level=logging.WARNING)
         if not quantity_list:
             raise ValueError(f'No data found for attribute {attr}')
@@ -162,46 +155,4 @@ def nested_getattr(obj: object, attr_string):
         obj = getattr(obj, name)
     return obj
 
-
-@dataclass
-class DatabaseReport:
-    data_dirpath : str
-    failed_files : list[str]
-    source_files : list[str]
-    pattern_reports: list[PatternReport]
-
-    def __post_init__(self):
-        self.num_crit, self.num_err, self.num_warn = 0, 0, 0
-        for report in self.pattern_reports:
-            self.num_crit += report.has_critical()
-            self.num_err += report.has_error()
-            self.num_warn += report.has_warning()
-
-
-    def get_str(self) -> str:
-        num_failed = len(self.failed_files)
-        num_attempted_files = len(self.source_files)
-        num_parsed_patterns = len(self.pattern_reports)
-
-        summary_str = f'\n----- Finished creating database from data root \"{self.data_dirpath}\" -----\n'
-        if num_failed > 0:
-            summary_str += f'{num_failed}/{num_attempted_files} files could not be parsed'
-        else:
-            summary_str += f'All pattern were successfully parsed'
-        summary_str += f'\n- Processed {num_attempted_files} files to extract {num_parsed_patterns} patterns'
-        summary_str += f'\n- {self.num_crit}/{num_parsed_patterns} patterns had had critical error(s)'
-        summary_str += f'\n- {self.num_err}/{num_parsed_patterns} patterns had error(s)'
-        summary_str += f'\n- {self.num_warn}/{num_parsed_patterns} patterns had warning(s)'
-
-        if num_failed > 0:
-            summary_str += f'\n\nFailed files:\n'
-            for pattern_fpath in self.failed_files:
-                summary_str += f'\n{pattern_fpath}'
-
-        individual_reports = '\n\nIndividual file reports:\n\n'
-        for pattern_health in self.pattern_reports:
-            individual_reports += f'{str(pattern_health)}\n\n'
-        summary_str += f'\n\n----------------------------------------{individual_reports}'
-
-        return summary_str
 

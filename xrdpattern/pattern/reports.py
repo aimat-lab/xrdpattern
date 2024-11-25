@@ -55,3 +55,47 @@ class PatternReport:
     def __str__(self):
         return self.get_report_str()
 
+
+
+@dataclass
+class DatabaseReport:
+    data_dirpath : str
+    failed_files : list[str]
+    source_files : list[str]
+    pattern_reports: list[PatternReport]
+
+    def __post_init__(self):
+        self.num_crit, self.num_err, self.num_warn = 0, 0, 0
+        for report in self.pattern_reports:
+            self.num_crit += report.has_critical()
+            self.num_err += report.has_error()
+            self.num_warn += report.has_warning()
+
+
+    def get_str(self) -> str:
+        num_failed = len(self.failed_files)
+        num_attempted_files = len(self.source_files)
+        num_parsed_patterns = len(self.pattern_reports)
+
+        summary_str = f'\n----- Finished creating database from data root \"{self.data_dirpath}\" -----\n'
+        if num_failed > 0:
+            summary_str += f'{num_failed}/{num_attempted_files} files could not be parsed'
+        else:
+            summary_str += f'All pattern were successfully parsed'
+        summary_str += f'\n- Processed {num_attempted_files} files to extract {num_parsed_patterns} patterns'
+        summary_str += f'\n- {self.num_crit}/{num_parsed_patterns} patterns had had critical error(s)'
+        summary_str += f'\n- {self.num_err}/{num_parsed_patterns} patterns had error(s)'
+        summary_str += f'\n- {self.num_warn}/{num_parsed_patterns} patterns had warning(s)'
+
+        if num_failed > 0:
+            summary_str += f'\n\nFailed files:\n'
+            for pattern_fpath in self.failed_files:
+                summary_str += f'\n{pattern_fpath}'
+
+        individual_reports = '\n\nIndividual file reports:\n\n'
+        for pattern_health in self.pattern_reports:
+            individual_reports += f'{str(pattern_health)}\n\n'
+        summary_str += f'\n\n----------------------------------------{individual_reports}'
+
+        return summary_str
+
