@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import os
 from typing import Optional
 
@@ -73,6 +72,9 @@ class XrdPattern(PatternData):
 
     # -------------------------------------------
     # get
+
+    def get_name(self) -> str:
+        return self.metadata.filename
 
     @property
     def startval(self):

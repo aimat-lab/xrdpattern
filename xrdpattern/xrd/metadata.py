@@ -8,6 +8,7 @@ from holytools.abstract import JsonDataclass
 
 @dataclass
 class OriginMetadata(JsonDataclass):
+    filename : Optional[str] = None
     institution : Optional[str] = None
     contributor_name : Optional[str] = None
     file_format : Optional[str] = None

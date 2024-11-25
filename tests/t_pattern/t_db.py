@@ -18,8 +18,8 @@ class TestPatternDB(ParserBaseTest):
 
         self.assertEqual(len(oldpattern), len(new_patterns))
 
-        old_pattern_map = {pattern.get_name(): pattern for pattern in oldpattern}
-        new_pattern_map = {pattern.get_name(): pattern for pattern in new_patterns}
+        old_pattern_map = {pattern.get_name() : pattern for pattern in oldpattern}
+        new_pattern_map = {pattern.get_name() : pattern for pattern in new_patterns}
 
         print(f'Old patterns {old_pattern_map.keys()}')
         print(f'New patterns {new_pattern_map.keys()}')

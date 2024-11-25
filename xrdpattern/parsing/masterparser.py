@@ -17,8 +17,9 @@ from .xylib import get_xylib_repr
 
 
 class MasterParser:
-    def __init__(self, default_csv_orientation : Optional[Orientation] = None):
+    def __init__(self, default_csv_orientation : Optional[Orientation] = None, store_filename : bool = False):
         self.default_csv_orientation : Optional[Orientation] = default_csv_orientation
+        self.store_filename : bool = store_filename
 
         self.stoe_reader : StoeParser = StoeParser()
         self.cif_parser : CifParser = CifParser()
@@ -53,6 +54,8 @@ class MasterParser:
 
         for p in pattern_infos:
             p.metadata.file_format = f'{the_format.name} (.{suffix})'
+            if self.store_filename:
+                p.metadata.filename = os.path.basename(fpath)
         return pattern_infos
 
 
