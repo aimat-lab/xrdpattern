@@ -3,10 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 import torch
+from tensordict import TensorDict
 from torch import Tensor
 
 from xrdpattern.crystal import CrystalStructure, CrystalBase, AtomicSite, Lengths, Angles
 from holytools.abstract import JsonDataclass
+from xrdpattern.xrd.xray import XRayInfo
 
 NUM_SPACEGROUPS = 230
 MAX_ATOMIC_SITES = 100
@@ -14,25 +16,15 @@ MAX_ATOMIC_SITES = 100
 # ---------------------------------------------------------
 
 @dataclass
-class QuantityRegion:
-    obj : list
-    start : int
-    end : int
-
-    def get_size(self) -> int:
-        return self.end + 1 - self.start
-
-
-@dataclass
 class PowderExperiment(JsonDataclass):
     powder : PowderSample
-    artifacts : Artifacts
+    artifacts : XRayInfo
     is_simulated : bool
 
     @classmethod
     def from_structure(cls, structure : CrystalStructure, crystallite_size : float, is_simulated : bool):
         powder = PowderSample(crystal_structure=structure, crystallite_size=crystallite_size)
-        artifacts = Artifacts.mk_empty()
+        artifacts = XRayInfo.mk_empty()
         return cls(powder=powder, artifacts=artifacts, is_simulated=is_simulated)
 
 
@@ -85,7 +77,7 @@ class PowderExperiment(JsonDataclass):
     # ---------------------------------------------------------
     # properties
 
-    def is_partial_label(self) -> bool:
+    def is_partially_labeled(self) -> bool:
         powder_tensor = torch.tensor(self.get_list_repr())
         is_nan = powder_tensor != powder_tensor
         print(f'Powder tensor len = {len(powder_tensor)}')
@@ -117,11 +109,6 @@ class PowderExperiment(JsonDataclass):
     def secondary_wavelength(self) -> float:
         return self.artifacts.secondary_wavelength
 
-    @classmethod
-    def get_length(cls):
-        empty = cls.make_empty()
-        return len(empty.get_list_repr())
-
     # ---------------------------------------------------------
     # save/load
 
@@ -131,53 +118,25 @@ class PowderExperiment(JsonDataclass):
         powder = PowderSample(crystal_structure=structure)
         structure.calculate_properties()
 
-        artifacts = Artifacts.mk_empty()
+        xray_info = XRayInfo.mk_empty()
         lines = cif_content.split('\n')
         for l in lines:
             if '_diffrn_radiation_wavelength' in l:
                 parts = l.split()
                 if len(parts) > 1:
-                    artifacts.primary_wavelength = float(parts[-1])
+                    xray_info.primary_wavelength = float(parts[-1])
 
         blocks = cif_content.split(f'loop_')
         for b in blocks:
             if '_diffrn_radiation_wavelength_wt' in b:
                 b = b.strip()
                 b_lines = b.split('\n')
-                artifacts.primary_wavelength = float(b_lines[-2].split()[0])
-                artifacts.secondary_wavelength = float(b_lines[-1].split()[0])
+                xray_info.primary_wavelength = float(b_lines[-2].split()[0])
+                xray_info.secondary_wavelength = float(b_lines[-1].split()[0])
 
-        return cls(powder=powder, artifacts=artifacts, is_simulated=False)
-
-
-    @classmethod
-    def make_empty(cls, is_simulated : bool = False) -> PowderExperiment:
-        lengths = Lengths(a=None, b=None, c=None)
-        angles = Angles(alpha=None, beta=None, gamma=None)
-        base = CrystalBase()
-
-        structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
-        sample = PowderSample(crystal_structure=structure,crystallite_size=None, temp_in_celcius=None)
-        artifacts = Artifacts.mk_empty()
-
-        return cls(sample, artifacts, is_simulated=is_simulated)
+        return cls(powder=powder, artifacts=xray_info, is_simulated=False)
 
 
-@dataclass
-class Artifacts(JsonDataclass):
-    primary_wavelength: Optional[float]
-    secondary_wavelength: Optional[float]
-
-    @classmethod
-    def mk_empty(cls):
-        return cls(primary_wavelength=None, secondary_wavelength=None)
-
-    def as_list(self) -> list[float]:
-        return [self.primary_wavelength, self.secondary_wavelength]
-
-    @staticmethod
-    def default_ratio() -> float:
-        return 0.5
 
 @dataclass
 class PowderSample(JsonDataclass):
@@ -187,76 +146,26 @@ class PowderSample(JsonDataclass):
     shape_factor : Optional[float] = 0.9
 
 
-class LabelTensor(Tensor):
-    pass
-#     example_experiment: PowderExperiment = PowderExperiment.make_empty()
-#     lattice_param_region : QuantityRegion = example_experiment.lattice_param_region
-#     atomic_site_regions : list[QuantityRegion] = example_experiment.atomic_site_regions
-#     spacegroup_region : QuantityRegion = example_experiment.spacegroup_region
-#     artifacts_region : QuantityRegion = example_experiment.artifacts_region
-#     domain_region : QuantityRegion = example_experiment.domain_region
-#
-#     def new_empty(self, *sizes, dtype=None, device=None, requires_grad=False):
-#         dtype = dtype if dtype is not None else self.dtype
-#         device = device if device is not None else self.device
-#         return LabelTensor(torch.empty(*sizes, dtype=dtype, device=device, requires_grad=requires_grad))
-#
-#     @staticmethod
-#     def __new__(cls, tensor) -> LabelTensor:
-#         return torch.Tensor.as_subclass(tensor, cls)
-#
-#     #noinspection PyTypeChecker
-#     def get_lattice_params(self) -> LabelTensor:
-#         return self[..., self.lattice_param_region.start:self.lattice_param_region.end]
-#
-#     # noinspection PyTypeChecker
-#     def get_atomic_site(self, index: int) -> LabelTensor:
-#         region = self.atomic_site_regions[index]
-#         return self[..., region.start:region.end]
-#
-#     # noinspection PyTypeChecker
-#     def get_spg_logits(self) -> LabelTensor:
-#         return self[..., self.spacegroup_region.start:self.spacegroup_region.end]
-#
-#     def get_spg_probabilities(self):
-#         logits = self.get_spg_logits()
-#         return torch.softmax(logits, dim=-1)
-#
-#     # noinspection PyTypeChecker
-#     def get_artifacts(self) -> LabelTensor:
-#         return self[..., self.artifacts_region.start:self.artifacts_region.end]
-#
-#     # noinspection PyTypeChecker
-#     def get_simulated_probability(self) -> LabelTensor:
-#         return self[..., self.domain_region.start:self.domain_region.end]
-#
-#     # noinspection PyTypeChecker
-#     def to_sample(self) -> PowderExperiment:
-#         raise NotImplementedError
+class LabelTensor(TensorDict):
+    def get_lattice_params(self) -> Tensor:
+        return self['lattice_params']
 
+    def get_atomic_site(self, index : int) -> Tensor:
+        return self[f'atomic_site_{index}']
 
-from enum import Enum
+    def get_spg_logits(self) -> Tensor:
+        return self['spg_logits']
 
-class XrdAnode(Enum):
-    Cu = "Cu"
-    Mo = "Mo"
-    Cr = "Cr"
-    Fe = "Fe"
-    Co = "Co"
-    Ag = "Ag"
+    def get_spg_probabilities(self) -> Tensor:
+        logits = self.get_spg_logits()
+        return torch.softmax(logits, dim=-1)
 
-    def get_wavelengths(self) -> (float, float):
-        MATERiAL_TO_WAVELENGTHS = {
-            "Cu": (1.54439, 1.54056),
-            "Mo": (0.71359, 0.70930),
-            "Cr": (2.29361, 2.28970),
-            "Fe": (1.93998, 1.93604),
-            "Co": (1.79285, 1.78896),
-            "Ag": (0.563813, 0.559421),
-        }
-        return MATERiAL_TO_WAVELENGTHS[self.value]
+    def get_artifacts(self) -> LabelTensor:
+        return self['artifacts']
 
-    @staticmethod
-    def compute_ratio():
-        return 0.5
+    def get_simulated_probability(self) -> LabelTensor:
+        return self['is_simulated']
 
+    # noinspection PyTypeChecker
+    def to_sample(self) -> PowderExperiment:
+        raise NotImplementedError

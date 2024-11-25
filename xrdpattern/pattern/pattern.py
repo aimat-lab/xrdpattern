@@ -10,7 +10,7 @@ from numpy.typing import NDArray
 import torch
 
 from xrdpattern.crystal import CrystalStructure
-from xrdpattern.xrd import PatternData, Artifacts
+from xrdpattern.xrd import PatternData, XRayInfo
 from xrdpattern.parsing import MasterParser, Formats
 from .reports import PatternReport
 
@@ -93,7 +93,7 @@ class XrdPattern(PatternData):
         return self.label.powder
 
     @property
-    def artifacts(self) -> Artifacts:
+    def artifacts(self) -> XRayInfo:
         return self.label.artifacts
 
     @property

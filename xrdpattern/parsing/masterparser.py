@@ -6,7 +6,7 @@ from typing import Optional, Iterator, Tuple
 import numpy as np
 
 from holytools.fsys import SaveManager
-from xrdpattern.xrd import PatternData, Artifacts, PowderExperiment, OriginMetadata
+from xrdpattern.xrd import PatternData, XRayInfo, PowderExperiment, OriginMetadata
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
 from .csv import CsvParser, Orientation
@@ -115,7 +115,7 @@ class MasterParser:
             return val
 
         experiment = PowderExperiment.make_empty()
-        experiment.artifacts = Artifacts(primary_wavelength=get_float('ALPHA1'),secondary_wavelength=get_float('ALPHA2'))
+        experiment.artifacts = XRayInfo(primary_wavelength=get_float('ALPHA1'), secondary_wavelength=get_float('ALPHA2'))
         experiment.powder.temp_in_celcius = get_float('TEMP_CELCIUS')
 
         return experiment

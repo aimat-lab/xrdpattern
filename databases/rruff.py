@@ -2,7 +2,7 @@ import os
 
 from dataclasses import dataclass
 from xrdpattern.pattern import XrdPattern
-from xrdpattern.xrd import PowderExperiment, PowderSample, CrystalStructure, Lengths, Angles, CrystalBase, Artifacts
+from xrdpattern.xrd import PowderExperiment, PowderSample, CrystalStructure, Lengths, Angles, CrystalBase, XRayInfo
 import re
 
 delim = ' '
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
             crystal_structure = CrystalStructure(lengths=lengths, angles=angles, spacegroup=spacegroup, base=CrystalBase())
             powder = PowderSample(crystal_structure=crystal_structure)
-            artifacts = Artifacts(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength)
+            artifacts = XRayInfo(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength)
             pattern.label = PowderExperiment(powder=powder, artifacts=artifacts, is_simulated=False)
             pattern.save(fpath=os.path.join(output_dirpath, base_name))
 
