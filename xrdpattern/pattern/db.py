@@ -63,6 +63,9 @@ class PatternDB:
         parsing_reports = []
 
         data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=selected_suffixes)
+        if len(data_fpaths) == 0:
+            raise ValueError(f"No data files found in directory {dirpath}")
+
         tracker = TrackedInt(start_value=0, finish_value=len(data_fpaths))
         for fpath in data_fpaths:
             try:
