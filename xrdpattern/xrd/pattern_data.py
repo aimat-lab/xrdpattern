@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, fields, field
 from typing import Optional, Literal
 
 import numpy as np
@@ -83,10 +83,10 @@ class PatternData(Serializable):
 
 @dataclass
 class OriginMetadata:
-    institution : str
-    contributor_name : str
-    file_format : str
-    tags : list[Tag]
+    institution : str = ''
+    contributor_name : str = ''
+    file_format : str = ''
+    tags: list[Tag] = field(default_factory=list)
     measurement_date: Optional[str] = None
 
 
