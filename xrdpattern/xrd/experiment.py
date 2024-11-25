@@ -187,7 +187,8 @@ class PowderSample(JsonDataclass):
     shape_factor : Optional[float] = 0.9
 
 
-# class LabelTensor(Tensor):
+class LabelTensor(Tensor):
+    pass
 #     example_experiment: PowderExperiment = PowderExperiment.make_empty()
 #     lattice_param_region : QuantityRegion = example_experiment.lattice_param_region
 #     atomic_site_regions : list[QuantityRegion] = example_experiment.atomic_site_regions

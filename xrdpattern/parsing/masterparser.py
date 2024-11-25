@@ -17,8 +17,8 @@ from .xylib import get_xylib_repr
 
 
 class MasterParser:
-    def __init__(self, default_csv_orientation : Optional[Orientation] = None, store_filename : bool = False):
-        self.default_csv_orientation : Optional[Orientation] = default_csv_orientation
+    def __init__(self, csv_orientation : Optional[Orientation] = None, store_filename : bool = False):
+        self.default_csv_orientation : Optional[Orientation] = csv_orientation
         self.store_filename : bool = store_filename
 
         self.stoe_reader : StoeParser = StoeParser()

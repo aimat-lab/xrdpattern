@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedInt
-from xrdpattern.parsing import MasterParser, Formats
+from xrdpattern.parsing import MasterParser, Formats, Orientation
 from .pattern import XrdPattern
 from .reports import DatabaseReport
 
@@ -39,7 +39,10 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, dirpath : str, store_filenames : bool = False, selected_suffixes : Optional[list[str]] = None) -> PatternDB:
+    def load(cls, dirpath : str,
+             store_filenames : bool = False,
+             csv_orientation : Orientation = Orientation.VERTICAL,
+             selected_suffixes : Optional[list[str]] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
@@ -51,7 +54,7 @@ class PatternDB:
             raise ValueError(f"No data files matching suffixes {Formats.get_all_suffixes()} found in directory {dirpath}")
 
         patterns : list[XrdPattern] = []
-        parser = MasterParser(store_filename=store_filenames)
+        parser = MasterParser(store_filename=store_filenames, csv_orientation=csv_orientation)
         failed_fpath = []
         parsing_reports = []
 
