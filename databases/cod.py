@@ -17,11 +17,11 @@ def write_cod(json_fpath : str, out_dirpath : str):
     base_url = 'https://www.crystallography.net/cod'
 
     for cod_id, value in the_dict.items():
-        try:
-            num = cod_id.split('/')[-1]
-            request_url = f'{base_url}/{num}.cif'
-            cif_content = requests.get(url=request_url).content.decode()
+        num = cod_id.split('/')[-1]
+        request_url = f'{base_url}/{num}.cif'
+        cif_content = requests.get(url=request_url).content.decode()
 
+        try:
             temp_fpath = SaveManager.get_tmp_fpath(suffix='.cif')
             with open(temp_fpath, 'w') as f:
                 f.write(cif_content)
@@ -35,10 +35,10 @@ def write_cod(json_fpath : str, out_dirpath : str):
             print(f'Successfully parsed structure number {value["id"]} and saved file at {save_fpath}')
 
         except BaseException as e:
-            print(f'Failed to extract COD pattern due to error {e}')
+            print(f'Failed to extract COD pattern {num} due to error {e}')
 
 if __name__ == "__main__":
     j_fpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/extracted_data.json'
-    out_dirpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/'
-    write_cod(json_fpath=j_fpath, out_dirpath=out_dirpath)
+    the_out_dirpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/'
+    write_cod(json_fpath=j_fpath, out_dirpath=the_out_dirpath)
     print(f'done')
