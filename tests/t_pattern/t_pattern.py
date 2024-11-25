@@ -51,7 +51,7 @@ class TestXrdPattern(ParserBaseTest):
         self.check_data_ok(*pattern.get_pattern_data(apply_standardization=False))
 
     @staticmethod
-    def save_and_load(pattern : XrdPattern):
+    def save_and_load(pattern : XrdPattern) -> XrdPattern:
         save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.aimat_xrdpattern.suffix}')
         pattern.save(fpath=save_path)
         reloaded_pattern = XrdPattern.load(fpath=save_path)
