@@ -33,11 +33,13 @@ Loading Diffractogram patterns from the following data formats is supported:
 
 - Plain Text Files
     - Comma seperated values (.csv)
+    - Two column data (.xy)
     - Crystallographic Information File for Powder Diffraction (.cif)
     - Custom XrdPattern json format (.json)
     - Plain text tab seperated values (.txt) (! In progress)
     - PANalytical XRDML (.xrdml)
     - Freiberg Instruments XSYG (.xysg)
+
 
 - Binaries:
   - Siemens/Bruker RAW ver. 1/2/3/4 (.raw)
