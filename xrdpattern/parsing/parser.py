@@ -14,8 +14,6 @@ from .csv import CsvParser, Orientation
 from .formats import XrdFormat, Formats
 from .xylib import get_xylib_repr
 
-
-
 # -------------------------------------------
 
 
