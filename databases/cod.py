@@ -47,8 +47,6 @@ def parse_cod_cif(num : int) -> XrdPattern:
     except:
         pass
 
-    print(f'cif content = {cif_content}')
-
     temp_fpath = SaveManager.get_tmp_fpath(suffix='.cif')
     with open(temp_fpath, 'w') as f:
         f.write(cif_content)
@@ -57,11 +55,10 @@ def parse_cod_cif(num : int) -> XrdPattern:
 
 
 if __name__ == "__main__":
-    cod_int = 4316807
-    pattern = parse_cod_cif(num=cod_int)
+    # cod_int = 4316807
+    # pattern = parse_cod_cif(num=cod_int)
 
-
-    # j_fpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/extracted_data.json'
-    # the_out_dirpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/'
-    # write_cod(json_fpath=j_fpath, out_dirpath=the_out_dirpath)
-    # print(f'done')
+    j_fpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/extracted_data.json'
+    the_out_dirpath = '/home/daniel/aimat/opXRD/raw/coudert_hardiagon_0/data/'
+    write_cod(json_fpath=j_fpath, out_dirpath=the_out_dirpath)
+    print(f'done')
