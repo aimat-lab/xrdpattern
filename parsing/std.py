@@ -1,3 +1,5 @@
+import os
+
 from xrdpattern.pattern import PatternDB
 
 # ---------------------------------------------------------
@@ -9,6 +11,8 @@ def parse_directory(input_dirpath : str, output_dirpath : str):
 
 
 if __name__ == "__main__":
-    out_dirpath = '/home/daniel/Drive/data/workspace/opxrd'
-    in_dirpath = '/home/daniel/Drive/data/opxrd/v0_backup/breitung_schweidler_0/data'
+    opxrd_root_dirpath = '/home/daniel/aimat/opXRD/'
+    in_dirpath = os.path.join(opxrd_root_dirpath, 'breitung_schweidler_0')
+    out_dirpath = os.path.join()
+
     parse_directory(input_dirpath=in_dirpath, output_dirpath=out_dirpath)
