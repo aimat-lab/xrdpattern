@@ -40,7 +40,7 @@ class Formats:
 
     @classmethod
     def get_datafile_suffixes(cls):
-        return [xrd_format.suffixes for xrd_format in cls.get_all_formats() if not xrd_format.suffixes in [Formats.aimat_xrdpattern.suffixes, "csv"]]
+        return [xrd_format.suffixes for xrd_format in cls.get_all_formats() if not xrd_format.suffixes in [Formats.aimat_suffix(), "csv"]]
 
     @classmethod
     def get_all_suffixes(cls) -> list[str]:

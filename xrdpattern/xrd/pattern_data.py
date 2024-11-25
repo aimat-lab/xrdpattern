@@ -15,11 +15,24 @@ from xrdpattern.xrd.experiment import PowderExperiment
 # -------------------------------------------
 
 @dataclass
+class OriginMetadata(JsonDataclass):
+    institution : Optional[str] = None
+    contributor_name : Optional[str] = None
+    file_format : Optional[str] = None
+    tags: list[str] = field(default_factory=list)
+    measurement_date: Optional[str] = None
+
+    def __eq__(self, other : OriginMetadata):
+        s1, s2 = self.to_str(), other.to_str()
+        return s1 == s2
+
+
+@dataclass
 class PatternData(Serializable):
     two_theta_values : NDArray
     intensities : NDArray
     label : PowderExperiment
-    metadata : Optional[OriginMetadata] = None
+    metadata : OriginMetadata = OriginMetadata()
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
@@ -84,18 +97,6 @@ class PatternData(Serializable):
 
         return True
 
-
-@dataclass
-class OriginMetadata(JsonDataclass):
-    institution : Optional[str] = None
-    contributor_name : Optional[str] = None
-    file_format : Optional[str] = None
-    tags: list[str] = field(default_factory=list)
-    measurement_date: Optional[str] = None
-
-    def __eq__(self, other : OriginMetadata):
-        s1, s2 = self.to_str(), other.to_str()
-        return s1 == s2
 
 if __name__ == '__main__':
     pass

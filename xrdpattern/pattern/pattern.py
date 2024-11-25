@@ -64,8 +64,8 @@ class XrdPattern(PatternData):
     def save(self, fpath : str, force_overwrite : bool = False):
         if os.path.isfile(fpath) and not force_overwrite:
             raise ValueError(f'File {fpath} already exists')
-        if not fpath.endswith(f'.{Formats.aimat_xrdpattern.suffixes}'):
-            print(f'[Warning]: Saved xrd files should end with ".{Formats.aimat_xrdpattern.suffixes}" suffix. '
+        if not fpath.endswith(f'.{Formats.aimat_suffix()}'):
+            print(f'[Warning]: Saved xrd files should end with ".{Formats.aimat_suffix()}" suffix. '
                   f'Given filename is {os.path.basename(fpath)}')
         with open(fpath, 'w') as f:
             f.write(self.to_str())

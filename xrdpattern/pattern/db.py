@@ -35,7 +35,7 @@ class PatternDB:
         os.makedirs(dirpath, exist_ok=True)
 
         for j, pattern in enumerate(self.patterns):
-            fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_xrdpattern.suffixes}')
+            fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_suffix()}')
             pattern.save(fpath=fpath)
 
     @classmethod
