@@ -40,15 +40,15 @@ class Parser:
             raise ValueError(f"Could not determine file format of \"{fpath}\": Invalid suffix {suffix}")
 
         if the_format == Formats.aimat_xrdpattern:
-            pattern_infos = [self.from_json(fpath=fpath)]
+            pattern_infos = [self.load_json(fpath=fpath)]
         elif the_format == Formats.cif:
-            pattern_infos = [self.from_cif(fpath=fpath)]
+            pattern_infos = [self.load_cif(fpath=fpath)]
         elif the_format == Formats.stoe_raw:
             pattern_infos = [self.stoe_reader.get_pattern_info(fpath=fpath)]
         elif the_format.suffix in Formats.get_datafile_suffixes():
-            pattern_infos = [self.from_data_file(fpath=fpath, format_hint=the_format)]
+            pattern_infos = [self.load_data_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:
-            pattern_infos = self.from_csv(fpath=fpath)
+            pattern_infos = self.load_csv(fpath=fpath)
         else:
             raise ValueError(f"Format .{the_format} is not supported")
         for pattern in pattern_infos:
@@ -60,7 +60,7 @@ class Parser:
 
 
     @staticmethod
-    def from_json(fpath: str) -> PatternData:
+    def load_json(fpath: str) -> PatternData:
         with open(fpath, 'r') as file:
             data = file.read()
             new_pattern = PatternData.from_str(json_str=data)
@@ -68,7 +68,7 @@ class Parser:
 
 
     @staticmethod
-    def from_data_file(fpath: str, format_hint : XrdFormat) -> PatternData:
+    def load_data_file(fpath: str, format_hint : XrdFormat) -> PatternData:
         xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         metadata = Parser.parse_xylib_header(header_str=header)
@@ -85,7 +85,7 @@ class Parser:
         return PatternData(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
 
 
-    def from_csv(self, fpath : str) -> list[PatternData]:
+    def load_csv(self, fpath : str) -> list[PatternData]:
         if CsvParser.has_two_columns(fpath=fpath):
             orientation = Orientation.VERTICAL
         elif self.default_csv_orientation is not None:
@@ -96,7 +96,7 @@ class Parser:
         pattern_infos = self.csv_parser.extract_patterns(fpath=fpath, pattern_dimension=orientation)
         return pattern_infos
 
-    def from_cif(self, fpath : str) -> PatternData:
+    def load_cif(self, fpath : str) -> PatternData:
         return self.cif_parser.extract_pattern(fpath=fpath)
 
     # -------------------------------------------
