@@ -32,7 +32,7 @@ class Parser:
 
     def extract(self, fpath : str) -> list[PatternData]:
         suffix = SaveManager.get_suffix(fpath)
-        if not suffix in Formats.get_allowed_suffixes():
+        if not suffix in Formats.get_all_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
         if suffix:
             the_format = Formats.get_format(fpath)
@@ -45,7 +45,7 @@ class Parser:
             pattern_infos = [self.load_cif(fpath=fpath)]
         elif the_format == Formats.stoe_raw:
             pattern_infos = [self.stoe_reader.get_pattern_info(fpath=fpath)]
-        elif the_format.suffix in Formats.get_datafile_suffixes():
+        elif the_format.suffixes in Formats.get_datafile_suffixes():
             pattern_infos = [self.load_data_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:
             pattern_infos = self.load_csv(fpath=fpath)
@@ -98,7 +98,7 @@ class Parser:
         return self.cif_parser.extract_pattern(fpath=fpath)
 
     # -------------------------------------------
-    # parsing xylib header
+    # databases xylib header
 
     @classmethod
     def parse_experiment_params(cls, header_str: str) -> PowderExperiment:

@@ -31,7 +31,7 @@ class TestXrdPattern(ParserBaseTest):
 
     def test_plot(self):
         if self.is_manual_mode:
-            self.skipTest(reason='Only available in parsing mode')
+            self.skipTest(reason='Only available in databases mode')
 
     def test_standardize(self):
         pattern = self.pattern
@@ -52,7 +52,7 @@ class TestXrdPattern(ParserBaseTest):
 
     @staticmethod
     def save_and_load(pattern : XrdPattern) -> XrdPattern:
-        save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.aimat_xrdpattern.suffix}')
+        save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.aimat_xrdpattern.suffixes}')
         pattern.save(fpath=save_path)
         reloaded_pattern = XrdPattern.load(fpath=save_path)
         return reloaded_pattern

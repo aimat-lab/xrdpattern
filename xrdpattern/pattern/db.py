@@ -36,7 +36,7 @@ class PatternDB:
         os.makedirs(dirpath, exist_ok=True)
 
         for j, pattern in enumerate(self.patterns):
-            fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_xrdpattern.suffix}')
+            fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_xrdpattern.suffixes}')
             pattern.save(fpath=fpath)
 
     @classmethod
@@ -48,7 +48,7 @@ class PatternDB:
         data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath)
         if len(data_fpaths) == 0:
             raise ValueError(
-                f"No data files matching suffixes {Formats.get_allowed_suffixes()} found in directory {dirpath}")
+                f"No data files matching suffixes {Formats.get_all_suffixes()} found in directory {dirpath}")
 
         patterns : list[XrdPattern] = []
         parser = Parser(default_csv_orientation=default_csv_orientation)
@@ -73,7 +73,7 @@ class PatternDB:
     @staticmethod
     def get_xrd_fpaths(dirpath: str):
         root_node = FsysNode(path=dirpath)
-        xrd_file_nodes = root_node.get_file_subnodes(select_formats=Formats.get_allowed_suffixes())
+        xrd_file_nodes = root_node.get_file_subnodes(select_formats=Formats.get_all_suffixes())
         data_fpaths = [node.get_path() for node in xrd_file_nodes]
 
         return data_fpaths
