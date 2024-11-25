@@ -3,11 +3,13 @@ from dataclasses import dataclass
 from holytools.fsys import SaveManager
 from .stoe import StoeParser
 
+# -------------------------------------------
+
+
 @dataclass
 class XrdFormat:
     name : str
     suffixes : list[str]
-
 
 class Formats:
     bruker_raw = XrdFormat("bruker_raw", ["raw"])
@@ -29,8 +31,12 @@ class Formats:
     xfit_xdd = XrdFormat("xfit_xdd", ["xdd"])
     xrdml = XrdFormat("xrdml", ["xrdml"])
     xsyg = XrdFormat("xsyg", ["xsyg"])
-    aimat_xrdpattern = XrdFormat("aimat", ["json"])
+    aimat_xrdpattern = XrdFormat("aimat", ['json'])
     cif = XrdFormat('cif', ['cif'])
+
+    @classmethod
+    def aimat_suffix(cls) -> str:
+        return cls.aimat_xrdpattern.suffixes[0]
 
     @classmethod
     def get_datafile_suffixes(cls):

@@ -22,7 +22,7 @@ class DataExamples:
 
     @classmethod
     def get_aimat_xrdpattern_fpath(cls) -> str:
-        return os.path.join(cls.get_example_dirpath(), f'aimat.{Formats.aimat_xrdpattern.suffixes}')
+        return os.path.join(cls.get_example_dirpath(), f'aimat.{Formats.aimat_suffix()}')
 
     @classmethod
     def get_datafolder_fpath(cls) -> str:
