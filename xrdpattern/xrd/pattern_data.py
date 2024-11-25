@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
 
 from holytools.abstract import Serializable
-from xrdpattern.xrd import OriginMetadata
+from xrdpattern.xrd.metadata import OriginMetadata
 from xrdpattern.xrd.experiment import PowderExperiment
 
 
