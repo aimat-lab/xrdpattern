@@ -1,5 +1,4 @@
 import numpy as np
-# from xrdpattern.xrd import PatternData
 from gemmi import cif
 from numpy.typing import NDArray
 
@@ -32,34 +31,41 @@ class CifParser:
     @staticmethod
     def extract_pattern_from_block(block) -> tuple[NDArray, NDArray]:
         x, y = None, None
+        loops_gen = (i.loop for i in block if i.loop is not None)
 
-        xfields = ["_pd_proc_2theta_corrected", "_pd_meas_2theta_scan", "_pd_meas_2theta"]
         yfields = ["_pd_meas_counts_total", "_pd_meas_counts", "_pd_meas_intensity_total", "_pd_meas_intensity",
                    "_pd_proc_intensity_total", "_pd_proc_intensity_net"]
-
-        loops_gen = (i.loop for i in block if i.loop is not None)
         for loop in loops_gen:
-            if find_tags(xfields, loop.tags) or find_tags(yfields, loop.tags):
-                for yfield in yfields:
-                    y = get_values_as_array(block, yfield)
+            if find_tags(yfields, loop.tags):
+                for yf in yfields:
+                    y = get_values_as_array(block, yf)
                     if y is not None:
+                        y = np.array(y)
                         break
 
-        rmin = block.find_value("_pd_meas_2theta_range_min")
-        rmax = block.find_value("_pd_meas_2theta_range_max")
-        if None in [rmin, rmax]:
-            raise ValueError("Could not find 2theta range")
+        loops_gen = (i.loop for i in block if i.loop is not None)
+        xfields = ["_pd_proc_2theta_corrected", "_pd_meas_2theta_scan", "_pd_meas_2theta"]
+        for loop in loops_gen:
+            if find_tags(xfields, loop.tags):
+                for xf in xfields:
+                    x = get_values_as_array(block, xf)
+                    if x is not None:
+                        break
+
+        if x is None:
+            rmin = block.find_value("_pd_meas_2theta_range_min")
+            rmax = block.find_value("_pd_meas_2theta_range_max")
+
+            if None in [rmin, rmax]:
+                raise ValueError("Could not find 2theta range")
+            rmin = cif.as_number(rmin)
+            rmax = cif.as_number(rmax)
+            x = np.linspace(rmin, rmax, len(y))
 
         if x is None or y is None:
             raise ValueError("Could not find 2theta or intensity values")
 
-        rmin = cif.as_number(rmin)
-        rmax = cif.as_number(rmax)
-        x = np.linspace(rmin, rmax, len(y))
-        y = np.array(y)
-
         return x,y
-
 
 def find_tags(needles, haystack):
     for needle in needles:
@@ -74,7 +80,6 @@ def get_values_as_array(block, name, minlength = 2):
         return list(map(cif.as_number, column))
 
     return None
-
 
 if __name__ == "__main__":
     example_fpath = '/home/daniel/Drive/data/workspace/cod/1101016.cif'
