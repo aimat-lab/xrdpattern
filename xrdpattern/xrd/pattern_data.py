@@ -62,19 +62,26 @@ class PatternData(Serializable):
         two_theta_values = np.array(data['two_theta_values'])
         intensities = np.array(data['intensities'])
         label = PowderExperiment.from_str(data['label'])
-        name = data['name']
         return cls(two_theta_values=two_theta_values, intensities=intensities, label=label)
 
 
     def __eq__(self, other : PatternData):
-        if not isinstance(other, PatternData):
-            return False
+        for attr in fields(self):
+            v1, v2 = getattr(self, attr.name), getattr(other, attr.name)
+            if isinstance(v1, np.ndarray):
+                is_ok = np.array_equal(v1, v2)
+            elif isinstance(v1, PowderExperiment):
+                print(f'v1 list repr: {v1.list_repr}')
+                print(f'v2 list repr: {v2.list_repr}')
+                is_ok = [x==y for x,y in zip(v1.list_repr, v2.list_repr)]
+                print(f'is_okk = {is_ok}')
+            else:
+                is_ok = v1 == v2
 
-        angles_equal = np.array_equal(self.two_theta_values, other.two_theta_values)
-        intensities_equal = np.array_equal(self.intensities, other.intensities)
-        labels_equal = self.label.list_repr = other.label.list_repr
+            if not is_ok:
+                return False
 
-        return angles_equal and intensities_equal and labels_equal
+        return True
 
 
 @dataclass
