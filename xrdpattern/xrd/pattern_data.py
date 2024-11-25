@@ -32,7 +32,7 @@ class PatternData(Serializable):
     two_theta_values : NDArray
     intensities : NDArray
     label : PowderExperiment
-    metadata : OriginMetadata = OriginMetadata()
+    metadata: OriginMetadata = field(default_factory=OriginMetadata)
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
