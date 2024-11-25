@@ -62,9 +62,11 @@ class PatternDB:
         failed_fpath = []
         parsing_reports = []
 
+        if selected_suffixes is None:
+            selected_suffixes = Formats.get_allowed_suffixes()
         data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=selected_suffixes)
         if len(data_fpaths) == 0:
-            raise ValueError(f"No data files found in directory {dirpath}")
+            raise ValueError(f"No data files matching suffixes {selected_suffixes} found in directory {dirpath}")
 
         tracker = TrackedInt(start_value=0, finish_value=len(data_fpaths))
         for fpath in data_fpaths:
@@ -88,12 +90,11 @@ class PatternDB:
     # pattern database
 
     @staticmethod
-    def get_xrd_fpaths(dirpath : str, selected_suffixes : Optional[list[str]] = None):
-        if selected_suffixes is None:
-            selected_suffixes = Formats.get_allowed_suffixes()
+    def get_xrd_fpaths(dirpath : str, selected_suffixes : list[str]):
         root_node = FsysNode(path=dirpath)
         xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
         data_fpaths = [node.get_path() for node in xrd_file_nodes]
+
 
         return data_fpaths
 
