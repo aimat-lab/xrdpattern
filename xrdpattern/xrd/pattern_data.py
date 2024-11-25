@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, fields, field
-from typing import Optional, Literal
+from typing import Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -12,8 +12,6 @@ from holytools.abstract import Serializable
 from xrdpattern.xrd.experiment import PowderExperiment
 
 
-Tag = Literal['in-situ', 'high-temperature', 'thin-film', 'time-series']
-
 # -------------------------------------------
 
 @dataclass
@@ -22,7 +20,6 @@ class PatternData(Serializable):
     intensities : NDArray
     label : PowderExperiment
     metadata : Optional[OriginMetadata] = None
-    name : Optional[str] = None
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
@@ -55,8 +52,7 @@ class PatternData(Serializable):
     def to_str(self) -> str:
         the_dict = {'two_theta_values' : self.two_theta_values.tolist(),
                     'intensities' : self.intensities.tolist(),
-                    'label' : self.label.to_str(),
-                    'name' : str(self.name)}
+                    'label' : self.label.to_str()}
 
         return json.dumps(the_dict)
 
@@ -67,7 +63,7 @@ class PatternData(Serializable):
         intensities = np.array(data['intensities'])
         label = PowderExperiment.from_str(data['label'])
         name = data['name']
-        return cls(two_theta_values=two_theta_values, intensities=intensities, label=label, name=name)
+        return cls(two_theta_values=two_theta_values, intensities=intensities, label=label)
 
 
     def __eq__(self, other : PatternData):
@@ -86,7 +82,7 @@ class OriginMetadata:
     institution : str = ''
     contributor_name : str = ''
     file_format : str = ''
-    tags: list[Tag] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
     measurement_date: Optional[str] = None
 
 

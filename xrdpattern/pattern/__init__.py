@@ -1,2 +1,2 @@
-from .pattern import XrdPattern, PatternReport, Origin
+from .pattern import XrdPattern, PatternReport
 from .db import PatternDB
