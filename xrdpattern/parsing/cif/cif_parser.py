@@ -50,6 +50,7 @@ class CifParser:
                 for xf in xfields:
                     x = get_values_as_array(block, xf)
                     if x is not None:
+                        x = np.array(x)
                         break
 
         if x is None:
