@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Optional
+
 import torch
 from tensordict import TensorDict
 from torch import Tensor
 
-from xrdpattern.crystal import CrystalStructure, CrystalBase, AtomicSite, Lengths, Angles
 from holytools.abstract import JsonDataclass
+from xrdpattern.crystal import CrystalStructure, CrystalBase, AtomicSite
 from xrdpattern.xrd.xray import XRayInfo
 
 NUM_SPACEGROUPS = 230

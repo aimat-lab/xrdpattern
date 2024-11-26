@@ -22,7 +22,7 @@ class XRayInfo(JsonDataclass):
         return 0.5
 
 
-class XRayAnodes(Enum):
+class XrdAnode(Enum):
     Cu = "Cu"
     Mo = "Mo"
     Cr = "Cr"
