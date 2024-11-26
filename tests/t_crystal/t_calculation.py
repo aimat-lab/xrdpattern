@@ -5,7 +5,7 @@ import numpy as np
 from pymatgen.core import Lattice, Structure, Composition, PeriodicSite, Site, Species, Element
 
 import tests.t_crystal.crystal_test as BaseTest
-from xrdpattern.crystal import AtomicSite, CrystalStructure
+from xrdpattern.crystal import AtomicSite, CrystalPhase
 
 # ---------------------------------------------------------
 
@@ -76,7 +76,7 @@ class TestPropertyCalculation(BaseTest.CrystalTest):
 
 
     @staticmethod
-    def to_clustered_pymatgen(crystal : CrystalStructure) -> Structure:
+    def to_clustered_pymatgen(crystal : CrystalPhase) -> Structure:
         a, b, c = crystal.lengths.as_tuple()
         alpha, beta, gamma = crystal.angles.as_tuple()
         lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)

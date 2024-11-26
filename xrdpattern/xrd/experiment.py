@@ -8,7 +8,7 @@ from tensordict import TensorDict
 from torch import Tensor
 
 from holytools.abstract import JsonDataclass
-from xrdpattern.crystal import CrystalStructure, CrystalBase, AtomicSite, Angles, Lengths
+from xrdpattern.crystal import CrystalPhase, CrystalBase, AtomicSite, Angles, Lengths
 from xrdpattern.xrd.xray import XRayInfo
 
 NUM_SPACEGROUPS = 230
@@ -28,22 +28,22 @@ class PowderExperiment(JsonDataclass):
         angles = Angles(alpha=None, beta=None, gamma=None)
         base = CrystalBase()
 
-        structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
-        sample = PowderSample(crystal_structure=structure,crystallite_size=None, temp_in_celcius=None)
+        structure = CrystalPhase(lengths=lengths, angles=angles, base=base)
+        sample = PowderSample(phases=[structure], crystallite_size=None, temp_in_celcius=None)
         artifacts = XRayInfo.mk_empty()
 
         return cls(sample, artifacts, is_simulated=is_simulated)
 
     @classmethod
-    def from_structure(cls, structure : CrystalStructure, crystallite_size : float, is_simulated : bool):
-        powder = PowderSample(crystal_structure=structure, crystallite_size=crystallite_size)
+    def from_structure(cls, structure : CrystalPhase, crystallite_size : float, is_simulated : bool):
+        powder = PowderSample(phases=[structure], crystallite_size=crystallite_size)
         artifacts = XRayInfo.mk_empty()
         return cls(powder=powder, artifacts=artifacts, is_simulated=is_simulated)
 
 
     def get_list_repr(self) -> list:
         list_repr = []
-        structure = self.crystal_structure
+        structure = self.primary_phase
 
         a, b, c = structure.lengths
         alpha, beta, gamma = structure.angles
@@ -107,8 +107,8 @@ class PowderExperiment(JsonDataclass):
         return self.powder.temp_in_celcius
 
     @property
-    def crystal_structure(self) -> CrystalStructure:
-        return self.powder.crystal_structure
+    def primary_phase(self) -> CrystalPhase:
+        return self.powder.phases[0]
 
     @property
     def domain(self) -> bool:
@@ -127,8 +127,8 @@ class PowderExperiment(JsonDataclass):
 
     @classmethod
     def from_cif(cls, cif_content : str) -> PowderExperiment:
-        structure = CrystalStructure.from_cif(cif_content)
-        powder = PowderSample(crystal_structure=structure)
+        structure = CrystalPhase.from_cif(cif_content)
+        powder = PowderSample(phases=[structure])
         structure.calculate_properties()
 
         xray_info = XRayInfo.mk_empty()
@@ -153,10 +153,14 @@ class PowderExperiment(JsonDataclass):
 
 @dataclass
 class PowderSample(JsonDataclass):
-    crystal_structure: CrystalStructure
+    phases: list[CrystalPhase]
     crystallite_size: Optional[float] = None
     temp_in_celcius : Optional[float] = None
     shape_factor : Optional[float] = 0.9
+
+    def __post_init__(self):
+        if len(self.phases) == 0:
+            raise ValueError(f'Powder sample must have at least one phase! Got {len(self.phases)}')
 
 
 class LabelTensor(TensorDict):

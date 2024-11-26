@@ -91,5 +91,6 @@ class DatabaseProcessor:
 
 if __name__ == "__main__":
     processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
-    processor.parse_USC()
+    processor.parse_CNRS()
+    # processor.parse_USC()
 

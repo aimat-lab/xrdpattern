@@ -7,11 +7,10 @@ from typing import Optional
 import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
-import torch
 
-from xrdpattern.crystal import CrystalStructure
-from xrdpattern.xrd import PatternData, XRayInfo
+from xrdpattern.crystal import CrystalPhase
 from xrdpattern.parsing import MasterParser, Formats
+from xrdpattern.xrd import PatternData, XRayInfo
 from .reports import PatternReport
 
 parser = MasterParser()
@@ -85,8 +84,8 @@ class XrdPattern(PatternData):
         return self.two_theta_values[-1]
 
     @property
-    def crystal_structure(self) -> CrystalStructure:
-        return self.label.crystal_structure
+    def crystal_structure(self) -> CrystalPhase:
+        return self.label.primary_phase
 
     @property
     def powder(self):
@@ -100,16 +99,16 @@ class XrdPattern(PatternData):
     def is_simulated(self) -> bool:
         return self.label.is_simulated
 
-    def to_tensor_pair(self, dtype : torch.dtype, device : torch.device) -> tuple[torch.Tensor, torch.Tensor]:
-        # now = time.time()
-
-        labels = self.label.to_tensor(dtype=dtype, device=device)
-        _, intensities = self.get_pattern_data()
-        intensities = torch.tensor(intensities, dtype=dtype, device=device)
-
-        # print(f'Time taken = {time.time() - now} seconds')
-
-        return intensities, labels
+    # def to_tensor_pair(self, dtype : torch.dtype, device : torch.device) -> tuple[torch.Tensor, torch.Tensor]:
+    #     # now = time.time()
+    #
+    #     labels = self.label.to_tensor(dtype=dtype, device=device)
+    #     _, intensities = self.get_pattern_data()
+    #     intensities = torch.tensor(intensities, dtype=dtype, device=device)
+    #
+    #     # print(f'Time taken = {time.time() - now} seconds')
+    #
+    #     return intensities, labels
 
     def get_parsing_report(self, datafile_fpath : str) -> PatternReport:
         pattern_health = PatternReport(datafile_fpath=datafile_fpath)
@@ -148,7 +147,7 @@ class XrdPattern(PatternData):
         return 0, 90
 
     def get_info_as_str(self) -> str:
-        crystal = self.label.crystal_structure
+        crystal = self.label.primary_phase
         pattern_content = str(self.intensities)[:50] + '...'
         try:
             crystal_data = str(crystal.to_pymatgen())

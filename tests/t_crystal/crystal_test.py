@@ -1,7 +1,7 @@
 from holytools.devtools import Unittest
 from pymatgen.core import Structure
 
-from xrdpattern.crystal import CrystalStructure, CrystalExamples
+from xrdpattern.crystal import CrystalPhase, CrystalExamples
 
 # ---------------------------------------------------------
 
@@ -9,7 +9,7 @@ class CrystalTest(Unittest):
     def setUp(self):
         self.cifs : list[str] = [CrystalExamples.get_cif_content(j) for j in range(1, 3)]
         self.pymatgen_structures : list[Structure] = [Structure.from_str(cif, fmt='cif') for cif in self.cifs]
-        self.custom_structures : list[CrystalStructure] = [CrystalStructure.from_cif(cif_content=cif) for cif in self.cifs]
+        self.custom_structures : list[CrystalPhase] = [CrystalPhase.from_cif(cif_content=cif) for cif in self.cifs]
         self.spgs : list[int] = [self.extract_spg(cif) for cif in self.cifs]
 
     @staticmethod

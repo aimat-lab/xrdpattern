@@ -19,10 +19,11 @@ CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tet
 # ---------------------------------------------------------
 
 @dataclass
-class CrystalStructure(JsonDataclass):
+class CrystalPhase(JsonDataclass):
     lengths : Lengths
     angles : Angles
     base : CrystalBase
+    phase_fraction : Optional[float] = None
     chemical_composition : Optional[str] = None
     spacegroup : Optional[int] = None
     volume_uc : Optional[float] = None
@@ -31,13 +32,13 @@ class CrystalStructure(JsonDataclass):
     crystal_system : Optional[str] = None
 
     @classmethod
-    def from_cif(cls, cif_content : str) -> CrystalStructure:
+    def from_cif(cls, cif_content : str) -> CrystalPhase:
         pymatgen_structure = Structure.from_str(cif_content, fmt='cif')
         crystal_structure = cls.from_pymatgen(pymatgen_structure)
         return crystal_structure
 
     @classmethod
-    def from_pymatgen(cls, pymatgen_structure: Structure) -> CrystalStructure:
+    def from_pymatgen(cls, pymatgen_structure: Structure) -> CrystalPhase:
         lattice = pymatgen_structure.lattice
         base : CrystalBase = CrystalBase()
 
@@ -77,10 +78,10 @@ class CrystalStructure(JsonDataclass):
         self.chemical_composition = pymatgen_structure.composition.formula
 
 
-    def get_standardized(self) -> CrystalStructure:
+    def get_standardized(self) -> CrystalPhase:
         analzyer = SpacegroupAnalyzer(self.to_pymatgen())
         standardized_pymatgen = analzyer.get_conventional_standard_structure()
-        return CrystalStructure.from_pymatgen(pymatgen_structure=standardized_pymatgen)
+        return CrystalPhase.from_pymatgen(pymatgen_structure=standardized_pymatgen)
 
     def scale(self, target_density: float):
         volume_scaling = self.packing_density / target_density
