@@ -8,7 +8,7 @@ from tensordict import TensorDict
 from torch import Tensor
 
 from holytools.abstract import JsonDataclass
-from xrdpattern.crystal import CrystalStructure, CrystalBase, AtomicSite
+from xrdpattern.crystal import CrystalStructure, CrystalBase, AtomicSite, Angles, Lengths
 from xrdpattern.xrd.xray import XRayInfo
 
 NUM_SPACEGROUPS = 230
@@ -21,6 +21,18 @@ class PowderExperiment(JsonDataclass):
     powder : PowderSample
     artifacts : XRayInfo
     is_simulated : bool
+
+    @classmethod
+    def make_empty(cls, is_simulated : bool = False) -> PowderExperiment:
+        lengths = Lengths(a=None, b=None, c=None)
+        angles = Angles(alpha=None, beta=None, gamma=None)
+        base = CrystalBase()
+
+        structure = CrystalStructure(lengths=lengths, angles=angles, base=base)
+        sample = PowderSample(crystal_structure=structure,crystallite_size=None, temp_in_celcius=None)
+        artifacts = XRayInfo.mk_empty()
+
+        return cls(sample, artifacts, is_simulated=is_simulated)
 
     @classmethod
     def from_structure(cls, structure : CrystalStructure, crystallite_size : float, is_simulated : bool):
