@@ -1,7 +1,6 @@
 import os
 
 from xrdpattern.parsing import Formats
-from xrdpattern.pattern import XrdPattern
 
 
 class DataExamples:
@@ -34,7 +33,3 @@ class DataExamples:
         return os.path.dirname(__file__)
 
 
-
-if __name__ == "__main__":
-    pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
-    pattern.save(DataExamples.get_aimat_fpath(), force_overwrite=True)
