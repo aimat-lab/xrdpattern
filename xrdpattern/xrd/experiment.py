@@ -8,7 +8,7 @@ from tensordict import TensorDict
 from torch import Tensor
 
 from holytools.abstract import JsonDataclass
-from xrdpattern.crystal import CrystalPhase, CrystalBase, AtomicSite, Angles, Lengths
+from xrdpattern.crystal import CrystalPhase, CrystalBase, Angles, Lengths, AtomicSite
 from xrdpattern.xrd.xray import XRayInfo
 
 NUM_SPACEGROUPS = 230
@@ -76,6 +76,17 @@ class PowderExperiment(JsonDataclass):
     # ---------------------------------------------------------
     # properties
 
+    def is_nonempty(self) -> bool:
+        xray_info_nonemtpy = self.xray_info.primary_wavelength or self.xray_info.secondary_wavelength
+        
+        primary_phase = self.primary_phase
+        composition_nonempty = primary_phase.chemical_composition
+        lengths_nonempty = primary_phase.lengths.a or primary_phase.lengths.b or primary_phase.lengths.c
+        angles_nonempty = primary_phase.angles.alpha or primary_phase.angles.beta or primary_phase.angles.gamma
+        crystal_basis_nonempty = len(primary_phase.base) > 0
+        
+        return xray_info_nonemtpy or composition_nonempty or lengths_nonempty or angles_nonempty or crystal_basis_nonempty
+
     @property
     def primary_phase(self) -> CrystalPhase:
         return self.material_phases[0]
@@ -88,6 +99,51 @@ class PowderExperiment(JsonDataclass):
     def secondary_wavelength(self) -> float:
         return self.xray_info.secondary_wavelength
 
+    def get_list_repr(self) -> list:
+        list_repr = []
+        structure = self.primary_phase
+
+        a, b, c = structure.lengths
+        alpha, beta, gamma = structure.angles
+        lattice_params = [a, b, c, alpha, beta, gamma]
+        list_repr += lattice_params
+
+        base = structure.base
+        padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
+        for atomic_site in padded_base:
+            list_repr += atomic_site.as_list()
+
+        if structure.spacegroup is None:
+            spg_logits_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
+        else:
+            spg_logits_list = [1000 if j + 1 == structure.spacegroup else 0 for j in range(NUM_SPACEGROUPS)]
+        list_repr += spg_logits_list
+
+        list_repr += self.xray_info.as_list()
+        list_repr += [self.is_simulated]
+
+        return list_repr
+
+    @staticmethod
+    def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
+        def make_padding_site():
+            if nan_padding:
+                site = AtomicSite.make_placeholder()
+            else:
+                site = AtomicSite.make_void()
+            return site
+
+        delta = MAX_ATOMIC_SITES - len(base)
+        if delta < 0:
+            raise ValueError(f'Base is too large! Size = {len(base)} exceeds MAX_ATOMIC_SITES = {MAX_ATOMIC_SITES}')
+
+        padded_base = base + [make_padding_site() for _ in range(delta)]
+        return padded_base
+
+
+    def to_tensor(self, dtype : torch.dtype = torch.get_default_dtype(), device : torch.device = torch.get_default_device()) -> LabelTensor:
+        tensor = torch.tensor(self.get_list_repr(), dtype=dtype, device=device)
+        return LabelTensor(tensor)
 
 
 class LabelTensor(TensorDict):
@@ -114,49 +170,3 @@ class LabelTensor(TensorDict):
     def to_sample(self) -> PowderExperiment:
         raise NotImplementedError
 
-    #
-    # def get_list_repr(self) -> list:
-    #     list_repr = []
-    #     structure = self.primary_phase
-    #
-    #     a, b, c = structure.lengths
-    #     alpha, beta, gamma = structure.angles
-    #     lattice_params = [a, b, c, alpha, beta, gamma]
-    #     list_repr += lattice_params
-    #
-    #     base = structure.base
-    #     padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
-    #     for atomic_site in padded_base:
-    #         list_repr += atomic_site.as_list()
-    #
-    #     if structure.spacegroup is None:
-    #         spg_logits_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
-    #     else:
-    #         spg_logits_list = [1000 if j + 1 == structure.spacegroup else 0 for j in range(NUM_SPACEGROUPS)]
-    #     list_repr += spg_logits_list
-    #
-    #     list_repr += self.xray_info.as_list()
-    #     list_repr += [self.is_simulated]
-    #
-    #     return list_repr
-    #
-    # @staticmethod
-    # def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
-    #     def make_padding_site():
-    #         if nan_padding:
-    #             site = AtomicSite.make_placeholder()
-    #         else:
-    #             site = AtomicSite.make_void()
-    #         return site
-    #
-    #     delta = MAX_ATOMIC_SITES - len(base)
-    #     if delta < 0:
-    #         raise ValueError(f'Base is too large! Size = {len(base)} exceeds MAX_ATOMIC_SITES = {MAX_ATOMIC_SITES}')
-    #
-    #     padded_base = base + [make_padding_site() for _ in range(delta)]
-    #     return padded_base
-    #
-    #
-    # def to_tensor(self, dtype : torch.dtype = torch.get_default_dtype(), device : torch.device = torch.get_default_device()) -> LabelTensor:
-    #     tensor = torch.tensor(self.get_list_repr(), dtype=dtype, device=device)
-    #     return LabelTensor(tensor)
