@@ -45,7 +45,7 @@ class StoeParser(BinaryReader):
     def get_pattern_info(self, fpath : str) -> PatternData:
         self.read(fpath=fpath)
         experiment = PowderExperiment.make_empty()
-        experiment.artifacts = XRayInfo(primary_wavelength=self.primary_wavelength.get_value(),
+        experiment.xray_info = XRayInfo(primary_wavelength=self.primary_wavelength.get_value(),
                                         secondary_wavelength=self.secondary_wavelength.get_value())
 
         two_theta_values = self._get_x_values()

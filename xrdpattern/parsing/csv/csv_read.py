@@ -45,7 +45,7 @@ class CsvParser:
         for intensities in data_rows:
             new = PatternData.make_unlabeled(two_theta_values=two_theta_degs, intensities=intensities)
             if is_qvalues:
-                new.powder_experiment.artifacts.primary_wavelength = copper_wavelength
+                new.powder_experiment.xray_info.primary_wavelength = copper_wavelength
             pattern_infos.append(new)
 
         x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'

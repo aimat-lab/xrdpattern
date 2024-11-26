@@ -18,9 +18,18 @@ MAX_ATOMIC_SITES = 100
 
 @dataclass
 class PowderExperiment(JsonDataclass):
-    powder : PowderSample
-    artifacts : XRayInfo
-    is_simulated : bool
+    material_phases: list[CrystalPhase]
+    xray_info : XRayInfo
+    is_simulated : bool = False
+    crystallite_size: Optional[float] = None
+    temp_in_celcius: Optional[float] = None
+
+    def __post_init__(self):
+        if len(self.material_phases) == 0:
+            raise ValueError(f'Material must have at least one phase! Got {len(self.material_phases)}')
+
+        if len(self.material_phases) == 1:
+            self.material_phases[0].phase_fraction = 1
 
     @classmethod
     def make_empty(cls, is_simulated : bool = False, num_phases : int = 1) -> PowderExperiment:
@@ -33,103 +42,17 @@ class PowderExperiment(JsonDataclass):
             p = CrystalPhase(lengths=lengths, angles=angles, base=base)
             phases.append(p)
 
-        sample = PowderSample(phases=phases, crystallite_size=None, temp_in_celcius=None)
-        artifacts = XRayInfo.mk_empty()
-
-        return cls(sample, artifacts, is_simulated=is_simulated)
+        xray_info = XRayInfo.mk_empty()
+        return cls(material_phases=phases, crystallite_size=None, temp_in_celcius=None, xray_info=xray_info, is_simulated=is_simulated)
 
     @classmethod
-    def from_structure(cls, structure : CrystalPhase, crystallite_size : float, is_simulated : bool):
-        powder = PowderSample(phases=[structure], crystallite_size=crystallite_size)
+    def from_phase(cls, phase : CrystalPhase, crystallite_size : float, is_simulated : bool):
         artifacts = XRayInfo.mk_empty()
-        return cls(powder=powder, artifacts=artifacts, is_simulated=is_simulated)
-
-
-    def get_list_repr(self) -> list:
-        list_repr = []
-        structure = self.primary_phase
-
-        a, b, c = structure.lengths
-        alpha, beta, gamma = structure.angles
-        lattice_params = [a, b, c, alpha, beta, gamma]
-        list_repr += lattice_params
-
-        base = structure.base
-        padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
-        for atomic_site in padded_base:
-            list_repr += atomic_site.as_list()
-
-        if structure.spacegroup is None:
-            spg_logits_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
-        else:
-            spg_logits_list = [1000 if j + 1 == structure.spacegroup else 0 for j in range(NUM_SPACEGROUPS)]
-        list_repr += spg_logits_list
-
-        list_repr += self.artifacts.as_list()
-        list_repr += [self.is_simulated]
-
-        return list_repr
-
-    @staticmethod
-    def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
-        def make_padding_site():
-            if nan_padding:
-                site = AtomicSite.make_placeholder()
-            else:
-                site = AtomicSite.make_void()
-            return site
-
-        delta = MAX_ATOMIC_SITES - len(base)
-        if delta < 0:
-            raise ValueError(f'Base is too large! Size = {len(base)} exceeds MAX_ATOMIC_SITES = {MAX_ATOMIC_SITES}')
-
-        padded_base = base + [make_padding_site() for _ in range(delta)]
-        return padded_base
-
-
-    def to_tensor(self, dtype : torch.dtype = torch.get_default_dtype(), device : torch.device = torch.get_default_device()) -> LabelTensor:
-        tensor = torch.tensor(self.get_list_repr(), dtype=dtype, device=device)
-        return LabelTensor(tensor)
-
-    # ---------------------------------------------------------
-    # properties
-
-    def is_partially_labeled(self) -> bool:
-        powder_list = self.get_list_repr()
-        is_nan = [x != x for x in powder_list]
-        return any(is_nan)
-
-    @property
-    def crystallite_size(self) -> float:
-        return self.powder.crystallite_size
-
-    @property
-    def temp_in_celcius(self) -> float:
-        return self.powder.temp_in_celcius
-
-    @property
-    def primary_phase(self) -> CrystalPhase:
-        return self.powder.phases[0]
-
-    @property
-    def domain(self) -> bool:
-        return self.is_simulated
-
-    @property
-    def primary_wavelength(self) -> float:
-        return self.artifacts.primary_wavelength
-
-    @property
-    def secondary_wavelength(self) -> float:
-        return self.artifacts.secondary_wavelength
-
-    # ---------------------------------------------------------
-    # save/load
+        return cls(material_phases=[phase], crystallite_size=crystallite_size, xray_info=artifacts, is_simulated=is_simulated)
 
     @classmethod
     def from_cif(cls, cif_content : str) -> PowderExperiment:
         structure = CrystalPhase.from_cif(cif_content)
-        powder = PowderSample(phases=[structure])
         structure.calculate_properties()
 
         xray_info = XRayInfo.mk_empty()
@@ -148,23 +71,23 @@ class PowderExperiment(JsonDataclass):
                 xray_info.primary_wavelength = float(b_lines[-2].split()[0])
                 xray_info.secondary_wavelength = float(b_lines[-1].split()[0])
 
-        return cls(powder=powder, artifacts=xray_info, is_simulated=False)
+        return cls(material_phases=[structure], xray_info=xray_info, is_simulated=False)
 
+    # ---------------------------------------------------------
+    # properties
 
+    @property
+    def primary_phase(self) -> CrystalPhase:
+        return self.material_phases[0]
 
-@dataclass
-class PowderSample(JsonDataclass):
-    phases: list[CrystalPhase]
-    crystallite_size: Optional[float] = None
-    temp_in_celcius : Optional[float] = None
-    shape_factor : Optional[float] = 0.9
+    @property
+    def primary_wavelength(self) -> float:
+        return self.xray_info.primary_wavelength
 
-    def __post_init__(self):
-        if len(self.phases) == 0:
-            raise ValueError(f'Powder sample must have at least one phase! Got {len(self.phases)}')
+    @property
+    def secondary_wavelength(self) -> float:
+        return self.xray_info.secondary_wavelength
 
-        if len(self.phases) == 1:
-            self.phases[0].phase_fraction = 1
 
 
 class LabelTensor(TensorDict):
@@ -190,3 +113,50 @@ class LabelTensor(TensorDict):
     # noinspection PyTypeChecker
     def to_sample(self) -> PowderExperiment:
         raise NotImplementedError
+
+    #
+    # def get_list_repr(self) -> list:
+    #     list_repr = []
+    #     structure = self.primary_phase
+    #
+    #     a, b, c = structure.lengths
+    #     alpha, beta, gamma = structure.angles
+    #     lattice_params = [a, b, c, alpha, beta, gamma]
+    #     list_repr += lattice_params
+    #
+    #     base = structure.base
+    #     padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
+    #     for atomic_site in padded_base:
+    #         list_repr += atomic_site.as_list()
+    #
+    #     if structure.spacegroup is None:
+    #         spg_logits_list = [float('nan') for _ in range(NUM_SPACEGROUPS)]
+    #     else:
+    #         spg_logits_list = [1000 if j + 1 == structure.spacegroup else 0 for j in range(NUM_SPACEGROUPS)]
+    #     list_repr += spg_logits_list
+    #
+    #     list_repr += self.xray_info.as_list()
+    #     list_repr += [self.is_simulated]
+    #
+    #     return list_repr
+    #
+    # @staticmethod
+    # def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
+    #     def make_padding_site():
+    #         if nan_padding:
+    #             site = AtomicSite.make_placeholder()
+    #         else:
+    #             site = AtomicSite.make_void()
+    #         return site
+    #
+    #     delta = MAX_ATOMIC_SITES - len(base)
+    #     if delta < 0:
+    #         raise ValueError(f'Base is too large! Size = {len(base)} exceeds MAX_ATOMIC_SITES = {MAX_ATOMIC_SITES}')
+    #
+    #     padded_base = base + [make_padding_site() for _ in range(delta)]
+    #     return padded_base
+    #
+    #
+    # def to_tensor(self, dtype : torch.dtype = torch.get_default_dtype(), device : torch.device = torch.get_default_device()) -> LabelTensor:
+    #     tensor = torch.tensor(self.get_list_repr(), dtype=dtype, device=device)
+    #     return LabelTensor(tensor)

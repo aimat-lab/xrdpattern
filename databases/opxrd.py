@@ -61,7 +61,7 @@ class DatabaseProcessor:
                 csv_label_dict = self.get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
                 csv_label = csv_label_dict[name]
 
-                phase = powder_experiment.powder.phases[phase_num]
+                phase = powder_experiment.powder.material_phases[phase_num]
                 phase.spacegroup = csv_label.spacegroup
                 phase.lengths = csv_label.lengths
                 phase.angles = csv_label.angles
