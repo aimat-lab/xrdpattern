@@ -24,7 +24,7 @@ class CifParser:
                 parts = l.split()
                 metadata.measurement_date = parts[1]
 
-        pattern_data = PatternData(intensities=y, two_theta_values=x, label=experiment_info, metadata=metadata)
+        pattern_data = PatternData(intensities=y, two_theta_values=x, powder_experiment=experiment_info, metadata=metadata)
         return pattern_data
 
 

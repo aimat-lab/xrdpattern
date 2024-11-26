@@ -19,7 +19,7 @@ class TestXrdPattern(ParserBaseTest):
     def test_save_load_roundtrip(self):
         unlabeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
         labeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
-        labeled_pattern.label = PowderExperiment.from_cif(cif_content=CrystalExamples.get_cif_content())
+        labeled_pattern.powder_experiment = PowderExperiment.from_cif(cif_content=CrystalExamples.get_cif_content())
 
         reloaded_unlabeled = self.save_and_load(unlabeled_pattern)
         reloaded_labeled = self.save_and_load(labeled_pattern)

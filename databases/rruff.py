@@ -110,7 +110,7 @@ if __name__ == "__main__":
             crystal_structure = CrystalPhase(lengths=lengths, angles=angles, spacegroup=spacegroup, base=CrystalBase())
             powder = PowderSample(phases=[crystal_structure])
             artifacts = XRayInfo(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength)
-            pattern.label = PowderExperiment(powder=powder, artifacts=artifacts, is_simulated=False)
+            pattern.powder_experiment = PowderExperiment(powder=powder, artifacts=artifacts, is_simulated=False)
             pattern.save(fpath=os.path.join(output_dirpath, base_name))
 
         except Exception as e:

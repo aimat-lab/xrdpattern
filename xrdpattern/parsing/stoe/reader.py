@@ -52,7 +52,7 @@ class StoeParser(BinaryReader):
         intensities = self._get_y_values()
 
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
-        return PatternData(two_theta_values=two_theta_values, intensities=intensities, label=experiment)
+        return PatternData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=experiment)
 
 
     def _get_x_values(self) -> list[float]:

@@ -19,14 +19,14 @@ from xrdpattern.xrd.experiment import PowderExperiment
 class PatternData(Serializable):
     two_theta_values : NDArray
     intensities : NDArray
-    label : PowderExperiment
+    powder_experiment : PowderExperiment
     metadata: OriginMetadata = field(default_factory=OriginMetadata)
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
         metadata = PowderExperiment.make_empty()
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
-        return cls(two_theta_values=two_theta_values, intensities=intensities, label=metadata)
+        return cls(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=metadata)
 
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}
@@ -53,7 +53,7 @@ class PatternData(Serializable):
     def to_str(self) -> str:
         the_dict = {'two_theta_values' : self.two_theta_values.tolist(),
                     'intensities' : self.intensities.tolist(),
-                    'label' : self.label.to_str(),
+                    'label' : self.powder_experiment.to_str(),
                     'metadata' : self.metadata.to_str()}
 
         return json.dumps(the_dict)
@@ -66,7 +66,7 @@ class PatternData(Serializable):
         label = PowderExperiment.from_str(data['label'])
         metadata = OriginMetadata.from_str(data['metadata'])
 
-        return cls(two_theta_values=two_theta_values, intensities=intensities, label=label, metadata=metadata)
+        return cls(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=label, metadata=metadata)
 
 
     def __eq__(self, other : PatternData):

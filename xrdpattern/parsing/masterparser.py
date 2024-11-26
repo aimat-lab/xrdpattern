@@ -84,7 +84,7 @@ class MasterParser:
             intensities.append(intensity)
 
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
-        return PatternData(two_theta_values=two_theta_values, intensities=intensities, label=powder_experiment, metadata=metadata)
+        return PatternData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=powder_experiment, metadata=metadata)
 
 
     def load_csv(self, fpath : str) -> list[PatternData]:

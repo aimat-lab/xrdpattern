@@ -23,13 +23,17 @@ class PowderExperiment(JsonDataclass):
     is_simulated : bool
 
     @classmethod
-    def make_empty(cls, is_simulated : bool = False) -> PowderExperiment:
-        lengths = Lengths(a=None, b=None, c=None)
-        angles = Angles(alpha=None, beta=None, gamma=None)
-        base = CrystalBase()
+    def make_empty(cls, is_simulated : bool = False, num_phases : int = 1) -> PowderExperiment:
+        phases = []
+        for j in range(num_phases):
+            lengths = Lengths(a=None, b=None, c=None)
+            angles = Angles(alpha=None, beta=None, gamma=None)
+            base = CrystalBase()
 
-        structure = CrystalPhase(lengths=lengths, angles=angles, base=base)
-        sample = PowderSample(phases=[structure], crystallite_size=None, temp_in_celcius=None)
+            p = CrystalPhase(lengths=lengths, angles=angles, base=base)
+            phases.append(p)
+
+        sample = PowderSample(phases=phases, crystallite_size=None, temp_in_celcius=None)
         artifacts = XRayInfo.mk_empty()
 
         return cls(sample, artifacts, is_simulated=is_simulated)
@@ -91,12 +95,9 @@ class PowderExperiment(JsonDataclass):
     # properties
 
     def is_partially_labeled(self) -> bool:
-        powder_tensor = torch.tensor(self.get_list_repr())
-        is_nan = powder_tensor != powder_tensor
-        print(f'Powder tensor len = {len(powder_tensor)}')
-        print(f'Nanvalues, non-nan values = {is_nan.sum()}, {is_nan.numel() - is_nan.sum()}')
-
-        return any(is_nan.tolist())
+        powder_list = self.get_list_repr()
+        is_nan = [x != x for x in powder_list]
+        return any(is_nan)
 
     @property
     def crystallite_size(self) -> float:

@@ -22,7 +22,7 @@ class TestParserPattern(ParserBaseTest):
         print(f'Parsing report: {as_str}')
 
     def test_metadata_ok(self):
-        metadata = self.pattern.label
+        metadata = self.pattern.powder_experiment
         primary_wavelength = metadata.primary_wavelength
         secondary_wavelength = metadata.secondary_wavelength
         print(f'prim, sec, ratio {primary_wavelength}, {secondary_wavelength}')

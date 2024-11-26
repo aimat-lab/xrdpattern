@@ -75,6 +75,13 @@ class XrdPattern(PatternData):
     def get_name(self) -> str:
         return self.metadata.filename
 
+    def get_phase(self, phase_num : int) -> CrystalPhase:
+        return self.powder_experiment.phases[phase_num]
+
+    @property
+    def primary_phase(self) -> CrystalPhase:
+        return self.powder_experiment.primary_phase
+
     @property
     def startval(self):
         return self.two_theta_values[0]
@@ -84,20 +91,16 @@ class XrdPattern(PatternData):
         return self.two_theta_values[-1]
 
     @property
-    def crystal_structure(self) -> CrystalPhase:
-        return self.label.primary_phase
-
-    @property
     def powder(self):
-        return self.label.powder
+        return self.powder_experiment.powder
 
     @property
     def artifacts(self) -> XRayInfo:
-        return self.label.artifacts
+        return self.powder_experiment.artifacts
 
     @property
     def is_simulated(self) -> bool:
-        return self.label.is_simulated
+        return self.powder_experiment.is_simulated
 
     # def to_tensor_pair(self, dtype : torch.dtype, device : torch.device) -> tuple[torch.Tensor, torch.Tensor]:
     #     # now = time.time()
@@ -117,9 +120,9 @@ class XrdPattern(PatternData):
         elif len(self.two_theta_values) < 10:
             pattern_health.add_critical('Data is too short. Less than 10 entries!')
 
-        if self.label.primary_wavelength is None:
+        if self.powder_experiment.primary_wavelength is None:
             pattern_health.add_error('Primary wavelength missing!')
-        if self.label.secondary_wavelength is None:
+        if self.powder_experiment.secondary_wavelength is None:
             pattern_health.add_warning('No secondary wavelength found')
 
         return pattern_health
@@ -147,7 +150,7 @@ class XrdPattern(PatternData):
         return 0, 90
 
     def get_info_as_str(self) -> str:
-        crystal = self.label.primary_phase
+        crystal = self.powder_experiment.primary_phase
         pattern_content = str(self.intensities)[:50] + '...'
         try:
             crystal_data = str(crystal.to_pymatgen())
@@ -158,7 +161,7 @@ class XrdPattern(PatternData):
               f'- Crystal: {crystal_data} \n'
               f'- Experiment Parameters:\n'
               f'    - Primary wavelength: {self.artifacts.primary_wavelength}\n'
-              f'    - Temperature : {self.label.temp_in_celcius}\n'
+              f'    - Temperature : {self.powder_experiment.temp_in_celcius}\n'
               f'- Origin Metadata:\n'
                 f'    - Contributor: {self.metadata.contributor_name}\n'
                 f'    - Institution: {self.metadata.institution}\n'
