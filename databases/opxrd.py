@@ -16,7 +16,7 @@ class DatabaseProcessor:
         self.processed_dirpath : str = os.path.join(root_dirpath, 'processed')
 
     def process_contribution(self, dirname: str):
-        contribution_dirpath = os.path.join(self.root_dirpath, dirname)
+        contribution_dirpath = os.path.join(self.raw_dirpath, dirname)
         info = self.get_contributor_info(contribution_dirpath=contribution_dirpath)
 
         data_dirpath = os.path.join(contribution_dirpath, 'data')
@@ -48,5 +48,5 @@ class DatabaseProcessor:
 
 
 if __name__ == "__main__":
-    processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/raw/')
-    processor.process_contribution(dirname='breitung_schweidler_0')
+    processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
+    processor.process_contribution(dirname='breitung_schweidler_1')
