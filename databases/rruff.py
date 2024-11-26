@@ -7,7 +7,7 @@ from xrdpattern.crystal import Lengths, Angles, CrystalBase
 import re
 
 delim = ' '
-with open('ruff_spgs.txt', 'r') as f:
+with open('tools/ruff_spgs.txt', 'r') as f:
     content = f.read()
 rows = content.split('\n')
 to_int_dict = {}
