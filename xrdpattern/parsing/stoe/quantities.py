@@ -44,7 +44,6 @@ class Quantity:
         if not size % self.dtype.get_num_bytes() == 0:
             raise ValueError(f'Size must be a multiple of {self.dtype.get_num_bytes()}')
         self._size = size
-        print(f'size set to {size}')
 
     @abstractmethod
     def get_dtype(self) -> DataType:
