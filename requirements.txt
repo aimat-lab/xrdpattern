@@ -5,3 +5,4 @@ pymatgen
 torch
 gemmi
 holytools @ git+https://git@github.com/Somerandomguy10111/holytools.git
+tensordict
