@@ -2,7 +2,7 @@ import os
 
 from dataclasses import dataclass
 from xrdpattern.pattern import XrdPattern
-from xrdpattern.xrd import PowderExperiment, PowderSample, CrystalPhase, XRayInfo
+from xrdpattern.xrd import PowderExperiment, CrystalPhase, XRayInfo
 from xrdpattern.crystal import Lengths, Angles, CrystalBase
 import re
 
@@ -108,9 +108,8 @@ if __name__ == "__main__":
             angles = Angles(alpha=alpha, beta=beta, gamma=gamma)
 
             crystal_structure = CrystalPhase(lengths=lengths, angles=angles, spacegroup=spacegroup, base=CrystalBase())
-            powder = PowderSample(phases=[crystal_structure])
             artifacts = XRayInfo(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength)
-            pattern.powder_experiment = PowderExperiment(powder=powder, xray_info=artifacts, is_simulated=False)
+            pattern.powder_experiment = PowderExperiment(material_phases=[crystal_structure], xray_info=artifacts, is_simulated=False)
             pattern.save(fpath=os.path.join(output_dirpath, base_name))
 
         except Exception as e:

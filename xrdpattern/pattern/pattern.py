@@ -91,10 +91,6 @@ class XrdPattern(PatternData):
         return self.two_theta_values[-1]
 
     @property
-    def powder(self):
-        return self.powder_experiment.powder
-
-    @property
     def artifacts(self) -> XRayInfo:
         return self.powder_experiment.xray_info
 
