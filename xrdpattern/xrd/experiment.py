@@ -162,6 +162,9 @@ class PowderSample(JsonDataclass):
         if len(self.phases) == 0:
             raise ValueError(f'Powder sample must have at least one phase! Got {len(self.phases)}')
 
+        if len(self.phases) == 1:
+            self.phases[0].phase_fraction = 1
+
 
 class LabelTensor(TensorDict):
     def get_lattice_params(self) -> Tensor:
