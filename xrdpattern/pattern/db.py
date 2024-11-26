@@ -51,7 +51,7 @@ class PatternDB:
             selected_suffixes = Formats.get_all_suffixes()
         data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, select_suffixes=selected_suffixes)
         if len(data_fpaths) == 0:
-            raise ValueError(f"No data files matching suffixes {Formats.get_all_suffixes()} found in directory {dirpath}")
+            raise ValueError(f"No data files matching suffixes {selected_suffixes} found in directory {dirpath}")
 
         patterns : list[XrdPattern] = []
         parser = MasterParser(store_filename=store_filenames, csv_orientation=csv_orientation)

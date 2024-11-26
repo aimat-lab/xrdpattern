@@ -23,6 +23,7 @@ class CrystalStructure(JsonDataclass):
     lengths : Lengths
     angles : Angles
     base : CrystalBase
+    chemical_composition : Optional[str] = None
     spacegroup : Optional[int] = None
     volume_uc : Optional[float] = None
     atomic_volume: Optional[float] = None
@@ -73,6 +74,7 @@ class CrystalStructure(JsonDataclass):
 
         pymatgen_spacegroup = SpaceGroup.from_int_number(self.spacegroup)
         self.crystal_system = pymatgen_spacegroup.crystal_system
+        self.chemical_composition = pymatgen_structure.composition.formula
 
 
     def get_standardized(self) -> CrystalStructure:

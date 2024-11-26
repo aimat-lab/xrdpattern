@@ -49,9 +49,10 @@ class DatabaseProcessor:
 
 
 if __name__ == "__main__":
-    # processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
-    # processor.process_contribution(dirname='breitung_schweidler_0')
-    fpath= '/home/daniel/aimat/opXRD/raw/breitung_schweidler_1/data/daten_gallium/Nithin/NS-366-Rec6_back_combined.raw'
-    pattern = XrdPattern.load(fpath=fpath)
-    pattern.save(fpath=f'stoe.json')
+    processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
+    processor.process_contribution(dirname='breitung_schweidler_1')
+
+    # fpath= '/home/daniel/aimat/opXRD/raw/breitung_schweidler_1/data/daten_gallium/Nithin/NS-366-Rec6_back_combined.raw'
+    # pattern = XrdPattern.load(fpath=fpath)
+    # pattern.save(fpath=f'stoe.json')
 
