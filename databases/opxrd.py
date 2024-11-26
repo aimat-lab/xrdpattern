@@ -47,7 +47,7 @@ class DatabaseProcessor:
 
     def attach_labels(self, pattern_db : PatternDB, dirname : str):
         for p in pattern_db.patterns:
-            if not p.powder_experiment.is_nonempty():
+            if p.powder_experiment.is_nonempty():
                 raise ValueError(f"Pattern {p.get_name()} is already labeled")
 
         pattern_dict = {SaveManager.prune_suffix(p.get_name()): p for p in pattern_db.patterns}
