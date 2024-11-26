@@ -35,8 +35,16 @@ class Quantity:
     def __init__(self, start : int, size : Optional[int] = None):
         self.start : int = start
         self.dtype : DataType = self.get_dtype()
-        self.size : int = size if not size is None else self.dtype.get_num_bytes()
         self.value : Optional[Any] = None
+        self._size: int = self.dtype.get_num_bytes()
+        if not size is None:
+            self.set_size(size=size)
+
+    def set_size(self, size : int):
+        if not size % self.dtype.get_num_bytes() == 0:
+            raise ValueError(f'Size must be a multiple of {self.dtype.get_num_bytes()}')
+        self._size = size
+        print(f'size set to {size}')
 
     @abstractmethod
     def get_dtype(self) -> DataType:
@@ -49,26 +57,19 @@ class Quantity:
             return self.value
 
     def extract_value(self, byte_content : bytes):
-        if len(byte_content) < self.start + self.size:
-            raise ValueError(f'Binary content has length {len(byte_content)} but expected at least {self.start + self.size} bytes')
+        if len(byte_content) < self.start + self._size:
+            raise ValueError(f'Binary content has length {len(byte_content)} but expected at least {self.start + self._size} bytes')
 
-        if self.size == 0:
+        if self._size == 0:
             return
 
         start = self.start
-        end = self.start + self.size
+        end = self.start + self._size
         partial = byte_content[start:end]
         self.value =  struct.unpack(self.get_fmt_str(), partial)
 
     def get_fmt_str(self) -> str:
-        elementary_size = self.dtype.get_num_bytes()
-        if not elementary_size is None:
-            if self.size % elementary_size != 0:
-                raise ValueError(f'Block size {self.size} must be multiple of size of specified '
-                                 f'datastructure {elementary_size} bytes')
-            num = self.size//elementary_size
-        else:
-            num = self.size
+        num = self._size // self.dtype.get_num_bytes()
         return f'{num}{self.dtype.value}'
 
 

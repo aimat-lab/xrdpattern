@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
 
+from xrdpattern.parsing.stoe import StoeParser
 from xrdpattern.pattern import PatternDB
 
 
@@ -48,5 +49,7 @@ class DatabaseProcessor:
 
 
 if __name__ == "__main__":
-    processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
-    processor.process_contribution(dirname='breitung_schweidler_1')
+    # processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
+    # processor.process_contribution(dirname='breitung_schweidler_0')
+    stoe_parser = StoeParser()
+    stoe_parser.get_pattern_info(fpath='/home/daniel/aimat/opXRD/raw/breitung_schweidler_1/data/daten_gallium/Nithin/NS-366-Rec6_back_combined.raw')

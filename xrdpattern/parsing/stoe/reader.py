@@ -35,7 +35,10 @@ class StoeParser(BinaryReader):
         if len(byte_content) < min_size:
             raise ValueError(f'File is too small. Expected at least {min_size} bytes, got {len(byte_content)} bytes')
         self.num_entries.extract_value(byte_content=byte_content)
-        self.intensities.size = self.num_entries.get_value()
+
+        num_entries = self.num_entries.get_value()
+        size = num_entries - num_entries % self.intensities.dtype.get_num_bytes()
+        self.intensities.set_size(size=size)
         super().read_bytes(byte_content=byte_content)
 
 
