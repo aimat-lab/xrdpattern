@@ -1,14 +1,13 @@
 import os
 from typing import Optional
 
-import pandas as pd
-
-from databases.tools.csv_label import CsvLabel
+from databases.tools.csv_label import standardize_path, get_phase_labels
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
-from xrdpattern.crystal import Lengths, Angles
+from xrdpattern.crystal import CrystalPhase
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment
+
 
 # -------------------------------------------
 
@@ -18,13 +17,18 @@ class DatabaseProcessor:
         self.raw_dirpath : str = os.path.join(root_dirpath, 'raw')
         self.processed_dirpath : str = os.path.join(root_dirpath, 'processed')
 
-    def process_contribution(self, dirname: str, selected_suffixes : Optional[list[str]] = None):
+    def process_contribution(self, dirname: str, selected_suffixes : Optional[list[str]] = None, use_cif_labels : bool = False):
         print(f'Started processing contributino {dirname}')
         data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
         pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes)
 
         self.attach_metadata(pattern_db, dirname=dirname)
-        self.attach_labels(pattern_db, dirname=dirname)
+        for p in pattern_db.patterns:
+            if p.powder_experiment.is_nonempty():
+                raise ValueError(f"Pattern {p.get_name()} is already labeled")
+
+        labeling_routine = self.attach_cif_labels if use_cif_labels else self.attach_labels
+        labeling_routine(pattern_db=pattern_db, dirname=dirname)
         self.save(pattern_db, dirname=dirname)
 
     # ---------------------------------------
@@ -45,63 +49,44 @@ class DatabaseProcessor:
             p.metadata.contributor_name = form_data["name_of_advisor"]
             p.metadata.institution = form_data["contributing_institution"]
 
+
     @log_execution
-    def attach_labels(self, pattern_db : PatternDB, dirname : str):
-        for p in pattern_db.patterns:
-            if p.powder_experiment.is_nonempty():
-                raise ValueError(f"Pattern {p.get_name()} is already labeled")
+    def attach_cif_labels(self, pattern_db : PatternDB):
+        for fpath, patterns in pattern_db.fpath_dict.items():
+            dirpath = os.path.basename(fpath)
+            cif_fnames = [fname for fname in os.listdir(dirpath) if SaveManager.get_suffix(fname) == 'cif']
 
-        contrib_dirpath = os.path.join(self.raw_dirpath, dirname)
-        data_dirpath = os.path.join(contrib_dirpath, 'data')
+            powder_experiment = PowderExperiment.make_empty()
+            for fname in cif_fnames:
+                cif_content = read_file(fpath=os.path.join(dirpath, fname))
+                powder_experiment.material_phases.append(CrystalPhase.from_cif(cif_content))
+
+            for p in patterns:
+                p.powder_experiment = powder_experiment
+
+
+    @log_execution
+    def attach_labels(self, pattern_db : PatternDB, contrib_dirpath : str):
         csv_fpath = os.path.join(contrib_dirpath, 'labels.csv')
-
         if not os.path.isfile(csv_fpath):
-            print(f'No labels available for contribution {dirname}')
+            print(f'No labels available for contribution {os.path.basename(contrib_dirpath)}')
             return
 
         for fpath, file_patterns in pattern_db.fpath_dict.items():
             powder_experiment = PowderExperiment.make_empty(num_phases=2)
-            rel_path = os.path.relpath(fpath, start=data_dirpath)
-            rel_path = self.standardize_path(rel_path)
+            rel_path = os.path.relpath(fpath, start=os.path.join(contrib_dirpath, 'data'))
+            rel_path = standardize_path(rel_path)
 
             for phase_num in range(0, 2):
-                csv_label_dict = self.get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
+                csv_label_dict = get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
                 csv_label = csv_label_dict.get(rel_path)
                 if not csv_label is None:
                     csv_label.set_phase_properties(phase=powder_experiment.material_phases[phase_num])
                 else:
-                    print(f'Unlabeled pattern {rel_path} in contribution {dirname}')
+                    print(f'Unlabeled pattern {rel_path} in contribution {os.path.basename(contrib_dirpath)}')
 
             for p in file_patterns:
                 p.powder_experiment = powder_experiment
-
-    @classmethod
-    def get_phase_labels(cls, csv_fpath : str, phase_num : int) -> dict[str, CsvLabel]:
-        data = pd.read_csv(csv_fpath, skiprows=1)
-        increment = 0 if phase_num == 0 else 11
-
-        rel_path = [row.iloc[0].strip() for index, row in data.iterrows()]
-        chemical_compositions = [row.iloc[1 + increment] for index, row in data.iterrows()]
-        phase_fractions = [row.iloc[2 + increment] for index, row in data.iterrows()]
-        lengths_list = [Lengths(row.iloc[3+increment], row.iloc[4+increment], row.iloc[5+increment]) for index, row in data.iterrows()]
-        angles_list = [Angles(row.iloc[6+increment], row.iloc[7+increment], row.iloc[8+increment]) for index, row in data.iterrows()]
-
-        spacegroups = [row.iloc[9+increment] for index, row in data.iterrows()]
-        spacegroups = [int(spg) if not spg != spg else spg for spg in spacegroups]
-
-        csv_label_dict = {}
-        for rel_path, lengths, angles, comp, fract, spacegroup in zip(rel_path, lengths_list, angles_list, chemical_compositions, phase_fractions, spacegroups):
-            rel_path = cls.standardize_path(fpath=rel_path)
-            csv_label_dict[rel_path] = CsvLabel(lengths=lengths, angles=angles, chemical_composition=comp, spacegroup=spacegroup, phase_fraction=fract)
-
-        return csv_label_dict
-
-
-    @staticmethod
-    def standardize_path(fpath : str):
-        fpath = SaveManager.prune_suffix(fpath)
-        fpath = fpath.replace('\\','/')
-        return fpath
 
 
     @log_execution
@@ -129,8 +114,24 @@ class DatabaseProcessor:
         self.process_contribution(dirname='siol_wieczorek_0')
         self.process_contribution(dirname='siol_zhuk_0')
 
+    def parse_IKFT(self):
+        self.process_contribution(dirname='wolf_wolf_0')
+
+    def parse_HKUST(self):
+        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['xy'])
+
+
+
+
+def read_file(fpath: str) -> str:
+    with open(fpath, 'r') as file:
+        cif_content = file.read()
+    return cif_content
+
 if __name__ == "__main__":
     processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
-    processor.parse_EMPA()
+    # processor.parse_EMPA()
+    # processor.parse_IKFT()
+    processor.parse_HKUST()
 
 
