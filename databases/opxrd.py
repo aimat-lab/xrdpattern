@@ -5,6 +5,7 @@ import pandas as pd
 
 from databases.tools.csv_label import CsvLabel
 from holytools.fsys import SaveManager
+from holytools.logging.tools import log_execution
 from xrdpattern.crystal import Lengths, Angles
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment
@@ -20,6 +21,7 @@ class DatabaseProcessor:
         self.processed_dirpath : str = os.path.join(root_dirpath, 'processed')
 
     def process_contribution(self, dirname: str, selected_suffixes : Optional[list[str]] = None):
+        print(f'Started processing contributino {dirname}')
         data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
         pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes)
 
@@ -30,6 +32,7 @@ class DatabaseProcessor:
     # ---------------------------------------
     # Parsing steps
 
+    @log_execution
     def attach_metadata(self, pattern_db : PatternDB, dirname : str):
         form_dirpath = os.path.join(self.raw_dirpath, dirname, 'form.txt')
         with open(form_dirpath, "r") as file:
@@ -44,7 +47,7 @@ class DatabaseProcessor:
             p.metadata.contributor_name = form_data["name_of_advisor"]
             p.metadata.institution = form_data["contributing_institution"]
 
-
+    @log_execution
     def attach_labels(self, pattern_db : PatternDB, dirname : str):
         for p in pattern_db.patterns:
             if p.powder_experiment.is_nonempty():
@@ -58,12 +61,12 @@ class DatabaseProcessor:
             powder_experiment = PowderExperiment.make_empty(num_phases=2)
             rel_path = os.path.relpath(fpath, start=data_dirpath)
             rel_path = SaveManager.prune_suffix(fpath=rel_path)
-            print(f'Fpath dict rel_fpath = {rel_path}')
+            # print(f'Fpath dict rel_fpath = {rel_path}')
 
             for phase_num in range(0, 2):
                 csv_label_dict = self.get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
                 csv_label = csv_label_dict[rel_path]
-                print(f'csv _label_dict = {csv_label_dict}')
+                # print(f'csv _label_dict = {csv_label_dict}')
 
                 phase = powder_experiment.material_phases[phase_num]
                 phase.spacegroup = csv_label.spacegroup
@@ -85,8 +88,6 @@ class DatabaseProcessor:
         lengths_list = [Lengths(row.iloc[3+increment], row.iloc[4+increment], row.iloc[5+increment]) for index, row in data.iterrows()]
         angles_list = [Angles(row.iloc[6+increment], row.iloc[7+increment], row.iloc[8+increment]) for index, row in data.iterrows()]
 
-
-        print([row.iloc[9+increment] for index, row in data.iterrows()])
         spacegroups = [row.iloc[9+increment] for index, row in data.iterrows()]
         spacegroups = [int(spg) if not spg != spg else spg for spg in spacegroups]
 
@@ -97,7 +98,7 @@ class DatabaseProcessor:
         # print(csv_label_dict)
         return csv_label_dict
 
-
+    @log_execution
     def save(self, pattern_db : PatternDB, dirname : str):
         out_dirpath = os.path.join(self.processed_dirpath, dirname)
         if not os.path.isdir(out_dirpath):
@@ -124,7 +125,6 @@ class DatabaseProcessor:
 
 if __name__ == "__main__":
     processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
-    # processor.parse_EMPA()
-    processor.parse_USC()
+    processor.parse_EMPA()
 
 
