@@ -6,7 +6,7 @@ from typing import Optional, Iterator, Tuple
 import numpy as np
 
 from holytools.fsys import SaveManager
-from xrdpattern.xrd import PatternData, XRayInfo, PowderExperiment, OriginMetadata
+from xrdpattern.xrd import PatternData, XRayInfo, PowderExperiment, Metadata
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
 from .csv import CsvParser, Orientation
@@ -121,9 +121,9 @@ class MasterParser:
         return experiment
 
     @classmethod
-    def parse_metadata(cls, header_str : str) -> OriginMetadata:
+    def parse_metadata(cls, header_str : str) -> Metadata:
         metadata_map = cls.get_key_value_dict(header_str=header_str)
-        metadata = OriginMetadata(measurement_date=metadata_map.get('MEASURE_DATE'))
+        metadata = Metadata(measurement_date=metadata_map.get('MEASURE_DATE'))
         return metadata
 
     @staticmethod

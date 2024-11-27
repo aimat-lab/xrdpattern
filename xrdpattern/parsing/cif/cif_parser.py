@@ -2,7 +2,7 @@ import numpy as np
 from gemmi import cif
 from numpy.typing import NDArray
 
-from xrdpattern.xrd import PowderExperiment, PatternData, OriginMetadata
+from xrdpattern.xrd import PowderExperiment, PatternData, Metadata
 
 
 class CifParser:
@@ -17,7 +17,7 @@ class CifParser:
         block = doc.sole_block()
         x,y = self.extract_pattern_from_block(block)
 
-        metadata = OriginMetadata()
+        metadata = Metadata()
         lines = cif_content.split('\n')
         for l in lines:
             if '$Date' in l:

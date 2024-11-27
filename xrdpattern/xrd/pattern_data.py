@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
 
 from holytools.abstract import Serializable
-from xrdpattern.xrd.metadata import OriginMetadata
+from xrdpattern.xrd.metadata import Metadata
 from xrdpattern.xrd.experiment import PowderExperiment
 
 
@@ -20,7 +20,7 @@ class PatternData(Serializable):
     two_theta_values : NDArray
     intensities : NDArray
     powder_experiment : PowderExperiment
-    metadata: OriginMetadata = field(default_factory=OriginMetadata)
+    metadata: Metadata = field(default_factory=Metadata)
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
@@ -64,7 +64,7 @@ class PatternData(Serializable):
         two_theta_values = np.array(data['two_theta_values'])
         intensities = np.array(data['intensities'])
         label = PowderExperiment.from_str(data['label'])
-        metadata = OriginMetadata.from_str(data['metadata'])
+        metadata = Metadata.from_str(data['metadata'])
 
         return cls(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=label, metadata=metadata)
 
