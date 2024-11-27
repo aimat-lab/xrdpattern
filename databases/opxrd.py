@@ -57,28 +57,28 @@ class DatabaseProcessor:
         data_dirpath = os.path.join(contrib_dirpath, 'data')
         csv_fpath = os.path.join(contrib_dirpath, 'labels.csv')
 
+        if not os.path.isfile(csv_fpath):
+            print(f'No labels available for contribution {dirname}')
+            return
+
         for fpath, patterns in pattern_db.fpath_dict.items():
             powder_experiment = PowderExperiment.make_empty(num_phases=2)
             rel_path = os.path.relpath(fpath, start=data_dirpath)
-            rel_path = SaveManager.prune_suffix(fpath=rel_path)
-            # print(f'Fpath dict rel_fpath = {rel_path}')
+            rel_path = self.standardize_path(rel_path)
 
             for phase_num in range(0, 2):
                 csv_label_dict = self.get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
-                csv_label = csv_label_dict[rel_path]
-                # print(f'csv _label_dict = {csv_label_dict}')
-
-                phase = powder_experiment.material_phases[phase_num]
-                phase.spacegroup = csv_label.spacegroup
-                phase.lengths = csv_label.lengths
-                phase.angles = csv_label.angles
-                phase.chemical_composition = csv_label.chemical_composition
+                csv_label = csv_label_dict.get(rel_path)
+                if not csv_label is None:
+                    csv_label.set_phase_properties(phase=powder_experiment.material_phases[phase_num])
+                else:
+                    print(f'Unlabeled')
 
             for p in patterns:
                 p.powder_experiment = powder_experiment
 
-    @staticmethod
-    def get_phase_labels(csv_fpath : str, phase_num : int) -> dict[str, CsvLabel]:
+    @classmethod
+    def get_phase_labels(cls, csv_fpath : str, phase_num : int) -> dict[str, CsvLabel]:
         data = pd.read_csv(csv_fpath, skiprows=1)
         increment = 0 if phase_num == 0 else 10
 
@@ -93,10 +93,18 @@ class DatabaseProcessor:
 
         csv_label_dict = {}
         for rel_path, lengths, angles, comp, fract, spacegroup in zip(rel_path, lengths_list, angles_list, chemical_compositions, phase_fractions, spacegroups):
+            rel_path = cls.standardize_path(fpath=rel_path)
             csv_label_dict[rel_path] = CsvLabel(lengths=lengths, angles=angles, chemical_composition=comp, spacegroup=spacegroup, phase_fraction=fract)
 
-        # print(csv_label_dict)
         return csv_label_dict
+
+
+    @staticmethod
+    def standardize_path(fpath : str):
+        fpath = SaveManager.prune_suffix(fpath)
+        fpath = fpath.replace('\\','/')
+        return fpath
+
 
     @log_execution
     def save(self, pattern_db : PatternDB, dirname : str):
