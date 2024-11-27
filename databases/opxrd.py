@@ -57,10 +57,11 @@ class DatabaseProcessor:
             powder_experiment = PowderExperiment.make_empty(num_phases=2)
             name = SaveManager.prune_suffix(fpath=name)
 
-            for phase_num in range(1, 3):
+            for phase_num in range(0, 2):
                 csv_label_dict = self.get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
                 csv_label = csv_label_dict[name]
 
+                # print(f'phase num = {phase_num}, csv_label = {csv_label}')
                 phase = powder_experiment.material_phases[phase_num]
                 phase.spacegroup = csv_label.spacegroup
                 phase.lengths = csv_label.lengths
@@ -86,7 +87,7 @@ class DatabaseProcessor:
         for fname, lengths, angles, comp, spacegroup in zip(fname, lengths_list, angles_list, chemical_compositions, spacegroups):
             csv_label_dict[fname] = CsvLabel(lengths=lengths, angles=angles, chemical_composition=comp, spacegroup=spacegroup)
 
-        print(csv_label_dict)
+        # print(csv_label_dict)
         return csv_label_dict
 
 
@@ -111,6 +112,6 @@ class DatabaseProcessor:
 
 if __name__ == "__main__":
     processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
-    # processor.parse_CNRS()
-    processor.parse_USC()
+    processor.parse_CNRS()
+    # processor.parse_USC()
 
