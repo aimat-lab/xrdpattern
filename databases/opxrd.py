@@ -72,7 +72,7 @@ class DatabaseProcessor:
                 if not csv_label is None:
                     csv_label.set_phase_properties(phase=powder_experiment.material_phases[phase_num])
                 else:
-                    print(f'Unlabeled')
+                    print(f'Unlabeled pattern {rel_path} in contribution {dirname}')
 
             for p in patterns:
                 p.powder_experiment = powder_experiment

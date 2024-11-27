@@ -58,6 +58,33 @@ class CrystalPhase(JsonDataclass):
         return crystal_str
 
     # ---------------------------------------------------------
+    # conversion
+
+    def to_cif(self) -> str:
+        pymatgen_structure = self.to_pymatgen()
+        return pymatgen_structure.to(filename='', fmt='cif')
+
+    def to_pymatgen(self) -> Structure:
+        a, b, c = self.lengths.as_tuple()
+        alpha, beta, gamma = self.angles.as_tuple()
+        lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
+
+        non_void_sites = self.base.get_non_void_sites()
+        atoms = [site.atom.as_pymatgen for site in non_void_sites]
+        positions = [(site.x, site.y, site.z) for site in non_void_sites]
+
+        if len(atoms) == 0:
+            logger.warning('Structure has no atoms!')
+
+        return Structure(lattice, atoms, positions)
+
+    def as_str(self) -> str:
+        the_dict = asdict(self)
+        the_dict = {str(key) : str(value) for key, value in the_dict.items() if not isinstance(value, Structure)}
+        the_dict['base'] = f'{self.base[0]}, ...'
+        return json.dumps(the_dict, indent='-')
+
+    # ---------------------------------------------------------
     # properties
 
     def calculate_properties(self):
@@ -100,33 +127,4 @@ class CrystalPhase(JsonDataclass):
         return len(self.base)
 
 
-    # ---------------------------------------------------------
-    # conversion
-
-    def to_cif(self) -> str:
-        pymatgen_structure = self.to_pymatgen()
-        return pymatgen_structure.to(filename='', fmt='cif')
-
-    def to_pymatgen(self) -> Structure:
-        a, b, c = self.lengths.as_tuple()
-        alpha, beta, gamma = self.angles.as_tuple()
-        lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
-
-        non_void_sites = self.base.get_non_void_sites()
-        atoms = [site.atom.as_pymatgen for site in non_void_sites]
-        positions = [(site.x, site.y, site.z) for site in non_void_sites]
-
-        if len(atoms) == 0:
-            logger.warning('Structure has no atoms!')
-
-        return Structure(lattice, atoms, positions)
-
-    def as_str(self) -> str:
-        the_dict = asdict(self)
-        the_dict = {str(key) : str(value) for key, value in the_dict.items() if not isinstance(value, Structure)}
-        the_dict['base'] = f'{self.base[0]}, ...'
-        return json.dumps(the_dict, indent='-')
-
-    def __str__(self):
-        return self.as_str()
 
