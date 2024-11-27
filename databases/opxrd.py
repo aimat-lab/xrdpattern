@@ -51,21 +51,20 @@ class DatabaseProcessor:
     @log_execution
     def attach_cif_labels(self, pattern_db : PatternDB):
         for fpath, patterns in pattern_db.fpath_dict.items():
-            try:
-                dirpath = os.path.dirname(fpath)
-                cif_fnames = [fname for fname in os.listdir(dirpath) if SaveManager.get_suffix(fname) == 'cif']
+            dirpath = os.path.dirname(fpath)
+            cif_fnames = [fname for fname in os.listdir(dirpath) if SaveManager.get_suffix(fname) == 'cif']
 
-                phases = []
-                for fname in cif_fnames:
-                    cif_fpath = os.path.join(dirpath, fname)
-                    cif_content = read_file(fpath=cif_fpath)
-                    phases.append(CrystalPhase.from_cif(cif_content))
+            phases = []
+            for fname in cif_fnames:
+                cif_fpath = os.path.join(dirpath, fname)
+                attached_cif_content = read_file(fpath=cif_fpath)
+                crystal_phase = safe_cif_read(cif_content=attached_cif_content)
+                phases.append(crystal_phase)
 
-                powder_experiment = PowderExperiment.from_multi_phase(phases=phases)
-                for p in patterns:
-                    p.powder_experiment = powder_experiment
-            except:
-                print(f'No CIF file found for pattern {fpath}')
+            phases = [p for p in phases if not p is None]
+            powder_experiment = PowderExperiment.from_multi_phase(phases=phases)
+            for p in patterns:
+                p.powder_experiment = powder_experiment
 
 
     @log_execution
@@ -122,6 +121,13 @@ def read_file(fpath: str) -> str:
     with open(fpath, 'r') as file:
         cif_content = file.read()
     return cif_content
+
+def safe_cif_read(cif_content: str) -> Optional[CrystalPhase]:
+    try:
+        extracted_phase = CrystalPhase.from_cif(cif_content)
+    except:
+        extracted_phase = None
+    return extracted_phase
 
 if __name__ == "__main__":
     processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
