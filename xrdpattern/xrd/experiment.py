@@ -18,18 +18,18 @@ MAX_ATOMIC_SITES = 100
 
 @dataclass
 class PowderExperiment(JsonDataclass):
-    material_phases: list[CrystalPhase]
+    phases: list[CrystalPhase]
     xray_info : XRayInfo
     is_simulated : bool = False
     crystallite_size: Optional[float] = None
     temp_in_celcius: Optional[float] = None
 
     def __post_init__(self):
-        if len(self.material_phases) == 0:
-            raise ValueError(f'Material must have at least one phase! Got {len(self.material_phases)}')
+        if len(self.phases) == 0:
+            raise ValueError(f'Material must have at least one phase! Got {len(self.phases)}')
 
-        if len(self.material_phases) == 1:
-            self.material_phases[0].phase_fraction = 1
+        if len(self.phases) == 1:
+            self.phases[0].phase_fraction = 1
 
     @classmethod
     def make_empty(cls, is_simulated : bool = False, num_phases : int = 1) -> PowderExperiment:
@@ -43,12 +43,16 @@ class PowderExperiment(JsonDataclass):
             phases.append(p)
 
         xray_info = XRayInfo.mk_empty()
-        return cls(material_phases=phases, crystallite_size=None, temp_in_celcius=None, xray_info=xray_info, is_simulated=is_simulated)
+        return cls(phases=phases, crystallite_size=None, temp_in_celcius=None, xray_info=xray_info, is_simulated=is_simulated)
 
     @classmethod
-    def from_phase(cls, phase : CrystalPhase, crystallite_size : float, is_simulated : bool):
+    def from_multi_phase(cls, phases : list[CrystalPhase]):
+        return cls(phases=phases, crystallite_size=None, xray_info=XRayInfo.mk_empty(), is_simulated=False)
+
+    @classmethod
+    def from_single_phase(cls, phase : CrystalPhase, crystallite_size : Optional[float] = None, is_simulated : bool = False):
         artifacts = XRayInfo.mk_empty()
-        return cls(material_phases=[phase], crystallite_size=crystallite_size, xray_info=artifacts, is_simulated=is_simulated)
+        return cls(phases=[phase], crystallite_size=crystallite_size, xray_info=artifacts, is_simulated=is_simulated)
 
     @classmethod
     def from_cif(cls, cif_content : str) -> PowderExperiment:
@@ -71,7 +75,7 @@ class PowderExperiment(JsonDataclass):
                 xray_info.primary_wavelength = float(b_lines[-2].split()[0])
                 xray_info.secondary_wavelength = float(b_lines[-1].split()[0])
 
-        return cls(material_phases=[structure], xray_info=xray_info, is_simulated=False)
+        return cls(phases=[structure], xray_info=xray_info, is_simulated=False)
 
     # ---------------------------------------------------------
     # properties
@@ -89,7 +93,7 @@ class PowderExperiment(JsonDataclass):
 
     @property
     def primary_phase(self) -> CrystalPhase:
-        return self.material_phases[0]
+        return self.phases[0]
 
     @property
     def primary_wavelength(self) -> float:

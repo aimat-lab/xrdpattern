@@ -76,7 +76,7 @@ class XrdPattern(PatternData):
         return self.metadata.filename
 
     def get_phase(self, phase_num : int) -> CrystalPhase:
-        return self.powder_experiment.material_phases[phase_num]
+        return self.powder_experiment.phases[phase_num]
 
     @property
     def primary_phase(self) -> CrystalPhase:

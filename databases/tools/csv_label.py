@@ -36,7 +36,7 @@ def get_powder_experiment(pattern_fpath : str, contrib_dirpath : str) -> PowderE
         csv_label_dict = get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
         csv_label = csv_label_dict.get(rel_path)
         if not csv_label is None:
-            csv_label.set_phase_properties(phase=powder_experiment.material_phases[phase_num])
+            csv_label.set_phase_properties(phase=powder_experiment.phases[phase_num])
         else:
             print(f'Unlabeled pattern {rel_path} in contribution {os.path.basename(contrib_dirpath)}')
 

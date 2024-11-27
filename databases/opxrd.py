@@ -1,12 +1,13 @@
 import os
 from typing import Optional
 
-from databases.tools.csv_label import standardize_path, get_phase_labels, get_powder_experiment
+from databases.tools.csv_label import get_powder_experiment
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment
+
 
 # -------------------------------------------
 
@@ -22,8 +23,10 @@ class DatabaseProcessor:
         pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes)
 
         self.attach_metadata(pattern_db, dirname=dirname)
-        labeling_routine = self.attach_cif_labels if use_cif_labels else self.attach_labels
-        labeling_routine(pattern_db=pattern_db, dirname=dirname)
+        if use_cif_labels:
+            self.attach_cif_labels(pattern_db)
+        else:
+            self.attach_labels(pattern_db, contrib_dirpath=os.path.join(self.raw_dirpath, dirname))
         self.save(pattern_db, dirname=dirname)
 
     # ---------------------------------------
@@ -48,16 +51,21 @@ class DatabaseProcessor:
     @log_execution
     def attach_cif_labels(self, pattern_db : PatternDB):
         for fpath, patterns in pattern_db.fpath_dict.items():
-            dirpath = os.path.basename(fpath)
-            cif_fnames = [fname for fname in os.listdir(dirpath) if SaveManager.get_suffix(fname) == 'cif']
+            try:
+                dirpath = os.path.dirname(fpath)
+                cif_fnames = [fname for fname in os.listdir(dirpath) if SaveManager.get_suffix(fname) == 'cif']
 
-            powder_experiment = PowderExperiment.make_empty()
-            for fname in cif_fnames:
-                cif_content = read_file(fpath=os.path.join(dirpath, fname))
-                powder_experiment.material_phases.append(CrystalPhase.from_cif(cif_content))
+                phases = []
+                for fname in cif_fnames:
+                    cif_fpath = os.path.join(dirpath, fname)
+                    cif_content = read_file(fpath=cif_fpath)
+                    phases.append(CrystalPhase.from_cif(cif_content))
 
-            for p in patterns:
-                p.powder_experiment = powder_experiment
+                powder_experiment = PowderExperiment.from_multi_phase(phases=phases)
+                for p in patterns:
+                    p.powder_experiment = powder_experiment
+            except:
+                print(f'No CIF file found for pattern {fpath}')
 
 
     @log_execution
@@ -107,9 +115,7 @@ class DatabaseProcessor:
         self.process_contribution(dirname='wolf_wolf_0')
 
     def parse_HKUST(self):
-        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['xy'])
-
-
+        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['txt'])
 
 
 def read_file(fpath: str) -> str:
