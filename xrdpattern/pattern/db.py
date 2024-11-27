@@ -61,10 +61,11 @@ class PatternDB:
         fpath_dict = {}
         for fpath in data_fpaths:
             try:
-                patterns += [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath)]
+                new_patterns = [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath)]
+                patterns += new_patterns
                 parsing_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in patterns]
                 tracker.increment(to_add=1)
-                fpath_dict[fpath] = patterns
+                fpath_dict[fpath] = new_patterns
             except Exception as e:
                 failed_fpath.append(fpath)
                 patterdb_logger.log(msg=f"Could not import pattern from file {fpath}\n"

@@ -10,9 +10,7 @@ from xrdpattern.crystal import Lengths, Angles
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment
 
-
 # -------------------------------------------
-
 
 class DatabaseProcessor:
     def __init__(self, root_dirpath : str):
@@ -61,7 +59,7 @@ class DatabaseProcessor:
             print(f'No labels available for contribution {dirname}')
             return
 
-        for fpath, patterns in pattern_db.fpath_dict.items():
+        for fpath, file_patterns in pattern_db.fpath_dict.items():
             powder_experiment = PowderExperiment.make_empty(num_phases=2)
             rel_path = os.path.relpath(fpath, start=data_dirpath)
             rel_path = self.standardize_path(rel_path)
@@ -74,13 +72,13 @@ class DatabaseProcessor:
                 else:
                     print(f'Unlabeled pattern {rel_path} in contribution {dirname}')
 
-            for p in patterns:
+            for p in file_patterns:
                 p.powder_experiment = powder_experiment
 
     @classmethod
     def get_phase_labels(cls, csv_fpath : str, phase_num : int) -> dict[str, CsvLabel]:
         data = pd.read_csv(csv_fpath, skiprows=1)
-        increment = 0 if phase_num == 0 else 10
+        increment = 0 if phase_num == 0 else 11
 
         rel_path = [row.iloc[0].strip() for index, row in data.iterrows()]
         chemical_compositions = [row.iloc[1 + increment] for index, row in data.iterrows()]
@@ -129,7 +127,7 @@ class DatabaseProcessor:
 
     def parse_EMPA(self):
         self.process_contribution(dirname='siol_wieczorek_0')
-        # self.process_contribution(dirname='siol_zhuk_0')
+        self.process_contribution(dirname='siol_zhuk_0')
 
 if __name__ == "__main__":
     processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
