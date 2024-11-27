@@ -17,9 +17,8 @@ from .xylib import get_xylib_repr
 
 
 class MasterParser:
-    def __init__(self, csv_orientation : Optional[Orientation] = None, store_filename : bool = False):
+    def __init__(self, csv_orientation : Optional[Orientation] = None):
         self.default_csv_orientation : Optional[Orientation] = csv_orientation
-        self.store_filename : bool = store_filename
 
         self.stoe_reader : StoeParser = StoeParser()
         self.cif_parser : CifParser = CifParser()
@@ -55,7 +54,6 @@ class MasterParser:
         for p in pattern_infos:
             if not the_format == Formats.aimat_xrdpattern:
                 p.metadata.original_file_format = f'{the_format.name} (.{suffix})'
-            if self.store_filename:
                 p.metadata.filename = os.path.basename(fpath)
         return pattern_infos
 

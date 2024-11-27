@@ -21,7 +21,7 @@ class DatabaseProcessor:
 
     def process_contribution(self, dirname: str, selected_suffixes : Optional[list[str]] = None):
         data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
-        pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes, store_filenames=True)
+        pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes, store_fpaths=True)
 
         self.attach_metadata(pattern_db, dirname=dirname)
         self.attach_labels(pattern_db, dirname=dirname)
@@ -75,7 +75,7 @@ class DatabaseProcessor:
         data = pd.read_csv(csv_fpath, skiprows=1)
         increment = 0 if phase_num == 0 else 10
 
-        fname = [row.iloc[0].strip() for index, row in data.iterrows()]
+        rel_path = [row.iloc[0].strip() for index, row in data.iterrows()]
         lengths_list = [Lengths(row.iloc[4+increment], row.iloc[5+increment], row.iloc[6+increment]) for index, row in data.iterrows()]
         angles_list = [Angles(row.iloc[7+increment], row.iloc[8+increment], row.iloc[9+increment]) for index, row in data.iterrows()]
 
@@ -84,8 +84,8 @@ class DatabaseProcessor:
         spacegroups = [int(spg) if not spg != spg else spg for spg in spacegroups]
 
         csv_label_dict = {}
-        for fname, lengths, angles, comp, spacegroup in zip(fname, lengths_list, angles_list, chemical_compositions, spacegroups):
-            csv_label_dict[fname] = CsvLabel(lengths=lengths, angles=angles, chemical_composition=comp, spacegroup=spacegroup)
+        for rel_path, lengths, angles, comp, spacegroup in zip(rel_path, lengths_list, angles_list, chemical_compositions, spacegroups):
+            csv_label_dict[rel_path] = CsvLabel(lengths=lengths, angles=angles, chemical_composition=comp, spacegroup=spacegroup)
 
         # print(csv_label_dict)
         return csv_label_dict
