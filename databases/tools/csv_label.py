@@ -1,7 +1,11 @@
+import os
 from dataclasses import dataclass
+
+import pandas as pd
 
 from holytools.fsys import SaveManager
 from xrdpattern.crystal import Lengths, Angles, CrystalPhase
+from xrdpattern.xrd import PowderExperiment
 
 
 @dataclass
@@ -18,6 +22,25 @@ class CsvLabel:
         phase.angles = self.angles
         phase.chemical_composition = self.chemical_composition
         phase.phase_fraction = self.phase_fraction
+
+
+def get_powder_experiment(pattern_fpath : str, contrib_dirpath : str) -> PowderExperiment:
+    data_dirpath = os.path.join(contrib_dirpath, 'data')
+    csv_fpath = os.path.join(contrib_dirpath, 'labels.csv')
+
+    powder_experiment = PowderExperiment.make_empty(num_phases=2)
+    rel_path = os.path.relpath(pattern_fpath, start=data_dirpath)
+    rel_path = standardize_path(rel_path)
+
+    for phase_num in range(0, 2):
+        csv_label_dict = get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
+        csv_label = csv_label_dict.get(rel_path)
+        if not csv_label is None:
+            csv_label.set_phase_properties(phase=powder_experiment.material_phases[phase_num])
+        else:
+            print(f'Unlabeled pattern {rel_path} in contribution {os.path.basename(contrib_dirpath)}')
+
+    return powder_experiment
 
 
 def get_phase_labels(csv_fpath : str, phase_num : int) -> dict[str, CsvLabel]:

@@ -1,13 +1,12 @@
 import os
 from typing import Optional
 
-from databases.tools.csv_label import standardize_path, get_phase_labels
+from databases.tools.csv_label import standardize_path, get_phase_labels, get_powder_experiment
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment
-
 
 # -------------------------------------------
 
@@ -23,10 +22,6 @@ class DatabaseProcessor:
         pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes)
 
         self.attach_metadata(pattern_db, dirname=dirname)
-        for p in pattern_db.patterns:
-            if p.powder_experiment.is_nonempty():
-                raise ValueError(f"Pattern {p.get_name()} is already labeled")
-
         labeling_routine = self.attach_cif_labels if use_cif_labels else self.attach_labels
         labeling_routine(pattern_db=pattern_db, dirname=dirname)
         self.save(pattern_db, dirname=dirname)
@@ -72,18 +67,12 @@ class DatabaseProcessor:
             print(f'No labels available for contribution {os.path.basename(contrib_dirpath)}')
             return
 
-        for fpath, file_patterns in pattern_db.fpath_dict.items():
-            powder_experiment = PowderExperiment.make_empty(num_phases=2)
-            rel_path = os.path.relpath(fpath, start=os.path.join(contrib_dirpath, 'data'))
-            rel_path = standardize_path(rel_path)
+        for p in pattern_db.patterns:
+            if p.powder_experiment.is_nonempty():
+                raise ValueError(f"Pattern {p.get_name()} is already labeled")
 
-            for phase_num in range(0, 2):
-                csv_label_dict = get_phase_labels(csv_fpath=csv_fpath, phase_num=phase_num)
-                csv_label = csv_label_dict.get(rel_path)
-                if not csv_label is None:
-                    csv_label.set_phase_properties(phase=powder_experiment.material_phases[phase_num])
-                else:
-                    print(f'Unlabeled pattern {rel_path} in contribution {os.path.basename(contrib_dirpath)}')
+        for pattern_fpath, file_patterns in pattern_db.fpath_dict.items():
+            powder_experiment = get_powder_experiment(pattern_fpath=pattern_fpath, contrib_dirpath=contrib_dirpath)
 
             for p in file_patterns:
                 p.powder_experiment = powder_experiment
