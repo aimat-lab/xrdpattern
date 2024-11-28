@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-
-from .pattern_report import PatternReport
 from .pattern import XrdPattern
 
 
@@ -23,7 +21,7 @@ class DatabaseReport:
         self.source_files = list(self.fpath_dict.keys()) + self.failed_files
 
 
-    def get_report(self, with_individual_reports : bool = False) -> str:
+    def as_str(self, with_individual_reports : bool = False) -> str:
         num_failed = len(self.failed_files)
         num_attempted_files = len(self.source_files)
         num_parsed_patterns = len(self.pattern_reports)

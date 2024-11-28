@@ -11,7 +11,7 @@ from numpy.typing import NDArray
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import PatternData, XRayInfo
-from .pattern_report import PatternReport
+from .pattern_report import ParsingReport
 
 parser = MasterParser()
 
@@ -61,7 +61,7 @@ class XrdPattern(PatternData):
 
         report = pattern.get_parsing_report(datafile_fpath=fpath)
         if not mute:
-            print(report.get_report())
+            print(report.as_str())
         return pattern
 
     def save(self, fpath : str, force_overwrite : bool = False):
@@ -113,17 +113,15 @@ class XrdPattern(PatternData):
     #
     #     return intensities, labels
 
-    def get_parsing_report(self, datafile_fpath : str) -> PatternReport:
-        pattern_health = PatternReport(datafile_fpath=datafile_fpath)
+    def get_parsing_report(self, datafile_fpath : str) -> ParsingReport:
+        pattern_health = ParsingReport(datafile_fpath=datafile_fpath)
         if len(self.two_theta_values) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
         elif len(self.two_theta_values) < 10:
-            pattern_health.add_critical('Data is too short. Less than 10 entries!')
+            pattern_health.add_critical('Data is too short. Less than 50 entries!')
 
         if self.powder_experiment.primary_wavelength is None:
             pattern_health.add_error('Primary wavelength missing!')
-        if self.powder_experiment.secondary_wavelength is None:
-            pattern_health.add_warning('No secondary wavelength found')
 
         return pattern_health
 

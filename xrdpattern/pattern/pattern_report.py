@@ -3,7 +3,7 @@ from typing import Optional
 # -------------------------------------------
 
 @dataclass
-class PatternReport:
+class ParsingReport:
     datafile_fpath: Optional[str]
     critical_errors: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
@@ -27,7 +27,7 @@ class PatternReport:
     def add_warning(self, msg : str):
         self.warnings.append(f'\n{msg}')
 
-    def get_report(self):
+    def as_str(self):
         report_str = f'--- Successfully processed file ---'
         data_file_info = self.datafile_fpath if self.datafile_fpath else 'Unavailable'
         report_str += f'\nData file path: {data_file_info}'
@@ -53,6 +53,6 @@ class PatternReport:
         return report_str
 
     def __str__(self):
-        return self.get_report()
+        return self.as_str()
 
 

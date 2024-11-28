@@ -66,7 +66,7 @@ class PatternDB:
 
         failed_files = [fpath for fpath in data_fpaths if not fpath in fpath_dict]
         database_report = DatabaseReport(data_dirpath=dirpath, fpath_dict=fpath_dict, failed_files=failed_files)
-        print(database_report.get_report())
+        print(database_report.as_str())
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, database_report=database_report)
 
     @staticmethod

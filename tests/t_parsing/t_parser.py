@@ -17,7 +17,7 @@ class TestParserPattern(ParserBaseTest):
 
     def test_report_ok(self):
         report = self.pattern.get_parsing_report(datafile_fpath=self.get_fpath())
-        as_str = report.get_report()
+        as_str = report.as_str()
         self.assertIsInstance(obj=as_str, cls=str)
         print(f'Parsing report: {as_str}')
 
@@ -69,7 +69,7 @@ class TestParserDatabase(ParserBaseTest):
     def test_db_report_ok(self):
         for db in [self.bruker_only_db, self.all_example_db]:
             report = db.database_report
-            as_str = report.get_report()
+            as_str = report.as_str()
             print(f'Parsing report: {as_str[:300]}')
 
             self.assertIsInstance(obj=as_str, cls=str)
