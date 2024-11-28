@@ -51,14 +51,18 @@ class XrdPattern(PatternData):
     # save/load
 
     @classmethod
-    def load(cls, fpath : str) -> XrdPattern:
+    def load(cls, fpath : str, mute : bool = False) -> XrdPattern:
         pattern_list = parser.extract(fpath=fpath)
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
         pattern_info = pattern_list[0]
-
         kwargs = pattern_info.to_dict()
-        return cls(**kwargs)
+        pattern = cls(**kwargs)
+
+        report = pattern.get_parsing_report(datafile_fpath=fpath)
+        if not mute:
+            print(report.get_report())
+        return pattern
 
     def save(self, fpath : str, force_overwrite : bool = False):
         if os.path.isfile(fpath) and not force_overwrite:

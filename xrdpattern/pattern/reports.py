@@ -27,7 +27,7 @@ class PatternReport:
     def add_warning(self, msg : str):
         self.warnings.append(f'\n{msg}')
 
-    def get_report_str(self):
+    def get_report(self):
         report_str = f'--- Successfully processed file ---'
         data_file_info = self.datafile_fpath if self.datafile_fpath else 'Unavailable'
         report_str += f'\nData file path: {data_file_info}'
@@ -53,8 +53,7 @@ class PatternReport:
         return report_str
 
     def __str__(self):
-        return self.get_report_str()
-
+        return self.get_report()
 
 
 @dataclass
@@ -72,7 +71,7 @@ class DatabaseReport:
             self.num_warn += report.has_warning()
 
 
-    def get_str(self) -> str:
+    def get_report(self, with_individual_reports : bool = False) -> str:
         num_failed = len(self.failed_files)
         num_attempted_files = len(self.source_files)
         num_parsed_patterns = len(self.pattern_reports)
@@ -83,19 +82,22 @@ class DatabaseReport:
         else:
             summary_str += f'All pattern were successfully parsed'
         summary_str += f'\n- Processed {num_attempted_files} files to extract {num_parsed_patterns} patterns'
-        summary_str += f'\n- {self.num_crit}/{num_parsed_patterns} patterns had had critical error(s)'
-        summary_str += f'\n- {self.num_err}/{num_parsed_patterns} patterns had error(s)'
         summary_str += f'\n- {self.num_warn}/{num_parsed_patterns} patterns had warning(s)'
+        summary_str += f'\n- {self.num_err}/{num_parsed_patterns} patterns had error(s)'
+        summary_str += f'\n- {self.num_crit}/{num_parsed_patterns} patterns had had critical error(s)'
 
         if num_failed > 0:
             summary_str += f'\n\nFailed files:\n'
             for pattern_fpath in self.failed_files:
                 summary_str += f'\n{pattern_fpath}'
 
-        individual_reports = '\n\nIndividual file reports:\n\n'
-        for pattern_health in self.pattern_reports:
-            individual_reports += f'{str(pattern_health)}\n\n'
-        summary_str += f'\n\n----------------------------------------{individual_reports}'
+        if with_individual_reports:
+            individual_reports = '\n\nIndividual file reports:\n\n'
+            for pattern_health in self.pattern_reports:
+                individual_reports += f'{str(pattern_health)}\n\n'
+            summary_str += f'\n\n----------------------------------------{individual_reports}'
+
+        summary_str += '\n----------------------------------------\n'
 
         return summary_str
 
