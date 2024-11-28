@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-import traceback
 from collections import Counter
 from dataclasses import dataclass, field
 from typing import Optional, Any
@@ -14,7 +13,7 @@ from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedInt
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from .pattern import XrdPattern
-from .reports import DatabaseReport
+from .db_report import DatabaseReport
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
 
@@ -40,8 +39,7 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, dirpath : str, selected_suffixes : Optional[list[str]] = None,
-                  csv_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
+    def load(cls, dirpath : str, selected_suffixes : Optional[list[str]] = None, csv_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
@@ -54,26 +52,20 @@ class PatternDB:
 
         patterns : list[XrdPattern] = []
         parser = MasterParser(csv_orientation=csv_orientation)
-        failed_fpath = []
-        parsing_reports = []
 
-        tracker = TrackedInt(start_value=0, finish_value=len(data_fpaths))
         fpath_dict = {}
+        tracker = TrackedInt(start_value=0, finish_value=len(data_fpaths))
         for fpath in data_fpaths:
             try:
                 new_patterns = [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath)]
                 patterns += new_patterns
-                parsing_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in new_patterns]
-                tracker.increment(to_add=1)
                 fpath_dict[fpath] = new_patterns
+            except Exception:
+                patterdb_logger.log(msg=f"Could not import pattern from file {fpath}\n", level=logging.WARNING)
+            tracker.increment()
 
-            except Exception as e:
-                failed_fpath.append(fpath)
-                patterdb_logger.log(msg=f"Could not import pattern from file {fpath}\n"
-                      f"-> Error: \"{e.__class__.__name__}: {str(e)}\"\n"
-                      f"-> Traceback: \n{traceback.format_exc()}", level=logging.WARNING)
-
-        database_report = DatabaseReport(failed_files=failed_fpath,source_files=data_fpaths,pattern_reports=parsing_reports,data_dirpath=dirpath)
+        failed_files = [fpath for fpath in data_fpaths if not fpath in fpath_dict]
+        database_report = DatabaseReport(data_dirpath=dirpath, fpath_dict=fpath_dict, failed_files=failed_files)
         print(database_report.get_report())
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, database_report=database_report)
 

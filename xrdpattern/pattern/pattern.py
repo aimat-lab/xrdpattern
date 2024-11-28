@@ -11,7 +11,7 @@ from numpy.typing import NDArray
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import PatternData, XRayInfo
-from .reports import PatternReport
+from .pattern_report import PatternReport
 
 parser = MasterParser()
 
