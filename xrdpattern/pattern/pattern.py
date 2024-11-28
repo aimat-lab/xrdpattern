@@ -113,12 +113,15 @@ class XrdPattern(PatternData):
     #
     #     return intensities, labels
 
-    def get_parsing_report(self, datafile_fpath : str) -> ParsingReport:
+    def get_parsing_report(self, datafile_fpath : str = 'Unmarked pattern') -> ParsingReport:
         pattern_health = ParsingReport(datafile_fpath=datafile_fpath)
         if len(self.two_theta_values) == 0:
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.two_theta_values) < 10:
+        elif len(self.two_theta_values) < 50:
             pattern_health.add_critical('Data is too short. Less than 50 entries!')
+        if np.any(self.intensities < 0):
+            pattern_health.add_critical('Pattern contains negative intensity found!')
+
 
         if self.powder_experiment.primary_wavelength is None:
             pattern_health.add_error('Primary wavelength missing!')
