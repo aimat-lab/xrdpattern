@@ -119,18 +119,14 @@ class XrdPattern(PatternData):
             pattern_health.add_critical('No data found. Degree over intensity is empty!')
         elif len(self.two_theta_values) < 50:
             pattern_health.add_critical('Data is too short. Less than 50 entries!')
-        if np.any(self.intensities < 0):
+        if np.sum(self.intensities) < 0:
             pattern_health.add_critical('Pattern contains negative intensity found!')
-
-
         if self.powder_experiment.primary_wavelength is None:
             pattern_health.add_error('Primary wavelength missing!')
 
         return pattern_health
 
-
-    def get_pattern_data(self, apply_standardization : bool = True,
-                               zero_mask_below : float = 0, zero_mask_above : float = 90) -> tuple[NDArray, NDArray]:
+    def get_pattern_data(self, apply_standardization : bool = True, zero_mask_below : float = 0, zero_mask_above : float = 90) -> tuple[NDArray, NDArray]:
         if apply_standardization:
             start, stop = self.std_two_theta_range()
             num_entries = self.std_num_entries()
