@@ -14,6 +14,7 @@ from holytools.userIO import TrackedInt
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from .pattern import XrdPattern
 from .db_report import DatabaseReport
+from ..xrd import XRayInfo
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
 
@@ -76,6 +77,10 @@ class PatternDB:
         data_fpaths = [node.get_path() for node in xrd_file_nodes]
 
         return data_fpaths
+
+    def set_xray(self, xray_info : XRayInfo):
+        for p in self.patterns:
+            p.powder_experiment.xray_info = xray_info
 
     # -------------------------------------------
     # attributes

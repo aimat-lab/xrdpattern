@@ -6,7 +6,7 @@ from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.pattern import PatternDB
-from xrdpattern.xrd import PowderExperiment
+from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
 
 
 # -------------------------------------------
@@ -16,8 +16,12 @@ class DatabaseProcessor:
         self.root_dirpath : str = root_dirpath
         self.raw_dirpath : str = os.path.join(root_dirpath, 'raw')
         self.processed_dirpath : str = os.path.join(root_dirpath, 'processed')
+        self.cu_xray : XRayInfo = XrdAnode.Cu.get_xray_info()
 
-    def process_contribution(self, dirname: str, selected_suffixes : Optional[list[str]] = None, use_cif_labels : bool = False):
+    def process_contribution(self, dirname: str,
+                             selected_suffixes : Optional[list[str]] = None,
+                             use_cif_labels : bool = False,
+                             xray_info : Optional[XRayInfo] = None):
         print(f'Started processing contributino {dirname}')
         data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
         pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes)
@@ -26,7 +30,10 @@ class DatabaseProcessor:
         if use_cif_labels:
             self.attach_cif_labels(pattern_db)
         else:
-            self.attach_labels(pattern_db, contrib_dirpath=os.path.join(self.raw_dirpath, dirname))
+            self.attach_csv_labels(pattern_db, contrib_dirpath=os.path.join(self.raw_dirpath, dirname))
+        if xray_info:
+            pattern_db.set_xray(xray_info=xray_info)
+
         self.save(pattern_db, dirname=dirname)
 
     # ---------------------------------------
@@ -68,7 +75,7 @@ class DatabaseProcessor:
 
 
     @log_execution
-    def attach_labels(self, pattern_db : PatternDB, contrib_dirpath : str):
+    def attach_csv_labels(self, pattern_db : PatternDB, contrib_dirpath : str):
         csv_fpath = os.path.join(contrib_dirpath, 'labels.csv')
         if not os.path.isfile(csv_fpath):
             print(f'No labels available for contribution {os.path.basename(contrib_dirpath)}')
@@ -103,19 +110,26 @@ class DatabaseProcessor:
         self.process_contribution(dirname='coudert_hardiagon_0', selected_suffixes=['json'])
 
     def parse_USC(self):
-        self.process_contribution(dirname='hodge_alwen_0')
-        self.process_contribution(dirname='hodge_alwen_1')
+        self.process_contribution(dirname='hodge_alwen_0', xray_info=self.cu_xray)
+        self.process_contribution(dirname='hodge_alwen_1', xray_info=self.cu_xray)
 
     def parse_EMPA(self):
-        self.process_contribution(dirname='siol_wieczorek_0')
-        self.process_contribution(dirname='siol_zhuk_0')
+        self.process_contribution(dirname='siol_wieczorek_0', xray_info=self.cu_xray)
+        self.process_contribution(dirname='siol_zhuk_0', xray_info=self.cu_xray)
 
     def parse_IKFT(self):
-        self.process_contribution(dirname='wolf_wolf_0')
+        self.process_contribution(dirname='wolf_wolf_0', xray_info=self.cu_xray)
 
     def parse_HKUST(self):
-        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['txt'])
+        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['txt'], xray_info=self.cu_xray)
 
+    def parse_all(self):
+        self.parse_INT()
+        self.parse_CNRS()
+        self.parse_USC()
+        self.parse_EMPA()
+        self.parse_IKFT()
+        self.parse_HKUST()
 
 def read_file(fpath: str) -> str:
     with open(fpath, 'r') as file:
@@ -131,8 +145,6 @@ def safe_cif_read(cif_content: str) -> Optional[CrystalPhase]:
 
 if __name__ == "__main__":
     processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
-    # processor.parse_EMPA()
-    # processor.parse_IKFT()
-    processor.parse_HKUST()
+    processor.parse_all()
 
 

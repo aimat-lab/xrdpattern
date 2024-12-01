@@ -40,3 +40,9 @@ class XrdAnode(Enum):
             "Ag": (0.563813, 0.559421),
         }
         return MATERiAL_TO_WAVELENGTHS[self.value]
+
+
+
+    def get_xray_info(self) -> XRayInfo:
+        primary, secondary = self.get_wavelengths()
+        return XRayInfo(primary_wavelength=primary, secondary_wavelength=secondary)
