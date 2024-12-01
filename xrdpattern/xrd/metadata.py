@@ -24,6 +24,8 @@ class Metadata(JsonDataclass):
         s1, s2 = self.to_str(), other.to_str()
         return s1 == s2
 
+    def remove_filename(self):
+        self.filename = None
 
 
 if __name__ == "__main__":

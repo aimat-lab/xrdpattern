@@ -24,17 +24,17 @@ class DatabaseProcessor:
                              xray_info : Optional[XRayInfo] = None):
         print(f'Started processing contributino {dirname}')
         data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
+        contrib_dirpath = os.path.join(self.raw_dirpath, dirname)
         pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes)
 
         self.attach_metadata(pattern_db, dirname=dirname)
-        if use_cif_labels:
-            self.attach_cif_labels(pattern_db)
-        else:
-            self.attach_csv_labels(pattern_db, contrib_dirpath=os.path.join(self.raw_dirpath, dirname))
+        self.attach_labels(pattern_db=pattern_db, contrib_dirpath=contrib_dirpath, use_cif_labels=use_cif_labels)
         if xray_info:
             pattern_db.set_xray(xray_info=xray_info)
+        for p in pattern_db.patterns:
+            p.metadata.remove_filename()
 
-        self.save(pattern_db, dirname=dirname)
+        self.save(pattern_db.get_noncritical(), dirname=dirname)
 
     # ---------------------------------------
     # Parsing steps
@@ -54,6 +54,12 @@ class DatabaseProcessor:
             p.metadata.contributor_name = form_data["name_of_advisor"]
             p.metadata.institution = form_data["contributing_institution"]
 
+
+    def attach_labels(self, pattern_db : PatternDB, contrib_dirpath: str, use_cif_labels : bool):
+        if use_cif_labels:
+            self.attach_cif_labels(pattern_db)
+        else:
+            self.attach_csv_labels(pattern_db, contrib_dirpath=contrib_dirpath)
 
     @log_execution
     def attach_cif_labels(self, pattern_db : PatternDB):

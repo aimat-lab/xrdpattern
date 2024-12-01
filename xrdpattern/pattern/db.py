@@ -95,10 +95,10 @@ class PatternDB:
                 return False
         return True
 
-    def get_noncritical(self) -> list[XrdPattern]:
+    def get_noncritical(self) -> PatternDB:
         noncritical_patterns = [pattern for pattern in self.patterns if not pattern.get_parsing_report().has_critical()]
         print(f'Excluded {len(self.patterns) - len(noncritical_patterns)} patterns with critical errors')
-        return noncritical_patterns
+        return PatternDB(patterns=noncritical_patterns)
 
     def plot_quantity(self, attr : str = 'crystal_structure.spacegroup', print_counts : bool = False):
         quantity_list = []
