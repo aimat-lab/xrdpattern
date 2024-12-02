@@ -1,3 +1,5 @@
+import tempfile
+
 from tests.base_tests import ParserBaseTest
 from xrdpattern.parsing import Orientation, DataExamples
 from xrdpattern.pattern import XrdPattern, PatternDB
@@ -54,10 +56,8 @@ class TestParseStoe(ParserBaseTest):
         print(f'{pattern.to_str()[:1000]} ... {pattern.to_str()[-1000:]}')
 
 
-from unittest.mock import patch
 class TestParserDatabase(ParserBaseTest):
 
-    @patch('builtins.input', lambda *args, **kwargs : 'VERTICAL')
     def test_db_parsing_ok(self):
         with self.assertNoLogs(level=0):
             bruker_db = self.get_bruker_db()
@@ -65,7 +65,7 @@ class TestParserDatabase(ParserBaseTest):
 
         for db in [bruker_db, all_db]:
             self.assertIsInstance(db, PatternDB)
-        all_db.save(dirpath='/tmp/patterndb')
+        all_db.save(dirpath=tempfile.mktemp())
 
 
     def test_db_report_ok(self):
@@ -93,4 +93,5 @@ class TestParserDatabase(ParserBaseTest):
 
 if __name__ == "__main__":
     # TestParserDatabase.execute_all()
-    TestMasterParser.update_aimat_json()
+    # TestMasterParser.update_aimat_json()
+    TestParserDatabase.execute_all()

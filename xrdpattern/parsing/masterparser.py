@@ -42,7 +42,7 @@ class MasterParser:
             pattern_infos = [self.load_cif(fpath=fpath)]
         elif the_format == Formats.stoe_raw:
             pattern_infos = [self.stoe_reader.get_pattern_info(fpath=fpath)]
-        elif the_format.suffixes in Formats.get_datafile_suffixes():
+        elif the_format in Formats.get_datafile_formats():
             pattern_infos = [self.load_data_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:
             pattern_infos = self.load_csv(fpath=fpath)

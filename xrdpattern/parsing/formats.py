@@ -38,8 +38,8 @@ class Formats:
         return cls.aimat_xrdpattern.suffixes[0]
 
     @classmethod
-    def get_datafile_suffixes(cls):
-        return [xrd_format.suffixes for xrd_format in cls.get_all_formats() if not xrd_format.suffixes in [Formats.aimat_suffix(), "csv"]]
+    def get_datafile_formats(cls):
+        return [f for f in cls.get_all_formats() if not f in [Formats.aimat_xrdpattern, Formats.csv]]
 
     @classmethod
     def get_all_suffixes(cls) -> list[str]:

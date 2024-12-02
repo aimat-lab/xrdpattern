@@ -11,10 +11,11 @@ from matplotlib import pyplot as plt
 from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedInt
+from xrdpattern.xrd import XRayInfo
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from .pattern import XrdPattern
 from .db_report import DatabaseReport
-from ..xrd import XRayInfo
+
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
 
@@ -61,8 +62,8 @@ class PatternDB:
                 new_patterns = [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath)]
                 patterns += new_patterns
                 fpath_dict[fpath] = new_patterns
-            except Exception:
-                patterdb_logger.log(msg=f"Could not import pattern from file {fpath}\n", level=logging.WARNING)
+            except Exception as e:
+                patterdb_logger.log(msg=f"Could not import pattern from file {fpath}: \"{e}\"\n", level=logging.WARNING)
             tracker.increment()
 
         failed_files = [fpath for fpath in data_fpaths if not fpath in fpath_dict]
