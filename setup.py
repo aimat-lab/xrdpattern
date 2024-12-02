@@ -14,7 +14,7 @@ class CustomBuild(build):
 
 # noinspection PyTypeChecker
 setup(name='xrdpattern',
-      version='0.9.1',
+      version='0.9.2',
       description='Python library for XrdPatterns including file import, file export and postprocessing functionalities',
       install_requires=[
           'numpy < 2.0.0',
