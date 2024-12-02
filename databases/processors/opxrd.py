@@ -120,7 +120,7 @@ class ContributionProcessor:
 
 
 
-class OpXRD(ContributionProcessor):
+class OpXRDProcessor(ContributionProcessor):
     def parse_INT(self):
         self.process(dirname='breitung_schweidler_0', selected_suffixes=['raw'])
         self.process(dirname='breitung_schweidler_1', selected_suffixes=['raw'])
@@ -146,6 +146,6 @@ class OpXRD(ContributionProcessor):
         self.process(dirname='zhang_cao_0', use_cif_labels=True,selected_suffixes=['txt'], xray_info=self.cu_xray)
 
 
-    processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
-
-
+if __name__ == "__main__":
+    processor = OpXRDProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
+    processor.parse_LBNL()
