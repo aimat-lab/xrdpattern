@@ -31,14 +31,22 @@ class PatternDB:
     # -------------------------------------------
     # save/load
 
-    def save(self, dirpath : str):
+    def save(self, dirpath : str, group_files : bool = False):
         if os.path.isfile(dirpath):
             raise ValueError(f'Path \"{dirpath}\" is occupied by file')
         os.makedirs(dirpath, exist_ok=True)
 
-        for j, pattern in enumerate(self.patterns):
-            fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_suffix()}')
-            pattern.save(fpath=fpath)
+        if group_files:
+            for j, patterns in enumerate(self.fpath_dict.values()):
+                for k, p in enumerate(patterns):
+                    fpath = os.path.join(dirpath, f'pattern_group_{j}_{k}.{Formats.aimat_suffix()}')
+                    p.save(fpath=fpath)
+            
+        else:
+            for j, pattern in enumerate(self.patterns):
+                fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_suffix()}')
+                pattern.save(fpath=fpath)
+
 
     @classmethod
     def load(cls, dirpath : str,
@@ -51,7 +59,6 @@ class PatternDB:
         data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=suffixes)
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
-
 
         fpath_dict = {}
         failed_files = []
