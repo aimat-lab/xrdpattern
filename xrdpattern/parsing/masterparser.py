@@ -67,7 +67,7 @@ class MasterParser:
 
     @staticmethod
     def load_data_file(fpath: str, format_hint : XrdFormat) -> PatternData:
-        xylib_repr = get_xylib_repr(fpath=fpath, format_hint=format_hint)
+        xylib_repr = get_xylib_repr(fpath=fpath, format_name=format_hint.name)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         powder_experiment = MasterParser.parse_experiment_params(header_str=header)
         metadata = MasterParser.parse_metadata(header_str=header)

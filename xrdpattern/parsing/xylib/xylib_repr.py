@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 from __future__ import annotations
+
 import os
-from typing import Optional
 from tempfile import NamedTemporaryFile
+from typing import Optional
+
 import xylib
+
 __version__ = xylib.xylib_get_version()
 
 import re
-from xrdpattern.parsing.formats import XrdFormat
 from dataclasses import dataclass
+
+
 # -------------------------------------------
 
 @dataclass
@@ -31,14 +35,14 @@ class XYLibPattern:
         return self.data_str
 
 
-def get_xylib_repr(fpath : str, format_hint : XrdFormat) -> XYLibPattern:
+def get_xylib_repr(fpath : str, format_name : Optional[str] = None) -> XYLibPattern:
     if not os.path.isfile(fpath):
         raise ValueError(f"File \"{fpath}\" does not exist")
 
     try:
         with NamedTemporaryFile(delete=False) as temp_file:
             output_path = temp_file.name
-        option = XYLibOption(input_path=fpath, output_path=output_path, format_hint=format_hint)
+        option = XYLibOption(input_path=fpath, output_path=output_path, format_name=format_name)
         convert_file(opt=option)
         with open(output_path, "r") as file:
             content = file.read()
@@ -50,7 +54,7 @@ def get_xylib_repr(fpath : str, format_hint : XrdFormat) -> XYLibPattern:
 
 def convert_file(opt : XYLibOption):
     if opt.INPUT_TYPE:
-        d = xylib.load_file(opt.INPUT_FILE, opt.INPUT_TYPE.name)
+        d = xylib.load_file(opt.INPUT_FILE, opt.INPUT_TYPE)
     else:
         d = xylib.load_file(opt.INPUT_FILE)
 
@@ -85,7 +89,7 @@ def export_metadata(f, meta):
 
 
 class XYLibOption:
-    def __init__(self, input_path : str, output_path : str, format_hint : Optional[XrdFormat] = None):
+    def __init__(self, input_path : str, output_path : str, format_name : Optional[str] = None):
         self.INPUT_FILE : str = input_path
         self.OUTPUT_PATH : str = output_path
-        self.INPUT_TYPE : Optional[XrdFormat] = format_hint
+        self.INPUT_TYPE : Optional[str] = format_name

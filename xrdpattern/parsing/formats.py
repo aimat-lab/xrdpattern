@@ -1,7 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from holytools.fsys import SaveManager
-from .xylib import get_xylib_repr
 from .stoe import StoeParser
 
 # -------------------------------------------
