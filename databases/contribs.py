@@ -1,8 +1,8 @@
-from databases.processors.opxrd import ContributionProcessor
+from databases.processors.opxrd import OpXRDProcessor
 from xrdpattern.parsing import Orientation
 
 
-class OpXRDProcessor(ContributionProcessor):
+class ContributionProcessor(OpXRDProcessor):
     def parse_INT(self):
         self.process(dirname='breitung_schweidler_0', selected_suffixes=['raw'])
         self.process(dirname='breitung_schweidler_1', selected_suffixes=['raw'])
@@ -29,5 +29,5 @@ class OpXRDProcessor(ContributionProcessor):
 
 
 if __name__ == "__main__":
-    processor = OpXRDProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
+    processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
     processor.parse_LBNL()

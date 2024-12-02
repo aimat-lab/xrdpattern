@@ -4,7 +4,6 @@ import tempfile
 
 import requests
 
-from holytools.fsys import SaveManager
 from xrdpattern.pattern import XrdPattern
 
 

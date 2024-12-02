@@ -1,9 +1,10 @@
 import os
-import shutil
+
+import matplotlib.pyplot as plt
 
 from xrdpattern.parsing import Formats
 from xrdpattern.pattern import XrdPattern, PatternDB
-import matplotlib.pyplot as plt
+
 
 def multiplot(patterns_to_ploat, labels):
     fig, axes = plt.subplots(4, 8, figsize=(20, 10))

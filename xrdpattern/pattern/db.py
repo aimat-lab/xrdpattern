@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional, Any
 
 from matplotlib import pyplot as plt
@@ -24,8 +24,8 @@ parser = MasterParser()
 @dataclass
 class PatternDB:
     patterns : list[XrdPattern]
-    fpath_dict : dict[str, list[XrdPattern]] = field(default_factory=dict)
-    database_report : Optional[DatabaseReport] = None
+    failed_files : list[str]
+    fpath_dict: dict[str, list[XrdPattern]]
     name : str = ''
 
     # -------------------------------------------
@@ -75,10 +75,7 @@ class PatternDB:
                 failed_files.append(fpath)
                 patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}: \"{e}\"\n")
 
-        database_report = DatabaseReport(data_dirpath=dirpath, fpath_dict=fpath_dict, failed_files=failed_files)
-        database_report.print()
-
-        return PatternDB(patterns=patterns, fpath_dict=fpath_dict, database_report=database_report)
+        return PatternDB(patterns=patterns, fpath_dict=fpath_dict, failed_files=failed_files)
 
     @staticmethod
     def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
@@ -112,10 +109,11 @@ class PatternDB:
         noncritical_patterns = [pattern for pattern in self.patterns if not pattern.get_parsing_report().has_critical()]
         for fpath, extracted_patterns in self.fpath_dict.items():
             self.fpath_dict[fpath] = [p for p in extracted_patterns if not p.get_parsing_report().has_critical()]
-        return PatternDB(patterns=noncritical_patterns, fpath_dict=self.fpath_dict)
+        return PatternDB(patterns=noncritical_patterns, fpath_dict=self.fpath_dict, failed_files=self.failed_files)
 
 
-
+    def get_database_report(self) -> DatabaseReport:
+        return DatabaseReport(data_dirpath=self.name, failed_files=self.failed_files, fpath_dict=self.fpath_dict)
 
 
 

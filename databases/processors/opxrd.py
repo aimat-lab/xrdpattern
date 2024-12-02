@@ -12,7 +12,7 @@ from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
 
 # -------------------------------------------
 
-class ContributionProcessor:
+class OpXRDProcessor:
     def __init__(self, root_dirpath : str):
         self.root_dirpath : str = root_dirpath
         self.raw_dirpath : str = os.path.join(root_dirpath, 'processed')

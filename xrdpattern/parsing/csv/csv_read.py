@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-import tempfile
-
-import pandas as pd
-
 import csv
 import math
 
-from holytools.abstract import SelectableEnum
-from holytools.fsys import SaveManager
+import pandas as pd
 
+from holytools.abstract import SelectableEnum
 from xrdpattern.xrd import PatternData, XrdAnode
 from .table_selector import TableSelector, TextTable, NumericalTable
 
