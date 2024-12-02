@@ -36,8 +36,9 @@ class TestMasterParser(ParserBaseTest):
         for data in [raw_data, std_data]:
             self.check_data_ok(*data)
 
-    def update_aimat_json(self):
-        pattern = XrdPattern.load(fpath=self.get_fpath())
+    @classmethod
+    def update_aimat_json(cls):
+        pattern = XrdPattern.load(fpath=cls.get_fpath())
         pattern.save(fpath=DataExamples.get_aimat_fpath(), force_overwrite=True)
 
 
@@ -91,4 +92,5 @@ class TestParserDatabase(ParserBaseTest):
 
 
 if __name__ == "__main__":
-    TestParserDatabase.execute_all()
+    # TestParserDatabase.execute_all()
+    TestMasterParser.update_aimat_json()
