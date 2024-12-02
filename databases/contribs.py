@@ -20,11 +20,11 @@ class ContributionProcessor(OpXRDProcessor):
         def parse_csv_contribution(dirname : str, selected_suffixes : Optional[list[str]] = None):
             self.process(dirname=dirname, csv_orientation=Orientation.VERTICAL, label_groups=True, selected_suffixes=selected_suffixes)
 
-        parse_csv_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'])
-        parse_csv_contribution(dirname='sutter-fella_abdelsamie_0')
-        parse_csv_contribution(dirname='sutter-fella_hu_0')
-        parse_csv_contribution(dirname='sutter-fella_kodalle_0')
-        parse_csv_contribution(dirname='sutter-fella_singh_0')
+        # parse_csv_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'])
+        # parse_csv_contribution(dirname='sutter-fella_abdelsamie_0')
+        # parse_csv_contribution(dirname='sutter-fella_hu_0')
+        parse_csv_contribution(dirname='sutter-fella_kodalle_0', selected_suffixes=['dat','csv'])
+        # parse_csv_contribution(dirname='sutter-fella_singh_0')
 
     def parse_EMPA(self):
         self.process(dirname='siol_wieczorek_0', xray_info=self.cu_xray)

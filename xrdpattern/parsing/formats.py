@@ -14,18 +14,14 @@ class XrdFormat:
 
 class Formats:
     bruker_raw = XrdFormat("bruker_raw", ["raw"])
-    stoe_raw = XrdFormat("stoe_raw", ['raw'])
     bruker_spc = XrdFormat("bruker_spc", ["spc"])
     canberra_cnf = XrdFormat("canberra_cnf", ["cnf"])
     canberra_mca = XrdFormat("canberra_mca", ["mca"])
     chiplot = XrdFormat("chiplot", ["chi"])
     cpi = XrdFormat("cpi", ["cpi"])
-    csv = XrdFormat("csv", ["csv", "xlsx"])
     dbws = XrdFormat("dbws", ["dbw"])
-    pdcif = XrdFormat("pdCIF", ["cif"])
     philips_rd = XrdFormat("philips_rd", ["rd"])
     philips_udf = XrdFormat("philips_udf", ["udf"])
-    plaintext_dat = XrdFormat("column_dat", ["dat"])
     riet7 = XrdFormat("riet7", ["dat"])
     rigaku_dat = XrdFormat("rigaku_dat", ["dat"])
     text = XrdFormat("text", ["txt", 'xy'])
@@ -33,15 +29,22 @@ class Formats:
     xfit_xdd = XrdFormat("xfit_xdd", ["xdd"])
     xrdml = XrdFormat("xrdml", ["xrdml"])
     xsyg = XrdFormat("xsyg", ["xsyg"])
+
+    plaintext_dat = XrdFormat("column_dat", ["dat"])
+    pdcif = XrdFormat("pdCIF", ["cif"])
     aimat_xrdpattern = XrdFormat("aimat", ['json'])
+    stoe_raw = XrdFormat("stoe_raw", ['raw'])
+    csv = XrdFormat("csv", ["csv", "xlsx"])
 
     @classmethod
     def aimat_suffix(cls) -> str:
         return cls.aimat_xrdpattern.suffixes[0]
 
     @classmethod
-    def get_datafile_formats(cls):
-        return [f for f in cls.get_all_formats() if not f in [Formats.aimat_xrdpattern, Formats.csv]]
+    def get_xylib_formats(cls):
+        return [cls.bruker_raw, cls.bruker_spc, cls.canberra_cnf, cls.canberra_mca, cls.chiplot, cls.cpi, cls.dbws,
+                cls.philips_rd, cls.philips_udf, cls.riet7, cls.rigaku_dat, cls.text, cls.uxd, cls.xfit_xdd,
+                cls.xrdml, cls.xsyg]
 
     @classmethod
     def get_all_suffixes(cls) -> list[str]:
