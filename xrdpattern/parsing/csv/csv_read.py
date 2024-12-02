@@ -54,10 +54,9 @@ class CsvParser:
             pattern_infos.append(new)
 
         x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'
-        print(f'\nThe format of the csv file {fpath} was automatically recognized as:'
+        print(f'\nThe format of the csv file {fpath} was automatically determined/specified as:'
               f'\n- XAxisType: \"{x_axis_type}\"'
               f'\n- Csv Seperator : \"{CsvParser.get_separator(fpath=fpath)}\"'
-              f'T\nThe orientation of the patterns was specified as follows:'
               f'\n- Orientation {pattern_dimension.value}')
 
         return pattern_infos
