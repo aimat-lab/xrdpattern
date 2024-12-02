@@ -12,7 +12,7 @@ from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
-from xrdpattern.xrd import XRayInfo
+from xrdpattern.xrd import XRayInfo, PatternData
 from .db_report import DatabaseReport
 from .pattern import XrdPattern
 
@@ -41,7 +41,9 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, dirpath : str, suffixes : Optional[list[str]] = None, csv_orientation : Optional[Orientation] = None) -> PatternDB:
+    def load(cls, dirpath : str,
+             suffixes : Optional[list[str]] = None,
+             csv_orientation : Optional[Orientation] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
@@ -50,13 +52,16 @@ class PatternDB:
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
+
         fpath_dict = {}
         failed_files = []
         patterns : list[XrdPattern] = []
+        def extract(xrd_fpath : str) -> list[PatternData]:
+            return parser.extract(fpath=xrd_fpath, csv_orientation=csv_orientation)
 
         for fpath in TrackedCollection(data_fpaths):
             try:
-                new_patterns = [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath, csv_orientation=csv_orientation)]
+                new_patterns = [XrdPattern(**info.to_dict()) for info in extract(fpath)]
                 patterns += new_patterns
                 fpath_dict[fpath] = new_patterns
             except Exception as e:
@@ -69,7 +74,7 @@ class PatternDB:
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, database_report=database_report)
 
     @staticmethod
-    def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]):
+    def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
         if selected_suffixes is None:
             selected_suffixes = Formats.get_all_suffixes()
 
