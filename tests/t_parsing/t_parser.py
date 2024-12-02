@@ -57,7 +57,6 @@ class TestParseStoe(ParserBaseTest):
 
 
 class TestParserDatabase(ParserBaseTest):
-
     def test_db_parsing_ok(self):
         with self.assertNoLogs(level=0):
             bruker_db = self.get_bruker_db()
