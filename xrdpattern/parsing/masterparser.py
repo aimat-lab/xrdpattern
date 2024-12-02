@@ -11,7 +11,7 @@ from xrdpattern.xrd import PatternData, XRayInfo, PowderExperiment, Metadata
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
 from .csv import CsvParser, Orientation
-from .dat.dat_boi import DatParser
+from .dat.dat_parser import DatParser
 from .formats import XrdFormat, Formats
 from .xylib import get_xylib_repr
 

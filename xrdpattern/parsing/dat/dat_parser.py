@@ -48,7 +48,6 @@ class DatParser:
         current_frame = 0
         indices = []
         for k, frame_num in enumerate(img_list):
-            if k == 0:
             if frame_num == current_frame:
                 indices.append(k)
                 current_frame += 1
