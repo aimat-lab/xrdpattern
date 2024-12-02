@@ -51,23 +51,23 @@ class TestParseStoe(ParserBaseTest):
 
 from unittest.mock import patch
 class TestParserDatabase(ParserBaseTest):
-    bruker_only_db = None
-    all_example_db = None
 
     @patch('builtins.input', lambda *args, **kwargs : 'VERTICAL')
     def test_db_parsing_ok(self):
         with self.assertNoLogs(level=0):
-            TestParserDatabase.bruker_only_db = PatternDB.load(dirpath=DataExamples.get_datafolder_fpath())
-            TestParserDatabase.all_example_db = PatternDB.load(dirpath=DataExamples.get_example_dirpath(),
-                                                               csv_orientation=Orientation.HORIZONTAL)
+            bruker_db = self.get_bruker_db()
+            all_db = self.get_all_db()
 
-        for db in [self.bruker_only_db, self.all_example_db]:
+        for db in [bruker_db, all_db]:
             self.assertIsInstance(db, PatternDB)
-        self.all_example_db.save(dirpath='/tmp/patterndb')
+        all_db.save(dirpath='/tmp/patterndb')
 
 
     def test_db_report_ok(self):
-        for db in [self.bruker_only_db, self.all_example_db]:
+        bruker_db = self.get_bruker_db()
+        all_db = self.get_all_db()
+
+        for db in [bruker_db, all_db]:
             report = db.database_report
             as_str = report.as_str()
             print(f'Parsing report: {as_str[:300]}')
@@ -76,14 +76,14 @@ class TestParserDatabase(ParserBaseTest):
             self.assertTrue(len(report.pattern_reports) > 0)
 
 
-if __name__ == "__main__":
-    # TestParserDatabase.execute_all(manual_mode=False)
-    # TestParserPattern.execute_all()
-    # TestParseStoe.execute_all()
-    # TestParserPattern.execute_all()
-    # pattern = XrdPattern.load(fpath='/home/daniel/Drive/data/opxrd/v0_backup/breitung_schweidler_0/data/Yanyan/HEALF/CoCrFeMnNi.raw')
+    @staticmethod
+    def get_bruker_db() -> PatternDB:
+        return PatternDB.load(dirpath=DataExamples.get_datafolder_fpath())
+        
+    @staticmethod
+    def get_all_db() -> PatternDB:
+        return PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=Orientation.HORIZONTAL)
 
-    # _ = PatternDB.load(dirpath='/home/daniel/Drive/data/opxrd/v0_backup/breitung_schweidler_0/')
+
+if __name__ == "__main__":
     TestParserDatabase.execute_all()
-    TestParseStoe.execute_all()
-    TestParserPattern.execute_all()

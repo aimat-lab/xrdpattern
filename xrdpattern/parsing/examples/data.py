@@ -31,5 +31,3 @@ class DataExamples:
     @staticmethod
     def get_example_dirpath() -> str:
         return os.path.dirname(__file__)
-
-
