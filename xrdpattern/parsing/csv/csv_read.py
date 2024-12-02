@@ -31,7 +31,7 @@ class CsvParser:
 
     def extract_patterns(self, fpath: str, pattern_dimension : Orientation) -> list[PatternData]:
         if SaveManager.get_suffix(fpath) == 'xlsx':
-            tmp_fpath = tempfile.mktemp()
+            tmp_fpath = tempfile.mktemp(suffix='.csv')
             CsvParser.xlsx_to_csv(xlsx_fpath=fpath, csv_fpath=tmp_fpath)
             fpath = tmp_fpath
 
