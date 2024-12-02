@@ -21,6 +21,9 @@ class DatabaseReport:
         self.source_files = list(self.fpath_dict.keys()) + self.failed_files
 
 
+    def print(self):
+        print(self.as_str())
+
     def as_str(self, with_individual_reports : bool = False) -> str:
         num_failed = len(self.failed_files)
         num_attempted_files = len(self.source_files)
@@ -50,3 +53,4 @@ class DatabaseReport:
         summary_str += '\n\n----------------------------------------'
 
         return summary_str
+

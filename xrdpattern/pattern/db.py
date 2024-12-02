@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
-from holytools.userIO import TrackedInt
+from holytools.userIO import TrackedInt, TrackedCollection
 from xrdpattern.xrd import XRayInfo
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from .pattern import XrdPattern
@@ -41,36 +41,36 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, dirpath : str, selected_suffixes : Optional[list[str]] = None, csv_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
+    def load(cls, dirpath : str, selected_suffixes : Optional[list[str]] = None,
+             csv_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
 
         if selected_suffixes is None:
             selected_suffixes = Formats.get_all_suffixes()
+
         data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, select_suffixes=selected_suffixes)
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {selected_suffixes} found in directory {dirpath}")
 
+        fpath_dict = {}
+        failed_files = []
         patterns : list[XrdPattern] = []
         parser = MasterParser(csv_orientation=csv_orientation)
 
-        fpath_dict = {}
-        tracker = TrackedInt(start_value=0, finish_value=len(data_fpaths))
-        for fpath in data_fpaths:
+        for fpath in TrackedCollection(data_fpaths):
             try:
                 new_patterns = [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath)]
                 patterns += new_patterns
                 fpath_dict[fpath] = new_patterns
             except Exception as e:
+                failed_files.append(fpath)
                 patterdb_logger.log(msg=f"Could not import pattern from file {fpath}: \"{e}\"", level=logging.WARNING)
-            tracker.increment()
-        if not tracker.is_finished():
-            tracker.finish()
 
-        failed_files = [fpath for fpath in data_fpaths if not fpath in fpath_dict]
         database_report = DatabaseReport(data_dirpath=dirpath, fpath_dict=fpath_dict, failed_files=failed_files)
-        print(database_report.as_str())
+        database_report.print()
+
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, database_report=database_report)
 
     @staticmethod
@@ -102,6 +102,48 @@ class PatternDB:
         noncritical_patterns = [pattern for pattern in self.patterns if not pattern.get_parsing_report().has_critical()]
         print(f'Excluded {len(self.patterns) - len(noncritical_patterns)} patterns with critical errors')
         return PatternDB(patterns=noncritical_patterns)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def plot_quantity(self, attr : str = 'crystal_structure.spacegroup', print_counts : bool = False):
         quantity_list = []
