@@ -1,5 +1,6 @@
 import json
 import os
+import tempfile
 
 import requests
 
@@ -47,7 +48,7 @@ def parse_cod_cif(num : int) -> XrdPattern:
     except:
         pass
 
-    temp_fpath = SaveManager.get_tmp_fpath(suffix='.cif')
+    temp_fpath = tempfile.mktemp(suffix='.cif')
     with open(temp_fpath, 'w') as f:
         f.write(cif_content)
 
