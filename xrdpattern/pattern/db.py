@@ -66,7 +66,7 @@ class PatternDB:
                 fpath_dict[fpath] = new_patterns
             except Exception as e:
                 failed_files.append(fpath)
-                patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}: \"{e}\"")
+                patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}: \"{e}\"\n")
 
         database_report = DatabaseReport(data_dirpath=dirpath, fpath_dict=fpath_dict, failed_files=failed_files)
         database_report.print()

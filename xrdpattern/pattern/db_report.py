@@ -42,7 +42,7 @@ class DatabaseReport:
         if num_failed > 0:
             summary_str += f'\n\nFailed files:\n'
             for pattern_fpath in self.failed_files:
-                summary_str += f'\n{pattern_fpath}'
+                summary_str += f'\n- {pattern_fpath}'
 
         if with_individual_reports:
             individual_reports = '\n\nIndividual file reports:\n\n'

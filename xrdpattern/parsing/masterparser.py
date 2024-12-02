@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os.path
+import tempfile
 from typing import Optional, Iterator, Tuple
 
 import numpy as np
@@ -84,13 +85,16 @@ class MasterParser:
 
 
     def load_csv(self, fpath : str, orientation : Optional[Orientation] = None) -> list[PatternData]:
+        if SaveManager.get_suffix(fpath) == 'xlsx':
+            tmp_fpath = tempfile.mktemp(suffix='.csv')
+            CsvParser.xlsx_to_csv(xlsx_fpath=fpath, csv_fpath=tmp_fpath)
+            fpath = tmp_fpath
         if CsvParser.has_two_columns(fpath=fpath):
             orientation = Orientation.VERTICAL
         if orientation is None:
             raise ValueError(f"Could not determine orientation of data in csv file {fpath}")
 
-        pattern_infos = self.csv_parser.extract_patterns(fpath=fpath, pattern_dimension=orientation)
-        return pattern_infos
+        return self.csv_parser.extract_patterns(fpath=fpath, pattern_dimension=orientation)
 
     def load_cif(self, fpath : str) -> PatternData:
         return self.cif_parser.extract_pattern(fpath=fpath)

@@ -1,10 +1,10 @@
 import os
 from typing import Optional
 
+from databases.processors.tools.fileIO import read_file, safe_cif_read
 from databases.tools.csv_label import get_powder_experiment
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
-from xrdpattern.crystal import CrystalPhase
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
 
@@ -43,15 +43,14 @@ class DatabaseProcessor:
         self.process_contribution(dirname='wolf_wolf_0', xray_info=self.cu_xray)
 
     def parse_HKUST(self):
-        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['txt'], xray_info=self.cu_xray)
+        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True,
+                                  selected_suffixes=['txt'], xray_info=self.cu_xray)
 
-    def parse_all(self):
-        self.parse_INT()
-        self.parse_CNRS()
-        self.parse_USC()
-        self.parse_EMPA()
-        self.parse_IKFT()
-        self.parse_HKUST()
+    def process_all(self):
+        attributes = [getattr(self, name) for name in dir(self) if name.startswith('parse_')]
+        methods = [mthd for mthd in attributes if callable(mthd)]
+        for mthd in methods:
+            mthd()
 
     def process_contribution(self, dirname: str,
                              selected_suffixes : Optional[list[str]] = None,
@@ -141,22 +140,11 @@ class DatabaseProcessor:
         pattern_db.save(dirpath=out_dirpath)
 
 
-def read_file(fpath: str) -> str:
-    with open(fpath, 'r') as file:
-        cif_content = file.read()
-    return cif_content
-
-def safe_cif_read(cif_content: str) -> Optional[CrystalPhase]:
-    try:
-        extracted_phase = CrystalPhase.from_cif(cif_content)
-    except:
-        extracted_phase = None
-    return extracted_phase
-
 if __name__ == "__main__":
-    processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
+    processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
     # processor.parse_EMPA()
     # processor.parse_all()
-    processor.parse_INT()
+    # processor.parse_INT()
+    processor.parse_LBNL()
 
 
