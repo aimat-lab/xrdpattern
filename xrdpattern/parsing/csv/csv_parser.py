@@ -25,7 +25,7 @@ class CsvParser:
     MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr
                      # Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
 
-    def extract_patterns(self, fpath: str, pattern_dimension : Orientation) -> list[PatternData]:
+    def extract_multi(self, fpath: str, pattern_dimension : Orientation) -> list[PatternData]:
         matrix = self._as_matrix(fpath=fpath, pattern_orientation=pattern_dimension)
         x_axis_row = matrix.get_data(row=0)
         data_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]

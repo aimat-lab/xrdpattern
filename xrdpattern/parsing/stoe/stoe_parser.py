@@ -28,6 +28,18 @@ class StoeParser(BinaryReader):
         self.intensities : IntegerQuantity = IntegerQuantity(start=2560)
 
 
+    def extract(self, fpath : str) -> PatternData:
+        self.read(fpath=fpath)
+        experiment = PowderExperiment.make_empty()
+        experiment.xray_info = XRayInfo(primary_wavelength=self.primary_wavelength.get_value(),
+                                        secondary_wavelength=self.secondary_wavelength.get_value())
+
+        two_theta_values = self._get_x_values()
+        intensities = self._get_y_values()
+
+        two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
+        return PatternData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=experiment)
+
     def read(self, fpath : str):
         with open(fpath, 'rb') as f:
             byte_content = f.read()
@@ -40,19 +52,6 @@ class StoeParser(BinaryReader):
         size = num_entries - num_entries % self.intensities.dtype.get_num_bytes()
         self.intensities.set_size(size=size)
         super().read_bytes(byte_content=byte_content)
-
-
-    def get_pattern_info(self, fpath : str) -> PatternData:
-        self.read(fpath=fpath)
-        experiment = PowderExperiment.make_empty()
-        experiment.xray_info = XRayInfo(primary_wavelength=self.primary_wavelength.get_value(),
-                                        secondary_wavelength=self.secondary_wavelength.get_value())
-
-        two_theta_values = self._get_x_values()
-        intensities = self._get_y_values()
-
-        two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
-        return PatternData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=experiment)
 
 
     def _get_x_values(self) -> list[float]:

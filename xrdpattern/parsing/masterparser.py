@@ -40,7 +40,7 @@ class MasterParser:
         elif the_format == Formats.pdcif:
             pattern_infos = [self.load_cif(fpath=fpath)]
         elif the_format == Formats.stoe_raw:
-            pattern_infos = [self.stoe_reader.get_pattern_info(fpath=fpath)]
+            pattern_infos = [self.stoe_reader.extract(fpath=fpath)]
         elif the_format in Formats.get_datafile_formats():
             pattern_infos = [self.load_data_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:
@@ -94,10 +94,10 @@ class MasterParser:
         if orientation is None:
             raise ValueError(f"Could not determine orientation of data in csv file {fpath}")
 
-        return self.csv_parser.extract_patterns(fpath=fpath, pattern_dimension=orientation)
+        return self.csv_parser.extract_multi(fpath=fpath, pattern_dimension=orientation)
 
     def load_cif(self, fpath : str) -> PatternData:
-        return self.cif_parser.extract_pattern(fpath=fpath)
+        return self.cif_parser.extract(fpath=fpath)
 
     # -------------------------------------------
     # databases xylib header

@@ -6,7 +6,7 @@ from xrdpattern.xrd import PowderExperiment, PatternData, Metadata
 
 
 class CifParser:
-    def extract_pattern(self, fpath : str) -> PatternData:
+    def extract(self, fpath : str) -> PatternData:
         with open(fpath, 'r') as f:
             cif_content = f.read()
         experiment_info = PowderExperiment.from_cif(cif_content=cif_content)
@@ -85,4 +85,4 @@ def get_values_as_array(block, name, minlength = 2):
 if __name__ == "__main__":
     example_fpath = '/home/daniel/Drive/data/workspace/cod/1101016.cif'
     parser = CifParser()
-    parser.extract_pattern(fpath=example_fpath)
+    parser.extract(fpath=example_fpath)

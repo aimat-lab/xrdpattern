@@ -1,1 +1,1 @@
-from .reader import StoeParser
+from .stoe_parser import StoeParser

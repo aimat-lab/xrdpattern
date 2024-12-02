@@ -39,7 +39,7 @@ class TestCsvReader(Unittest):
     @staticmethod
     def read_as_pattern_info(pattern_data_axis : Orientation, csv_path : str):
         reader = CsvParser()
-        reader.extract_patterns(fpath=csv_path, pattern_dimension=pattern_data_axis)
+        reader.extract_multi(fpath=csv_path, pattern_dimension=pattern_data_axis)
 
 
 if __name__ == '__main__':
