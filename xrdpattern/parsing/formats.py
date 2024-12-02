@@ -42,9 +42,10 @@ class Formats:
 
     @classmethod
     def get_xylib_formats(cls):
-        return [cls.bruker_raw, cls.bruker_spc, cls.canberra_cnf, cls.canberra_mca, cls.chiplot, cls.cpi, cls.dbws,
-                cls.philips_rd, cls.philips_udf, cls.riet7, cls.rigaku_dat, cls.text, cls.uxd, cls.xfit_xdd,
-                cls.xrdml, cls.xsyg]
+        formatsOne = [cls.bruker_raw, cls.bruker_spc, cls.canberra_cnf, cls.canberra_mca, cls.chiplot, cls.cpi]
+        formatsTwo = [cls.dbws, cls.philips_rd, cls.philips_udf, cls.riet7, cls.rigaku_dat, cls.text]
+        formatsTrhee = [cls.uxd, cls.xfit_xdd, cls.xrdml, cls.xsyg]
+        return formatsOne + formatsTwo + formatsTrhee
 
     @classmethod
     def get_all_suffixes(cls) -> list[str]:
