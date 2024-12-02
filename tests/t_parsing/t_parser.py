@@ -5,7 +5,7 @@ from xrdpattern.pattern import XrdPattern, PatternDB
 
 # -----------------------------------------------------------------
 
-class TestParserPattern(ParserBaseTest):
+class TestMasterParser(ParserBaseTest):
     @classmethod
     def get_fpath(cls) -> str:
         return DataExamples.get_bruker_fpath()
@@ -35,6 +35,10 @@ class TestParserPattern(ParserBaseTest):
         std_data = self.pattern.get_pattern_data(apply_standardization=True)
         for data in [raw_data, std_data]:
             self.check_data_ok(*data)
+
+    def update_aimat_json(self):
+        pattern = XrdPattern.load(fpath=self.get_fpath())
+        pattern.save(fpath=DataExamples.get_aimat_fpath(), force_overwrite=True)
 
 
 class TestParseStoe(ParserBaseTest):
@@ -83,6 +87,7 @@ class TestParserDatabase(ParserBaseTest):
     @staticmethod
     def get_all_db() -> PatternDB:
         return PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=Orientation.HORIZONTAL)
+
 
 
 if __name__ == "__main__":
