@@ -108,10 +108,11 @@ class PatternDB:
                 return False
         return True
 
-    def get_noncritical(self) -> PatternDB:
+    def exclude_critical(self):
         noncritical_patterns = [pattern for pattern in self.patterns if not pattern.get_parsing_report().has_critical()]
-        print(f'Excluded {len(self.patterns) - len(noncritical_patterns)} patterns with critical errors')
-        return PatternDB(patterns=noncritical_patterns)
+        for fpath, extracted_patterns in self.fpath_dict.items():
+            self.fpath_dict[fpath] = [p for p in extracted_patterns if not p.get_parsing_report().has_critical()]
+        return PatternDB(patterns=noncritical_patterns, fpath_dict=self.fpath_dict)
 
 
 
