@@ -151,7 +151,8 @@ def safe_cif_read(cif_content: str) -> Optional[CrystalPhase]:
 
 if __name__ == "__main__":
     processor = DatabaseProcessor(root_dirpath='/home/daniel/aimat/opXRD/')
-    processor.parse_EMPA()
+    # processor.parse_EMPA()
     # processor.parse_all()
+    processor.parse_INT()
 
 
