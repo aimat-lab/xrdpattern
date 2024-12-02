@@ -34,7 +34,7 @@ class DatabaseProcessor:
         self.process_contribution(dirname='hodge_alwen_1', xray_info=self.cu_xray)
 
     def parse_LBNL(self):
-        self.process_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'], csv_orientation=Orientation.VERTICAL)
+        self.process_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'], csv_orientation=Orientation.VERTICAL, label_groups=True)
 
     def parse_EMPA(self):
         self.process_contribution(dirname='siol_wieczorek_0', xray_info=self.cu_xray)
@@ -57,7 +57,8 @@ class DatabaseProcessor:
                              selected_suffixes : Optional[list[str]] = None,
                              use_cif_labels : bool = False,
                              xray_info : Optional[XRayInfo] = None,
-                             csv_orientation : Optional[Orientation] = None):
+                             csv_orientation : Optional[Orientation] = None,
+                             label_groups : bool = False):
         print(f'Started processing contributino {dirname}')
         data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
         contrib_dirpath = os.path.join(self.raw_dirpath, dirname)
@@ -70,7 +71,7 @@ class DatabaseProcessor:
         for p in pattern_db.patterns:
             p.metadata.remove_filename()
 
-        self.save(pattern_db.get_noncritical(), dirname=dirname)
+        self.save(pattern_db.get_noncritical(), dirname=dirname, label_groups=label_groups)
 
     # ---------------------------------------
     # Parsing steps
@@ -135,11 +136,11 @@ class DatabaseProcessor:
 
 
     @log_execution
-    def save(self, pattern_db : PatternDB, dirname : str):
+    def save(self, pattern_db : PatternDB, dirname : str, label_groups : bool):
         out_dirpath = os.path.join(self.processed_dirpath, dirname)
         if not os.path.isdir(out_dirpath):
             os.makedirs(out_dirpath)
-        pattern_db.save(dirpath=out_dirpath)
+        pattern_db.save(dirpath=out_dirpath,label_groups=label_groups)
 
 
 if __name__ == "__main__":
