@@ -1,7 +1,7 @@
 import numpy as np
 
 from xrdpattern.xrd import PatternData
-
+from xrdpattern.xrd.xray import XrdAnode
 
 class DatParser:
     def extract_multi(self, fpath : str) -> list[PatternData]:
@@ -21,9 +21,8 @@ class DatParser:
             x,y = x[l:], y[l:]
 
             new_pattern = PatternData.make_unlabeled(two_theta_values=pattern_angles, intensities=pattern_intensities)
+            new_pattern.powder_experiment.xray_info = XrdAnode.Cu.get_xray_info()
             patterns.append(new_pattern)
-
-            print(new_pattern)
 
         return patterns
 
@@ -50,12 +49,10 @@ class DatParser:
         indices = []
         for k, frame_num in enumerate(img_list):
             if k == 0:
-                print(f'k, framenum = {k, frame_num}')
             if frame_num == current_frame:
                 indices.append(k)
                 current_frame += 1
 
-        print(f'indices = {indices}')
         return indices
 
     @staticmethod
