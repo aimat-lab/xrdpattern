@@ -17,9 +17,7 @@ from .xylib import get_xylib_repr
 
 
 class MasterParser:
-    def __init__(self, csv_orientation : Optional[Orientation] = None):
-        self.default_csv_orientation : Optional[Orientation] = csv_orientation
-
+    def __init__(self):
         self.stoe_reader : StoeParser = StoeParser()
         self.cif_parser : CifParser = CifParser()
         self.csv_parser : CsvParser = CsvParser()
@@ -27,7 +25,7 @@ class MasterParser:
     # -------------------------------------------
     # pattern
 
-    def extract(self, fpath : str) -> list[PatternData]:
+    def extract(self, fpath : str, csv_orientation : Optional[Orientation] = None) -> list[PatternData]:
         suffix = SaveManager.get_suffix(fpath)
         if not suffix in Formats.get_all_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
@@ -45,7 +43,7 @@ class MasterParser:
         elif the_format in Formats.get_datafile_formats():
             pattern_infos = [self.load_data_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:
-            pattern_infos = self.load_csv(fpath=fpath)
+            pattern_infos = self.load_csv(fpath=fpath, orientation=csv_orientation)
         else:
             raise ValueError(f"Format .{the_format} is not supported")
         for info in pattern_infos:
@@ -85,12 +83,10 @@ class MasterParser:
         return PatternData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=powder_experiment, metadata=metadata)
 
 
-    def load_csv(self, fpath : str) -> list[PatternData]:
+    def load_csv(self, fpath : str, orientation : Optional[Orientation] = None) -> list[PatternData]:
         if CsvParser.has_two_columns(fpath=fpath):
             orientation = Orientation.VERTICAL
-        elif self.default_csv_orientation is not None:
-            orientation = self.default_csv_orientation
-        else:
+        if orientation is None:
             raise ValueError(f"Could not determine orientation of data in csv file {fpath}")
 
         pattern_infos = self.csv_parser.extract_patterns(fpath=fpath, pattern_dimension=orientation)

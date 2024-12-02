@@ -10,14 +10,14 @@ from matplotlib import pyplot as plt
 
 from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
-from holytools.userIO import TrackedInt, TrackedCollection
-from xrdpattern.xrd import XRayInfo
+from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
-from .pattern import XrdPattern
+from xrdpattern.xrd import XRayInfo
 from .db_report import DatabaseReport
-
+from .pattern import XrdPattern
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
+parser = MasterParser()
 
 # -------------------------------------------
 
@@ -41,32 +41,27 @@ class PatternDB:
             pattern.save(fpath=fpath)
 
     @classmethod
-    def load(cls, dirpath : str, selected_suffixes : Optional[list[str]] = None,
-             csv_orientation : Orientation = Orientation.VERTICAL) -> PatternDB:
+    def load(cls, dirpath : str, suffixes : Optional[list[str]] = None, csv_orientation : Optional[Orientation] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
 
-        if selected_suffixes is None:
-            selected_suffixes = Formats.get_all_suffixes()
-
-        data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, select_suffixes=selected_suffixes)
+        data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=suffixes)
         if len(data_fpaths) == 0:
-            raise ValueError(f"No data files matching suffixes {selected_suffixes} found in directory {dirpath}")
+            raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
         fpath_dict = {}
         failed_files = []
         patterns : list[XrdPattern] = []
-        parser = MasterParser(csv_orientation=csv_orientation)
 
         for fpath in TrackedCollection(data_fpaths):
             try:
-                new_patterns = [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath)]
+                new_patterns = [XrdPattern(**info.to_dict()) for info in parser.extract(fpath=fpath, csv_orientation=csv_orientation)]
                 patterns += new_patterns
                 fpath_dict[fpath] = new_patterns
             except Exception as e:
                 failed_files.append(fpath)
-                patterdb_logger.log(msg=f"Could not import pattern from file {fpath}: \"{e}\"", level=logging.WARNING)
+                patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}: \"{e}\"")
 
         database_report = DatabaseReport(data_dirpath=dirpath, fpath_dict=fpath_dict, failed_files=failed_files)
         database_report.print()
@@ -74,9 +69,12 @@ class PatternDB:
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, database_report=database_report)
 
     @staticmethod
-    def get_xrd_fpaths(dirpath: str, select_suffixes : list[str]):
+    def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]):
+        if selected_suffixes is None:
+            selected_suffixes = Formats.get_all_suffixes()
+
         root_node = FsysNode(path=dirpath)
-        xrd_file_nodes = root_node.get_file_subnodes(select_formats=select_suffixes)
+        xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
         data_fpaths = [node.get_path() for node in xrd_file_nodes]
 
         return data_fpaths

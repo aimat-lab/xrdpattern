@@ -25,7 +25,7 @@ class DatabaseProcessor:
         print(f'Started processing contributino {dirname}')
         data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
         contrib_dirpath = os.path.join(self.raw_dirpath, dirname)
-        pattern_db = PatternDB.load(dirpath=data_dirpath, selected_suffixes=selected_suffixes)
+        pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=selected_suffixes)
 
         self.attach_metadata(pattern_db, dirname=dirname)
         self.attach_labels(pattern_db=pattern_db, contrib_dirpath=contrib_dirpath, use_cif_labels=use_cif_labels)

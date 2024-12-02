@@ -20,7 +20,7 @@ def multiplot(patterns_to_ploat, labels):
 
 
 def get_patterns_and_fpaths(root_dirpath : str, max_patterns : int = 10000):
-    pattern_fpath_list = PatternDB.get_xrd_fpaths(dirpath=root_dirpath, select_suffixes=Formats.get_all_suffixes())
+    pattern_fpath_list = PatternDB.get_xrd_fpaths(dirpath=root_dirpath, selected_suffixes=Formats.get_all_suffixes())
     pattern_fpath_list = pattern_fpath_list[:max_patterns]
 
     dir_patterns = []
