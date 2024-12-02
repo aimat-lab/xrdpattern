@@ -66,20 +66,3 @@ class StoeParser(BinaryReader):
     def _get_y_values(self) -> list[float]:
         return [float(intensity) for intensity in self.intensities.get_value()]
 
-    @classmethod
-    def is_stoe(cls, fpath : str) -> bool:
-        try:
-            reader = StoeParser()
-            reader.read(fpath=fpath)
-            angle_start, angle_end = reader.angle_start.get_value(), reader.angle_end.get_value()
-            num_entries = reader.num_entries.get_value()
-
-            angles_ok = 0 < angle_start < angle_end < 180
-            entries_ok = isinstance(num_entries, int) and 0 < num_entries < 10**6
-            is_stoe = angles_ok and entries_ok
-
-        except:
-            is_stoe = False
-
-        return is_stoe
-

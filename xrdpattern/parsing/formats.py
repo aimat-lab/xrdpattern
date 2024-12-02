@@ -1,6 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from holytools.fsys import SaveManager
+from .xylib import get_xylib_repr
 from .stoe import StoeParser
 
 # -------------------------------------------
@@ -56,7 +57,8 @@ class Formats:
     def get_format(cls, fpath : str) -> XrdFormat:
         suffix = SaveManager.get_suffix(fpath)
         if suffix == 'raw':
-            return Formats.stoe_raw if StoeParser.is_stoe(fpath) else Formats.bruker_raw
+            return Formats.stoe_raw if cls.is_stoe(fpath) else Formats.bruker_raw
+
 
         suffix_to_format_map = {}
         for f in cls.get_all_formats():
@@ -68,6 +70,44 @@ class Formats:
 
         return xrd_format
 
+    @classmethod
+    def is_stoe(cls, fpath : str) -> bool:
+        try:
+            reader = StoeParser()
+            reader.read(fpath=fpath)
+            angle_start, angle_end = reader.angle_start.get_value(), reader.angle_end.get_value()
+            num_entries = reader.num_entries.get_value()
+
+            angles_ok = 0 < angle_start < angle_end < 180
+            entries_ok = isinstance(num_entries, int) and 0 < num_entries < 10**6
+            is_stoe = angles_ok and entries_ok
+
+        except:
+            is_stoe = False
+
+        return is_stoe
+
+    @classmethod
+    def is_binary_dat(cls, fpath : str) -> bool:
+        try:
+            get_xylib_repr(fpath=fpath,format_hint=Formats.rigaku_dat)
+            is_rigaku_dat = True
+        except:
+            is_rigaku_dat = False
+
+        try:
+            get_xylib_repr(fpath=fpath,format_hint=Formats.riet7)
+            is_riet_dat = True
+        except:
+            is_riet_dat = False
+
+        return is_rigaku_dat or is_riet_dat
+
+
+
 if __name__ == "__main__":
-    tha_format = Formats.get_format(fpath='/home/daniel/aimat/opXRD/raw/zhang_cao_0/data/caobin_pxrd_xy/C/xy.txt')
-    print(tha_format)
+    # tha_format = Formats.get_format(fpath='/home/daniel/aimat/opXRD/raw/zhang_cao_0/data/caobin_pxrd_xy/C/xy.txt')
+    # print(tha_format)
+
+    is_binary = Formats.is_binary_dat(fpath='/home/daniel/aimat/data/opXRD/processed/sutter-fella_kodalle_0/data/CIGS_Pvsk_GIWAXS/Dat-Samples/Sample_04-2-PVD/PVD.dat')
+    print(is_binary)
