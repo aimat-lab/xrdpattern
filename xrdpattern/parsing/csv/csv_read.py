@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import tempfile
+
+import pandas as pd
+
 import csv
 import math
 
 from holytools.abstract import SelectableEnum
+from holytools.fsys import SaveManager
 
 from xrdpattern.xrd import PatternData, XrdAnode
 from .table_selector import TableSelector, TextTable, NumericalTable
@@ -25,6 +30,11 @@ class CsvParser:
                      # Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
 
     def extract_patterns(self, fpath: str, pattern_dimension : Orientation) -> list[PatternData]:
+        if SaveManager.get_suffix(fpath) == 'xlsx':
+            tmp_fpath = tempfile.mktemp()
+            CsvParser.xlsx_to_csv(xlsx_fpath=fpath, csv_fpath=tmp_fpath)
+            fpath = tmp_fpath
+
         matrix = self._as_matrix(fpath=fpath, pattern_orientation=pattern_dimension)
         x_axis_row = matrix.get_data(row=0)
         data_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
@@ -90,6 +100,11 @@ class CsvParser:
             sniffer = csv.Sniffer()
             dialect = sniffer.sniff(content)
             return str(dialect.delimiter)
+
+    @staticmethod
+    def xlsx_to_csv(xlsx_fpath : str, csv_fpath : str):
+        data = pd.read_excel(xlsx_fpath)
+        data.to_csv(csv_fpath, index=False)
 
 
 

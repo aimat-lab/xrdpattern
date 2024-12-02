@@ -14,9 +14,44 @@ from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
 class DatabaseProcessor:
     def __init__(self, root_dirpath : str):
         self.root_dirpath : str = root_dirpath
-        self.raw_dirpath : str = os.path.join(root_dirpath, 'raw')
-        self.processed_dirpath : str = os.path.join(root_dirpath, 'processed')
+        self.raw_dirpath : str = os.path.join(root_dirpath, 'processed')
+        self.processed_dirpath : str = os.path.join(root_dirpath, 'final')
         self.cu_xray : XRayInfo = XrdAnode.Cu.get_xray_info()
+
+    # ---------------------------------------
+    # Parsing individual contributions
+
+    def parse_LBNL(self):
+        self.process_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'])
+
+    def parse_INT(self):
+        self.process_contribution(dirname='breitung_schweidler_0', selected_suffixes=['raw'])
+        self.process_contribution(dirname='breitung_schweidler_1', selected_suffixes=['raw'])
+
+    def parse_CNRS(self):
+        self.process_contribution(dirname='coudert_hardiagon_0', selected_suffixes=['json'])
+
+    def parse_USC(self):
+        self.process_contribution(dirname='hodge_alwen_0', xray_info=self.cu_xray)
+        self.process_contribution(dirname='hodge_alwen_1', xray_info=self.cu_xray)
+
+    def parse_EMPA(self):
+        self.process_contribution(dirname='siol_wieczorek_0', xray_info=self.cu_xray)
+        self.process_contribution(dirname='siol_zhuk_0', xray_info=self.cu_xray)
+
+    def parse_IKFT(self):
+        self.process_contribution(dirname='wolf_wolf_0', xray_info=self.cu_xray)
+
+    def parse_HKUST(self):
+        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['txt'], xray_info=self.cu_xray)
+
+    def parse_all(self):
+        self.parse_INT()
+        self.parse_CNRS()
+        self.parse_USC()
+        self.parse_EMPA()
+        self.parse_IKFT()
+        self.parse_HKUST()
 
     def process_contribution(self, dirname: str,
                              selected_suffixes : Optional[list[str]] = None,
@@ -105,37 +140,6 @@ class DatabaseProcessor:
             os.makedirs(out_dirpath)
         pattern_db.save(dirpath=out_dirpath)
 
-    # ---------------------------------------
-    # Parsing individual contributions
-
-    def parse_INT(self):
-        self.process_contribution(dirname='breitung_schweidler_0', selected_suffixes=['raw'])
-        self.process_contribution(dirname='breitung_schweidler_1', selected_suffixes=['raw'])
-
-    def parse_CNRS(self):
-        self.process_contribution(dirname='coudert_hardiagon_0', selected_suffixes=['json'])
-
-    def parse_USC(self):
-        self.process_contribution(dirname='hodge_alwen_0', xray_info=self.cu_xray)
-        self.process_contribution(dirname='hodge_alwen_1', xray_info=self.cu_xray)
-
-    def parse_EMPA(self):
-        self.process_contribution(dirname='siol_wieczorek_0', xray_info=self.cu_xray)
-        self.process_contribution(dirname='siol_zhuk_0', xray_info=self.cu_xray)
-
-    def parse_IKFT(self):
-        self.process_contribution(dirname='wolf_wolf_0', xray_info=self.cu_xray)
-
-    def parse_HKUST(self):
-        self.process_contribution(dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['txt'], xray_info=self.cu_xray)
-
-    def parse_all(self):
-        self.parse_INT()
-        self.parse_CNRS()
-        self.parse_USC()
-        self.parse_EMPA()
-        self.parse_IKFT()
-        self.parse_HKUST()
 
 def read_file(fpath: str) -> str:
     with open(fpath, 'r') as file:

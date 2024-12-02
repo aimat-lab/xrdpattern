@@ -19,7 +19,7 @@ class Formats:
     canberra_mca = XrdFormat("canberra_mca", ["mca"])
     chiplot = XrdFormat("chiplot", ["chi"])
     cpi = XrdFormat("cpi", ["cpi"])
-    csv = XrdFormat("csv", ["csv"])
+    csv = XrdFormat("csv", ["csv", "xlsx"])
     dbws = XrdFormat("dbws", ["dbw"])
     pdcif = XrdFormat("pdCIF", ["cif"])
     philips_rd = XrdFormat("philips_rd", ["rd"])

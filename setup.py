@@ -24,6 +24,8 @@ setup(name='xrdpattern',
           'torch',
           'gemmi',
           'holytools',
+          'pandas',
+          'openpyxl',
 	  'tensordict'
       ],      long_description=("Python library for XrdPatterns including import from data files, "
                         "export as json file and postprocessing functionalities. The data file "
