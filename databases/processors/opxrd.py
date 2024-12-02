@@ -5,6 +5,7 @@ from databases.processors.tools.fileIO import read_file, safe_cif_read
 from databases.tools.csv_label import get_powder_experiment
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
+from xrdpattern.parsing import Orientation
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
 
@@ -21,9 +22,6 @@ class DatabaseProcessor:
     # ---------------------------------------
     # Parsing individual contributions
 
-    def parse_LBNL(self):
-        self.process_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'])
-
     def parse_INT(self):
         self.process_contribution(dirname='breitung_schweidler_0', selected_suffixes=['raw'])
         self.process_contribution(dirname='breitung_schweidler_1', selected_suffixes=['raw'])
@@ -34,6 +32,9 @@ class DatabaseProcessor:
     def parse_USC(self):
         self.process_contribution(dirname='hodge_alwen_0', xray_info=self.cu_xray)
         self.process_contribution(dirname='hodge_alwen_1', xray_info=self.cu_xray)
+
+    def parse_LBNL(self):
+        self.process_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'], csv_orientation=Orientation.VERTICAL)
 
     def parse_EMPA(self):
         self.process_contribution(dirname='siol_wieczorek_0', xray_info=self.cu_xray)
@@ -55,11 +56,12 @@ class DatabaseProcessor:
     def process_contribution(self, dirname: str,
                              selected_suffixes : Optional[list[str]] = None,
                              use_cif_labels : bool = False,
-                             xray_info : Optional[XRayInfo] = None):
+                             xray_info : Optional[XRayInfo] = None,
+                             csv_orientation : Optional[Orientation] = None):
         print(f'Started processing contributino {dirname}')
         data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
         contrib_dirpath = os.path.join(self.raw_dirpath, dirname)
-        pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=selected_suffixes)
+        pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=selected_suffixes, csv_orientation=csv_orientation)
 
         self.attach_metadata(pattern_db, dirname=dirname)
         self.attach_labels(pattern_db=pattern_db, contrib_dirpath=contrib_dirpath, use_cif_labels=use_cif_labels)
