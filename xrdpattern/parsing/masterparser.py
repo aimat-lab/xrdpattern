@@ -11,6 +11,7 @@ from xrdpattern.xrd import PatternData, XRayInfo, PowderExperiment, Metadata
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
 from .csv import CsvParser, Orientation
+from .dat.dat_boi import DatParser
 from .formats import XrdFormat, Formats
 from .xylib import get_xylib_repr
 
@@ -22,6 +23,7 @@ class MasterParser:
         self.stoe_reader : StoeParser = StoeParser()
         self.cif_parser : CifParser = CifParser()
         self.csv_parser : CsvParser = CsvParser()
+        self.dat_parser : DatParser = DatParser()
 
     # -------------------------------------------
     # pattern
@@ -45,6 +47,8 @@ class MasterParser:
             pattern_infos = [self.load_data_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:
             pattern_infos = self.load_csv(fpath=fpath, orientation=csv_orientation)
+        elif the_format == Formats.plaintext_dat:
+            pattern_infos = self.load_plaintext_dat(fpath=fpath)
         else:
             raise ValueError(f"Format .{the_format} is not supported")
         for info in pattern_infos:
@@ -98,6 +102,9 @@ class MasterParser:
 
     def load_cif(self, fpath : str) -> PatternData:
         return self.cif_parser.extract(fpath=fpath)
+
+    def load_plaintext_dat(self, fpath : str) -> list[PatternData]:
+        return self.dat_parser.extract_multi(fpath=fpath)
 
     # -------------------------------------------
     # databases xylib header
