@@ -1,4 +1,4 @@
-import tests.t_crystal.crystal_test as BaseTest
+import tests.t_crystal.base_test as BaseTest
 
 # ---------------------------------------------------------
 

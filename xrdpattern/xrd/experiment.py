@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Optional
 
@@ -88,10 +89,9 @@ class PowderExperiment(JsonDataclass):
 
         a,b,c = primary_phase.lengths
         alpha, beta, gamma = primary_phase.angles
-        lattice_params_nonempty = a and b and c and alpha and beta and gamma
+        lattice_params_nonempty = not all(math.isnan(x) for x in [a, b, c, alpha, beta, gamma])
         crystal_basis_nonempty = len(primary_phase.base) > 0
-
-        print(f'lattiice params, crystal basis, xray info = {lattice_params_nonempty, crystal_basis_nonempty, xray_info_nonemtpy}')
+        # print(f'lattiice params, crystal basis, xray info = {lattice_params_nonempty, crystal_basis_nonempty, xray_info_nonemtpy}')
         
         return xray_info_nonemtpy or composition_nonempty or lattice_params_nonempty or crystal_basis_nonempty
 
