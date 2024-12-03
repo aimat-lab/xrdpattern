@@ -28,6 +28,7 @@ def retrieve_cod_data(json_fpath : str, out_dirpath : str):
             print(f'Successfully parsed structure number {num} and saved file at {save_fpath}')
         except BaseException as e:
             a,b,c = data_dict['cell_a'], data_dict['cell_b'], data_dict['cell_c']
+            a,b,c = (a,b,c)*10
             alpha, beta, gamma = data_dict['cell_alpha'], data_dict['cell_beta'], data_dict['cell_gamma']
             spg_num = data_dict['sg_number']
 
