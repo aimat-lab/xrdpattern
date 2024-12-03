@@ -112,7 +112,8 @@ class CrystalPhase(JsonDataclass):
     def scale(self, target_density: float):
         volume_scaling = self.packing_density / target_density
         cbrt_scaling = volume_scaling ** (1 / 3)
-        self.lengths = self.lengths * cbrt_scaling
+        a,b,c = self.lengths
+        self.lengths = cbrt_scaling * a, cbrt_scaling * b, cbrt_scaling * c
         self.volume_uc = self.volume_uc * volume_scaling
 
     @property
