@@ -14,13 +14,6 @@ class Angles(Serializable):
     beta: Optional[float]
     gamma: Optional[float]
 
-    @classmethod
-    def make_example(cls) -> Angles:
-        return cls(alpha=90, beta=90, gamma=90)
-
-    def __iter__(self):
-        return iter((self.alpha, self.beta, self.gamma))
-
     def as_tuple(self) -> tuple:
         return self.alpha, self.beta, self.gamma
 
@@ -39,16 +32,6 @@ class Lengths(Serializable):
     a: Optional[float]
     b: Optional[float]
     c: Optional[float]
-
-    def __hash__(self):
-        return id(self)
-
-    @classmethod
-    def make_example(cls) -> Lengths:
-        return cls(a=3, b=3, c=3)
-
-    def __iter__(self):
-        return iter((self.a, self.b, self.c))
 
     def as_tuple(self) -> tuple:
         return self.a, self.b, self.c

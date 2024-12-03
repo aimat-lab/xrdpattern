@@ -4,19 +4,19 @@ import tempfile
 
 import requests
 
+from xrdpattern.crystal import CrystalPhase
 from xrdpattern.pattern import XrdPattern
-
 
 # -------------------------------------------------
 
-def write_cod(json_fpath : str, out_dirpath : str):
+def retrieve_cod_data(json_fpath : str, out_dirpath : str):
     with open(json_fpath, 'r') as f:
         content = f.read()
 
     the_dict = json.loads(content)
     print(f'done reading json. Contains {len(the_dict)} entries')
 
-    for cod_id in the_dict.keys():
+    for cod_id, data_dict in the_dict.items():
         num = cod_id.split('/')[-1]
         fname = f"COD_{num}"
         save_fpath = os.path.join(out_dirpath, f'{fname}.json')
@@ -24,8 +24,17 @@ def write_cod(json_fpath : str, out_dirpath : str):
             pattern = parse_cod_cif(num=num)
             pattern.save(fpath=save_fpath, force_overwrite=True)
             print(f'Successfully parsed structure number {num} and saved file at {save_fpath}')
-
         except BaseException as e:
+            a,b,c = data_dict['cell_a'], data_dict['cell_b'], data_dict['cell_c']
+            alpha, beta, gamma = data_dict['cell_alpha'], data_dict['cell_beta'], data_dict['cell_gamma']
+            spg_num = data_dict['sg_number']
+
+            x, y = data_dict['x'], data_dict['y']
+
+            phase = CrystalPhase(lengths=(a,b,c), angles=(alpha,beta,gamma), space_group=spg_num)
+
+            data_dict
+
             print(f'Failed to extract COD pattern {num} due to error {e}')
 
 
@@ -53,7 +62,6 @@ def parse_cod_cif(num : int) -> XrdPattern:
 
     return XrdPattern.load(fpath=temp_fpath, mute=True)
 
-
 if __name__ == "__main__":
     # cod_int = 1508528
     # pattern = parse_cod_cif(num=cod_int)
@@ -61,5 +69,5 @@ if __name__ == "__main__":
 
     j_fpath = '/home/daniel/aimat/data/opXRD/processed/coudert_hardiagon_0/data/extracted_data.json'
     the_out_dirpath = '/home/daniel/aimat/data/opXRD/processed/coudert_hardiagon_0/data/'
-    write_cod(json_fpath=j_fpath, out_dirpath=the_out_dirpath)
+    retrieve_cod_data(json_fpath=j_fpath, out_dirpath=the_out_dirpath)
     print(f'done')
