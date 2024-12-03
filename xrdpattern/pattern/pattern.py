@@ -54,7 +54,7 @@ class XrdPattern(PatternData):
     def load(cls, fpath : str, mute : bool = False) -> XrdPattern:
         pattern_list = parser.extract(fpath=fpath)
         if len(pattern_list) > 1:
-            raise ValueError('Multiple patterns found in file. Please use pattern database class instead')
+            raise ValueError('Multiple patterns found in file. Please use PatternDB class instead')
         pattern_info = pattern_list[0]
         kwargs = pattern_info.to_dict()
         pattern = cls(**kwargs)

@@ -1,4 +1,5 @@
 from xrdpattern.examples import DataExamples
+from xrdpattern.parsing import MasterParser
 from xrdpattern.pattern import XrdPattern
 from holytools.devtools import Unittest
 
@@ -7,6 +8,7 @@ class ParserBaseTest(Unittest):
     @classmethod
     def setUpClass(cls):
         cls.pattern: XrdPattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
+        cls.parser : MasterParser = MasterParser()
 
     def check_data_ok(self, two_theta_values : list[float], intensities : list[float]):
         data_view = str(two_theta_values)[:100]+ '...' +  str(two_theta_values)[-100:]

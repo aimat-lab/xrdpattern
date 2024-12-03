@@ -40,15 +40,15 @@ class MasterParser:
         if the_format == Formats.aimat_xrdpattern:
             pattern_infos = [self.load_json(fpath=fpath)]
         elif the_format == Formats.pdcif:
-            pattern_infos = [self.load_cif(fpath=fpath)]
+            pattern_infos = [self._load_cif(fpath=fpath)]
         elif the_format == Formats.stoe_raw:
             pattern_infos = [self.stoe_reader.extract(fpath=fpath)]
         elif the_format in Formats.get_xylib_formats():
-            pattern_infos = [self.load_data_file(fpath=fpath, format_hint=the_format)]
+            pattern_infos = [self._load_xylib_file(fpath=fpath, format_hint=the_format)]
         elif the_format == Formats.csv:
-            pattern_infos = self.load_csv(fpath=fpath, orientation=csv_orientation)
+            pattern_infos = self._load_csv(fpath=fpath, orientation=csv_orientation)
         elif the_format == Formats.plaintext_dat:
-            pattern_infos = self.load_plaintext_dat(fpath=fpath)
+            pattern_infos = self._load_plaintext_dat(fpath=fpath)
         else:
             raise ValueError(f"Format .{the_format} is not supported")
         for info in pattern_infos:
@@ -70,7 +70,7 @@ class MasterParser:
 
 
     @staticmethod
-    def load_data_file(fpath: str, format_hint : XrdFormat) -> PatternData:
+    def _load_xylib_file(fpath: str, format_hint : XrdFormat) -> PatternData:
         xylib_repr = get_xylib_repr(fpath=fpath, format_name=format_hint.name)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         powder_experiment = MasterParser.parse_experiment_params(header_str=header)
@@ -88,7 +88,7 @@ class MasterParser:
         return PatternData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=powder_experiment, metadata=metadata)
 
 
-    def load_csv(self, fpath : str, orientation : Optional[Orientation] = None) -> list[PatternData]:
+    def _load_csv(self, fpath : str, orientation : Optional[Orientation] = None) -> list[PatternData]:
         if SaveManager.get_suffix(fpath) == 'xlsx':
             tmp_fpath = tempfile.mktemp(suffix='.csv')
             CsvParser.xlsx_to_csv(xlsx_fpath=fpath, csv_fpath=tmp_fpath)
@@ -100,10 +100,10 @@ class MasterParser:
 
         return self.csv_parser.extract_multi(fpath=fpath, pattern_dimension=orientation)
 
-    def load_cif(self, fpath : str) -> PatternData:
+    def _load_cif(self, fpath : str) -> PatternData:
         return self.cif_parser.extract(fpath=fpath)
 
-    def load_plaintext_dat(self, fpath : str) -> list[PatternData]:
+    def _load_plaintext_dat(self, fpath : str) -> list[PatternData]:
         return self.dat_parser.extract_multi(fpath=fpath)
 
     # -------------------------------------------

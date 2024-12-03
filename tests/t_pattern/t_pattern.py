@@ -49,7 +49,6 @@ class TestXrdPattern(ParserBaseTest):
         intensities = [10.0, 20.0, 100.0]
         pattern = XrdPattern.make_unlabeled(two_theta_values=angles, intensities=intensities)
         self.check_data_ok(*pattern.get_pattern_data(apply_standardization=False))
-
     @staticmethod
     def save_and_load(pattern : XrdPattern) -> XrdPattern:
         save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.aimat_suffix()}')
