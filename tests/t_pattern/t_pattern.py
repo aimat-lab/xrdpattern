@@ -1,11 +1,11 @@
 import os.path
 
 from xrdpattern.crystal import CrystalExamples
+from xrdpattern.examples import DataExamples
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
 from tests.base_tests import ParserBaseTest
 
-from xrdpattern.parsing import DataExamples
 from xrdpattern.xrd import PowderExperiment
 import tempfile
 

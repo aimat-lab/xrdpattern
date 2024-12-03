@@ -70,7 +70,7 @@ class CsvParser:
         if pattern_orientation == Orientation.VERTICAL:
             data = [list(col) for col in zip(*data)]
         table = TextTable(data)
-        print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
+        # print(f'fpath,row, col length = {fpath} {table.get_row_count()}, {table.get_row_len()}')
         return TableSelector.get_numerical_subtable(table=table)
 
 
