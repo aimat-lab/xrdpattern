@@ -31,7 +31,7 @@ class PatternDB:
     # -------------------------------------------
     # save/load
 
-    def save(self, dirpath : str, label_groups : bool = False):
+    def save(self, dirpath : str, label_groups : bool = False, force_overwrite : bool = False):
         if os.path.isfile(dirpath):
             raise ValueError(f'Path \"{dirpath}\" is occupied by file')
         os.makedirs(dirpath, exist_ok=True)
@@ -40,12 +40,12 @@ class PatternDB:
             for j, patterns in enumerate(self.fpath_dict.values()):
                 for k, p in enumerate(patterns):
                     fpath = os.path.join(dirpath, f'pattern_group_{j}_{k}.{Formats.aimat_suffix()}')
-                    p.save(fpath=fpath)
+                    p.save(fpath=fpath, force_overwrite=force_overwrite)
 
         else:
             for j, pattern in enumerate(self.patterns):
                 fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_suffix()}')
-                pattern.save(fpath=fpath)
+                pattern.save(fpath=fpath, force_overwrite=force_overwrite)
 
 
     @classmethod

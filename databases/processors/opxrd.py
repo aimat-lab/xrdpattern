@@ -119,4 +119,4 @@ class OpXRDProcessor:
         out_dirpath = os.path.join(self.processed_dirpath, dirname)
         if not os.path.isdir(out_dirpath):
             os.makedirs(out_dirpath)
-        pattern_db.save(dirpath=out_dirpath,label_groups=label_groups)
+        pattern_db.save(dirpath=out_dirpath,label_groups=label_groups, force_overwrite=True)
