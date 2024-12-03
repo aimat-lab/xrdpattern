@@ -1,4 +1,11 @@
 from holytools.devtools import Unittest
+from xrdpattern.xrd import PowderExperiment
+
+
+class TestPowderExperiment(Unittest):
+    def test_empty(self):
+        empty_experiment = PowderExperiment.make_empty()
+        self.assertTrue(not empty_experiment.is_nonempty())
 
 
 class TestTensorRegions(Unittest):
@@ -79,4 +86,4 @@ def is_nan(value):
     return value != value
 
 if __name__ == "__main__":
-    TestTensorRegions.execute_all()
+    TestPowderExperiment.execute_all()

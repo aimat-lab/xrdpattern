@@ -88,7 +88,7 @@ class OpXRDProcessor:
                 cif_fpath = os.path.join(dirpath, fname)
                 attached_cif_content = read_file(fpath=cif_fpath)
                 crystal_phase = safe_cif_read(cif_content=attached_cif_content)
-                phases.append(crystal_phase)
+                phases.append(crystal_phase)2
 
             phases = [p for p in phases if not p is None]
             powder_experiment = PowderExperiment.from_multi_phase(phases=phases)
