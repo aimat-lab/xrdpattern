@@ -4,7 +4,7 @@ from xrdpattern.crystal import CrystalExamples
 from xrdpattern.examples import DataExamples
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
-from tests.base_tests import ParserBaseTest
+from tests.base_pattern import ParserBaseTest
 
 from xrdpattern.xrd import PowderExperiment
 import tempfile

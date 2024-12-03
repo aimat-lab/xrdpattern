@@ -1,6 +1,6 @@
 import tempfile
 
-from tests.base_tests import ParserBaseTest
+from tests.base_pattern import ParserBaseTest
 from xrdpattern.examples import DataExamples
 from xrdpattern.parsing import Orientation
 from xrdpattern.pattern import XrdPattern, PatternDB
