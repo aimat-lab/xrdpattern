@@ -2,9 +2,10 @@ import os
 from dataclasses import dataclass
 
 from databases.tools.spg_converter import to_int
-from xrdpattern.crystal import Lengths, Angles, CrystalBase
+from xrdpattern.crystal import CrystalBase
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.xrd import PowderExperiment, CrystalPhase, XRayInfo
+
 
 # ---------------------------------------------------------
 
@@ -77,10 +78,8 @@ if __name__ == "__main__":
                 raise ValueError(f'Expected int, got {type(spacegroup)}')
 
             a,b,c,alpha, beta, gamma = labels.lattice_parameters
-            lengths = Lengths(a=a, b=b, c=c)
-            angles = Angles(alpha=alpha, beta=beta, gamma=gamma)
 
-            crystal_structure = CrystalPhase(lengths=lengths, angles=angles, spacegroup=spacegroup, base=CrystalBase())
+            crystal_structure = CrystalPhase(lengths=(a,b,c), angles=(alpha, beta, gamma), spacegroup=spacegroup, base=CrystalBase())
             artifacts = XRayInfo(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength)
             pattern.powder_experiment = PowderExperiment(phases=[crystal_structure], xray_info=artifacts, is_simulated=False)
             pattern.save(fpath=os.path.join(output_dirpath, base_name))

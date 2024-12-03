@@ -77,8 +77,8 @@ class TestPropertyCalculation(BaseTest.CrystalTest):
 
     @staticmethod
     def to_clustered_pymatgen(crystal : CrystalPhase) -> Structure:
-        a, b, c = crystal.lengths.as_tuple()
-        alpha, beta, gamma = crystal.angles.as_tuple()
+        a, b, c = crystal.lengths
+        alpha, beta, gamma = crystal.angles
         lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
 
         non_void_sites = crystal.base.get_non_void_sites()

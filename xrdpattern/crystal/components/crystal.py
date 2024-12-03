@@ -4,15 +4,14 @@ import json
 from dataclasses import dataclass, asdict
 from typing import Optional, Literal
 
-from holytools.abstract import JsonDataclass
 from pymatgen.core import Structure, Lattice, Species, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.groups import SpaceGroup
 
+from holytools.abstract import JsonDataclass
 from holytools.logging import LoggerFactory
 from .atomic_site import AtomicSite
 from .base import CrystalBase
-from .lattice import Angles, Lengths
 
 logger = LoggerFactory.get_logger(name=__name__)
 CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tetragonal", "triclinic", "trigonal"]
@@ -20,8 +19,8 @@ CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tet
 
 @dataclass
 class CrystalPhase(JsonDataclass):
-    lengths : Lengths
-    angles : Angles
+    lengths : tuple[float, float, float]
+    angles : tuple[float, float, float]
     base : CrystalBase
     phase_fraction : Optional[float] = None
     chemical_composition : Optional[str] = None
@@ -51,8 +50,8 @@ class CrystalPhase(JsonDataclass):
                 atomic_site = AtomicSite(x, y, z, occupancy=occupancy, species_str=str(species))
                 base.append(atomic_site)
 
-        crystal_str = cls(lengths=Lengths(a=lattice.a, b=lattice.b, c=lattice.c),
-                          angles=Angles(alpha=lattice.alpha, beta=lattice.beta, gamma=lattice.gamma),
+        crystal_str = cls(lengths=(lattice.a, lattice.b, lattice.c),
+                          angles=(lattice.alpha, lattice.beta, lattice.gamma),
                           base=base)
 
         return crystal_str
@@ -65,8 +64,8 @@ class CrystalPhase(JsonDataclass):
         return pymatgen_structure.to(filename='', fmt='cif')
 
     def to_pymatgen(self) -> Structure:
-        a, b, c = self.lengths.as_tuple()
-        alpha, beta, gamma = self.angles.as_tuple()
+        a, b, c = self.lengths
+        alpha, beta, gamma = self.angles
         lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
 
         non_void_sites = self.base.get_non_void_sites()

@@ -8,7 +8,7 @@ from tensordict import TensorDict
 from torch import Tensor
 
 from holytools.abstract import JsonDataclass
-from xrdpattern.crystal import CrystalPhase, CrystalBase, Angles, Lengths, AtomicSite
+from xrdpattern.crystal import CrystalPhase, CrystalBase, AtomicSite
 from xrdpattern.xrd.xray import XRayInfo
 
 NUM_SPACEGROUPS = 230
@@ -35,8 +35,8 @@ class PowderExperiment(JsonDataclass):
     def make_empty(cls, is_simulated : bool = False, num_phases : int = 1) -> PowderExperiment:
         phases = []
         for j in range(num_phases):
-            lengths = Lengths(a=None, b=None, c=None)
-            angles = Angles(alpha=None, beta=None, gamma=None)
+            lengths = (float('nan'),float('nan'), float('nan'))
+            angles = (float('nan'),float('nan'), float('nan'))
             base = CrystalBase()
 
             p = CrystalPhase(lengths=lengths, angles=angles, base=base)
@@ -85,11 +85,13 @@ class PowderExperiment(JsonDataclass):
         
         primary_phase = self.primary_phase
         composition_nonempty = primary_phase.chemical_composition
-        lengths_nonempty = primary_phase.lengths.a or primary_phase.lengths.b or primary_phase.lengths.c
-        angles_nonempty = primary_phase.angles.alpha or primary_phase.angles.beta or primary_phase.angles.gamma
+
+        a,b,c = primary_phase.lengths
+        alpha, beta, gamma = primary_phase.angles
+        lattice_params_nonempty = a and b and c and alpha and beta and gamma
         crystal_basis_nonempty = len(primary_phase.base) > 0
         
-        return xray_info_nonemtpy or composition_nonempty or lengths_nonempty or angles_nonempty or crystal_basis_nonempty
+        return xray_info_nonemtpy or composition_nonempty or lattice_params_nonempty or crystal_basis_nonempty
 
     @property
     def primary_phase(self) -> CrystalPhase:
