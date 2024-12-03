@@ -4,14 +4,14 @@ from dataclasses import dataclass
 import pandas as pd
 
 from holytools.fsys import SaveManager
-from xrdpattern.crystal import Lengths, Angles, CrystalPhase
+from xrdpattern.crystal import CrystalPhase
 from xrdpattern.xrd import PowderExperiment
 
 
 @dataclass
 class CsvLabel:
-    lengths : Lengths
-    angles : Angles
+    lengths : tuple[float, float, float]
+    angles : tuple[float, float, float]
     chemical_composition : str
     phase_fraction : float
     spacegroup : int
@@ -50,8 +50,8 @@ def get_phase_labels(csv_fpath : str, phase_num : int) -> dict[str, CsvLabel]:
     rel_path = [row.iloc[0].strip() for index, row in data.iterrows()]
     chemical_compositions = [row.iloc[1 + increment] for index, row in data.iterrows()]
     phase_fractions = [row.iloc[2 + increment] for index, row in data.iterrows()]
-    lengths_list = [Lengths(row.iloc[3+increment], row.iloc[4+increment], row.iloc[5+increment]) for index, row in data.iterrows()]
-    angles_list = [Angles(row.iloc[6+increment], row.iloc[7+increment], row.iloc[8+increment]) for index, row in data.iterrows()]
+    lengths_list = [(row.iloc[3+increment], row.iloc[4+increment], row.iloc[5+increment]) for index, row in data.iterrows()]
+    angles_list = [(row.iloc[6+increment], row.iloc[7+increment], row.iloc[8+increment]) for index, row in data.iterrows()]
 
     spacegroups = [row.iloc[9+increment] for index, row in data.iterrows()]
     spacegroups = [int(spg) if not spg != spg else spg for spg in spacegroups]

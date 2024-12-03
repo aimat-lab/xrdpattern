@@ -3,6 +3,7 @@ from typing import Optional
 
 from databases.tools.fileIO import read_file, safe_cif_read
 from databases.tools.csv_label import get_powder_experiment
+from holytools.devtools import ModuleInspector
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
 from xrdpattern.parsing import Orientation
@@ -23,9 +24,11 @@ class OpXRDProcessor:
     # Parsing individual contributions
 
     def parse_all(self):
-        attributes = [getattr(self, name) for name in dir(self) if not name.endswith('all')]
-        methods = [mthd for mthd in attributes if callable(mthd)]
-        for mthd in methods:
+        methods = ModuleInspector.get_methods(self)
+        parse_methods = [m for m in methods if not m.__name__.endswith('all') and 'parse' in m.__name__]
+
+        for mthd in parse_methods:
+            print(f'mthd name = {mthd.__name__}')
             mthd()
 
     def process(self, dirname: str,

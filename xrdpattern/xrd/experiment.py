@@ -90,6 +90,8 @@ class PowderExperiment(JsonDataclass):
         alpha, beta, gamma = primary_phase.angles
         lattice_params_nonempty = a and b and c and alpha and beta and gamma
         crystal_basis_nonempty = len(primary_phase.base) > 0
+
+        print(f'lattiice params, crystal basis, xray info = {lattice_params_nonempty, crystal_basis_nonempty, xray_info_nonemtpy}')
         
         return xray_info_nonemtpy or composition_nonempty or lattice_params_nonempty or crystal_basis_nonempty
 
