@@ -24,6 +24,10 @@ class XrdPatternData(Serializable):
     powder_experiment : PowderExperiment
     metadata: Metadata = field(default_factory=Metadata)
 
+    def __post_init__(self):
+        if len(self.two_theta_values) != len(self.intensities):
+            raise ValueError(f'Two theta values and intensities must have the same length. Got lengths: {len(self.two_theta_values)}, {len(self.intensities)}')
+
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> XrdPatternData:
         metadata = PowderExperiment.make_empty()
