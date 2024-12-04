@@ -8,6 +8,9 @@ from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
 
 from holytools.abstract import Serializable
+
+from xrdpattern.crystal import CrystalPhase
+from xrdpattern.xrd import XRayInfo
 from xrdpattern.xrd.metadata import Metadata
 from xrdpattern.xrd.experiment import PowderExperiment
 
@@ -42,6 +45,7 @@ class XrdPatternData(Serializable):
         mask = (std_angles >= start) & (std_angles <= end)
         std_intensities = cs(std_angles)
         std_intensities = std_intensities * mask
+        std_intensities -= np.min(std_intensities)
 
         max_intensity = np.max(std_intensities)
         normalization_factor = max_intensity if max_intensity > 0 else 1
