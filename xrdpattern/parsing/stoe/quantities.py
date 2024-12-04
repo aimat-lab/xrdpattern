@@ -38,9 +38,9 @@ class Quantity:
         self.value : Optional[Any] = None
         self._size: int = self.dtype.get_num_bytes()
         if not size is None:
-            self.set_size(size=size)
+            self.set_num_bytes(size=size)
 
-    def set_size(self, size : int):
+    def set_num_bytes(self, size : int):
         if not size % self.dtype.get_num_bytes() == 0:
             raise ValueError(f'Size must be a multiple of {self.dtype.get_num_bytes()}')
         self._size = size

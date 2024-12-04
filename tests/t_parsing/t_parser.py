@@ -107,4 +107,5 @@ class TestParserDatabase(ParserBaseTest):
 
 
 if __name__ == "__main__":
-    TestParserDatabase.execute_all()
+    # TestParserDatabase.execute_all()
+    TestCustomFormats.execute_all()

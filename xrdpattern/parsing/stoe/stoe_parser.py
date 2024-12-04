@@ -49,8 +49,7 @@ class StoeParser(BinaryReader):
         self.num_entries.extract_value(byte_content=byte_content)
 
         num_entries = self.num_entries.get_value()
-        size = num_entries - num_entries % self.intensities.dtype.get_num_bytes()
-        self.intensities.set_size(size=size)
+        self.intensities.set_num_bytes(size=4 * num_entries)
         super().read_bytes(byte_content=byte_content)
 
 
