@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 
-from xrdpattern.crystal import CrystalPhase
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrdPatternData, XRayInfo
 from .pattern_report import ParsingReport

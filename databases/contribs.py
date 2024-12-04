@@ -36,7 +36,6 @@ class ContributionProcessor(OpXRDProcessor):
     def parse_HKUST(self):
         self.process(dirname='zhang_cao_0', use_cif_labels=True,selected_suffixes=['txt'], xray_info=self.cu_xray)
 
-
 if __name__ == "__main__":
     processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
     processor.parse_all()
