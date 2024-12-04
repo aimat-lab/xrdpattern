@@ -95,23 +95,22 @@ class XrdPattern(PatternData):
         return self.two_theta_values[-1]
 
     @property
-    def artifacts(self) -> XRayInfo:
+    def xray_info(self) -> XRayInfo:
         return self.powder_experiment.xray_info
 
     @property
     def is_simulated(self) -> bool:
         return self.powder_experiment.is_simulated
 
-    # def to_tensor_pair(self, dtype : torch.dtype, device : torch.device) -> tuple[torch.Tensor, torch.Tensor]:
-    #     # now = time.time()
-    #
-    #     labels = self.label.to_tensor(dtype=dtype, device=device)
-    #     _, intensities = self.get_pattern_data()
-    #     intensities = torch.tensor(intensities, dtype=dtype, device=device)
-    #
-    #     # print(f'Time taken = {time.time() - now} seconds')
-    #
-    #     return intensities, labels
+    def to_tensorpair(self, dtype : torch.dtype, device : torch.device) -> tuple[torch.Tensor, torch.Tensor]:
+        raise NotImplementedError
+
+        # now = time.time()
+        # labels = self.label.to_tensor(dtype=dtype, device=device)
+        # _, intensities = self.get_pattern_data()
+        # intensities = torch.tensor(intensities, dtype=dtype, device=device)
+        # print(f'Time taken = {time.time() - now} seconds')
+        # return intensities, labels
 
     def get_parsing_report(self, datafile_fpath : str = 'Unmarked pattern') -> ParsingReport:
         pattern_health = ParsingReport(datafile_fpath=datafile_fpath)
@@ -157,7 +156,7 @@ class XrdPattern(PatternData):
         as_str = (f'----> Sample \n'
               f'- Crystal: {crystal_data} \n'
               f'- Experiment Parameters:\n'
-              f'    - Primary wavelength: {self.artifacts.primary_wavelength}\n'
+              f'    - Primary wavelength: {self.xray_info.primary_wavelength}\n'
               f'    - Temperature : {self.powder_experiment.temp_in_celcius}\n'
               f'- Origin Metadata:\n'
                 f'    - Contributor: {self.metadata.contributor_name}\n'
