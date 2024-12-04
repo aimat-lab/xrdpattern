@@ -54,7 +54,7 @@ def get_phase_labels(csv_fpath : str, phase_num : int) -> dict[str, CsvLabel]:
     angles_list = [(row.iloc[6+increment], row.iloc[7+increment], row.iloc[8+increment]) for index, row in data.iterrows()]
 
     spacegroups = [row.iloc[9+increment] for index, row in data.iterrows()]
-    spacegroups = [int(spg) if not spg != spg else spg for spg in spacegroups]
+    spacegroups = [int(spg) if not spg != spg else None for spg in spacegroups]
 
     csv_label_dict = {}
     for rel_path, lengths, angles, comp, fract, spacegroup in zip(rel_path, lengths_list, angles_list, chemical_compositions, phase_fractions, spacegroups):

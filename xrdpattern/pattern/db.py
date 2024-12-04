@@ -49,7 +49,7 @@ class PatternDB:
 
 
     @classmethod
-    def load(cls, dirpath : str,
+    def load(cls, dirpath : str, strict : bool = False,
              suffixes : Optional[list[str]] = None,
              csv_orientation : Optional[Orientation] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
@@ -74,6 +74,8 @@ class PatternDB:
             except Exception as e:
                 failed_files.append(fpath)
                 patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}: \"{e}\"\n")
+                if strict:
+                    raise e
 
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, failed_files=failed_files)
 
