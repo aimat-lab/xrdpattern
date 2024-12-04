@@ -24,14 +24,14 @@ class CsvLabel:
         phase.phase_fraction = self.phase_fraction
 
 
-def get_powder_experiment(pattern_fpath : str, contrib_dirpath : str, phase0, phase1) -> PowderExperiment:
+def get_powder_experiment(pattern_fpath : str, contrib_dirpath : str, phases) -> PowderExperiment:
     data_dirpath = os.path.join(contrib_dirpath, 'data')
 
     powder_experiment = PowderExperiment.make_empty(num_phases=2)
     rel_path = os.path.relpath(pattern_fpath, start=data_dirpath)
     rel_path = standardize_path(rel_path)
 
-    for phase_num, csv_label_dict in enumerate([phase0, phase1]):
+    for phase_num, csv_label_dict in enumerate(phases):
         csv_label = csv_label_dict.get(rel_path)
         if not csv_label is None:
             csv_label.set_phase_properties(phase=powder_experiment.phases[phase_num])

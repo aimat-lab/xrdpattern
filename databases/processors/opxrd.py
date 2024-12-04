@@ -110,11 +110,9 @@ class OpXRDProcessor:
             if p.powder_experiment.is_nonempty():
                 raise ValueError(f"Pattern {p.get_name()} is already labeled")
 
-        csv_dict_0 = get_label_mapping(data=data, phase_num=0)
-        csv_dict_1 = get_label_mapping(data=data, phase_num=1)
-
+        phases = [get_label_mapping(data=data, phase_num=num) for num in range(2)]
         for pattern_fpath, file_patterns in pattern_db.fpath_dict.items():
-            powder_experiment = get_powder_experiment(pattern_fpath=pattern_fpath, contrib_dirpath=contrib_dirpath, phase0=csv_dict_0,phase1=csv_dict_1)
+            powder_experiment = get_powder_experiment(pattern_fpath=pattern_fpath, contrib_dirpath=contrib_dirpath, phases=phases)
 
             for p in file_patterns:
                 p.powder_experiment = powder_experiment
