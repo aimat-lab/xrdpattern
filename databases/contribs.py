@@ -39,4 +39,5 @@ class ContributionProcessor(OpXRDProcessor):
 if __name__ == "__main__":
     processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
     # processor.parse_all()
-    processor.parse_USC()
+    # processor.parse_USC()
+    processor.parse_EMPA()

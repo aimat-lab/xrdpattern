@@ -1,8 +1,10 @@
 import os
 from typing import Optional
 
+import pandas as pd
+
 from databases.tools.fileIO import read_file, safe_cif_read
-from databases.tools.csv_label import get_powder_experiment
+from databases.tools.csv_label import get_powder_experiment, get_label_mapping
 from holytools.devtools import ModuleInspector
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
@@ -99,6 +101,7 @@ class OpXRDProcessor:
     @log_execution
     def attach_csv_labels(self, pattern_db : PatternDB, contrib_dirpath : str):
         csv_fpath = os.path.join(contrib_dirpath, 'labels.csv')
+        data = pd.read_csv(csv_fpath, skiprows=1)
         if not os.path.isfile(csv_fpath):
             print(f'No labels available for contribution {os.path.basename(contrib_dirpath)}')
             return
@@ -107,8 +110,11 @@ class OpXRDProcessor:
             if p.powder_experiment.is_nonempty():
                 raise ValueError(f"Pattern {p.get_name()} is already labeled")
 
+        csv_dict_0 = get_label_mapping(data=data, phase_num=0)
+        csv_dict_1 = get_label_mapping(data=data, phase_num=1)
+
         for pattern_fpath, file_patterns in pattern_db.fpath_dict.items():
-            powder_experiment = get_powder_experiment(pattern_fpath=pattern_fpath, contrib_dirpath=contrib_dirpath)
+            powder_experiment = get_powder_experiment(pattern_fpath=pattern_fpath, contrib_dirpath=contrib_dirpath, phase0=csv_dict_0,phase1=csv_dict_1)
 
             for p in file_patterns:
                 p.powder_experiment = powder_experiment
