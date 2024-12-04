@@ -62,7 +62,7 @@ class TestCustomFormats(ParserBaseTest):
             self.assertIsInstance(p, XrdPatternData)
 
     def test_multi_csv(self):
-        patterns = self.parser.extract(fpath=DataExamples.get_multi_csv_fpath(), csv_orientation=Orientation.HORIZONTAL)
+        patterns = self.parser.extract(fpath=DataExamples.get_multi_csv_fpath(), csv_orientation=Orientation.VERTICAL)
         for p in patterns:
             self.assertIsInstance(p, XrdPatternData)
 
@@ -102,9 +102,9 @@ class TestParserDatabase(ParserBaseTest):
         
     @staticmethod
     def get_all_db() -> PatternDB:
-        return PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=Orientation.HORIZONTAL)
+        return PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=Orientation.VERTICAL)
 
 
 
 if __name__ == "__main__":
-    TestCustomFormats.execute_all()
+    TestParserDatabase.execute_all()

@@ -18,7 +18,7 @@ class DataExamples:
 
     @classmethod
     def get_multi_csv_fpath(cls) -> str:
-        return os.path.join(cls.get_example_dirpath(), 'multi.csv')
+        return os.path.join(cls.get_example_dirpath(), 'vertical.csv')
 
     @classmethod
     def get_aimat_fpath(cls) -> str:
@@ -30,7 +30,7 @@ class DataExamples:
 
     @classmethod
     def get_xlsx_fpath(cls) -> str:
-        return os.path.join(cls.get_example_dirpath(), 'data.xlsx')
+        return os.path.join(cls.get_example_dirpath(), 'vertical.xlsx')
 
     @classmethod
     def get_dat_fpath(cls) -> str:
