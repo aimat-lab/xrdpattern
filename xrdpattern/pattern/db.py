@@ -107,13 +107,6 @@ class PatternDB:
                 return False
         return True
 
-    def exclude_critical(self):
-        noncritical_patterns = [pattern for pattern in self.patterns if not pattern.get_parsing_report().has_critical()]
-        for fpath, extracted_patterns in self.fpath_dict.items():
-            self.fpath_dict[fpath] = [p for p in extracted_patterns if not p.get_parsing_report().has_critical()]
-        return PatternDB(patterns=noncritical_patterns, fpath_dict=self.fpath_dict, failed_files=self.failed_files)
-
-
     def get_database_report(self) -> DatabaseReport:
         return DatabaseReport(data_dirpath=self.name, failed_files=self.failed_files, fpath_dict=self.fpath_dict)
 

@@ -27,8 +27,13 @@ class XrdPatternData(Serializable):
     def __post_init__(self):
         if len(self.two_theta_values) != len(self.intensities):
             raise ValueError(f'Two theta values and intensities must have the same length. Got lengths: {len(self.two_theta_values)}, {len(self.intensities)}')
-        if len(self.two_theta_values) == 0:
-            raise ValueError(f'Two theta values and intensities must have at least one entry. Two thetas, intensities = {self.two_theta_values}, {self.intensities}')
+        if len(self.two_theta_values) < 50:
+            raise ValueError(f'Data is too short. Less than 50 entries! Two theta values = {self.two_theta_values}')
+        if np.sum(self.intensities) < 0:
+            raise ValueError(f'Pattern contains negative intensity found! Intensities = {self.intensities}')
+        _, unique_indices = np.unique(self.two_theta_values, return_index=True)
+        if len(unique_indices) == 1:
+            raise ValueError(f'Pattern contains only one unique value. Two theta values = {self.two_theta_values}')
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> XrdPatternData:

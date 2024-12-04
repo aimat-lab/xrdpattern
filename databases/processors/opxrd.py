@@ -50,7 +50,6 @@ class OpXRDProcessor:
             pattern_db.set_xray(xray_info=xray_info)
         for p in pattern_db.patterns:
             p.metadata.remove_filename()
-        pattern_db.exclude_critical()
 
         self.save(pattern_db, dirname=dirname, label_groups=label_groups)
 

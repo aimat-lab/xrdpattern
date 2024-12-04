@@ -6,10 +6,11 @@ from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
 from numpy.typing import NDArray
 
 from xrdpattern.parsing import MasterParser, Formats
-from xrdpattern.xrd import XrdPatternData, XRayInfo
+from xrdpattern.xrd import XrdPatternData
 from .pattern_report import ParsingReport
 
 parser = MasterParser()
@@ -87,15 +88,8 @@ class XrdPattern(XrdPatternData):
 
     def get_parsing_report(self, datafile_fpath : str = 'Unmarked pattern') -> ParsingReport:
         pattern_health = ParsingReport(datafile_fpath=datafile_fpath)
-        if len(self.two_theta_values) == 0:
-            pattern_health.add_critical('No data found. Degree over intensity is empty!')
-        elif len(self.two_theta_values) < 50:
-            pattern_health.add_critical('Data is too short. Less than 50 entries!')
-        if np.sum(self.intensities) < 0:
-            pattern_health.add_critical('Pattern contains negative intensity found!')
         if self.powder_experiment.primary_wavelength is None:
             pattern_health.add_error('Primary wavelength missing!')
-
         return pattern_health
 
     def get_pattern_data(self, apply_standardization : bool = True, zero_mask_below : float = 0, zero_mask_above : float = 90) -> tuple[NDArray, NDArray]:
