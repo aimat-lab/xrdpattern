@@ -101,7 +101,7 @@ class OpXRDProcessor:
     @log_execution
     def attach_csv_labels(self, pattern_db : PatternDB, contrib_dirpath : str):
         csv_fpath = os.path.join(contrib_dirpath, 'labels.csv')
-        data = pd.read_csv(csv_fpath, skiprows=1)
+
         if not os.path.isfile(csv_fpath):
             print(f'No labels available for contribution {os.path.basename(contrib_dirpath)}')
             return
@@ -110,6 +110,7 @@ class OpXRDProcessor:
             if p.powder_experiment.is_nonempty():
                 raise ValueError(f"Pattern {p.get_name()} is already labeled")
 
+        data = pd.read_csv(csv_fpath, skiprows=1)
         phases = [get_label_mapping(data=data, phase_num=num) for num in range(2)]
         for pattern_fpath, file_patterns in pattern_db.fpath_dict.items():
             powder_experiment = get_powder_experiment(pattern_fpath=pattern_fpath, contrib_dirpath=contrib_dirpath, phases=phases)
