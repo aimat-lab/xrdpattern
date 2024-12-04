@@ -30,10 +30,10 @@ class XrdPatternData(Serializable):
         if len(self.two_theta_values) < 50:
             raise ValueError(f'Data is too short. Less than 50 entries! Two theta values = {self.two_theta_values}')
         if np.sum(self.intensities) < 0:
-            raise ValueError(f'Pattern contains negative intensity found! Intensities = {self.intensities}')
+            raise ValueError(f'Pattern contains negative intensity found! Intensities = {self.intensities[:20]}')
         _, unique_indices = np.unique(self.two_theta_values, return_index=True)
         if len(unique_indices) == 1:
-            raise ValueError(f'Pattern contains only one unique value. Two theta values = {self.two_theta_values}')
+            raise ValueError(f'Pattern contains only one unique value. Two theta values = {self.two_theta_values[:20]}...')
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> XrdPatternData:

@@ -73,7 +73,7 @@ class PatternDB:
                 fpath_dict[fpath] = new_patterns
             except Exception as e:
                 failed_files.append(fpath)
-                patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}: \"{e}\"\n")
+                patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
                 if strict:
                     raise e
 
