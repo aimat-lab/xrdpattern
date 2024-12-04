@@ -40,8 +40,9 @@ class XrdPatternData(Serializable):
         x = np.array(self.two_theta_values)
         y = np.array(self.intensities)
         y -= np.min(y)
-
+        x,y = self.to_strictly_increasing(x,y)
         cs = CubicSpline(x, y)
+
         mask = (std_angles >= start) & (std_angles <= end)
         std_intensities = cs(std_angles)
         std_intensities = std_intensities * mask
@@ -52,6 +53,17 @@ class XrdPatternData(Serializable):
         std_intensities = std_intensities/normalization_factor
 
         return std_angles, std_intensities
+
+    @staticmethod
+    def to_strictly_increasing(x : NDArray, y : NDArray):
+        indices = np.argsort(x)
+        x_sorted, y_sorted = x[indices], y[indices]
+        _, unique_indices = np.unique(x_sorted, return_index=True)
+        x = x_sorted[unique_indices]
+        y = y_sorted[unique_indices]
+
+        return x, y
+
 
     def to_str(self) -> str:
         the_dict = {'two_theta_values' : self.two_theta_values.tolist(),
