@@ -12,7 +12,7 @@ from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
-from xrdpattern.xrd import XRayInfo, PatternData
+from xrdpattern.xrd import XRayInfo, XrdPatternData
 from .db_report import DatabaseReport
 from .pattern import XrdPattern
 
@@ -63,7 +63,7 @@ class PatternDB:
         fpath_dict = {}
         failed_files = []
         patterns : list[XrdPattern] = []
-        def extract(xrd_fpath : str) -> list[PatternData]:
+        def extract(xrd_fpath : str) -> list[XrdPatternData]:
             return parser.extract(fpath=xrd_fpath, csv_orientation=csv_orientation)
 
         for fpath in TrackedCollection(data_fpaths):

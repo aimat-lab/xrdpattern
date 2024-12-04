@@ -14,16 +14,15 @@ from xrdpattern.xrd.experiment import PowderExperiment
 
 # -------------------------------------------
 
-
 @dataclass
-class PatternData(Serializable):
+class XrdPatternData(Serializable):
     two_theta_values : NDArray
     intensities : NDArray
     powder_experiment : PowderExperiment
     metadata: Metadata = field(default_factory=Metadata)
 
     @classmethod
-    def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> PatternData:
+    def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> XrdPatternData:
         metadata = PowderExperiment.make_empty()
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
         return cls(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=metadata)
@@ -31,7 +30,7 @@ class PatternData(Serializable):
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}
 
-    def get_standardized_map(self, start_val : float, stop_val : float, num_entries : int) -> (list[float], list[float]):
+    def _get_uniform(self, start_val : float, stop_val : float, num_entries : int) -> (list[float], list[float]):
         start, end = self.two_theta_values[0], self.two_theta_values[-1]
         std_angles = np.linspace(start=start_val, stop=stop_val, num=num_entries)
 
@@ -59,7 +58,7 @@ class PatternData(Serializable):
         return json.dumps(the_dict)
 
     @classmethod
-    def from_str(cls, json_str: str) -> PatternData:
+    def from_str(cls, json_str: str) -> XrdPatternData:
         data = json.loads(json_str)
         two_theta_values = np.array(data['two_theta_values'])
         intensities = np.array(data['intensities'])
@@ -69,7 +68,36 @@ class PatternData(Serializable):
         return cls(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=label, metadata=metadata)
 
 
-    def __eq__(self, other : PatternData):
+    # ---------------------------------------
+    # properties
+
+    def get_name(self) -> str:
+        return self.metadata.filename
+
+    def get_phase(self, phase_num : int) -> CrystalPhase:
+        return self.powder_experiment.phases[phase_num]
+
+    @property
+    def primary_phase(self) -> CrystalPhase:
+        return self.powder_experiment.primary_phase
+
+    @property
+    def startval(self):
+        return self.two_theta_values[0]
+
+    @property
+    def endval(self):
+        return self.two_theta_values[-1]
+
+    @property
+    def xray_info(self) -> XRayInfo:
+        return self.powder_experiment.xray_info
+
+    @property
+    def is_simulated(self) -> bool:
+        return self.powder_experiment.is_simulated
+
+    def __eq__(self, other : XrdPatternData):
         for attr in fields(self):
             v1, v2 = getattr(self, attr.name), getattr(other, attr.name)
             if isinstance(v1, np.ndarray):

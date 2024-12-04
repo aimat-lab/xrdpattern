@@ -4,7 +4,7 @@ from tests.base_pattern import ParserBaseTest
 from xrdpattern.examples import DataExamples
 from xrdpattern.parsing import Orientation
 from xrdpattern.pattern import XrdPattern, PatternDB
-from xrdpattern.xrd import PatternData
+from xrdpattern.xrd import XrdPatternData
 
 
 # -----------------------------------------------------------------
@@ -59,17 +59,17 @@ class TestCustomFormats(ParserBaseTest):
     def test_xlsx(self):
         patterns = self.parser.extract(fpath=DataExamples.get_xlsx_fpath(), csv_orientation=Orientation.VERTICAL)
         for p in patterns:
-            self.assertIsInstance(p, PatternData)
+            self.assertIsInstance(p, XrdPatternData)
 
     def test_multi_csv(self):
         patterns = self.parser.extract(fpath=DataExamples.get_multi_csv_fpath(), csv_orientation=Orientation.HORIZONTAL)
         for p in patterns:
-            self.assertIsInstance(p, PatternData)
+            self.assertIsInstance(p, XrdPatternData)
 
     def test_dat(self):
         patterns = self.parser.extract(fpath=DataExamples.get_dat_fpath())
         for p in patterns:
-            self.assertIsInstance(p, PatternData)
+            self.assertIsInstance(p, XrdPatternData)
 
 
 class TestParserDatabase(ParserBaseTest):

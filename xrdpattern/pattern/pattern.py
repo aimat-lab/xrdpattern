@@ -10,14 +10,14 @@ from numpy.typing import NDArray
 
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.parsing import MasterParser, Formats
-from xrdpattern.xrd import PatternData, XRayInfo
+from xrdpattern.xrd import XrdPatternData, XRayInfo
 from .pattern_report import ParsingReport
 
 parser = MasterParser()
 
 # -------------------------------------------
 
-class XrdPattern(PatternData):
+class XrdPattern(XrdPatternData):
     def plot(self, title: Optional[str] = None, save_fpath : Optional[str] = None, apply_standardization : bool =True):
         title = title or 'XrdPattern'
 
@@ -76,32 +76,6 @@ class XrdPattern(PatternData):
     # -------------------------------------------
     # get
 
-    def get_name(self) -> str:
-        return self.metadata.filename
-
-    def get_phase(self, phase_num : int) -> CrystalPhase:
-        return self.powder_experiment.phases[phase_num]
-
-    @property
-    def primary_phase(self) -> CrystalPhase:
-        return self.powder_experiment.primary_phase
-
-    @property
-    def startval(self):
-        return self.two_theta_values[0]
-
-    @property
-    def endval(self):
-        return self.two_theta_values[-1]
-
-    @property
-    def xray_info(self) -> XRayInfo:
-        return self.powder_experiment.xray_info
-
-    @property
-    def is_simulated(self) -> bool:
-        return self.powder_experiment.is_simulated
-
     def to_tensorpair(self, dtype : torch.dtype, device : torch.device) -> tuple[torch.Tensor, torch.Tensor]:
         raise NotImplementedError
 
@@ -129,7 +103,7 @@ class XrdPattern(PatternData):
         if apply_standardization:
             start, stop = self.std_two_theta_range()
             num_entries = self.std_num_entries()
-            angles, intensities = self.get_standardized_map(start_val=start, stop_val=stop, num_entries=num_entries)
+            angles, intensities = self._get_uniform(start_val=start, stop_val=stop, num_entries=num_entries)
         else:
             angles, intensities = copy.deepcopy(self.two_theta_values), copy.copy(self.intensities)
         mask = (angles >= zero_mask_below) & (angles <= zero_mask_above)

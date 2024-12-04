@@ -2,11 +2,11 @@ import numpy as np
 from gemmi import cif
 from numpy.typing import NDArray
 
-from xrdpattern.xrd import PowderExperiment, PatternData, Metadata
+from xrdpattern.xrd import PowderExperiment, XrdPatternData, Metadata
 
 
 class CifParser:
-    def extract(self, fpath : str) -> PatternData:
+    def extract(self, fpath : str) -> XrdPatternData:
         with open(fpath, 'r') as f:
             cif_content = f.read()
         experiment_info = PowderExperiment.from_cif(cif_content=cif_content)
@@ -24,7 +24,7 @@ class CifParser:
                 parts = l.split()
                 metadata.measurement_date = parts[1]
 
-        pattern_data = PatternData(intensities=y, two_theta_values=x, powder_experiment=experiment_info, metadata=metadata)
+        pattern_data = XrdPatternData(intensities=y, two_theta_values=x, powder_experiment=experiment_info, metadata=metadata)
         return pattern_data
 
 
