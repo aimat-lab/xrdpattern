@@ -149,49 +149,59 @@ class PatternDB:
 
 
 
-    def plot_quantity(self, attr : str = 'crystal_structure.spacegroup', print_counts : bool = False):
-        quantity_list = []
-        for j,pattern in enumerate(self.patterns):
-            try:
-                spg = nested_getattr(pattern, attr)
-                quantity_list.append(spg)
-            except:
-                patterdb_logger.log(msg=f'Could not extract attribute \"{attr}\" from pattern {pattern.get_info_as_str()}',
-                                    level=logging.WARNING)
-        if not quantity_list:
-            raise ValueError(f'No data found for attribute {attr}')
+    def plot_quantity(self, attrs : list[str], print_counts : bool = False, save_fpath : Optional[str] = None):
+        fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
+        axs = axs.flatten()
 
-        counts = Counter(quantity_list)
-        sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+        for i, attr in enumerate(attrs):
+            quantity_list = []
+            for pattern in self.patterns:
+                try:
+                    spg = nested_getattr(pattern, attr)
+                    quantity_list.append(spg)
+                except Exception as e:
+                    patterdb_logger.warning(msg=f'Could not extract attribute "{attr}" from pattern {pattern.get_name()}\n'
+                                                f'- Reason: {e}')
 
-        if print_counts:
-            print(f'-> Count distribution of {attr} in Dataset:')
-            for key, value in sorted_counts:
-                print(f'- {key} : {value}')
+            if not quantity_list:
+                raise ValueError(f'No data found for attribute {attr}')
 
-        keys, values = zip(*sorted_counts)
-        if len(keys) > 30:
-            keys = keys[:30]
-            values = values[:30]
+            counts = Counter(quantity_list)
+            sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
 
-        def attempt_round(val : Any):
-            if type(val) == int:
-                return val
-            try:
-                rounded_val = round(val,2)
-            except:
-                rounded_val = val
-            return rounded_val
+            if print_counts:
+                print(f'-> Count distribution of {attr} in Dataset:')
+                for key, value in sorted_counts:
+                    print(f'- {key} : {value}')
 
-        rounded_keys = [str(attempt_round(key)) for key in keys]
-        print(f'Number of data patterns with label {attr} = {len(quantity_list)}')
+            keys, values = zip(*sorted_counts)
+            if len(keys) > 30:
+                keys = keys[:30]
+                values = values[:30]
 
-        plt.figure(figsize=(10, 5))
-        plt.bar(rounded_keys, values)
-        plt.xlabel(attr)
-        plt.ylabel('Counts')
-        plt.title(f'Count distribution of {attr} in Dataset {self.name}')
-        plt.xticks(rotation=90)
+            def attempt_round(val):
+                try:
+                    return round(val, 2) if isinstance(val, float) else val
+                except TypeError:
+                    return val
+
+            rounded_keys = [str(attempt_round(key)) for key in keys]
+
+            axs[i].bar(rounded_keys, values)
+            axs[i].set_title(f'Count distribution of {attr}')
+            axs[i].set_xlabel(attr)
+            axs[i].set_ylabel('Counts')
+            axs[i].tick_params(labelrotation=90)
+
+        # Hide unused axes if number of attributes is odd
+        if len(attrs) % 2 != 0:
+            axs[-1].axis('off')
+
+        plt.tight_layout()
+
+        if save_fpath:
+            plt.savefig(save_fpath)
+
         plt.show()
 
 

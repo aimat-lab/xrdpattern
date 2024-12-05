@@ -99,7 +99,11 @@ class XrdPatternData(Serializable):
     # properties
 
     def get_name(self) -> str:
-        return self.metadata.filename
+        name = self.metadata.filename
+        if not name:
+            name = f'unnamed_pattern'
+
+        return name
 
     def get_phase(self, phase_num : int) -> CrystalPhase:
         return self.powder_experiment.phases[phase_num]
