@@ -105,6 +105,10 @@ class XrdPatternData(Serializable):
         return self.powder_experiment.phases[phase_num]
 
     @property
+    def num_entries(self) -> int:
+        return len(self.two_theta_values)
+
+    @property
     def primary_phase(self) -> CrystalPhase:
         return self.powder_experiment.primary_phase
 

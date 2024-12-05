@@ -39,4 +39,4 @@ class ContributionProcessor(OpXRDProcessor):
 if __name__ == "__main__":
     processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
     # processor.parse_CNRS()
-    processor.parse_LBNL()
+    processor.parse_all()
