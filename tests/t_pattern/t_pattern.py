@@ -1,5 +1,8 @@
 import os.path
 
+import numpy as np
+from matplotlib import pyplot as plt
+
 from xrdpattern.crystal import CrystalExamples
 from xrdpattern.examples import DataExamples
 from xrdpattern.pattern import XrdPattern
@@ -31,7 +34,7 @@ class TestXrdPattern(ParserBaseTest):
 
     def test_plot(self):
         if self.is_manual_mode:
-            self.skipTest(reason='Only available in databases mode')
+            self.skipTest(reason='Only available in manual mode')
 
     def test_standardize(self):
         pattern = self.pattern
@@ -45,10 +48,36 @@ class TestXrdPattern(ParserBaseTest):
             self.check_data_ok(*data)
 
     def test_from_angle_data(self):
-        angles = [1.0, 2.0, 3.0]
-        intensities = [10.0, 20.0, 100.0]
+        pattern_len = 90
+        angles = [float(x) for x in range(pattern_len)]
+        intensities = [float(x*20) for x in range(pattern_len)]
         pattern = XrdPattern.make_unlabeled(two_theta_values=angles, intensities=intensities)
         self.check_data_ok(*pattern.get_pattern_data(apply_standardization=False))
+
+    def test_get_pattern_data(self):
+        if not self.is_manual_mode:
+            print('Only available in manual mode')
+            return
+
+        a1, i1 = self.pattern.get_pattern_data(apply_standardization=False)
+        a2, i2 = self.pattern.get_pattern_data(apply_standardization=True)
+        a3, i3 = self.pattern.get_pattern_data(apply_standardization=True, apply_constant_padding=True)
+
+        plt.figure(figsize=(15, 5))
+        titles = ['Without Standardization', 'With Standardization', 'With Standardization and Constant Padding']
+        data = [(a1, i1), (a2, i2), (a3, i3)]
+
+        for idx, (angles, intensities) in enumerate(data):
+            plt.subplot(1, 3, idx + 1)
+            plt.plot(angles, intensities, label=titles[idx])
+            plt.title(titles[idx])
+            plt.xlabel('Angle (degrees)')
+            plt.ylabel('Intensity')
+            plt.legend()
+
+        plt.tight_layout()
+        plt.show()
+
     @staticmethod
     def save_and_load(pattern : XrdPattern) -> XrdPattern:
         save_path = os.path.join(tempfile.mkdtemp(), f'pattern.{Formats.aimat_suffix()}')

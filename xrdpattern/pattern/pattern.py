@@ -92,11 +92,13 @@ class XrdPattern(XrdPatternData):
             pattern_health.add_error('Primary wavelength missing!')
         return pattern_health
 
-    def get_pattern_data(self, apply_standardization : bool = True, zero_mask_below : float = 0, zero_mask_above : float = 90) -> tuple[NDArray, NDArray]:
+    def get_pattern_data(self, apply_standardization : bool = True, apply_constant_padding : bool = False,
+                         zero_mask_below : float = 0,
+                         zero_mask_above : float = 90) -> tuple[NDArray, NDArray]:
         if apply_standardization:
             start, stop = self.std_two_theta_range()
             num_entries = self.std_num_entries()
-            angles, intensities = self._get_uniform(start_val=start, stop_val=stop, num_entries=num_entries)
+            angles, intensities = self._get_uniform(start_val=start, stop_val=stop, num_entries=num_entries, constant_padding=apply_constant_padding)
         else:
             angles, intensities = copy.deepcopy(self.two_theta_values), copy.copy(self.intensities)
         mask = (angles >= zero_mask_below) & (angles <= zero_mask_above)

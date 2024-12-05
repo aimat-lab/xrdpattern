@@ -44,21 +44,29 @@ class XrdPatternData(Serializable):
     def to_dict(self):
         return {f.name: getattr(self, f.name) for f in fields(self)}
 
-    def _get_uniform(self, start_val : float, stop_val : float, num_entries : int) -> (list[float], list[float]):
+    def _get_uniform(self, start_val : float, stop_val : float, num_entries : int, constant_padding : bool) -> (list[float], list[float]):
         start, end = self.two_theta_values[0], self.two_theta_values[-1]
         std_angles = np.linspace(start=start_val, stop=stop_val, num=num_entries)
 
         x = np.array(self.two_theta_values)
         y = np.array(self.intensities)
+        x, y = self.to_strictly_increasing(x, y)
         y -= np.min(y)
-        x,y = self.to_strictly_increasing(x,y)
+
         cs = CubicSpline(x, y)
-
-        mask = (std_angles >= start) & (std_angles <= end)
         std_intensities = cs(std_angles)
-        std_intensities = std_intensities * mask
-        std_intensities -= np.min(std_intensities)
+        below_start_indices = np.where(std_angles < start)[0]
+        above_end_indices = np.where(std_angles > end)[0]
 
+        if constant_padding:
+            below_start, after_end = y[0], y[-1]
+        else:
+            below_start, after_end = 0, 0
+
+        std_intensities[below_start_indices] = below_start
+        std_intensities[above_end_indices] = after_end
+
+        std_intensities -= np.min(std_intensities)
         max_intensity = np.max(std_intensities)
         normalization_factor = max_intensity if max_intensity > 0 else 1
         std_intensities = std_intensities/normalization_factor
