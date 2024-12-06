@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from enum import Enum
 from typing import Optional
 
 import torch
@@ -154,6 +155,12 @@ class PowderExperiment(JsonDataclass):
         return LabelTensor(tensor)
 
 
+class LabelType(Enum):
+    spg = "spg"
+    lattice = "lattice"
+    atom_coords = "atom_coords"
+    composition = "composition"
+
 class LabelTensor(TensorDict):
     def get_lattice_params(self) -> Tensor:
         return self['lattice_params']
@@ -177,4 +184,5 @@ class LabelTensor(TensorDict):
     # noinspection PyTypeChecker
     def to_sample(self) -> PowderExperiment:
         raise NotImplementedError
+
 

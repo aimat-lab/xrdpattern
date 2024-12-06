@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass, fields, field
 
 import numpy as np
@@ -12,7 +13,7 @@ from holytools.abstract import Serializable
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.xrd import XRayInfo
 from xrdpattern.xrd.metadata import Metadata
-from xrdpattern.xrd.experiment import PowderExperiment
+from xrdpattern.xrd.experiment import PowderExperiment, LabelType
 
 
 # -------------------------------------------
@@ -139,6 +140,17 @@ class XrdPatternData(Serializable):
     @property
     def is_simulated(self) -> bool:
         return self.powder_experiment.is_simulated
+
+    def has_label(self, label_type: LabelType) -> bool:
+        if label_type == LabelType.composition:
+            return self.primary_phase.chemical_composition is not None
+        if label_type == LabelType.spg:
+            return self.primary_phase.spacegroup is not None
+        if label_type == LabelType.lattice:
+            return all(not math.isnan(x) for x in self.primary_phase.lengths) and all(not math.isnan(x) for x in self.primary_phase.angles)
+        if label_type == LabelType.atom_coords:
+            return len(self.primary_phase.base) > 0
+        return False
 
     def __eq__(self, other : XrdPatternData):
         for attr in fields(self):
