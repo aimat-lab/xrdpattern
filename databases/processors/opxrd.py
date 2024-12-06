@@ -33,25 +33,25 @@ class OpXRDProcessor:
             print(f'mthd name = {mthd.__name__}')
             mthd()
 
-    def process(self, dirname: str,
+    def process(self, input_dirname: str, output_dirname : str,
                 selected_suffixes : Optional[list[str]] = None,
                 use_cif_labels : bool = False,
                 xray_info : Optional[XRayInfo] = None,
                 csv_orientation : Optional[Orientation] = None,
                 label_groups : bool = False):
-        print(f'Started processing contributino {dirname}')
-        data_dirpath = os.path.join(self.raw_dirpath, dirname, 'data')
-        contrib_dirpath = os.path.join(self.raw_dirpath, dirname)
+        print(f'Started processing contributino {input_dirname}')
+        data_dirpath = os.path.join(self.raw_dirpath, input_dirname, 'data')
+        contrib_dirpath = os.path.join(self.raw_dirpath, input_dirname)
         pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=selected_suffixes, csv_orientation=csv_orientation)
 
-        self.attach_metadata(pattern_db, dirname=dirname)
+        self.attach_metadata(pattern_db, dirname=input_dirname)
         self.attach_labels(pattern_db=pattern_db, contrib_dirpath=contrib_dirpath, use_cif_labels=use_cif_labels)
         if xray_info:
             pattern_db.set_xray(xray_info=xray_info)
         for p in pattern_db.patterns:
             p.metadata.remove_filename()
 
-        self.save(pattern_db, dirname=dirname, label_groups=label_groups)
+        self.save(pattern_db, dirname=output_dirname, label_groups=label_groups)
 
     # ---------------------------------------
     # Parsing steps
