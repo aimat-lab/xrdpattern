@@ -1,16 +1,15 @@
 import os.path
+import tempfile
 
-import numpy as np
 from matplotlib import pyplot as plt
 
+from tests.base_pattern import ParserBaseTest
 from xrdpattern.crystal import CrystalExamples
 from xrdpattern.examples import DataExamples
-from xrdpattern.pattern import XrdPattern
 from xrdpattern.parsing import Formats
-from tests.base_pattern import ParserBaseTest
-
+from xrdpattern.pattern import XrdPattern
 from xrdpattern.xrd import PowderExperiment
-import tempfile
+
 
 # ---------------------------------------------------------
 

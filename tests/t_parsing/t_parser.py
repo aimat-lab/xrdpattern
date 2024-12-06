@@ -95,7 +95,6 @@ class TestParserDatabase(ParserBaseTest):
             self.assertIsInstance(obj=as_str, cls=str)
             self.assertTrue(len(report.pattern_reports) > 0)
 
-
     @staticmethod
     def get_bruker_db() -> PatternDB:
         return PatternDB.load(dirpath=DataExamples.get_datafolder_fpath())

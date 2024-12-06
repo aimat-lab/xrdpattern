@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import logging
 import os
 from collections import Counter
 from dataclasses import dataclass
-from typing import Optional, Any
+from typing import Optional
 
 from matplotlib import pyplot as plt
 

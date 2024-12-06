@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from .pattern import XrdPattern
+from .pattern_report import ParsingReport
 
 
 @dataclass
@@ -9,15 +10,13 @@ class DatabaseReport:
     fpath_dict : dict[str, list[XrdPattern]]
 
     def __post_init__(self):
-        self.num_crit, self.num_err, self.num_warn = 0, 0, 0
-        self.pattern_reports = []
+        self.num_err, self.num_warn = 0, 0, 0
+        self.pattern_reports : list[ParsingReport] = []
         for fpath, fpath_patterns in self.fpath_dict.items():
             self.pattern_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in fpath_patterns]
 
         for report in self.pattern_reports:
-            self.num_crit += report.has_critical()
             self.num_err += report.has_error()
-            self.num_warn += report.has_warning()
         self.source_files = list(self.fpath_dict.keys()) + self.failed_files
 
 
@@ -37,7 +36,6 @@ class DatabaseReport:
         summary_str += f'\n- Processed {num_attempted_files} files to extract {num_parsed_patterns} patterns'
         summary_str += f'\n- {self.num_warn}/{num_parsed_patterns} patterns had warning(s)'
         summary_str += f'\n- {self.num_err}/{num_parsed_patterns} patterns had error(s)'
-        summary_str += f'\n- {self.num_crit}/{num_parsed_patterns} patterns had had critical error(s)'
 
         if num_failed > 0:
             summary_str += f'\n\nFailed files:\n'
