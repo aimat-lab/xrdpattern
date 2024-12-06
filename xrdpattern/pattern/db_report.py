@@ -10,7 +10,7 @@ class DatabaseReport:
     fpath_dict : dict[str, list[XrdPattern]]
 
     def __post_init__(self):
-        self.num_err, self.num_warn = 0, 0, 0
+        self.num_err, self.num_warn = 0, 0
         self.pattern_reports : list[ParsingReport] = []
         for fpath, fpath_patterns in self.fpath_dict.items():
             self.pattern_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in fpath_patterns]
@@ -18,7 +18,6 @@ class DatabaseReport:
         for report in self.pattern_reports:
             self.num_err += report.has_error()
         self.source_files = list(self.fpath_dict.keys()) + self.failed_files
-
 
     def print(self):
         print(self.as_str())
