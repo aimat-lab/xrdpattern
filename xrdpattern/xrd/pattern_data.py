@@ -35,6 +35,9 @@ class XrdPatternData(Serializable):
             raise ValueError(f'Pattern contains only one unique value. Two theta values = {self.two_theta_values[:20]}...')
         if np.isnan(self.two_theta_values).any() or np.isnan(self.intensities).any():
             raise ValueError(f'TwoThetaValues or Intensities contain NaN values')
+        if np.all(self.intensities == 0):
+            raise ValueError(f'All intensities are zero')
+
 
     @classmethod
     def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> XrdPatternData:
