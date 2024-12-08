@@ -78,6 +78,18 @@ class PatternDB:
 
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, failed_files=failed_files)
 
+    @classmethod
+    def merge(cls, dbs : list[PatternDB]):
+        patterns = []
+        failed_files = []
+        fpath_dict = {}
+        for db in dbs:
+            patterns += db.patterns
+            failed_files += db.failed_files
+            fpath_dict.update(db.fpath_dict)
+
+        return PatternDB(patterns=patterns, failed_files=failed_files, fpath_dict=fpath_dict)
+
     @staticmethod
     def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
         if selected_suffixes is None:

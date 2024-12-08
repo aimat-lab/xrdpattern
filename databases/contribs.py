@@ -1,3 +1,6 @@
+import os
+import shutil
+import tempfile
 from typing import Optional
 
 from databases.processors.opxrd import OpXRDProcessor
@@ -37,7 +40,42 @@ class ContributionProcessor(OpXRDProcessor):
     def parse_HKUST(self):
         self.process(input_dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['txt'], xray_info=self.cu_xray, output_dirname='HKUST_0')
 
+    def prepare_zips(self):
+        dir_content_names = os.listdir(self.final_dirpath)
+        dir_content_paths = [os.path.join(self.final_dirpath, name) for name in dir_content_names]
+        dirpaths = [d for d in dir_content_paths if os.path.isdir(d)]
+
+        in_situ_dirs = [d for d in dirpaths if 'LBNL' in d]
+        non_situ_dirs = [d for d in dirpaths if d not in in_situ_dirs]
+
+        print(f'In situ dirs: {in_situ_dirs}')
+        print(f'Non situ dirs: {non_situ_dirs}')
+
+        in_situ_fpath = os.path.join(self.final_dirpath, 'opxrd_in_situ.zip')
+        self._zip_dirs(in_situ_dirs, output_fpath=in_situ_fpath)
+
+        non_situ_fpath = os.path.join(self.final_dirpath, 'opxrd.zip')
+        self._zip_dirs(non_situ_dirs, output_fpath=non_situ_fpath)
+
+    @staticmethod
+    def _zip_dirs(dirpaths : list[str], output_fpath : str):
+        if len(dirpaths) == 0:
+            raise ValueError('No directories to zip')
+
+        tmp_dir = tempfile.mktemp()
+        for d in dirpaths:
+            print(f'Copying {d} to {tmp_dir}')
+            tmp_dirpath = os.path.join(tmp_dir, os.path.basename(d))
+            shutil.copytree(d,tmp_dirpath)
+        print(f'Zipping {tmp_dir} to {output_fpath}')
+        parts = output_fpath.split('.')[:-1]
+        output_fpath = '.'.join(parts)
+        shutil.make_archive(base_name=output_fpath, format='zip', root_dir=tmp_dir)
+
+
 if __name__ == "__main__":
     processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
     # processor.parse_CNRS()
-    processor.parse_all()
+    # processor.parse_all()
+    # ContributionProcessor.zip_dirs(dirpaths=['/home/daniel/aimat/data/opXRD/final/LBNL_0'], output_fpath='/home/daniel/aimat/data/opXRD/final/LBNL_0.zip')
+    processor.prepare_zips()

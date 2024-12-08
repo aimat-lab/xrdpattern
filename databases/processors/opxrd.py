@@ -18,8 +18,8 @@ from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
 class OpXRDProcessor:
     def __init__(self, root_dirpath : str):
         self.root_dirpath : str = root_dirpath
-        self.raw_dirpath : str = os.path.join(root_dirpath, 'processed')
-        self.processed_dirpath : str = os.path.join(root_dirpath, 'final')
+        self.processed_dirpath : str = os.path.join(root_dirpath, 'processed')
+        self.final_dirpath : str = os.path.join(root_dirpath, 'final')
         self.cu_xray : XRayInfo = XrdAnode.Cu.get_xray_info()
 
     # ---------------------------------------
@@ -40,8 +40,8 @@ class OpXRDProcessor:
                 csv_orientation : Optional[Orientation] = None,
                 label_groups : bool = False):
         print(f'Started processing contributino {input_dirname}')
-        data_dirpath = os.path.join(self.raw_dirpath, input_dirname, 'data')
-        contrib_dirpath = os.path.join(self.raw_dirpath, input_dirname)
+        data_dirpath = os.path.join(self.processed_dirpath, input_dirname, 'data')
+        contrib_dirpath = os.path.join(self.processed_dirpath, input_dirname)
         pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=selected_suffixes, csv_orientation=csv_orientation)
 
         self.attach_metadata(pattern_db, dirname=input_dirname)
@@ -58,7 +58,7 @@ class OpXRDProcessor:
 
     @log_execution
     def attach_metadata(self, pattern_db : PatternDB, dirname : str):
-        form_dirpath = os.path.join(self.raw_dirpath, dirname, 'form.txt')
+        form_dirpath = os.path.join(self.processed_dirpath, dirname, 'form.txt')
         with open(form_dirpath, "r") as file:
             lines = file.readlines()
         form_data = {}
@@ -120,7 +120,7 @@ class OpXRDProcessor:
 
     @log_execution
     def save(self, pattern_db : PatternDB, dirname : str, label_groups : bool):
-        out_dirpath = os.path.join(self.processed_dirpath, dirname)
+        out_dirpath = os.path.join(self.final_dirpath, dirname)
         if not os.path.isdir(out_dirpath):
             os.makedirs(out_dirpath)
         pattern_db.save(dirpath=out_dirpath,label_groups=label_groups, force_overwrite=True)
