@@ -1,6 +1,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from holytools.fsys import SaveManager
+from typing import Optional
+
+from holytools.fsys import SaveManager, FsysNode
 from xrdpattern.parsing.xylib import get_xylib_repr
 from .stoe import StoeParser
 
@@ -116,6 +118,16 @@ class Formats:
             is_riet_dat = False
         return is_riet_dat
 
+    @staticmethod
+    def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
+        if selected_suffixes is None:
+            selected_suffixes = Formats.get_all_suffixes()
+
+        root_node = FsysNode(path=dirpath)
+        xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
+        data_fpaths = [node.get_path() for node in xrd_file_nodes]
+
+        return data_fpaths
 
 if __name__ == "__main__":
     # tha_format = Formats.get_format(fpath='/home/daniel/aimat/opXRD/raw/zhang_cao_0/data/caobin_pxrd_xy/C/xy.txt')

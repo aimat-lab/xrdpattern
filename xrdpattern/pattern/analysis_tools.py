@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from tabulate import tabulate
 from collections import Counter
 
-from xrdpattern.pattern import XrdPattern, PatternDB
+from xrdpattern.pattern import XrdPattern
 from xrdpattern.xrd import LabelType
 
 # -----------------------------------------
@@ -103,23 +103,9 @@ def get_count_map(patterns : list[XrdPattern], attr : str, print_counts : bool) 
     return keys, counts
 
 
-def show_label_fractions(dbs: list[PatternDB]):
-    db_groups = {}
-    for db in dbs:
-        three_letter_name = db.name[:4]
-        if not three_letter_name in db_groups:
-            db_groups[three_letter_name] = [db]
-        else:
-            db_groups[three_letter_name].append(db)
-
-    merged_dbs = []
-    for name, g in db_groups.items():
-        merged = PatternDB.merge(dbs=g)
-        merged.name = name
-        merged_dbs.append(merged)
-
+def show_label_fractions(dbs):
     table_data = []
-    for d in merged_dbs:
+    for d in dbs:
         label_counts = {l: 0 for l in LabelType}
         patterns = d.patterns
         for l in LabelType:
@@ -130,8 +116,7 @@ def show_label_fractions(dbs: list[PatternDB]):
         table_data.append(db_percentages)
 
     col_headers = [label.name for label in LabelType]
-    row_headers = [db.name for db in merged_dbs]
+    row_headers = [db.name for db in dbs]
 
     table = tabulate(table_data, headers=col_headers, showindex=row_headers, tablefmt='psql')
     print(table)
-

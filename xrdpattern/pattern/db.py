@@ -4,11 +4,12 @@ import os
 from dataclasses import dataclass
 from typing import Optional
 
-from holytools.fsys import FsysNode
+from tabulate import tabulate
+
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
-from xrdpattern.xrd import XRayInfo, XrdPatternData
+from xrdpattern.xrd import XRayInfo, XrdPatternData, LabelType
 from .analysis_tools import multiplot, attribute_histograms
 from .db_report import DatabaseReport
 from .pattern import XrdPattern
@@ -45,14 +46,12 @@ class PatternDB:
                 pattern.save(fpath=fpath, force_overwrite=force_overwrite)
 
     @classmethod
-    def load(cls, dirpath : str, strict : bool = False,
-             suffixes : Optional[list[str]] = None,
-             csv_orientation : Optional[Orientation] = None) -> PatternDB:
+    def load(cls, dirpath : str, strict : bool = False, suffixes : Optional[list[str]] = None, csv_orientation : Optional[Orientation] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
 
-        data_fpaths = cls.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=suffixes)
+        data_fpaths = Formats.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=suffixes)
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
@@ -74,18 +73,6 @@ class PatternDB:
                     raise e
 
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, failed_files=failed_files)
-
-
-    @staticmethod
-    def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
-        if selected_suffixes is None:
-            selected_suffixes = Formats.get_all_suffixes()
-
-        root_node = FsysNode(path=dirpath)
-        xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
-        data_fpaths = [node.get_path() for node in xrd_file_nodes]
-
-        return data_fpaths
 
     # -------------------------------------------
     # operations
