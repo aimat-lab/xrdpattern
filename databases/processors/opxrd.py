@@ -3,11 +3,11 @@ from typing import Optional
 
 import pandas as pd
 
-from databases.tools.fileIO import read_file, safe_cif_read
 from databases.tools.csv_label import get_powder_experiment, get_label_mapping
 from holytools.devtools import ModuleInspector
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
+from xrdpattern.crystal import CrystalPhase
 from xrdpattern.parsing import Orientation
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
@@ -124,3 +124,20 @@ class OpXRDProcessor:
         if not os.path.isdir(out_dirpath):
             os.makedirs(out_dirpath)
         pattern_db.save(dirpath=out_dirpath,label_groups=label_groups, force_overwrite=True)
+
+    # -----------------------------
+    # Helper methods
+
+    @staticmethod
+    def read_file(fpath: str) -> str:
+        with open(fpath, 'r') as file:
+            cif_content = file.read()
+        return cif_content
+
+    @staticmethod
+    def safe_cif_read(cif_content: str) -> Optional[CrystalPhase]:
+        try:
+            extracted_phase = CrystalPhase.from_cif(cif_content)
+        except:
+            extracted_phase = None
+        return extracted_phase

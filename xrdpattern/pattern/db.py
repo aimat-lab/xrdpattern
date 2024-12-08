@@ -121,43 +121,35 @@ class PatternDB:
     def get_database_report(self) -> DatabaseReport:
         return DatabaseReport(data_dirpath=self.name, failed_files=self.failed_files, fpath_dict=self.fpath_dict)
 
+    def view_all(self):
+        batch_size = 32
 
+        j = 0
+        while j < len(self.patterns):
+            pattern_batch = self.patterns[j:j + batch_size]
+            for p in pattern_batch:
+                p.metadata.filename = f'pattern_{j}'
+            self.multiplot(patterns=pattern_batch)
+            j += batch_size
 
+            user_input = input(f'Press enter to continue or q to quit')
+            if user_input.lower() == 'q':
+                break
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @staticmethod
+    def multiplot(patterns : list[XrdPattern]):
+        labels = [p.get_name() for p in patterns]
+        fig, axes = plt.subplots(4, 8, figsize=(20, 10))
+        for i, pattern in enumerate(patterns):
+            ax = axes[i // 8, i % 8]
+            x_values, intensities = pattern.get_pattern_data(apply_standardization=False)
+            ax.set_xlabel(r'$2\theta$ (Degrees)')
+            ax.plot(x_values, intensities, label='Interpolated Intensity')
+            ax.set_ylabel('Intensity')
+            ax.set_title(f'({i}){labels[i][:20]}')
+            ax.legend(fontsize=8)
+        plt.tight_layout()
+        plt.show()
 
 
     def plot_quantity(self, attrs : list[str], print_counts : bool = False, save_fpath : Optional[str] = None):
