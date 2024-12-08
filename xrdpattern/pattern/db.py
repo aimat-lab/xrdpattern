@@ -127,8 +127,8 @@ class PatternDB:
         j = 0
         while j < len(self.patterns):
             pattern_batch = self.patterns[j:j + batch_size]
-            for p in pattern_batch:
-                p.metadata.filename = f'pattern_{j}'
+            for k,p in enumerate(pattern_batch):
+                p.metadata.filename = p.metadata.filename or f'pattern_{j+k}'
             self.multiplot(patterns=pattern_batch)
             j += batch_size
 

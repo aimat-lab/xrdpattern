@@ -87,8 +87,8 @@ class OpXRDProcessor:
             phases = []
             for fname in cif_fnames:
                 cif_fpath = os.path.join(dirpath, fname)
-                attached_cif_content = read_file(fpath=cif_fpath)
-                crystal_phase = safe_cif_read(cif_content=attached_cif_content)
+                attached_cif_content = OpXRDProcessor.read_file(fpath=cif_fpath)
+                crystal_phase = OpXRDProcessor.safe_cif_read(cif_content=attached_cif_content)
                 phases.append(crystal_phase)
 
             phases = [p for p in phases if not p is None]

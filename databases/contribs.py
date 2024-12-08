@@ -75,7 +75,5 @@ class ContributionProcessor(OpXRDProcessor):
 
 if __name__ == "__main__":
     processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
-    # processor.parse_CNRS()
-    # processor.parse_all()
-    # ContributionProcessor.zip_dirs(dirpaths=['/home/daniel/aimat/data/opXRD/final/LBNL_0'], output_fpath='/home/daniel/aimat/data/opXRD/final/LBNL_0.zip')
+    processor.parse_all()
     processor.prepare_zips()
