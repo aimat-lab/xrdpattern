@@ -1,18 +1,15 @@
 from __future__ import annotations
 
 import os
-from collections import Counter
 from dataclasses import dataclass
 from typing import Optional
-
-import numpy as np
-from matplotlib import pyplot as plt
 
 from holytools.fsys import FsysNode
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from xrdpattern.xrd import XRayInfo, XrdPatternData
+from .analysis_tools import multiplot, attribute_histograms
 from .db_report import DatabaseReport
 from .pattern import XrdPattern
 
@@ -47,7 +44,6 @@ class PatternDB:
                 fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_suffix()}')
                 pattern.save(fpath=fpath, force_overwrite=force_overwrite)
 
-
     @classmethod
     def load(cls, dirpath : str, strict : bool = False,
              suffixes : Optional[list[str]] = None,
@@ -79,6 +75,24 @@ class PatternDB:
 
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, failed_files=failed_files)
 
+
+    @staticmethod
+    def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
+        if selected_suffixes is None:
+            selected_suffixes = Formats.get_all_suffixes()
+
+        root_node = FsysNode(path=dirpath)
+        xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
+        data_fpaths = [node.get_path() for node in xrd_file_nodes]
+
+        return data_fpaths
+
+    # -------------------------------------------
+    # operations
+
+    def __add__(self, other):
+        return PatternDB.merge(dbs=[self, other])
+
     @classmethod
     def merge(cls, dbs : list[PatternDB]):
         patterns = []
@@ -91,19 +105,6 @@ class PatternDB:
 
         return PatternDB(patterns=patterns, failed_files=failed_files, fpath_dict=fpath_dict)
 
-    def __add__(self, other):
-        return PatternDB.merge(dbs=[self, other])
-
-    @staticmethod
-    def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
-        if selected_suffixes is None:
-            selected_suffixes = Formats.get_all_suffixes()
-
-        root_node = FsysNode(path=dirpath)
-        xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
-        data_fpaths = [node.get_path() for node in xrd_file_nodes]
-
-        return data_fpaths
 
     def set_xray(self, xray_info : XRayInfo):
         for p in self.patterns:
@@ -122,10 +123,10 @@ class PatternDB:
                 return False
         return True
 
-    def get_database_report(self) -> DatabaseReport:
+    def get_parsing_report(self) -> DatabaseReport:
         return DatabaseReport(data_dirpath=self.name, failed_files=self.failed_files, fpath_dict=self.fpath_dict)
 
-    def view_all(self):
+    def plot_all(self):
         batch_size = 32
 
         j = 0
@@ -133,106 +134,12 @@ class PatternDB:
             pattern_batch = self.patterns[j:j + batch_size]
             for k,p in enumerate(pattern_batch):
                 p.metadata.filename = p.metadata.filename or f'pattern_{j+k}'
-            self.multiplot(patterns=pattern_batch)
+            multiplot(patterns=pattern_batch)
             j += batch_size
 
             user_input = input(f'Press enter to continue or q to quit')
             if user_input.lower() == 'q':
                 break
 
-    @staticmethod
-    def multiplot(patterns : list[XrdPattern]):
-        labels = [p.get_name() for p in patterns]
-        fig, axes = plt.subplots(4, 8, figsize=(20, 10))
-        for i, pattern in enumerate(patterns):
-            ax = axes[i // 8, i % 8]
-            x_values, intensities = pattern.get_pattern_data(apply_standardization=False)
-            ax.set_xlabel(r'$2\theta$ (Degrees)')
-            ax.plot(x_values, intensities, label='Interpolated Intensity')
-            ax.set_ylabel('Intensity')
-            ax.set_title(f'({i}){labels[i][:20]}')
-            ax.legend(fontsize=8)
-        plt.tight_layout()
-        plt.show()
-
-
-    def compute_average_dot_product(self) -> float:
-        n = len(self.patterns)
-        normalized_dot_products = []
-
-        def compute_dot_prod(p1: XrdPattern, p2 : XrdPattern):
-            _, p1_intensities = p1.get_pattern_data()
-            _, p2_intensities = p2.get_pattern_data()
-            return np.dot(p1_intensities, p2_intensities)
-
-        for i in range(n):
-            for j in range(i + 1, n):
-                dot_prod = compute_dot_prod(self.patterns[i], self.patterns[j])
-                norm_p1_sq = compute_dot_prod(self.patterns[i], self.patterns[i])
-                norm_p2_sq = compute_dot_prod(self.patterns[j], self.patterns[j])
-
-                normed_dot_prod = dot_prod / np.sqrt(norm_p1_sq * norm_p2_sq)
-                normalized_dot_products.append(normed_dot_prod)
-        return sum(normalized_dot_products) / len(normalized_dot_products)
-
-    def plot_quantity(self, attrs : list[str], print_counts : bool = False, save_fpath : Optional[str] = None):
-        fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
-        axs = axs.flatten()
-
-        for i, attr in enumerate(attrs):
-            quantity_list = []
-            for pattern in self.patterns:
-                try:
-                    spg = nested_getattr(pattern, attr)
-                    quantity_list.append(spg)
-                except Exception as e:
-                    patterdb_logger.warning(msg=f'Could not extract attribute "{attr}" from pattern {pattern.get_name()}\n'
-                                                f'- Reason: {e}')
-
-            if not quantity_list:
-                raise ValueError(f'No data found for attribute {attr}')
-
-            counts = Counter(quantity_list)
-            sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
-
-            if print_counts:
-                print(f'-> Count distribution of {attr} in Dataset:')
-                for key, value in sorted_counts:
-                    print(f'- {key} : {value}')
-
-            keys, values = zip(*sorted_counts)
-            if len(keys) > 30:
-                keys = keys[:30]
-                values = values[:30]
-
-            def attempt_round(val):
-                try:
-                    return round(val, 2) if isinstance(val, float) else val
-                except TypeError:
-                    return val
-
-            rounded_keys = [str(attempt_round(key)) for key in keys]
-
-            axs[i].bar(rounded_keys, values)
-            axs[i].set_title(f'Count distribution of {attr}')
-            axs[i].set_xlabel(attr)
-            axs[i].set_ylabel('Counts')
-            axs[i].tick_params(labelrotation=90)
-
-        # Hide unused axes if number of attributes is odd
-        if len(attrs) % 2 != 0:
-            axs[-1].axis('off')
-
-        plt.tight_layout()
-
-        if save_fpath:
-            plt.savefig(save_fpath)
-
-        plt.show()
-
-
-def nested_getattr(obj: object, attr_string):
-    attr_names = attr_string.split('.')
-    for name in attr_names:
-        obj = getattr(obj, name)
-    return obj
+    def show_histograms(self, attrs : list[str]):
+        attribute_histograms(patterns=self.patterns, attrs=attrs)

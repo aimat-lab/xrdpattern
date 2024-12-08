@@ -88,7 +88,7 @@ class TestParserDatabase(ParserBaseTest):
         all_db = self.get_all_db()
 
         for db in [bruker_db, all_db]:
-            report = db.get_database_report()
+            report = db.get_parsing_report()
             as_str = report.as_str()
             print(f'Parsing report: {as_str[:300]}')
 
