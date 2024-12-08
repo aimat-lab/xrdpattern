@@ -5,6 +5,7 @@ from collections import Counter
 from dataclasses import dataclass
 from typing import Optional
 
+import numpy as np
 from matplotlib import pyplot as plt
 
 from holytools.fsys import FsysNode
@@ -90,6 +91,9 @@ class PatternDB:
 
         return PatternDB(patterns=patterns, failed_files=failed_files, fpath_dict=fpath_dict)
 
+    def __add__(self, other):
+        return PatternDB.merge(dbs=[self, other])
+
     @staticmethod
     def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
         if selected_suffixes is None:
@@ -151,6 +155,25 @@ class PatternDB:
         plt.tight_layout()
         plt.show()
 
+
+    def compute_average_dot_product(self) -> float:
+        n = len(self.patterns)
+        normalized_dot_products = []
+
+        def compute_dot_prod(p1: XrdPattern, p2 : XrdPattern):
+            _, p1_intensities = p1.get_pattern_data()
+            _, p2_intensities = p2.get_pattern_data()
+            return np.dot(p1_intensities, p2_intensities)
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                dot_prod = compute_dot_prod(self.patterns[i], self.patterns[j])
+                norm_p1_sq = compute_dot_prod(self.patterns[i], self.patterns[i])
+                norm_p2_sq = compute_dot_prod(self.patterns[j], self.patterns[j])
+
+                normed_dot_prod = dot_prod / np.sqrt(norm_p1_sq * norm_p2_sq)
+                normalized_dot_products.append(normed_dot_prod)
+        return sum(normalized_dot_products) / len(normalized_dot_products)
 
     def plot_quantity(self, attrs : list[str], print_counts : bool = False, save_fpath : Optional[str] = None):
         fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
