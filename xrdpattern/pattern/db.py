@@ -10,7 +10,7 @@ from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from xrdpattern.xrd import XRayInfo, XrdPatternData
-from .analysis_tools import multiplot, get_values
+from .analysis_tools import multiplot, get_valid_values, get_counts
 from .db_report import DatabaseReport
 from .pattern import XrdPattern
 
@@ -134,28 +134,34 @@ class PatternDB:
         axs = axs.flatten()
 
         for i, attr in enumerate(attrs):
-            values = get_values(patterns=self.patterns, attr=attr, sort_by_keys=(i > 1))
-            if i == 2:
+            values = get_valid_values(patterns=self.patterns, attr=attr)
+            if i == 0:
+                keys, counts = get_counts(patterns=self.patterns, attr=attr)
+                keys, counts = keys[:30], counts[:30]
+                rounded_keys = [str(k) for k in keys]
+                axs[i].bar(rounded_keys, counts)
+            elif i == 1:
+                bins = range(0, 10000, 100)
+                axs[i].hist(values, bins=bins)
+            elif i == 2:
                 bins = range(0,30)
                 axs[i].hist(values, bins=bins)
-            elif i == 3:
+            else:
                 bins = range(30,180)
                 axs[i].hist(values, bins=bins)
-            else:
-                axs[i].hist(values, bins='auto')
             axs[i].tick_params(labelrotation=90)
             if i == 0:
                 title = 'Spacegroup distribution in opXRD'
-                xlabel, ylabel = 'Spacegroup', 'Counts'
+                xlabel, ylabel = 'Spacegroup', 'No. patterns'
             elif i == 1:
                 title = 'Recorded angles per pattern'
-                xlabel, ylabel = 'Recorded angles', 'Counts'
+                xlabel, ylabel = 'Recorded angles', 'No. patterns'
             elif i == 2:
                 title = 'First 2theta values'
-                xlabel, ylabel = '2theta start', 'Counts'
+                xlabel, ylabel = '2theta start', 'No. patterns'
             else:
                 title = 'Final 2theta values'
-                xlabel, ylabel = '2theta end', 'Counts'
+                xlabel, ylabel = '2theta end', 'No. patterns'
 
             axs[i].set_xlabel(xlabel)
             axs[i].set_ylabel(ylabel)

@@ -45,7 +45,19 @@ def multiplot(patterns : list[XrdPattern]):
     plt.show()
 
 
-def get_values(patterns : list[XrdPattern], attr : str, sort_by_keys : bool = False) -> (list[str], list[int]):
+def get_counts(patterns : list[XrdPattern], attr : str, sort_by_keys : bool = False):
+    values = get_valid_values(patterns, attr)
+    count_map = Counter(values)
+    if sort_by_keys:
+        sorted_counts = sorted(count_map.items(), key=lambda x: x[0])
+    else:
+        sorted_counts = sorted(count_map.items(), key=lambda x: x[1], reverse=True)
+    keys, counts = zip(*sorted_counts)
+
+    return keys, counts
+
+
+def get_valid_values(patterns : list[XrdPattern], attr : str) -> (list[str], list[int]):
     def nested_getattr(obj: object, attr_string):
         attr_names = attr_string.split('.')
         for name in attr_names:
@@ -61,24 +73,9 @@ def get_values(patterns : list[XrdPattern], attr : str, sort_by_keys : bool = Fa
             print(f'Could not extract attribute "{attr}" from pattern {pattern.get_name()}\n- Reason: {e}')
     if not values:
         raise ValueError(f'No data found for attribute {attr}')
+    values = [v for v in values if not v is None]
 
     return values
-
-    # count_map = Counter(values)
-    # if sort_by_keys:
-    #     sorted_counts = sorted(count_map.items(), key=lambda x: x[0])
-    # else:
-    #     sorted_counts = sorted(count_map.items(), key=lambda x: x[1], reverse=True)
-    # keys, counts = zip(*sorted_counts)
-
-    # if print_counts:
-    #     print(f'-> Count distribution of {attr} in Dataset:')
-    #     for key, value in sorted_counts:
-    #         print(f'- {key} : {value}')
-
-    # print(f'sum of counts = {sum(counts)}')
-    #
-    # return keys, counts
 
 
 def show_label_fractions(dbs):
