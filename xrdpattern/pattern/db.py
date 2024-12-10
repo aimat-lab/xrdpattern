@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import os
 import random
+import seaborn as sns
+
 from dataclasses import dataclass
 from typing import Optional
 
@@ -172,14 +174,16 @@ class PatternDB:
 
         ax5 = fig.add_subplot(lower_half_right[:1, :2],sharex=ax4) # Above
         ax5.set_title(f'(c)')
+        ax5.set_yscale('log')
         ax6 = fig.add_subplot(lower_half_right[1:, 2:],sharey=ax4) # Right
 
         ax5.hist(start_data, bins=range(0,30))
         ax6.hist(end_data, bins=range(30,180,5), orientation='horizontal')
+        ax6.set_xscale('log')
 
         # start_data = random.sample(start_data, 1000)
         # end_data = random.sample(end_data, 1000)
-        ax4.scatter(start_data, end_data)
+        sns.kdeplot(x=start_data, y=end_data, fill=True, color='red', ax=ax4)
         ax6.tick_params(axis="y", labelleft=False)
         ax5.tick_params(axis="x", labelbottom=False)
 
