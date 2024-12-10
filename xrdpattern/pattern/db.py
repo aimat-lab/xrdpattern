@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
+import matplotlib.gridspec as gridspec
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from xrdpattern.xrd import XRayInfo, XrdPatternData
 from .analysis_tools import multiplot, get_valid_values, get_counts
@@ -130,46 +131,54 @@ class PatternDB:
 
     def show_histograms(self, save_fpath : Optional[str] = None):
         attrs = ['primary_phase.spacegroup', 'num_entries', 'startval', 'endval']
-        fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
-        axs = axs.flatten()
+        # fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
+        # axs = axs.flatten()
 
-        for i, attr in enumerate(attrs):
-            values = get_valid_values(patterns=self.patterns, attr=attr)
-            if i == 0:
-                keys, counts = get_counts(patterns=self.patterns, attr=attr)
-                keys, counts = keys[:30], counts[:30]
-                rounded_keys = [str(k) for k in keys]
-                axs[i].bar(rounded_keys, counts)
-            elif i == 1:
-                bins = range(0, 10000, 100)
-                axs[i].hist(values, bins=bins)
-            elif i == 2:
-                bins = range(0,30)
-                axs[i].hist(values, bins=bins)
-            else:
-                bins = range(30,180)
-                axs[i].hist(values, bins=bins)
-            axs[i].tick_params(labelrotation=90)
-            if i == 0:
-                title = 'Spacegroup distribution in opXRD'
-                xlabel, ylabel = 'Spacegroup', 'No. patterns'
-            elif i == 1:
-                title = 'Recorded angles per pattern'
-                xlabel, ylabel = 'Recorded angles', 'No. patterns'
-            elif i == 2:
-                title = 'First 2theta values'
-                xlabel, ylabel = '2theta start', 'No. patterns'
-            else:
-                title = 'Final 2theta values'
-                xlabel, ylabel = '2theta end', 'No. patterns'
+        # Gridspec inside GridSpec
+        fig = plt.figure(figsize=(12,8))
 
-            axs[i].set_xlabel(xlabel)
-            axs[i].set_ylabel(ylabel)
-            axs[i].set_title(title)
+        figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig)
+        upper_half = figure[0].subgridspec(1, 3)
+        ax2 = fig.add_subplot(upper_half[:, :])
 
-        if len(attrs) % 2 != 0:
-            axs[-1].axis('off')
-        plt.tight_layout()
+        keys, counts = get_counts(patterns=self.patterns, attr=attrs[0])
+        keys, counts = keys[:30], counts[:30]
+        rounded_keys = [str(k) for k in keys]
+        ax2.bar(rounded_keys, counts)
+        ax2.tick_params(labelbottom=True, labelleft=True)  # Enable labels
+        ax2.set_xlabel(f'Spacegroup')
+        ax2.set_title(f'(a)')
+        ax2.set_ylabel(f'No. patterns')
+
+        lower_half = figure[1].subgridspec(1, 2)
+        ax3 = fig.add_subplot(lower_half[:, 0])
+        bins = range(0, 10000, 100)
+        values = get_valid_values(patterns=self.patterns, attr=attrs[1])
+        ax3.set_title(f'(b)')
+        ax3.hist(values, bins=bins)
+        ax3.set_xlabel(f'Recorded angles')
+        ax3.set_ylabel(f'No. patterns')
+
+
+        start_data = get_valid_values(patterns=self.patterns, attr=attrs[2])
+        end_data = get_valid_values(patterns=self.patterns, attr=attrs[3])
+
+        lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3)
+        ax4 = fig.add_subplot(lower_half_right[1:, :2]) # scaatter
+        ax4.set_xlabel('2theta start')
+        ax4.set_ylabel('2theta end')
+
+        ax5 = fig.add_subplot(lower_half_right[:1, :2],sharex=ax4) # Above
+        ax5.set_title(f'(c)')
+        ax6 = fig.add_subplot(lower_half_right[1:, 2:],sharey=ax4) # Right
+
+        ax5.hist(start_data, bins=range(0,30))
+        ax6.hist(end_data, bins=range(30,180,5), orientation='horizontal')
+
+        ax4.scatter(start_data, end_data)
+        ax6.tick_params(axis="y", labelleft=False)
+        ax5.tick_params(axis="x", labelbottom=False)
+        plt.show()
 
         if save_fpath:
             plt.savefig(save_fpath)
