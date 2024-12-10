@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from matplotlib import pyplot as plt
+from spglib import spglib
 
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
@@ -135,18 +136,21 @@ class PatternDB:
         attrs = ['primary_phase.spacegroup', 'num_entries', 'startval', 'endval']
         fig = plt.figure(figsize=(12,8))
 
-        figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig)
+        figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig, hspace=0.5)
         upper_half = figure[0].subgridspec(1, 3)
         ax2 = fig.add_subplot(upper_half[:, :])
 
         keys, counts = get_counts(patterns=self.patterns, attr=attrs[0])
         keys, counts = keys[:30], counts[:30]
-        rounded_keys = [str(k) for k in keys]
-        ax2.bar(rounded_keys, counts)
+
+        spgs = [spglib.get_spacegroup_type(hall_number=int(k)) for k in keys]
+        spg_ints = [f'${spg["international_short"]}$' for spg in spgs]
+        ax2.bar(spg_ints, counts)
         ax2.tick_params(labelbottom=True, labelleft=True)  # Enable labels
         ax2.set_xlabel(f'Spacegroup')
         ax2.set_title(f'(a)')
         ax2.set_ylabel(f'No. patterns')
+        ax2.set_xticklabels(spg_ints, rotation=90)
 
         lower_half = figure[1].subgridspec(1, 2)
         ax3 = fig.add_subplot(lower_half[:, 0])
@@ -173,8 +177,8 @@ class PatternDB:
         ax5.hist(start_data, bins=range(0,30))
         ax6.hist(end_data, bins=range(30,180,5), orientation='horizontal')
 
-        start_data = random.sample(start_data, 1000)
-        end_data = random.sample(end_data, 1000)
+        # start_data = random.sample(start_data, 1000)
+        # end_data = random.sample(end_data, 1000)
         ax4.scatter(start_data, end_data)
         ax6.tick_params(axis="y", labelleft=False)
         ax5.tick_params(axis="x", labelbottom=False)

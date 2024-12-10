@@ -37,6 +37,8 @@ class XrdPatternData(Serializable):
             raise ValueError(f'TwoThetaValues or Intensities contain NaN values')
         if np.all(self.intensities == 0):
             raise ValueError(f'All intensities are zero')
+        if np.any(self.two_theta_values < 0):
+            raise ValueError(f'TwoThetaValues contain negative values')
 
 
     @classmethod
@@ -130,11 +132,11 @@ class XrdPatternData(Serializable):
 
     @property
     def startval(self):
-        return self.two_theta_values[0]
+        return min(self.two_theta_values)
 
     @property
     def endval(self):
-        return self.two_theta_values[-1]
+        return max(self.two_theta_values)
 
     @property
     def xray_info(self) -> XRayInfo:
