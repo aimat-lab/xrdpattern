@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import random
 from dataclasses import dataclass
 from typing import Optional
 
@@ -131,10 +132,6 @@ class PatternDB:
 
     def show_histograms(self, save_fpath : Optional[str] = None):
         attrs = ['primary_phase.spacegroup', 'num_entries', 'startval', 'endval']
-        # fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
-        # axs = axs.flatten()
-
-        # Gridspec inside GridSpec
         fig = plt.figure(figsize=(12,8))
 
         figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig)
@@ -175,10 +172,11 @@ class PatternDB:
         ax5.hist(start_data, bins=range(0,30))
         ax6.hist(end_data, bins=range(30,180,5), orientation='horizontal')
 
+        start_data = random.sample(start_data, 1000)
+        end_data = random.sample(end_data, 1000)
         ax4.scatter(start_data, end_data)
         ax6.tick_params(axis="y", labelleft=False)
         ax5.tick_params(axis="x", labelbottom=False)
-        plt.show()
 
         if save_fpath:
             plt.savefig(save_fpath)
