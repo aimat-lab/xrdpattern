@@ -130,6 +130,7 @@ class PatternDB:
             if user_input.lower() == 'q':
                 break
 
+
     def show_histograms(self, save_fpath : Optional[str] = None):
         attrs = ['primary_phase.spacegroup', 'num_entries', 'startval', 'endval']
         fig = plt.figure(figsize=(12,8))
@@ -162,8 +163,8 @@ class PatternDB:
 
         lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3)
         ax4 = fig.add_subplot(lower_half_right[1:, :2]) # scaatter
-        ax4.set_xlabel('2theta start')
-        ax4.set_ylabel('2theta end')
+        ax4.set_xlabel(r'First recorded $2\theta$ value')
+        ax4.set_ylabel(r'Final recorded $2\theta$ value')
 
         ax5 = fig.add_subplot(lower_half_right[:1, :2],sharex=ax4) # Above
         ax5.set_title(f'(c)')

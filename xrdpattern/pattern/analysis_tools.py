@@ -35,7 +35,7 @@ def multiplot(patterns : list[XrdPattern]):
     fig, axes = plt.subplots(4, 8, figsize=(20, 10))
     for i, pattern in enumerate(patterns):
         ax = axes[i // 8, i % 8]
-        x_values, intensities = pattern.get_pattern_data(apply_standardization=False)
+        x_values, intensities = pattern.get_pattern_data(apply_standardization=True)
         ax.set_xlabel(r'$2\theta$ (Degrees)')
         ax.plot(x_values, intensities, label='Interpolated Intensity')
         ax.set_ylabel('Intensity')
