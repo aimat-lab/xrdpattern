@@ -45,35 +45,7 @@ def multiplot(patterns : list[XrdPattern]):
     plt.show()
 
 
-def attribute_histograms(patterns : list[XrdPattern], attrs : list[str], save_fpath : Optional[str] = None):
-    fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
-    axs = axs.flatten()
-
-    def attempt_round(val):
-        try:
-            return round(val, 2) if isinstance(val, float) else val
-        except TypeError:
-            return val
-
-    for i, attr in enumerate(attrs):
-        keys, counts = get_count_map(patterns=patterns, attr=attr)
-        rounded_keys = [str(attempt_round(key)) for key in keys]
-        axs[i].bar(rounded_keys, counts)
-        axs[i].set_title(f'Count distribution of {attr}')
-        axs[i].set_xlabel(attr)
-        axs[i].set_ylabel('Counts')
-        axs[i].tick_params(labelrotation=90)
-
-    if len(attrs) % 2 != 0:
-        axs[-1].axis('off')
-    plt.tight_layout()
-
-    if save_fpath:
-        plt.savefig(save_fpath)
-    plt.show()
-
-
-def get_count_map(patterns : list[XrdPattern], attr : str) -> (list[str], list[int]):
+def get_values(patterns : list[XrdPattern], attr : str, sort_by_keys : bool = False) -> (list[str], list[int]):
     def nested_getattr(obj: object, attr_string):
         attr_names = attr_string.split('.')
         for name in attr_names:
@@ -90,17 +62,23 @@ def get_count_map(patterns : list[XrdPattern], attr : str) -> (list[str], list[i
     if not values:
         raise ValueError(f'No data found for attribute {attr}')
 
-    count_map = Counter(values)
-    sorted_counts = sorted(count_map.items(), key=lambda x: x[1], reverse=True)
-    keys, counts = zip(*sorted_counts)
-    keys, counts = keys[:30], counts[:30]
+    return values
+
+    # count_map = Counter(values)
+    # if sort_by_keys:
+    #     sorted_counts = sorted(count_map.items(), key=lambda x: x[0])
+    # else:
+    #     sorted_counts = sorted(count_map.items(), key=lambda x: x[1], reverse=True)
+    # keys, counts = zip(*sorted_counts)
 
     # if print_counts:
     #     print(f'-> Count distribution of {attr} in Dataset:')
     #     for key, value in sorted_counts:
     #         print(f'- {key} : {value}')
 
-    return keys, counts
+    # print(f'sum of counts = {sum(counts)}')
+    #
+    # return keys, counts
 
 
 def show_label_fractions(dbs):

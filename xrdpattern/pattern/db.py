@@ -10,7 +10,7 @@ from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from xrdpattern.xrd import XRayInfo, XrdPatternData
-from .analysis_tools import multiplot, get_count_map
+from .analysis_tools import multiplot, get_values
 from .db_report import DatabaseReport
 from .pattern import XrdPattern
 
@@ -133,28 +133,28 @@ class PatternDB:
         fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
         axs = axs.flatten()
 
-        def attempt_round(val):
-            try:
-                return round(val, 2) if isinstance(val, float) else val
-            except TypeError:
-                return val
-
         for i, attr in enumerate(attrs):
-            keys, counts = get_count_map(patterns=self.patterns, attr=attr)
-            rounded_keys = [str(attempt_round(key)) for key in keys]
-            axs[i].bar(rounded_keys, counts)
+            values = get_values(patterns=self.patterns, attr=attr, sort_by_keys=(i > 1))
+            if i == 2:
+                bins = range(0,30)
+                axs[i].hist(values, bins=bins)
+            elif i == 3:
+                bins = range(30,180)
+                axs[i].hist(values, bins=bins)
+            else:
+                axs[i].hist(values, bins='auto')
             axs[i].tick_params(labelrotation=90)
             if i == 0:
-                title = f'Spacegroup distribution in opXRD'
+                title = 'Spacegroup distribution in opXRD'
                 xlabel, ylabel = 'Spacegroup', 'Counts'
             elif i == 1:
-                title = f'Recorded angles per pattern'
+                title = 'Recorded angles per pattern'
                 xlabel, ylabel = 'Recorded angles', 'Counts'
             elif i == 2:
-                title = f'First 2theta values'
+                title = 'First 2theta values'
                 xlabel, ylabel = '2theta start', 'Counts'
             else:
-                title = f'Final 2theta values'
+                title = 'Final 2theta values'
                 xlabel, ylabel = '2theta end', 'Counts'
 
             axs[i].set_xlabel(xlabel)
@@ -168,4 +168,3 @@ class PatternDB:
         if save_fpath:
             plt.savefig(save_fpath)
         plt.show()
-
