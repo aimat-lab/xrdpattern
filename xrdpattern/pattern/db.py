@@ -4,13 +4,13 @@ import os
 from dataclasses import dataclass
 from typing import Optional
 
-from tabulate import tabulate
+from matplotlib import pyplot as plt
 
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
-from xrdpattern.xrd import XRayInfo, XrdPatternData, LabelType
-from .analysis_tools import multiplot, attribute_histograms
+from xrdpattern.xrd import XRayInfo, XrdPatternData
+from .analysis_tools import multiplot, get_count_map
 from .db_report import DatabaseReport
 from .pattern import XrdPattern
 
@@ -128,5 +128,44 @@ class PatternDB:
             if user_input.lower() == 'q':
                 break
 
-    def show_histograms(self, attrs : list[str]):
-        attribute_histograms(patterns=self.patterns, attrs=attrs)
+    def show_histograms(self, save_fpath : Optional[str] = None):
+        attrs = ['primary_phase.spacegroup', 'num_entries', 'startval', 'endval']
+        fig, axs = plt.subplots(nrows=(len(attrs) + 1) // 2, ncols=2, figsize=(15, 5 * ((len(attrs) + 1) // 2)))
+        axs = axs.flatten()
+
+        def attempt_round(val):
+            try:
+                return round(val, 2) if isinstance(val, float) else val
+            except TypeError:
+                return val
+
+        for i, attr in enumerate(attrs):
+            keys, counts = get_count_map(patterns=self.patterns, attr=attr)
+            rounded_keys = [str(attempt_round(key)) for key in keys]
+            axs[i].bar(rounded_keys, counts)
+            axs[i].tick_params(labelrotation=90)
+            if i == 0:
+                title = f'Spacegroup distribution in opXRD'
+                xlabel, ylabel = 'Spacegroup', 'Counts'
+            elif i == 1:
+                title = f'Recorded angles per pattern'
+                xlabel, ylabel = 'Recorded angles', 'Counts'
+            elif i == 2:
+                title = f'First 2theta values'
+                xlabel, ylabel = '2theta start', 'Counts'
+            else:
+                title = f'Final 2theta values'
+                xlabel, ylabel = '2theta end', 'Counts'
+
+            axs[i].set_xlabel(xlabel)
+            axs[i].set_ylabel(ylabel)
+            axs[i].set_title(title)
+
+        if len(attrs) % 2 != 0:
+            axs[-1].axis('off')
+        plt.tight_layout()
+
+        if save_fpath:
+            plt.savefig(save_fpath)
+        plt.show()
+
