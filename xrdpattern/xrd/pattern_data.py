@@ -139,6 +139,10 @@ class XrdPatternData(Serializable):
         return max(self.two_theta_values)
 
     @property
+    def angular_resolution(self):
+        return (self.endval-self.startval)/self.num_entries
+
+    @property
     def xray_info(self) -> XRayInfo:
         return self.powder_experiment.xray_info
 

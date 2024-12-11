@@ -29,7 +29,7 @@ class XrdPattern(XrdPatternData):
         plt.figure(figsize=(10, 6))
         plt.title(title)
         plt.ylabel(f'{label}')
-        plt.xlabel(r'$2\theta$ [°]')
+        plt.xlabel(r'$2\theta$ [$^\circ$]')
         plt.plot(x_values, intensities, label=label)
         plt.legend()
 

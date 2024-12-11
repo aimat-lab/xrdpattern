@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 import matplotlib.gridspec as gridspec
+import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
@@ -151,8 +152,6 @@ class PatternDB:
         ax6 = fig.add_subplot(lower_half_right[1:, 2:], sharey=ax4)  # Right
         self.define_density_ax(patterns=self.patterns, density_ax=ax4, top_marginal=ax5, right_marginal=ax6)
 
-
-
         if save_fpath:
             plt.savefig(save_fpath)
         plt.show()
@@ -172,23 +171,24 @@ class PatternDB:
         
     @staticmethod
     def define_recorded_angles_ax(patterns : list[XrdPattern], ax : Axes):
-        bins = range(0, 10000, 100)
-        values = get_valid_values(patterns=patterns, attr='num_entries')
+        values = get_valid_values(patterns=patterns, attr='angular_resolution')
         ax.set_title(f'(b)')
-        ax.hist(values, bins=bins)
-        ax.set_xlabel(f'Recorded angles')
+        ax.hist(values, bins=30)
+        ax.set_xlabel(r'Angular resolution $\Delta(2\theta)$ [$^\circ$]')
         ax.set_ylabel(f'No. patterns')
 
     @staticmethod
     def define_density_ax(patterns : list[XrdPattern], density_ax : Axes, top_marginal : Axes, right_marginal : Axes):
         start_data = get_valid_values(patterns=patterns, attr='startval')
         end_data = get_valid_values(patterns=patterns, attr='endval')
-        start_angle_range = (0,180)
+        start_angle_range = (0,60)
         end_angle_range = (0,180)
 
-        sns.kdeplot(x=start_data, y=end_data, fill=True, color='red', ax=density_ax)
-        density_ax.set_xlabel(r'First recorded $2\theta$ value')
-        density_ax.set_ylabel(r'Final recorded $2\theta$ value')
+        sns.kdeplot(x=start_data, y=end_data, fill=True, ax=density_ax)
+        # noinspection PyTypeChecker
+        # density_ax.hist2d(start_data,end_data, bins=20, range=[list(start_angle_range),list(end_angle_range)])
+        density_ax.set_xlabel(r'Smallest recorded $2\theta$ value [$^\circ$]')
+        density_ax.set_ylabel(r'Largest recorded $2\theta$ value [$^\circ$]')
         density_ax.set_xlim(start_angle_range)
         density_ax.set_ylim(end_angle_range)
 
