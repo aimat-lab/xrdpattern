@@ -1,19 +1,17 @@
 from __future__ import annotations
 
 import os
-import random
-import seaborn as sns
-
 from dataclasses import dataclass
 from typing import Optional
 
+import matplotlib.gridspec as gridspec
+import seaborn as sns
 from matplotlib import pyplot as plt
-from spglib import spglib
+from matplotlib.axes import Axes
 
 from databases.tools.spg_converter import SpacegroupConverter
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
-import matplotlib.gridspec as gridspec
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from xrdpattern.xrd import XRayInfo, XrdPatternData
 from .analysis_tools import multiplot, get_valid_values, get_counts
@@ -136,58 +134,72 @@ class PatternDB:
 
 
     def show_histograms(self, save_fpath : Optional[str] = None):
-        attrs = ['primary_phase.spacegroup', 'num_entries', 'startval', 'endval']
+        attrs = ['', 'num_entries', '', 'endval']
         fig = plt.figure(figsize=(12,8))
 
         figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig, hspace=0.5)
         upper_half = figure[0].subgridspec(1, 3)
         ax2 = fig.add_subplot(upper_half[:, :])
-
-        keys, counts = get_counts(patterns=self.patterns, attr=attrs[0])
-        keys, counts = keys[:30], counts[:30]
-
-        spgs = [int(k) for k in keys]
-        spg_formulas = [f'${SpacegroupConverter.to_formula(spg, mathmode=True)}$' for spg in spgs]
-        ax2.bar(spg_formulas, counts)
-        ax2.tick_params(labelbottom=True, labelleft=True)  # Enable labels
-        ax2.set_xlabel(f'Spacegroup')
-        ax2.set_title(f'(a)')
-        ax2.set_ylabel(f'No. patterns')
-        ax2.set_xticklabels(spg_formulas, rotation=90)
-
+        self.define_spg_ax(patterns=self.patterns, ax=ax2)
+        
         lower_half = figure[1].subgridspec(1, 2)
         ax3 = fig.add_subplot(lower_half[:, 0])
-        bins = range(0, 10000, 100)
-        values = get_valid_values(patterns=self.patterns, attr=attrs[1])
-        ax3.set_title(f'(b)')
-        ax3.hist(values, bins=bins)
-        ax3.set_xlabel(f'Recorded angles')
-        ax3.set_ylabel(f'No. patterns')
-
-
-        start_data = get_valid_values(patterns=self.patterns, attr=attrs[2])
-        end_data = get_valid_values(patterns=self.patterns, attr=attrs[3])
+        self.define_recorded_angles_ax(patterns=self.patterns, ax=ax3)
 
         lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3)
         ax4 = fig.add_subplot(lower_half_right[1:, :2]) # scaatter
-        ax4.set_xlabel(r'First recorded $2\theta$ value')
-        ax4.set_ylabel(r'Final recorded $2\theta$ value')
+        ax5 = fig.add_subplot(lower_half_right[:1, :2], sharex=ax4)  # Above
+        ax6 = fig.add_subplot(lower_half_right[1:, 2:], sharey=ax4)  # Right
+        self.define_density_ax(patterns=self.patterns, density_ax=ax4, top_marginal=ax5, right_marginal=ax6)
 
-        ax5 = fig.add_subplot(lower_half_right[:1, :2],sharex=ax4) # Above
-        ax5.set_title(f'(c)')
-        ax5.set_yscale('log')
-        ax6 = fig.add_subplot(lower_half_right[1:, 2:],sharey=ax4) # Right
 
-        ax5.hist(start_data, bins=range(0,30))
-        ax6.hist(end_data, bins=range(30,180,5), orientation='horizontal')
-        ax6.set_xscale('log')
-
-        # start_data = random.sample(start_data, 1000)
-        # end_data = random.sample(end_data, 1000)
-        sns.kdeplot(x=start_data, y=end_data, fill=True, color='red', ax=ax4)
-        ax6.tick_params(axis="y", labelleft=False)
-        ax5.tick_params(axis="x", labelbottom=False)
 
         if save_fpath:
             plt.savefig(save_fpath)
         plt.show()
+
+    @staticmethod
+    def define_spg_ax(patterns : list[XrdPattern], ax : Axes):
+        keys, counts = get_counts(patterns=patterns, attr='primary_phase.spacegroup')
+        keys, counts = keys[:30], counts[:30]
+
+        spgs = [int(k) for k in keys]
+        spg_formulas = [f'${SpacegroupConverter.to_formula(spg, mathmode=True)}$' for spg in spgs]
+        ax.bar(spg_formulas, counts)
+        ax.tick_params(labelbottom=True, labelleft=True)  # Enable labels
+        ax.set_xlabel(f'Spacegroup')
+        ax.set_title(f'(a)')
+        ax.set_ylabel(f'No. patterns')
+        ax.set_xticklabels(spg_formulas, rotation=90)
+        
+    @staticmethod
+    def define_recorded_angles_ax(patterns : list[XrdPattern], ax : Axes):
+        bins = range(0, 10000, 100)
+        values = get_valid_values(patterns=patterns, attr='num_entries')
+        ax.set_title(f'(b)')
+        ax.hist(values, bins=bins)
+        ax.set_xlabel(f'Recorded angles')
+        ax.set_ylabel(f'No. patterns')
+
+    @staticmethod
+    def define_density_ax(patterns : list[XrdPattern], density_ax : Axes, top_marginal : Axes, right_marginal : Axes):
+        start_data = get_valid_values(patterns=patterns, attr='startval')
+        end_data = get_valid_values(patterns=patterns, attr='endval')
+
+        sns.kdeplot(x=start_data, y=end_data, fill=True, color='red', ax=density_ax)
+        density_ax.set_xlabel(r'First recorded $2\theta$ value')
+        density_ax.set_ylabel(r'Final recorded $2\theta$ value')
+        density_ax.set_xlim(0, 30)
+        density_ax.set_ylim(30, 180)
+
+        top_marginal.hist(start_data, bins=range(0, 30))
+        top_marginal.set_title(f'(c)')
+        top_marginal.set_yscale('log')
+        top_marginal.tick_params(axis="x", labelbottom=False)
+
+        right_marginal.hist(end_data, bins=range(30,180,5), orientation='horizontal')
+        right_marginal.set_xscale('log')
+        right_marginal.tick_params(axis="y", labelleft=False)
+
+
+

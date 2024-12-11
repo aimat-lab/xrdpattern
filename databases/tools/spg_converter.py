@@ -1,5 +1,4 @@
 import os.path
-import re
 
 from pymatgen.symmetry.groups import SpaceGroup
 
@@ -46,7 +45,9 @@ class SpacegroupConverter:
 
     @staticmethod
     def get_all_formulas() -> list[str]:
-        return list(rruff_formula_to_int.keys())
+        rruff_formulas = list(rruff_formula_to_int.keys())
+        international_formula = [SpaceGroup.from_int_number(i).symbol for i in range(1, 231)]
+        return rruff_formulas + international_formula
 
 if __name__ == "__main__":
     # print(SpacegroupConverter.to_int(spg_formula='Ia-3'))
