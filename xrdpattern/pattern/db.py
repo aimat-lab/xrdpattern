@@ -185,19 +185,21 @@ class PatternDB:
     def define_density_ax(patterns : list[XrdPattern], density_ax : Axes, top_marginal : Axes, right_marginal : Axes):
         start_data = get_valid_values(patterns=patterns, attr='startval')
         end_data = get_valid_values(patterns=patterns, attr='endval')
+        start_angle_range = (0,180)
+        end_angle_range = (0,180)
 
         sns.kdeplot(x=start_data, y=end_data, fill=True, color='red', ax=density_ax)
         density_ax.set_xlabel(r'First recorded $2\theta$ value')
         density_ax.set_ylabel(r'Final recorded $2\theta$ value')
-        density_ax.set_xlim(0, 30)
-        density_ax.set_ylim(30, 180)
+        density_ax.set_xlim(start_angle_range)
+        density_ax.set_ylim(end_angle_range)
 
-        top_marginal.hist(start_data, bins=range(0, 30))
+        top_marginal.hist(start_data, bins=range(*start_angle_range))
         top_marginal.set_title(f'(c)')
         top_marginal.set_yscale('log')
         top_marginal.tick_params(axis="x", labelbottom=False)
 
-        right_marginal.hist(end_data, bins=range(30,180,5), orientation='horizontal')
+        right_marginal.hist(end_data, bins=range(*end_angle_range,5), orientation='horizontal')
         right_marginal.set_xscale('log')
         right_marginal.tick_params(axis="y", labelleft=False)
 
