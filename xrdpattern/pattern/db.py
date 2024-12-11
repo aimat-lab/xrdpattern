@@ -173,8 +173,9 @@ class PatternDB:
     def define_recorded_angles_ax(patterns : list[XrdPattern], ax : Axes):
         values = get_valid_values(patterns=patterns, attr='angular_resolution')
         ax.set_title(f'(b)')
-        ax.hist(values, bins=30)
+        ax.hist(values, bins=30, range=(0,0.1))
         ax.set_xlabel(r'Angular resolution $\Delta(2\theta)$ [$^\circ$]')
+        ax.set_yscale('log')
         ax.set_ylabel(f'No. patterns')
 
     @staticmethod
