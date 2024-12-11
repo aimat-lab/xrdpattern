@@ -134,7 +134,6 @@ class PatternDB:
 
 
     def show_histograms(self, save_fpath : Optional[str] = None):
-        attrs = ['', 'num_entries', '', 'endval']
         fig = plt.figure(figsize=(12,8))
 
         figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig, hspace=0.5)
@@ -167,7 +166,6 @@ class PatternDB:
         spg_formulas = [f'${SpacegroupConverter.to_formula(spg, mathmode=True)}$' for spg in spgs]
         ax.bar(spg_formulas, counts)
         ax.tick_params(labelbottom=True, labelleft=True)  # Enable labels
-        ax.set_xlabel(f'Spacegroup')
         ax.set_title(f'(a)')
         ax.set_ylabel(f'No. patterns')
         ax.set_xticklabels(spg_formulas, rotation=90)
