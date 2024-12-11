@@ -146,7 +146,7 @@ class PatternDB:
         keys, counts = keys[:30], counts[:30]
 
         spgs = [spglib.get_spacegroup_type(hall_number=int(k)) for k in keys]
-        spg_ints = [f'${spg["international_short"]}$' for spg in spgs]
+        spg_ints = [f'${spg["international_full"]}$' for spg in spgs]
         ax2.bar(spg_ints, counts)
         ax2.tick_params(labelbottom=True, labelleft=True)  # Enable labels
         ax2.set_xlabel(f'Spacegroup')

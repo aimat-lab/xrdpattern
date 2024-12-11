@@ -1,5 +1,6 @@
 import re
 
+from pymatgen.symmetry.groups import SpaceGroup
 
 to_int_dict = {}
 
@@ -13,11 +14,19 @@ for r in [r for r in rows if len(r) > 0]:
     for s in entries[1:]:
             to_int_dict[s] = i
 
-def to_int(spg_formula : str) -> int:
-    spg_formula = spg_formula.replace('-', '')
-    spg_formula = spg_formula.replace('_', '')
+class SpacegroupConverter:
+    @staticmethod
+    def to_int(spg_formula : str) -> int:
+        spg_formula = spg_formula.replace('-', '')
+        spg_formula = spg_formula.replace('_', '')
 
-    return to_int_dict[spg_formula]
+        return to_int_dict[spg_formula]
+
+    @staticmethod
+    def to_formula(spg_int : int):
+        sg = SpaceGroup.from_int_number(spg_int)
+        return sg.symbol
 
 
-print(to_int(spg_formula='Ia-3'))
+if __name__ == "__main__":
+    print(SpacegroupConverter.to_int(spg_formula='Ia-3'))

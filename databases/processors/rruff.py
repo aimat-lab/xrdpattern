@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass
 
-from databases.tools.spg_converter import to_int
+from databases.tools.spg_converter import SpacegroupConverter
 from xrdpattern.crystal import CrystalBase
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.xrd import PowderExperiment, CrystalPhase, XRayInfo
@@ -68,7 +68,7 @@ if __name__ == "__main__":
             struct_fpath = STRUCTURE_NAME_FPATH_MAP[base_name]
             print(f'\nExtracting labels from path: {struct_fpath}')
             labels = extract_labels(fpath=struct_fpath)
-            spacegroup = to_int(labels.spacegroup)
+            spacegroup = SpacegroupConverter.to_int(labels.spacegroup)
 
             pattern = XrdPattern.load(fpath=pattern_fpath)
             for p in labels.lattice_parameters:
