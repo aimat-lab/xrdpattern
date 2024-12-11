@@ -1,10 +1,12 @@
+import os.path
 import re
 
 from pymatgen.symmetry.groups import SpaceGroup
 
 to_int_dict = {}
 
-with open('spg_formulas.txt', 'r') as f:
+dirpath = os.path.dirname(__file__)
+with open(f'{dirpath}/spg_formulas.txt', 'r') as f:
     content = f.read()
     rows = content.split('\n')
 
@@ -23,9 +25,13 @@ class SpacegroupConverter:
         return to_int_dict[spg_formula]
 
     @staticmethod
-    def to_formula(spg_int : int):
+    def to_formula(spg_int : int, mathmode : bool = False):
         sg = SpaceGroup.from_int_number(spg_int)
-        return sg.symbol
+        symbol = sg.symbol
+        symbol = symbol.replace(' ', '')
+        if mathmode:
+            symbol = symbol.replace('-', '\\text{-}')
+        return symbol
 
 
 if __name__ == "__main__":

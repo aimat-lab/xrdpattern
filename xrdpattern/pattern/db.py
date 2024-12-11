@@ -10,6 +10,7 @@ from typing import Optional
 from matplotlib import pyplot as plt
 from spglib import spglib
 
+from databases.tools.spg_converter import SpacegroupConverter
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 import matplotlib.gridspec as gridspec
@@ -145,14 +146,14 @@ class PatternDB:
         keys, counts = get_counts(patterns=self.patterns, attr=attrs[0])
         keys, counts = keys[:30], counts[:30]
 
-        spgs = [spglib.get_spacegroup_type(hall_number=int(k)) for k in keys]
-        spg_ints = [f'${spg["international_full"]}$' for spg in spgs]
-        ax2.bar(spg_ints, counts)
+        spgs = [int(k) for k in keys]
+        spg_formulas = [f'${SpacegroupConverter.to_formula(spg, mathmode=True)}$' for spg in spgs]
+        ax2.bar(spg_formulas, counts)
         ax2.tick_params(labelbottom=True, labelleft=True)  # Enable labels
         ax2.set_xlabel(f'Spacegroup')
         ax2.set_title(f'(a)')
         ax2.set_ylabel(f'No. patterns')
-        ax2.set_xticklabels(spg_ints, rotation=90)
+        ax2.set_xticklabels(spg_formulas, rotation=90)
 
         lower_half = figure[1].subgridspec(1, 2)
         ax3 = fig.add_subplot(lower_half[:, 0])
