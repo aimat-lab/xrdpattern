@@ -1,230 +1,230 @@
-1	P1	A1	B1	C1	I1	F1 C-1 C1
-2	P1	A1	B1	C1	I1	F1 I-1
-3	P2
-4	P21
-5	A2	A21	B2	B21	C2	C21
-6	Pm
-7	Pa	Pb	Pc
-8	Am	Ab	Ac	Bm	Ba	Bc	Cm	Ca	Cb
-9	Aa	An	Bb	Bn	Cc	Cn
-10	P2/m
-11	P21/m
-12	A2/m	A21/b	A21/c	B2/m	B21/a	B21/c	C2/m	C21/a	C21/b I2/m A2/m	F2/m
-13	P2/a	P2/b	P2/c P2/a
-14	P21/a	P21/b	P21/c	P21/n P21/n P21/a P21/b
-15	A2/a	A21/n	B2/b	B21/n	C2/c	C21/n A2/a I2/a I2/c B2/b I2/a
-16	P222
-17	P2221	P2212	P2122
-18	P21212	P21221	P22121
-19	P212121
-20	A2122	B2212	C2221	A212121	B212121	C212121
-21	A222	B222	C222	A22121	B21221	C21212
-22	F222	F212121
-23	I222
-24	I212121
-25	P2mm	Pm2m	Pmm2 Pm2m
-26	Pmc21	P21ma	Pb21m	Pm21b	Pcm21	P21am
-27	Pcc2	P2aa	Pb2b
-28	Pma2	P2mb	Pc2m	Pm2a	Pbm2	P2cm P2cm
-29	Pca21	P21ab	Pc21b	Pb21a	Pbc21	P21ca
-30	Pnc2	P2na	Pb2n	Pn2b	Pcn2	P2an
-31	Pmn21	P21mn	Pn21m	Pm21n	Pnm21	P21nm Pn21m Pnm21
-32	Pba2	P2cb	Pc2a
-33	Pna21	P21nb	Pc21n	Pn21a	Pbn21	P21cn Pbn21 P21nb Pn21a
-34	Pnn2	P2nn	Pn2n
-35	Cmm2	A2mm	Bm2m	Cba2	A2cb	Bc2a
-36	A21am	A21ma	A21cn	A21nb	Bb21m	Bm21b	Bn21a	Bc21n	Ccm21	Cmc21	Cbn21	Cna21
-37	A2aa	A2nn	Bb2b	Bn2n	Ccc2	Cnn2;
-38	Amm2	Am2m	Anc21	An21b	B2mm	Bmm2	B21na	Bcn21	C2mm	Cm2m	Cb21n	C21an
-39	Abm2	Ac2m	Acc21	Ab21b	B2cm	Bma2	B21aa	Bcc21	Cm2a	C2mb	Cb21b	C21aa
-40	Ama2	Am2a	Ann21	An21n	B2mb	Bbm2	B21nn	Bnn21	Cc2m	C2cm	Cn21n	C21nn B2mb
-41	Aba2	Ac2a	Acn21	Ab21n	B2cb	Bba2	B21an	Bnc21	Cc2a	C2cb	Cn21b	C21na Bba2
-42	Fmm2	Fbc21	Fca21	Fnn2	Fm2m	Fb21a	Fc21b	Fn2n
-43	Fdd2	Fdd21	F2dd	F21dd	Fd2d	Fd21d Fd2d
-44	Imm2	Inn21	I2mm	I21nn	Im2m	In21n
-45	Iba2	Icc21	I2cb	I21aa	Ic2a	Ib21b
-46	Ima2	Inc21	I2mb	I21na	Ic2m	Ib21n	Im2a	In21b	Ibm2	Icn21	I2cm	I21an
-47	Pmmm
-48	Pnnn
-49	Pccm	Pmaa	Pbmb
-50	Pban	Pncb	Pcna
-51	Pmma	Pbmm	Pmcm	Pmam	Pmmb	Pcmm
-52	Pnna	Pbnn	Pncn	Pnan	Pnnb	Pcnn Pncn Pbnn
-53	Pmna	Pbmn	Pncm	Pman	Pnmb	Pcnm Pncm
-54	Pcca	Pbaa	Pbcb	Pbab	Pccb	Pcaa
-55	Pbam	Pmcb	Pcma
-56	Pccn	Pnaa	Pbnb
-57	Pbcm	Pmca	Pbma	Pcmb	Pcam	Pmab
-58	Pnnm	Pmnn	Pnmn
-59	Pmmn	Pnmm	Pmnm Pmmn
-60	Pbcn	Pnca	Pbna	Pcnb	Pcan	Pnab Pcan
-61	Pbca	Pcab Pcab
-62	Pnma	Pbnm	Pmcn	Pnam	Pmnb	Pcmn Pbnm Pcmn Pnam Pmnb Pmcn
-63	Cmcm	Cbnn	Amma	Ancn	Bbmm	Bnna	Bmmb	Bcnn	Ccmm	Cnan	Amam	Annb
-64	Cmca	Cbnb	Abma	Accn	Bbcm	Bnaa	Bmab	Bccn	Ccmb	Cnaa	Acam	Abnb	Bbam	Bmcb
-65	Cmmm	Cban	Ammm	Ancb	Bmmm	Bcna
-66	Cccm	Cnnn	Amaa	Annn	Bbmb	Bnnn
-67	Cmma	Cbab	Abmm	Accb	Bmcm	Bcaa	Bmam	Bcca	Cmmb	Cbaa	Acmm	Abcb Cmma
-68	Ccca	Cnnb	Abaa	Acnn	Bbcb	Anan	Bbab	Bncn	Cccb	Cnna	Acaa	Abnn
-69	Fmmm	Fbca	Fcab	Fnnn
-70	Fddd Fddd
-71	Immm	Innn
-72	Ibam	Iccn	Imcb	Inaa	Icma	Ibnb
-73	Ibca	Icab
-74	Imma	Innb	Ibmm	Icnn	Imcm	Inan	Imam	Incn	Immb	Inna	Icmm	Ibnn Imam
-75	P4	C4
-76	P41	C41
-77	P42	C42
-78	P43	C43
-79	I4	F4
-80	I41	F41
-81	P4	C4
-82	I4	F4
-83	P4/m	C4/m
-84	P42/m	C42/m
-85	P4/n	C4/n P4/n
-86	P42/n	C42/n
-87	I4/m	F4/m
-88	I41/a	F41/a I41/a
-89	P422	C422
-90	P4212	C4221
-91	P4122	C4122
-92	P41212	C41221
-93	P4222	C4222
-94	P42212	C42221
-95	P4322	C4322
-96	P43212	C43221
-97	I422	F422
-98	I4122	F4122
-99	P4mm	C4mm
-100	P4bm	C4mb
-101	P42cm	C42mc
-102	P42nm	C42mn
-103	P4cc	C4cc
-104	P4nc	C4cn
-105	P42mc	C42cm
-106	P42bc	C42cb
-107	I4mm	F4mm
-108	I4cm	F4mc
-109	I41md	F41dm
-110	I41cd	F41dc
-111	P42m	C4m2
-112	P42c	C4c2
-113	P421m	C4m21
-114	P421c	C4c21
-115	P4m2	C42m
-116	P4c2	C42c
-117	P4bc	C42b
-118	P4n2	C42n
-119	I4m2	F42m
-120	I4c2	F42c
-121	I42m	F4m2
-122	I42d	F4d2
-123	P4/mmm	C4/mmm	P4/m2/m2/m	C4/m2/m2/m
-124	P4/mcc	C4/mcc	P4/m2/c2/c	C4/m2/c2/c
-125	P4/nbm	C4/nmb	P4/n2/b2/m	C4/n2/m2/b
-126	P4/nnc	C4/ncn	P4/n2/n2/c	C4/n2/c2/n P4/nnc
-127	P4/mbm	C4/mmb	P4/m21/b2/m	C4/m2/m21/b
-128	P4/mnc	C4/mcn	P4/m21/n2/c	C4/m2/c21/n
-129	P4/nmm	C4/nmm	P4/n21/m2/m	C4/n2/m21/m P4/nmm
-130	P4/ncc	C4/ncc	P4/n21/c2/c	C4/n2/c21/c P4/ncc
-131	P42/mmc	C42/mcm	P42/m2/m2/c	C42/m2/c2/m
-132	P42/mcm	C42/mmc	P42/m2/c2/m	C42/m2/m2/c
-133	P42/nbc	C42/ncb	P42/n2/b2/c	C42/n2/c2/b
-134	P42/nnm	C42/nmn	P42/n2/n2/m	C42/n2/m2/n
-135	P42/mbc	C42/mcb	P42/m21/b2/c	C42/m2/c21/b
-136	P42/mnm	C42/mmn	P42/m21/n2/m	C42/m2/m21/n
-137	P42/nmc	C42/ncm	P42/n21/m2/c	C42/n2/c21/m
-138	P42/ncm	C42/nmc	P42/n21/c2/m	C42/n2/m21/c
-139	I4/mmm	F4/mmm	I4/m2/m2/m	F4/m2/m2/m
-140	I4/mcm	F4/mmc	I4/m2/c2/m	F4/m2/m2/c
-141	I41/amd	F41/adm	I41/a2/m2/d	F41/a2/d2/m I41/amd
-142	I41/acd	F41/adc	I41/a2/c2/d	F41/a2/d2/c I41/acd
-143	P3
-144	P31
-145	P32
-146	R3
-147	P3
-148	R3
-149	P312
-150	P321
-151	P3112
-152	P3121
-153	P3212
-154	P3221 Pmnb
-155	R32
-156	P3m1
-157	P31m
-158	P3c1
-159	P31c
-160	R3m
-161	R3c
-162	P31m	P312/m
-163	P31c	P312/c
-164	P3m1	P32/m1
-165	P3c1	P32/c1
-166	R3m	R32/m
-167	R3c	R32/c
-168	P6
-169	P61
-170	P65
-171	P62
-172	P64
-173	P63
-174	P6
-175	P6/m
-176	P63/m
-177	P622
-178	P6122
-179	P6522
-180	P6222
-181	P6422
-182	P6322
-183	P6mm
-184	P6cc
-185	P63cm
-186	P63mc
-187	P6m2
-188	P6c2
-189	P62m
-190	P62c
-191	P6/mmm	P6/m2/m2/m
-192	P6/mcc	P6/m2/c2/c
-193	P63/mcm	P63/m2/c2/m
-194	P63/mmc	P63/m2/m2/c
-195	P23
-196	F23
-197	I23
-198	P213
-199	I213
-200	Pm3	P2/m3
-201	Pn3	P2/n3
-202	Fm3	F2/m3
-203	Fd3	F2/d3
-204	Im3	I2/m3
-205	Pa3	P21/a3
-206	Ia3	I21/a3
-207	P432
-208	P4232
-209	F432
-210	F4132
-211	I432
-212	P4332
-213	P4132
-214	I4132
-215	P43m
-216	F43m
-217	I43m
-218	P43n
-219	F43c
-220	I43d
-221	Pm3m	P4/m32/m
-222	Pn3n	P4/n32/n
-223	Pm3n	P41/m32/n
-224	Pn3m	P41/n32/m
-225	Fm3m	F4/m32/m
-226	Fm3c	F4/m32/c
-227	Fd3m	F41/d32/m
-228	Fd3c	F41/d32/c
-229	Im3m	I4/m32/m
-230	Ia3d	I41/a32/d	Ia3d
+sg_synonyms[1] = "P1||A1||B1||C1||I1||F1"
+sg_synonyms[2] = "P-1||A-1||B-1||C-1||I-1||F-1"
+sg_synonyms[3] = "P2"
+sg_synonyms[4] = "P2_1"
+sg_synonyms[5] = "A2||A2_1||B2||B2_1||C2||C2_1"
+sg_synonyms[6] = "Pm"
+sg_synonyms[7] = "Pa||Pb||Pc"
+sg_synonyms[8] = "Am||Ab||Ac||Bm||Ba||Bc||Cm||Ca||Cb"
+sg_synonyms[9] = "Aa||An||Bb||Bn||Cc||Cn"
+sg_synonyms[10] = "P2/m"
+sg_synonyms[11] = "P2_1/m"
+sg_synonyms[12] = "A2/m||A2_1/b||A2_1/c||B2/m||B2_1/a||B2_1/c||C2/m||C2_1/a||C2_1/b"
+sg_synonyms[13] = "P2/a||P2/b||P2/c"
+sg_synonyms[14] = "P2_1/a||P2_1/b||P2_1/c||P2_1/n"
+sg_synonyms[15] = "A2/a||A2_1/n||B2/b||B2_1/n||C2/c||C2_1/n"
+sg_synonyms[16] = "P222"
+sg_synonyms[17] = "P222_1||P22_12||P2_122"
+sg_synonyms[18] = "P2_12_12||P2_122_1||P22_12_1"
+sg_synonyms[19] = "P2_12_12_1"
+sg_synonyms[20] = "A2_122||B22_12||C222_1||A2_12_12_1||B2_12_12_1||C2_12_12_1"
+sg_synonyms[21] = "A222||B222||C222||A22_12_1||B2_122_1||C2_12_12"
+sg_synonyms[22] = "F222||F2_12_12_1"
+sg_synonyms[23] = "I222"
+sg_synonyms[24] = "I2_12_12_1"
+sg_synonyms[25] = "P2mm||Pm2m||Pmm2"
+sg_synonyms[26] = "Pmc2_1||P2_1ma||Pb2_1m||Pm2_1b||Pcm2_1||P2_1am"
+sg_synonyms[27] = "Pcc2||P2aa||Pb2b"
+sg_synonyms[28] = "Pma2||P2mb||Pc2m||Pm2a||Pbm2||P2cm"
+sg_synonyms[29] = "Pca2_1||P2_1ab||Pc2_1b||Pb2_1a||Pbc2_1||P2_1ca"
+sg_synonyms[30] = "Pnc2||P2na||Pb2n||Pn2b||Pcn2||P2an"
+sg_synonyms[31] = "Pmn2_1||P2_1mn||Pn2_1m||Pm2_1n||Pnm2_1||P2_1nm"
+sg_synonyms[32] = "Pba2||P2cb||Pc2a"
+sg_synonyms[33] = "Pna2_1||P2_1nb||Pc2_1n||Pn2_1a||Pbn2_1||P2_1cn"
+sg_synonyms[34] = "Pnn2||P2nn||Pn2n"
+sg_synonyms[35] = "Cmm2||A2mm||Bm2m||Cba2||A2cb||Bc2a"
+sg_synonyms[36] = "A2_1am||A2_1ma||A2_1cn||A2_1nb||Bb2_1m||Bm2_1b||Bn2_1a||Bc2_1n||Ccm2_1||Cmc2_1||Cbn2_1||Cna2_1"
+sg_synonyms[37] = "A2aa||A2nn||Bb2b||Bn2n||Ccc2||Cnn2;"
+sg_synonyms[38] = "Amm2||Am2m||Anc2_1||An2_1b||B2mm||Bmm2||B2_1na||Bcn2_1||C2mm||Cm2m||Cb2_1n||C2_1an"
+sg_synonyms[39] = "Abm2||Ac2m||Acc2_1||Ab2_1b||B2cm||Bma2||B2_1aa||Bcc2_1||Cm2a||C2mb||Cb2_1b||C2_1aa"
+sg_synonyms[40] = "Ama2||Am2a||Ann2_1||An2_1n||B2mb||Bbm2||B2_1nn||Bnn2_1||Cc2m||C2cm||Cn2_1n||C2_1nn"
+sg_synonyms[41] = "Aba2||Ac2a||Acn2_1||Ab2_1n||B2cb||Bba2||B2_1an||Bnc2_1||Cc2a||C2cb||Cn2_1b||C2_1na"
+sg_synonyms[42] = "Fmm2||Fbc2_1||Fca2_1||Fnn2||Fm2m||Fb2_1a||Fc2_1b||Fn2n"
+sg_synonyms[43] = "Fdd2||Fdd2_1||F2dd||F2_1dd||Fd2d||Fd2_1d"
+sg_synonyms[44] = "Imm2||Inn2_1||I2mm||I2_1nn||Im2m||In2_1n"
+sg_synonyms[45] = "Iba2||Icc2_1||I2cb||I2_1aa||Ic2a||Ib2_1b"
+sg_synonyms[46] = "Ima2||Inc2_1||I2mb||I2_1na||Ic2m||Ib2_1n||Im2a||In2_1b||Ibm2||Icn2_1||I2cm||I2_1an"
+sg_synonyms[47] = "Pmmm"
+sg_synonyms[48] = "Pnnn"
+sg_synonyms[49] = "Pccm||Pmaa||Pbmb"
+sg_synonyms[50] = "Pban||Pncb||Pcna"
+sg_synonyms[51] = "Pmma||Pbmm||Pmcm||Pmam||Pmmb||Pcmm"
+sg_synonyms[52] = "Pnna||Pbnn||Pncn||Pnan||Pnnb||Pcnn"
+sg_synonyms[53] = "Pmna||Pbmn||Pncm||Pman||Pnmb||Pcnm"
+sg_synonyms[54] = "Pcca||Pbaa||Pbcb||Pbab||Pccb||Pcaa"
+sg_synonyms[55] = "Pbam||Pmcb||Pcma"
+sg_synonyms[56] = "Pccn||Pnaa||Pbnb"
+sg_synonyms[57] = "Pbcm||Pmca||Pbma||Pcmb||Pcam||Pmab"
+sg_synonyms[58] = "Pnnm||Pmnn||Pnmn"
+sg_synonyms[59] = "Pmmn||Pnmm||Pmnm"
+sg_synonyms[60] = "Pbcn||Pnca||Pbna||Pcnb||Pcan||Pnab"
+sg_synonyms[61] = "Pbca||Pcab"
+sg_synonyms[62] = "Pnma||Pbnm||Pmcn||Pnam||Pmnb||Pcmn"
+sg_synonyms[63] = "Cmcm||Cbnn||Amma||Ancn||Bbmm||Bnna||Bmmb||Bcnn||Ccmm||Cnan||Amam||Annb"
+sg_synonyms[64] = "Cmca||Cbnb||Abma||Accn||Bbcm||Bnaa||Bmab||Bccn||Ccmb||Cnaa||Acam||Abnb||Bbam||Bmcb"
+sg_synonyms[65] = "Cmmm||Cban||Ammm||Ancb||Bmmm||Bcna"
+sg_synonyms[66] = "Cccm||Cnnn||Amaa||Annn||Bbmb||Bnnn"
+sg_synonyms[67] = "Cmma||Cbab||Abmm||Accb||Bmcm||Bcaa||Bmam||Bcca||Cmmb||Cbaa||Acmm||Abcb"
+sg_synonyms[68] = "Ccca||Cnnb||Abaa||Acnn||Bbcb||Anan||Bbab||Bncn||Cccb||Cnna||Acaa||Abnn"
+sg_synonyms[69] = "Fmmm||Fbca||Fcab||Fnnn"
+sg_synonyms[70] = "Fddd"
+sg_synonyms[71] = "Immm||Innn"
+sg_synonyms[72] = "Ibam||Iccn||Imcb||Inaa||Icma||Ibnb"
+sg_synonyms[73] = "Ibca||Icab"
+sg_synonyms[74] = "Imma||Innb||Ibmm||Icnn||Imcm||Inan||Imam||Incn||Immb||Inna||Icmm||Ibnn"
+sg_synonyms[75] = "P4||C4"
+sg_synonyms[76] = "P4_1||C4_1"
+sg_synonyms[77] = "P4_2||C4_2"
+sg_synonyms[78] = "P4_3||C4_3"
+sg_synonyms[79] = "I4||F4"
+sg_synonyms[80] = "I4_1||F4_1"
+sg_synonyms[81] = "P-4||C-4"
+sg_synonyms[82] = "I-4||F-4"
+sg_synonyms[83] = "P4/m||C4/m"
+sg_synonyms[84] = "P4_2/m||C4_2/m"
+sg_synonyms[85] = "P4/n||C4/n"
+sg_synonyms[86] = "P4_2/n||C4_2/n"
+sg_synonyms[87] = "I4/m||F4/m"
+sg_synonyms[88] = "I4_1/a||F4_1/a"
+sg_synonyms[89] = "P422||C422"
+sg_synonyms[90] = "P42_12||C422_1"
+sg_synonyms[91] = "P4_122||C4_122"
+sg_synonyms[92] = "P4_12_12||C4_122_1"
+sg_synonyms[93] = "P4_222||C4_222"
+sg_synonyms[94] = "P4_22_12||C4_222_1"
+sg_synonyms[95] = "P4_322||C4_322"
+sg_synonyms[96] = "P4_32_12||C4_322_1"
+sg_synonyms[97] = "I422||F422"
+sg_synonyms[98] = "I4_122||F4_122"
+sg_synonyms[99] = "P4mm||C4mm"
+sg_synonyms[100] = "P4bm||C4mb"
+sg_synonyms[101] = "P4_2cm||C4_2mc"
+sg_synonyms[102] = "P4_2nm||C4_2mn"
+sg_synonyms[103] = "P4cc||C4cc"
+sg_synonyms[104] = "P4nc||C4cn"
+sg_synonyms[105] = "P4_2mc||C4_2cm"
+sg_synonyms[106] = "P4_2bc||C4_2cb"
+sg_synonyms[107] = "I4mm||F4mm"
+sg_synonyms[108] = "I4cm||F4mc"
+sg_synonyms[109] = "I4_1md||F4_1dm"
+sg_synonyms[110] = "I4_1cd||F4_1dc"
+sg_synonyms[111] = "P-42m||C-4m2"
+sg_synonyms[112] = "P-42c||C-4c2"
+sg_synonyms[113] = "P-42_1m||C-4m2_1"
+sg_synonyms[114] = "P-42_1c||C-4c2_1"
+sg_synonyms[115] = "P-4m2||C-42m"
+sg_synonyms[116] = "P-4c2||C-42c"
+sg_synonyms[117] = "P-4bc||C-42b"
+sg_synonyms[118] = "P-4n2||C-42n"
+sg_synonyms[119] = "I-4m2||F-42m"
+sg_synonyms[120] = "I-4c2||F-42c"
+sg_synonyms[121] = "I-42m||F-4m2"
+sg_synonyms[122] = "I-42d||F-4d2"
+sg_synonyms[123] = "P4/mmm||C4/mmm||P4/m2/m2/m||C4/m2/m2/m"
+sg_synonyms[124] = "P4/mcc||C4/mcc||P4/m2/c2/c||C4/m2/c2/c"
+sg_synonyms[125] = "P4/nbm||C4/nmb||P4/n2/b2/m||C4/n2/m2/b"
+sg_synonyms[126] = "P4/nnc||C4/ncn||P4/n2/n2/c||C4/n2/c2/n"
+sg_synonyms[127] = "P4/mbm||C4/mmb||P4/m2_1/b2/m||C4/m2/m2_1/b"
+sg_synonyms[128] = "P4/mnc||C4/mcn||P4/m2_1/n2/c||C4/m2/c2_1/n"
+sg_synonyms[129] = "P4/nmm||C4/nmm||P4/n2_1/m2/m||C4/n2/m2_1/m"
+sg_synonyms[130] = "P4/ncc||C4/ncc||P4/n2_1/c2/c||C4/n2/c2_1/c"
+sg_synonyms[131] = "P4_2/mmc||C4_2/mcm||P4_2/m2/m2/c||C4_2/m2/c2/m"
+sg_synonyms[132] = "P4_2/mcm||C4_2/mmc||P4_2/m2/c2/m||C4_2/m2/m2/c"
+sg_synonyms[133] = "P4_2/nbc||C4_2/ncb||P4_2/n2/b2/c||C4_2/n2/c2/b"
+sg_synonyms[134] = "P4_2/nnm||C4_2/nmn||P4_2/n2/n2/m||C4_2/n2/m2/n"
+sg_synonyms[135] = "P4_2/mbc||C4_2/mcb||P4_2/m2_1/b2/c||C4_2/m2/c2_1/b"
+sg_synonyms[136] = "P4_2/mnm||C4_2/mmn||P4_2/m2_1/n2/m||C4_2/m2/m2_1/n"
+sg_synonyms[137] = "P4_2/nmc||C4_2/ncm||P4_2/n2_1/m2/c||C4_2/n2/c2_1/m"
+sg_synonyms[138] = "P4_2/ncm||C4_2/nmc||P4_2/n2_1/c2/m||C4_2/n2/m2_1/c"
+sg_synonyms[139] = "I4/mmm||F4/mmm||I4/m2/m2/m||F4/m2/m2/m"
+sg_synonyms[140] = "I4/mcm||F4/mmc||I4/m2/c2/m||F4/m2/m2/c"
+sg_synonyms[141] = "I4_1/amd||F4_1/adm||I4_1/a2/m2/d||F4_1/a2/d2/m"
+sg_synonyms[142] = "I4_1/acd||F4_1/adc||I4_1/a2/c2/d||F4_1/a2/d2/c"
+sg_synonyms[143] = "P3"
+sg_synonyms[144] = "P3_1"
+sg_synonyms[145] = "P3_2"
+sg_synonyms[146] = "R3"
+sg_synonyms[147] = "P-3"
+sg_synonyms[148] = "R-3"
+sg_synonyms[149] = "P312"
+sg_synonyms[150] = "P321"
+sg_synonyms[151] = "P3_112"
+sg_synonyms[152] = "P3_121"
+sg_synonyms[153] = "P3_212"
+sg_synonyms[154] = "P3_221"
+sg_synonyms[155] = "R32"
+sg_synonyms[156] = "P3m1"
+sg_synonyms[157] = "P31m"
+sg_synonyms[158] = "P3c1"
+sg_synonyms[159] = "P31c"
+sg_synonyms[160] = "R3m"
+sg_synonyms[161] = "R3c"
+sg_synonyms[162] = "P-31m||P-312/m"
+sg_synonyms[163] = "P-31c||P-312/c"
+sg_synonyms[164] = "P-3m1||P-32/m1"
+sg_synonyms[165] = "P-3c1||P-32/c1"
+sg_synonyms[166] = "R-3m||R-32/m"
+sg_synonyms[167] = "R-3c||R-32/c"
+sg_synonyms[168] = "P6"
+sg_synonyms[169] = "P6_1"
+sg_synonyms[170] = "P6_5"
+sg_synonyms[171] = "P6_2"
+sg_synonyms[172] = "P6_4"
+sg_synonyms[173] = "P6_3"
+sg_synonyms[174] = "P-6"
+sg_synonyms[175] = "P6/m"
+sg_synonyms[176] = "P6_3/m"
+sg_synonyms[177] = "P622"
+sg_synonyms[178] = "P6_122"
+sg_synonyms[179] = "P6_522"
+sg_synonyms[180] = "P6_222"
+sg_synonyms[181] = "P6_422"
+sg_synonyms[182] = "P6_322"
+sg_synonyms[183] = "P6mm"
+sg_synonyms[184] = "P6cc"
+sg_synonyms[185] = "P6_3cm"
+sg_synonyms[186] = "P6_3mc"
+sg_synonyms[187] = "P-6m2"
+sg_synonyms[188] = "P-6c2"
+sg_synonyms[189] = "P-62m"
+sg_synonyms[190] = "P-62c"
+sg_synonyms[191] = "P6/mmm||P6/m2/m2/m"
+sg_synonyms[192] = "P6/mcc||P6/m2/c2/c"
+sg_synonyms[193] = "P6_3/mcm||P6_3/m2/c2/m"
+sg_synonyms[194] = "P6_3/mmc||P6_3/m2/m2/c"
+sg_synonyms[195] = "P23"
+sg_synonyms[196] = "F23"
+sg_synonyms[197] = "I23"
+sg_synonyms[198] = "P2_13"
+sg_synonyms[199] = "I2_13"
+sg_synonyms[200] = "Pm3||P2/m-3"
+sg_synonyms[201] = "Pn3||P2/n-3"
+sg_synonyms[202] = "Fm3||F2/m-3"
+sg_synonyms[203] = "Fd3||F2/d-3"
+sg_synonyms[204] = "Im3||I2/m-3"
+sg_synonyms[205] = "Pa3||P2_1/a-3"
+sg_synonyms[206] = "Ia3||I2_1/a-3"
+sg_synonyms[207] = "P432"
+sg_synonyms[208] = "P4_232"
+sg_synonyms[209] = "F432"
+sg_synonyms[210] = "F4_132"
+sg_synonyms[211] = "I432"
+sg_synonyms[212] = "P4_332"
+sg_synonyms[213] = "P4_132"
+sg_synonyms[214] = "I4_132"
+sg_synonyms[215] = "P-43m"
+sg_synonyms[216] = "F-43m"
+sg_synonyms[217] = "I-43m"
+sg_synonyms[218] = "P-43n"
+sg_synonyms[219] = "F-43c"
+sg_synonyms[220] = "I-43d"
+sg_synonyms[221] = "Pm3m||P4/m-32/m"
+sg_synonyms[222] = "Pn3n||P4/n-32/n"
+sg_synonyms[223] = "Pm3n||P4_1/m-32/n"
+sg_synonyms[224] = "Pn3m||P4_1/n-32/m"
+sg_synonyms[225] = "Fm3m||F4/m-32/m"
+sg_synonyms[226] = "Fm3c||F4/m-32/c"
+sg_synonyms[227] = "Fd3m||F4_1/d-32/m"
+sg_synonyms[228] = "Fd3c||F4_1/d-32/c"
+sg_synonyms[229] = "Im3m||I4/m-32/m"
+sg_synonyms[230] = "Ia3d||I4_1/a-32/d||Ia-3d"

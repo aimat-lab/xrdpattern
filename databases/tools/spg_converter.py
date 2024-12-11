@@ -3,18 +3,27 @@ import re
 
 from pymatgen.symmetry.groups import SpaceGroup
 
-to_int_dict = {}
+
+def get_formula_to_int(fpath):
+    sg_dict = {}
+    with open(fpath, 'r') as file:
+        content = file.read()
+        lines_with_eq = [l for l in content.split('\n') if '=' in l]
+        for line in lines_with_eq:
+            number_part, synonyms_part = line.split(' = ')
+            number_part = number_part.replace(f'sg_synonyms[', '')
+            number_part = number_part.replace(f']','')
+            number = int(number_part)
+
+            synonyms_part = synonyms_part.replace('\"', '')
+            synonyms = synonyms_part.split('||')
+            for s in synonyms:
+                sg_dict[s] = number
+    return sg_dict
 
 dirpath = os.path.dirname(__file__)
-with open(f'{dirpath}/spg_formulas.txt', 'r') as f:
-    content = f.read()
-    rows = content.split('\n')
+formula_to_int = get_formula_to_int(fpath=os.path.join(dirpath, 'spg_formulas.txt'))
 
-for r in [r for r in rows if len(r) > 0]:
-    entries = re.split('[\t ]+', r)
-    i = int(entries[0])
-    for s in entries[1:]:
-            to_int_dict[s] = i
 
 class SpacegroupConverter:
     @staticmethod
@@ -22,7 +31,7 @@ class SpacegroupConverter:
         spg_formula = spg_formula.replace('-', '')
         spg_formula = spg_formula.replace('_', '')
 
-        return to_int_dict[spg_formula]
+        return formula_to_int[spg_formula]
 
     @staticmethod
     def to_formula(spg_int : int, mathmode : bool = False):
@@ -33,6 +42,10 @@ class SpacegroupConverter:
             symbol = symbol.replace('-', '\\text{-}')
         return symbol
 
+    @staticmethod
+    def get_all_formulas() -> list[str]:
+        return list(formula_to_int.keys())
 
 if __name__ == "__main__":
-    print(SpacegroupConverter.to_int(spg_formula='Ia-3'))
+    # print(SpacegroupConverter.to_int(spg_formula='Ia-3'))
+    print(f'formula to int dict = {formula_to_int}')
