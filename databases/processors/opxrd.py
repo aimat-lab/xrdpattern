@@ -33,12 +33,11 @@ class OpXRDProcessor:
             print(f'mthd name = {mthd.__name__}')
             mthd()
 
-    def process(self, input_dirname: str, output_dirname : str,
-                selected_suffixes : Optional[list[str]] = None,
-                use_cif_labels : bool = False,
-                xray_info : Optional[XRayInfo] = None,
-                csv_orientation : Optional[Orientation] = None,
-                label_groups : bool = False):
+    def get_pattern_db(self, input_dirname: str,
+                       selected_suffixes : Optional[list[str]] = None,
+                       use_cif_labels : bool = False,
+                       xray_info : Optional[XRayInfo] = None,
+                       csv_orientation : Optional[Orientation] = None):
         print(f'Started processing contributino {input_dirname}')
         data_dirpath = os.path.join(self.processed_dirpath, input_dirname, 'data')
         contrib_dirpath = os.path.join(self.processed_dirpath, input_dirname)
@@ -51,7 +50,8 @@ class OpXRDProcessor:
         for p in pattern_db.patterns:
             p.metadata.remove_filename()
 
-        self.save(pattern_db, dirname=output_dirname, label_groups=label_groups)
+        return pattern_db
+
 
     # ---------------------------------------
     # Parsing steps
