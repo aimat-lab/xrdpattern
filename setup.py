@@ -26,7 +26,8 @@ setup(name='xrdpattern',
           'holytools',
           'pandas',
           'openpyxl',
-	  'tensordict'
+	  'tensordict',
+	  'seaborn'
       ],      long_description=("Python library for XrdPatterns including import from data files, "
                         "export as json file and postprocessing functionalities. The data file "
                         "import functionalities are built on C++ library xylib so beyond a standard "
