@@ -8,7 +8,6 @@ import pandas as pd
 from xrdpattern.parsing.csv.matrix import Orientation, Matrix
 from xrdpattern.xrd import XrdPatternData, XrdAnode
 
-copper_wavelength,_ = XrdAnode.Cu.get_wavelengths()
 # -------------------------------------------
 
 class CsvParser:
@@ -35,7 +34,7 @@ class CsvParser:
         for intensities in y_axis_rows:
             new = XrdPatternData.make_unlabeled(two_theta_values=two_theta_degs, intensities=intensities)
             if is_qvalues:
-                new.powder_experiment.xray_info.primary_wavelength = copper_wavelength
+                new.powder_experiment.xray_info = XrdAnode.Cu.get_xray_info()
             pattern_infos.append(new)
 
 
