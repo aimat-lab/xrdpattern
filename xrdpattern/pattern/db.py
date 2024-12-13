@@ -59,30 +59,28 @@ class PatternDB:
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
-        fpath_dict = {}
-        failed_files = set()
-        patterns : list[XrdPattern] = []
-        def extract(xrd_fpath : str) -> list[XrdPatternData]:
-            return parser.extract(fpath=xrd_fpath, csv_orientation=csv_orientation)
-
+        db = cls.make_empty()
         for fpath in TrackedCollection(data_fpaths):
-            new_patterns = [XrdPattern(**info.to_dict()) for info in extract(fpath)]
-            patterns += new_patterns
-            fpath_dict[fpath] = new_patterns
+            for info in parser.extract(fpath=fpath, csv_orientation=csv_orientation):
+                db._add_data(info=info, fpath=fpath, strict=strict)
 
-            for info in extract(xrd_fpath=fpath):
-                try:
-                    p = XrdPattern(**info.to_dict())
-                    if not fpath in fpath_dict:
-                        fpath_dict[fpath] = []
-                    fpath_dict[fpath].append(p)
-                except Exception as e:
-                    failed_files.add(fpath)
-                    patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
-                    if strict:
-                        raise e
+        return db
 
-        return PatternDB(patterns=patterns, fpath_dict=fpath_dict, failed_files=failed_files)
+    @classmethod
+    def make_empty(cls) -> PatternDB:
+        return cls(patterns=[], failed_files=set(), fpath_dict={})
+
+    def _add_data(self, info : XrdPatternData, fpath : str, strict : bool):
+        try:
+            p = XrdPattern(**info.to_dict())
+            if not fpath in self.fpath_dict:
+                self.fpath_dict[fpath] = []
+            self.fpath_dict[fpath].append(p)
+        except Exception as e:
+            self.failed_files.add(fpath)
+            patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
+            if strict:
+                raise e
 
     # -------------------------------------------
     # operations
