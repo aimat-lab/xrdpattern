@@ -80,11 +80,13 @@ class PatternDB:
             if not fpath in self.fpath_dict:
                 self.fpath_dict[fpath] = []
             self.fpath_dict[fpath].append(p)
+            self.patterns.append(p)
         except Exception as e:
             self.failed_files.add(fpath)
             patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
             if strict:
                 raise e
+
 
     # -------------------------------------------
     # operations
