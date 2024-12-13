@@ -59,9 +59,24 @@ class PatternDB:
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
+        def handle_parsing_err(err):
+
+            if strict:
+                raise err
+
         db = cls.make_empty()
         for fpath in TrackedCollection(data_fpaths):
-            for info in parser.extract(fpath=fpath, csv_orientation=csv_orientation):
+            try:
+                xrd_datas = parser.extract(fpath=fpath, csv_orientation=csv_orientation)
+                e = None
+            except Exception as e:
+                print(f'Failed to parse file {fpath}:\n- Reason: {e.__repr__()}')
+                xrd_datas = []
+
+            if strict and e:
+                raise e
+
+            for info in xrd_datas:
                 db._add_data(info=info, fpath=fpath, strict=strict)
 
         return db
