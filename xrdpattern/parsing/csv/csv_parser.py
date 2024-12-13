@@ -8,6 +8,7 @@ import pandas as pd
 from xrdpattern.parsing.csv.matrix import Orientation, Matrix
 from xrdpattern.xrd import XrdPatternData, XrdAnode
 
+copper_wavelength, _ = XrdAnode.Cu.get_wavelengths()
 # -------------------------------------------
 
 class CsvParser:
