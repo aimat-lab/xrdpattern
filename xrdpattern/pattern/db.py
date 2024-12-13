@@ -4,7 +4,9 @@ import os
 from dataclasses import dataclass
 from typing import Optional
 
+import matplotlib.colors
 import matplotlib.gridspec as gridspec
+import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
@@ -146,7 +148,8 @@ class PatternDB:
     def show_histograms(self, save_fpath : Optional[str] = None):
         fig = plt.figure(figsize=(12,8))
 
-        figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig, hspace=0.5)
+        figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig, hspace=0.35)
+        figure.update(top=0.96, bottom=0.075)
         upper_half = figure[0].subgridspec(1, 3)
         ax2 = fig.add_subplot(upper_half[:, :])
         self.define_spg_ax(patterns=self.patterns, ax=ax2)
@@ -182,7 +185,7 @@ class PatternDB:
     def define_recorded_angles_ax(patterns : list[XrdPattern], ax : Axes):
         values = get_valid_values(patterns=patterns, attr='angular_resolution')
         ax.set_title(f'(b)')
-        ax.hist(values, bins=30, range=(0,0.1))
+        ax.hist(values, bins=10, range=(0,0.1), edgecolor='black')
         ax.set_xlabel(r'Angular resolution $\Delta(2\theta)$ [$^\circ$]')
         ax.set_yscale('log')
         ax.set_ylabel(f'No. patterns')
@@ -194,20 +197,20 @@ class PatternDB:
         start_angle_range = (0,60)
         end_angle_range = (0,180)
 
-        sns.kdeplot(x=start_data, y=end_data, fill=True, ax=density_ax)
+        # sns.kdeplot(x=start_data, y=end_data, fill=True, ax=density_ax)
         # noinspection PyTypeChecker
-        # density_ax.hist2d(start_data,end_data, bins=20, range=[list(start_angle_range),list(end_angle_range)])
+        density_ax.hist2d(start_data,end_data, bins=(10,10), range=[list(start_angle_range),list(end_angle_range)], norm=matplotlib.colors.AsinhNorm())
         density_ax.set_xlabel(r'Smallest recorded $2\theta$ value [$^\circ$]')
         density_ax.set_ylabel(r'Largest recorded $2\theta$ value [$^\circ$]')
         density_ax.set_xlim(start_angle_range)
         density_ax.set_ylim(end_angle_range)
 
-        top_marginal.hist(start_data, bins=range(*start_angle_range))
+        top_marginal.hist(start_data, bins=np.linspace(*start_angle_range, num=10), edgecolor='black')
         top_marginal.set_title(f'(c)')
         top_marginal.set_yscale('log')
         top_marginal.tick_params(axis="x", labelbottom=False)
 
-        right_marginal.hist(end_data, bins=range(*end_angle_range,5), orientation='horizontal')
+        right_marginal.hist(end_data, bins=np.linspace(*end_angle_range, num=10), orientation='horizontal', edgecolor='black')
         right_marginal.set_xscale('log')
         right_marginal.tick_params(axis="y", labelleft=False)
 
