@@ -10,6 +10,8 @@ import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 from databases.tools.spg_converter import SpacegroupConverter
 from holytools.logging import LoggerFactory
@@ -158,11 +160,13 @@ class PatternDB:
         ax3 = fig.add_subplot(lower_half[:, 0])
         self.define_recorded_angles_ax(patterns=self.patterns, ax=ax3)
 
-        lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3)
+        lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3, width_ratios=[3,3,4])
         ax4 = fig.add_subplot(lower_half_right[1:, :2]) # scaatter
         ax5 = fig.add_subplot(lower_half_right[:1, :2], sharex=ax4)  # Above
         ax6 = fig.add_subplot(lower_half_right[1:, 2:], sharey=ax4)  # Right
-        self.define_density_ax(patterns=self.patterns, density_ax=ax4, top_marginal=ax5, right_marginal=ax6)
+        ax7 = fig.add_subplot(lower_half_right[:1, 2:])
+        ax7.axis('off')
+        self.define_density_ax(patterns=self.patterns, density_ax=ax4, top_marginal=ax5, right_marginal=ax6, cmap_ax=ax7)
 
         if save_fpath:
             plt.savefig(save_fpath)
@@ -191,7 +195,7 @@ class PatternDB:
         ax.set_ylabel(f'No. patterns')
 
     @staticmethod
-    def define_density_ax(patterns : list[XrdPattern], density_ax : Axes, top_marginal : Axes, right_marginal : Axes):
+    def define_density_ax(patterns : list[XrdPattern], density_ax : Axes, top_marginal : Axes, right_marginal : Axes, cmap_ax):
         start_data = get_valid_values(patterns=patterns, attr='startval')
         end_data = get_valid_values(patterns=patterns, attr='endval')
         start_angle_range = (0,60)
@@ -199,20 +203,31 @@ class PatternDB:
 
         # sns.kdeplot(x=start_data, y=end_data, fill=True, ax=density_ax)
         # noinspection PyTypeChecker
-        density_ax.hist2d(start_data,end_data, bins=(10,10), range=[list(start_angle_range),list(end_angle_range)], norm=matplotlib.colors.AsinhNorm())
-        density_ax.set_xlabel(r'Smallest recorded $2\theta$ value [$^\circ$]')
-        density_ax.set_ylabel(r'Largest recorded $2\theta$ value [$^\circ$]')
+        h = density_ax.hist2d(start_data,end_data, bins=(10,10), range=[list(start_angle_range),list(end_angle_range)], norm=matplotlib.colors.LogNorm())
+        density_ax.set_xlabel(r'Smallest recorded $2\theta$ [$^\circ$]')
+        density_ax.set_ylabel(r'Largest recorded $2\theta$ [$^\circ$]')
         density_ax.set_xlim(start_angle_range)
         density_ax.set_ylim(end_angle_range)
+
+        divider = make_axes_locatable(density_ax)
+        cax = divider.append_axes('right', size='5%', pad=0.0)
+        plt.colorbar(h[3], cax=cax, orientation='vertical')
 
         top_marginal.hist(start_data, bins=np.linspace(*start_angle_range, num=10), edgecolor='black')
         top_marginal.set_title(f'(c)')
         top_marginal.set_yscale('log')
-        top_marginal.tick_params(axis="x", labelbottom=False)
+        top_marginal.tick_params(axis="x", labelbottom=False, which='both', bottom=False)
+
+        divider = make_axes_locatable(top_marginal)
+        cax = divider.append_axes('right', size='5%', pad=0.0)
+        cax.axis('off')
+
+        divider = make_axes_locatable(right_marginal)
+        cax = divider.append_axes('left', size='15%', pad=0.0)
+        cax.axis('off')
 
         right_marginal.hist(end_data, bins=np.linspace(*end_angle_range, num=10), orientation='horizontal', edgecolor='black')
         right_marginal.set_xscale('log')
-        right_marginal.tick_params(axis="y", labelleft=False)
-
+        right_marginal.tick_params(axis="y", labelleft=False, which='both', left=False)
 
 
