@@ -1,7 +1,7 @@
 from xrdpattern.parsing.csv import TextTable, TableSelector
 from holytools.devtools import Unittest
 
-from xrdpattern.parsing.csv.tables import Region, Index
+from xrdpattern.parsing.csv.matrix import Region, Index
 
 
 class TestTableSelector(Unittest):

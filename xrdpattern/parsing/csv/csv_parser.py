@@ -5,13 +5,11 @@ import math
 
 import pandas as pd
 
-from xrdpattern.parsing.csv.tables import Orientation, Matrix
+from xrdpattern.parsing.csv.matrix import Orientation, Matrix
 from xrdpattern.xrd import XrdPatternData, XrdAnode
 
 copper_wavelength,_ = XrdAnode.Cu.get_wavelengths()
 # -------------------------------------------
-
-
 
 class CsvParser:
     MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr
@@ -27,18 +25,19 @@ class CsvParser:
         if not len(x_axis_row) == len(y_axis_rows[0]):
             raise ValueError(f"X-axis row length {len(x_axis_row)} does not match data row length {len(y_axis_rows[0])}")
 
-        pattern_infos = []
         is_qvalues = max(x_axis_row) < CsvParser.MAX_Q_VALUE
         if is_qvalues:
             two_theta_degs = qvalues_to_copper_angles(qvalues=x_axis_row)
         else:
             two_theta_degs = x_axis_row
 
+        pattern_infos = []
         for intensities in y_axis_rows:
             new = XrdPatternData.make_unlabeled(two_theta_values=two_theta_degs, intensities=intensities)
             if is_qvalues:
                 new.powder_experiment.xray_info.primary_wavelength = copper_wavelength
             pattern_infos.append(new)
+
 
         x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'
         print(f'\nThe format of the csv file {fpath} was automatically determined/specified as:'
