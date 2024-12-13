@@ -12,8 +12,7 @@ copper_wavelength, _ = XrdAnode.Cu.get_wavelengths()
 # -------------------------------------------
 
 class CsvParser:
-    MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr
-                     # Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
+    MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr;  Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
 
     def extract_multi(self, fpath: str, pattern_dimension : Orientation) -> list[XrdPatternData]:
         matrix = self._as_matrix(fpath=fpath, pattern_orientation=pattern_dimension)
@@ -26,6 +25,12 @@ class CsvParser:
             raise ValueError(f"X-axis row length {len(x_axis_row)} does not match data row length {len(y_axis_rows[0])}")
 
         is_qvalues = max(x_axis_row) < CsvParser.MAX_Q_VALUE
+        x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'
+        print(f'The format of the csv file {fpath} was automatically determined/specified as:'
+              f'\n- XAxisType     : \"{x_axis_type}\"'
+              f'\n- Csv Seperator : \"{CsvParser.get_separator(fpath=fpath)}\"'
+              f'\n- Orientation   : \"{pattern_dimension.value}\"')
+
         if is_qvalues:
             two_theta_degs = qvalues_to_copper_angles(qvalues=x_axis_row)
         else:
@@ -37,13 +42,6 @@ class CsvParser:
             if is_qvalues:
                 new.powder_experiment.xray_info = XrdAnode.Cu.get_xray_info()
             pattern_infos.append(new)
-
-
-        x_axis_type = 'QValues' if is_qvalues else 'TwoThetaDegs'
-        print(f'\nThe format of the csv file {fpath} was automatically determined/specified as:'
-              f'\n- XAxisType     : \"{x_axis_type}\"'
-              f'\n- Csv Seperator : \"{CsvParser.get_separator(fpath=fpath)}\"'
-              f'\n- Orientation   : \"{pattern_dimension.value}\"')
 
         return pattern_infos
 
@@ -60,12 +58,20 @@ class CsvParser:
             table = [list(col) for col in zip(*table)]
 
         if self.is_numerical(values=table[0]):
-            headers = None
-            data = self.to_numerical(data=table)
+            headers, numerical_part = None, table
         else:
-            headers = table[0]
-            data = self.to_numerical(data=table[1:], row_start=1)
-        return Matrix(headers=headers, data=data)
+            headers, numerical_part = table[0], table[1:]
+        data = self.to_numerical(numerical_part, row_start=0 if headers else 1)
+        matrix = Matrix(headers=headers, data=data)
+
+        delta = len(numerical_part) - len(matrix.data)
+        if delta > 0:
+            print(f'Warning: In {fpath}, {delta} rows were skipped due to non-numerical values')
+
+        return matrix
+
+    # -------------------------------------------
+    # csv tools
 
     @staticmethod
     def get_separator(fpath: str) -> str:
@@ -89,6 +95,9 @@ class CsvParser:
         data = pd.read_excel(xlsx_fpath)
         data.to_csv(csv_fpath, index=False)
 
+    # ------------------------------------------
+    # datatype tools
+
     @staticmethod
     def is_numerical(values : list[str]) -> bool:
         try:
@@ -101,18 +110,23 @@ class CsvParser:
     def to_numerical(self, data : list[list[str]], row_start : int = 0) -> list[list[float]]:
         numerical_data = []
         for row_num, row in enumerate(data):
-            float_data = []
-            for col_num, x in enumerate(row):
-                float_data.append(self.try_convert(x, row_num+row_start+1, col_num+1))
+            try:
+                float_data = [self.convert_to_float(x, row_num + row_start + 1, col_num + 1) for col_num, x in enumerate(row)]
+            except Exception as e:
+                continue
             numerical_data.append(float_data)
+
+
+
         return numerical_data
 
     @staticmethod
-    def try_convert(x : str, row_num : int, col_num : int) -> float:
+    def convert_to_float(x : str, row_num : int, col_num : int) -> float:
         try:
             return float(x)
         except Exception:
             raise ValueError(f"Could not convert value \"{x}\" at row {row_num}, column {col_num} to a numerical value")
+
 
 def qvalues_to_copper_angles(qvalues : list[float]) -> list[float]:
     theta_values_rad = [math.asin(q*copper_wavelength/(4*math.pi)) for q in qvalues]
