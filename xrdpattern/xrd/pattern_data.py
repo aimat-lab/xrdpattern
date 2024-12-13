@@ -115,6 +115,8 @@ class XrdPatternData(Serializable):
     def get_name(self) -> str:
         name = self.metadata.filename
         if not name:
+            name = self.powder_experiment.primary_phase.chemical_composition
+        if not name:
             name = f'unnamed_pattern'
 
         return name
@@ -149,6 +151,13 @@ class XrdPatternData(Serializable):
     @property
     def is_simulated(self) -> bool:
         return self.powder_experiment.is_simulated
+
+    @property
+    def composition(self) -> str:
+        comp = ''
+        for phase in self.powder_experiment.phases:
+            comp += phase.chemical_composition
+        return comp
 
     def has_label(self, label_type: LabelType) -> bool:
         if label_type == LabelType.composition:

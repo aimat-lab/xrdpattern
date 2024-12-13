@@ -1,12 +1,12 @@
-from typing import Optional
+from collections import Counter
 
 import numpy as np
 from matplotlib import pyplot as plt
 from tabulate import tabulate
-from collections import Counter
 
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.xrd import LabelType
+
 
 # -----------------------------------------
 
@@ -30,7 +30,7 @@ def compute_average_dot_product(patterns : list[XrdPattern]) -> float:
     return sum(normalized_dot_products) / len(normalized_dot_products)
 
 
-def multiplot(patterns : list[XrdPattern]):
+def multiplot(patterns : list[XrdPattern], start_idx : int):
     labels = [p.get_name() for p in patterns]
     fig, axes = plt.subplots(4, 8, figsize=(20, 10))
     for i, pattern in enumerate(patterns):
@@ -39,7 +39,7 @@ def multiplot(patterns : list[XrdPattern]):
         ax.set_xlabel(r'$2\theta$ (Degrees)')
         ax.plot(x_values, intensities, label='Interpolated Intensity')
         ax.set_ylabel('Intensity')
-        ax.set_title(f'({i}){labels[i][:20]}')
+        ax.set_title(f'({i+start_idx}){labels[i][:20]}')
         ax.legend(fontsize=8)
     plt.tight_layout()
     plt.show()

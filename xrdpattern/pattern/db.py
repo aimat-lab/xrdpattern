@@ -136,8 +136,8 @@ class PatternDB:
         while j < len(self.patterns):
             pattern_batch = self.patterns[j:j + batch_size]
             for k,p in enumerate(pattern_batch):
-                p.metadata.filename = p.metadata.filename or f'pattern_{j+k}'
-            multiplot(patterns=pattern_batch)
+                p.metadata.filename = p.get_name() or f'pattern_{j+k}'
+            multiplot(patterns=pattern_batch, start_idx=j)
             j += batch_size
 
             user_input = input(f'Press enter to continue or q to quit')
