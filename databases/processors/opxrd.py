@@ -37,11 +37,12 @@ class OpXRDProcessor:
                        selected_suffixes : Optional[list[str]] = None,
                        use_cif_labels : bool = False,
                        xray_info : Optional[XRayInfo] = None,
-                       csv_orientation : Optional[Orientation] = None):
+                       csv_orientation : Optional[Orientation] = None,
+                       strict : bool = False):
         print(f'Started processing contributino {input_dirname}')
         data_dirpath = os.path.join(self.processed_dirpath, input_dirname, 'data')
         contrib_dirpath = os.path.join(self.processed_dirpath, input_dirname)
-        pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=selected_suffixes, csv_orientation=csv_orientation)
+        pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=selected_suffixes, csv_orientation=csv_orientation, strict=strict)
 
         self.attach_metadata(pattern_db, dirname=input_dirname)
         self.attach_labels(pattern_db=pattern_db, contrib_dirpath=contrib_dirpath, use_cif_labels=use_cif_labels)

@@ -6,7 +6,7 @@ from .pattern_report import ParsingReport
 @dataclass
 class DatabaseReport:
     data_dirpath : str
-    failed_files : list[str]
+    failed_files : set[str]
     fpath_dict : dict[str, list[XrdPattern]]
 
     def __post_init__(self):
@@ -17,7 +17,7 @@ class DatabaseReport:
 
         for report in self.pattern_reports:
             self.num_err += report.has_error()
-        self.source_files = list(self.fpath_dict.keys()) + self.failed_files
+        self.source_files = list(self.fpath_dict.keys()) + list(self.failed_files)
 
     def print(self):
         print(self.as_str())

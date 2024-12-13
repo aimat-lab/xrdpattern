@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import Optional
 
 import matplotlib.gridspec as gridspec
-import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
@@ -27,7 +26,7 @@ parser = MasterParser()
 @dataclass
 class PatternDB:
     patterns : list[XrdPattern]
-    failed_files : list[str]
+    failed_files : set[str]
     fpath_dict: dict[str, list[XrdPattern]]
     name : str = ''
 
@@ -61,21 +60,27 @@ class PatternDB:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
         fpath_dict = {}
-        failed_files = []
+        failed_files = set()
         patterns : list[XrdPattern] = []
         def extract(xrd_fpath : str) -> list[XrdPatternData]:
             return parser.extract(fpath=xrd_fpath, csv_orientation=csv_orientation)
 
         for fpath in TrackedCollection(data_fpaths):
-            try:
-                new_patterns = [XrdPattern(**info.to_dict()) for info in extract(fpath)]
-                patterns += new_patterns
-                fpath_dict[fpath] = new_patterns
-            except Exception as e:
-                failed_files.append(fpath)
-                patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
-                if strict:
-                    raise e
+            new_patterns = [XrdPattern(**info.to_dict()) for info in extract(fpath)]
+            patterns += new_patterns
+            fpath_dict[fpath] = new_patterns
+
+            for info in extract(xrd_fpath=fpath):
+                try:
+                    p = XrdPattern(**info.to_dict())
+                    if not fpath in fpath_dict:
+                        fpath_dict[fpath] = []
+                    fpath_dict[fpath].append(p)
+                except Exception as e:
+                    failed_files.add(fpath)
+                    patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
+                    if strict:
+                        raise e
 
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict, failed_files=failed_files)
 
@@ -88,11 +93,11 @@ class PatternDB:
     @classmethod
     def merge(cls, dbs : list[PatternDB]):
         patterns = []
-        failed_files = []
+        failed_files = set()
         fpath_dict = {}
         for db in dbs:
             patterns += db.patterns
-            failed_files += db.failed_files
+            failed_files.update(db.failed_files)
             fpath_dict.update(db.fpath_dict)
 
         return PatternDB(patterns=patterns, failed_files=failed_files, fpath_dict=fpath_dict)

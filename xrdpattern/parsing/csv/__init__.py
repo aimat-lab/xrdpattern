@@ -1,3 +1,2 @@
-from .tables import NumericalTable, TextTable
-from .table_selector import TableSelector
+from .tables import Matrix
 from .csv_parser import Orientation, CsvParser

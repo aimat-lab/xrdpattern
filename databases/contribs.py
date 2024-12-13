@@ -27,7 +27,8 @@ class ContributionProcessor(OpXRDProcessor):
 
     def parse_LBNL(self):
         def get_contribution(dirname : str, selected_suffixes : Optional[list[str]] = None):
-            return self.get_pattern_db(input_dirname=dirname, csv_orientation=Orientation.VERTICAL,selected_suffixes=selected_suffixes)
+            return self.get_pattern_db(input_dirname=dirname, csv_orientation=Orientation.HORIZONTAL,
+                                       selected_suffixes=selected_suffixes, strict=True)
 
         perovskite_db =  get_contribution(dirname='sutter-fella_singh_0')
         perovskite_db += get_contribution(dirname='sutter-fella_kodalle_0', selected_suffixes=['dat','csv'])
@@ -89,5 +90,6 @@ class ContributionProcessor(OpXRDProcessor):
 
 if __name__ == "__main__":
     processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
-    processor.parse_all()
-    processor.prepare_zips()
+    processor.parse_LBNL()
+    # processor.parse_all()
+    # processor.prepare_zips()
