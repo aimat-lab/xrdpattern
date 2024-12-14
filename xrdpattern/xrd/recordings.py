@@ -90,6 +90,9 @@ class XrdData(Serializable):
             return len(self.primary_phase.base) > 0
         return False
 
+    def is_labeled(self) -> bool:
+        return any(self.has_label(label_type=lt) for lt in LabelType)
+
     @property
     def num_entries(self) -> int:
         return len(self.two_theta_values)
