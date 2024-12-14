@@ -10,7 +10,6 @@ from xrdpattern.parsing import MasterParser, Formats, Orientation
 from xrdpattern.xrd import XRayInfo, XrdPatternData
 from .analysis import histograms, plot_all
 from .pattern import XrdPattern
-from .reports import DirpathParsingReport
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
 parser = MasterParser()
@@ -20,7 +19,6 @@ parser = MasterParser()
 @dataclass
 class PatternDB:
     patterns : list[XrdPattern]
-    failed_files : set[str]
     fpath_dict: dict[str, list[XrdPattern]]
     name : str = ''
 
@@ -37,20 +35,25 @@ class PatternDB:
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
+        patterdb_logger.info(f'- Loading patterns from local dirpath {dirpath}')
         db = cls._make_empty()
         for fpath in TrackedCollection(data_fpaths):
             try:
                 xrd_datas = parser.extract(fpath=fpath, csv_orientation=csv_orientation)
                 [db._add_data(info=info, fpath=fpath, strict=strict) for info in xrd_datas]
             except Exception as e:
-                print(f'Failed to parse file {fpath}:\n- Reason: {e.__repr__()}')
+                patterdb_logger.warning(f'Failed to parse file {fpath}:\n- Reason: {e.__repr__()}')
                 if strict:
                     raise e
+
+        patterdb_logger.info(f'Finished processing pattern database located at {dirpath}')
+        patterdb_logger.info(f'Successfully extracted data from : {len(db.fpath_dict)}/{len(data_fpaths)} xrd files')
+
         return db
 
     @classmethod
     def _make_empty(cls) -> PatternDB:
-        return cls(patterns=[], failed_files=set(), fpath_dict={})
+        return cls(patterns=[], fpath_dict={})
 
     def _add_data(self, info : XrdPatternData, fpath : str, strict : bool):
         try:
@@ -60,7 +63,6 @@ class PatternDB:
             self.fpath_dict[fpath].append(p)
             self.patterns.append(p)
         except Exception as e:
-            self.failed_files.add(fpath)
             patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
             if strict:
                 raise e
@@ -90,14 +92,12 @@ class PatternDB:
     @classmethod
     def merge(cls, dbs : list[PatternDB]):
         patterns = []
-        failed_files = set()
         fpath_dict = {}
         for db in dbs:
             patterns += db.patterns
-            failed_files.update(db.failed_files)
             fpath_dict.update(db.fpath_dict)
 
-        return PatternDB(patterns=patterns, failed_files=failed_files, fpath_dict=fpath_dict)
+        return PatternDB(patterns=patterns, fpath_dict=fpath_dict)
 
     def set_xray(self, xray_info : XRayInfo):
         for p in self.patterns:
@@ -115,9 +115,6 @@ class PatternDB:
             if self_pattern != other_pattern:
                 return False
         return True
-
-    def get_parsing_report(self) -> DirpathParsingReport:
-        return DirpathParsingReport(data_dirpath=self.name, failed_files=self.failed_files, fpath_dict=self.fpath_dict)
 
     def show_all(self, single_plot : bool = False):
         plot_all(patterns=self.patterns, single_plot=single_plot)

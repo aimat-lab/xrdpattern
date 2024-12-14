@@ -11,7 +11,6 @@ from numpy.typing import NDArray
 
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrdPatternData
-from .reports import FileParsingReport
 
 parser = MasterParser()
 
@@ -58,10 +57,6 @@ class XrdPattern(XrdPatternData):
         pattern_info = pattern_list[0]
         kwargs = pattern_info.to_dict()
         pattern = cls(**kwargs)
-
-        report = pattern.get_parsing_report(datafile_fpath=fpath)
-        if not mute:
-            print(report.as_str())
         return pattern
 
     def save(self, fpath : str, force_overwrite : bool = False):
@@ -85,12 +80,6 @@ class XrdPattern(XrdPatternData):
         # intensities = torch.tensor(intensities, dtype=dtype, device=device)
         # print(f'Time taken = {time.time() - now} seconds')
         # return intensities, labels
-
-    def get_parsing_report(self, datafile_fpath : str = 'Unmarked pattern') -> FileParsingReport:
-        pattern_health = FileParsingReport(datafile_fpath=datafile_fpath)
-        if self.powder_experiment.primary_wavelength is None:
-            pattern_health.add_error('Primary wavelength missing!')
-        return pattern_health
 
     def get_pattern_data(self, apply_standardization : bool = True, apply_constant_padding : bool = False,
                          zero_mask_below : float = 0,
