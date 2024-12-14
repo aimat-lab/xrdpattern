@@ -129,9 +129,19 @@ class PatternDB:
     def get_parsing_report(self) -> DatabaseReport:
         return DatabaseReport(data_dirpath=self.name, failed_files=self.failed_files, fpath_dict=self.fpath_dict)
 
-    def plot_all(self):
-        batch_size = 32
+    def plot_all(self, single_plot : bool = False):
+        if single_plot:
+            data = [p.get_pattern_data() for p in patterns]
+            fig, ax = plt.subplots()
+            for x, y in data:
+                ax.plot(x, y, linewidth=0.1)
 
+            ax.set_xlabel('X Label')
+            ax.set_ylabel('Y Label')
+            ax.set_title('Multiple XY Plots')
+            plt.show()
+
+        batch_size = 32
         j = 0
         while j < len(self.patterns):
             pattern_batch = self.patterns[j:j + batch_size]
@@ -143,7 +153,6 @@ class PatternDB:
             user_input = input(f'Press enter to continue or q to quit')
             if user_input.lower() == 'q':
                 break
-
 
     def show_histograms(self, save_fpath : Optional[str] = None, attach_colorbar : bool = True):
         fig = plt.figure(figsize=(12,8))

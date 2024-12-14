@@ -1,1 +1,1 @@
-from .masterparser import MasterParser, XrdFormat, Orientation, Formats
+from .master import MasterParser, XrdFormat, Orientation, Formats
