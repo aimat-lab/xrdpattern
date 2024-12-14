@@ -58,7 +58,7 @@ class PatternDB:
 
     def _add_data(self, info : XrdPatternData, fpath : str, strict : bool):
         try:
-            p = XrdPattern(**info.to_dict())
+            p = XrdPattern(**info.to_init_dict())
             if not fpath in self.fpath_dict:
                 self.fpath_dict[fpath] = []
             self.fpath_dict[fpath].append(p)

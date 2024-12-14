@@ -85,7 +85,7 @@ class PowderExperiment(JsonDataclass):
     def is_nonempty(self) -> bool:
         xray_info_nonemtpy = self.xray_info.primary_wavelength or self.xray_info.secondary_wavelength
         
-        primary_phase = self.primary_phase
+        primary_phase = self.phases[0]
         composition_nonempty = primary_phase.chemical_composition
 
         a,b,c = primary_phase.lengths
@@ -97,10 +97,6 @@ class PowderExperiment(JsonDataclass):
         return xray_info_nonemtpy or composition_nonempty or lattice_params_nonempty or crystal_basis_nonempty
 
     @property
-    def primary_phase(self) -> CrystalPhase:
-        return self.phases[0]
-
-    @property
     def primary_wavelength(self) -> float:
         return self.xray_info.primary_wavelength
 
@@ -110,7 +106,7 @@ class PowderExperiment(JsonDataclass):
 
     def get_list_repr(self) -> list:
         list_repr = []
-        structure = self.primary_phase
+        structure = self.phases[0]
 
         a, b, c = structure.lengths
         alpha, beta, gamma = structure.angles
