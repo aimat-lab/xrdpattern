@@ -1,10 +1,10 @@
 import numpy as np
 
-from xrdpattern.xrd import XrdPatternData
-from xrdpattern.xrd.xray import XrdAnode
+from xrdpattern.xrd import XrdData, XrdAnode
+
 
 class DatParser:
-    def extract_multi(self, fpath : str) -> list[XrdPatternData]:
+    def extract_multi(self, fpath : str) -> list[XrdData]:
         data = self.get_data_dict(fpath=fpath)
         x,y = self.get_xy_data(data_dict=data)
         x = np.array(x)
@@ -20,7 +20,7 @@ class DatParser:
             pattern_intensities = y[:l]
             x,y = x[l:], y[l:]
 
-            new_pattern = XrdPatternData.make_unlabeled(two_theta_values=pattern_angles, intensities=pattern_intensities)
+            new_pattern = XrdData.make_unlabeled(two_theta_values=pattern_angles, intensities=pattern_intensities)
             new_pattern.powder_experiment.xray_info = XrdAnode.Cu.get_xray_info()
             patterns.append(new_pattern)
 

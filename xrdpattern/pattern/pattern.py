@@ -11,14 +11,14 @@ from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
 
 from xrdpattern.parsing import MasterParser, Formats
-from xrdpattern.xrd import XrdPatternData
-from xrdpattern.xrd.experiment import PowderExperiment
+from xrdpattern.xrd import XrdData
+from xrdpattern.xrd.powder import PowderExperiment
 
 parser = MasterParser()
 
 # -------------------------------------------
 
-class XrdPattern(XrdPatternData):
+class XrdPattern(XrdData):
     @classmethod
     def load(cls, fpath : str, mute : bool = False) -> XrdPattern:
         pattern_list = parser.extract(fpath=fpath)
@@ -93,7 +93,7 @@ class XrdPattern(XrdPatternData):
 
         return x, y
 
-    def __eq__(self, other : XrdPatternData):
+    def __eq__(self, other : XrdData):
         for attr in fields(self):
             v1, v2 = getattr(self, attr.name), getattr(other, attr.name)
             if isinstance(v1, np.ndarray):

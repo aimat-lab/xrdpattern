@@ -3,20 +3,20 @@ from __future__ import annotations
 import json
 import math
 from dataclasses import dataclass, fields, field
+from enum import Enum
 
 import numpy as np
 from numpy.typing import NDArray
 
 from holytools.abstract import Serializable
 from xrdpattern.crystal import CrystalPhase
-from xrdpattern.xrd.experiment import PowderExperiment, LabelType
-from xrdpattern.xrd.metadata import Metadata
-
+from xrdpattern.xrd.powder import PowderExperiment
+from xrdpattern.xrd import Metadata
 
 # -------------------------------------------
 
 @dataclass
-class XrdPatternData(Serializable):
+class XrdData(Serializable):
     two_theta_values : NDArray
     intensities : NDArray
     powder_experiment : PowderExperiment
@@ -38,13 +38,13 @@ class XrdPatternData(Serializable):
             raise ValueError(f'TwoThetaValues contain negative values')
 
     @classmethod
-    def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> XrdPatternData:
+    def make_unlabeled(cls, two_theta_values: list[float], intensities: list[float]) -> XrdData:
         metadata = PowderExperiment.make_empty()
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
         return cls(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=metadata)
 
     @classmethod
-    def from_str(cls, json_str: str) -> XrdPatternData:
+    def from_str(cls, json_str: str) -> XrdData:
         data = json.loads(json_str)
         two_theta_values = np.array(data['two_theta_values'])
         intensities = np.array(data['intensities'])
@@ -128,3 +128,10 @@ class XrdPatternData(Serializable):
     @classmethod
     def std_two_theta_range(cls) -> (float, float):
         return 0, 90
+
+
+class LabelType(Enum):
+    spg = "spg"
+    lattice = "lattice"
+    atom_coords = "atom_coords"
+    composition = "composition"

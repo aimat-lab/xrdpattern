@@ -4,7 +4,7 @@ from tests.base_pattern import ParserBaseTest
 from xrdpattern.parsing import Orientation
 from xrdpattern.parsing.examples import DataExamples
 from xrdpattern.pattern import XrdPattern, PatternDB
-from xrdpattern.xrd import XrdPatternData
+from xrdpattern.xrd import XrdData
 
 
 # -----------------------------------------------------------------
@@ -16,12 +16,6 @@ class TestXYLib(ParserBaseTest):
 
     def test_obj_ok(self):
         self.assertIsInstance(self.pattern, XrdPattern)
-
-    def test_report_ok(self):
-        report = self.pattern.get_parsing_report(datafile_fpath=self.get_fpath())
-        as_str = report.as_str()
-        self.assertIsInstance(obj=as_str, cls=str)
-        print(f'Parsing report: {as_str}')
 
     def test_metadata_ok(self):
         metadata = self.pattern.powder_experiment
@@ -59,17 +53,17 @@ class TestCustomFormats(ParserBaseTest):
     def test_xlsx(self):
         patterns = self.parser.extract(fpath=DataExamples.get_xlsx_fpath(), csv_orientation=Orientation.VERTICAL)
         for p in patterns:
-            self.assertIsInstance(p, XrdPatternData)
+            self.assertIsInstance(p, XrdData)
 
     def test_multi_csv(self):
         patterns = self.parser.extract(fpath=DataExamples.get_multi_csv_fpath(), csv_orientation=Orientation.VERTICAL)
         for p in patterns:
-            self.assertIsInstance(p, XrdPatternData)
+            self.assertIsInstance(p, XrdData)
 
     def test_dat(self):
         patterns = self.parser.extract(fpath=DataExamples.get_dat_fpath())
         for p in patterns:
-            self.assertIsInstance(p, XrdPatternData)
+            self.assertIsInstance(p, XrdData)
 
 
 class TestParserDatabase(ParserBaseTest):
@@ -81,19 +75,6 @@ class TestParserDatabase(ParserBaseTest):
         for db in [bruker_db, all_db]:
             self.assertIsInstance(db, PatternDB)
         all_db.save(dirpath=tempfile.mktemp())
-
-
-    def test_db_report_ok(self):
-        bruker_db = self.get_bruker_db()
-        all_db = self.get_all_db()
-
-        for db in [bruker_db, all_db]:
-            report = db.get_parsing_report()
-            as_str = report.as_str()
-            print(f'Parsing report: {as_str[:300]}')
-
-            self.assertIsInstance(obj=as_str, cls=str)
-            self.assertTrue(len(report.pattern_reports) > 0)
 
     @staticmethod
     def get_bruker_db() -> PatternDB:

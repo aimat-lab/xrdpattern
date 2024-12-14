@@ -7,7 +7,7 @@ from typing import Optional, Iterator, Tuple
 import numpy as np
 
 from holytools.fsys import SaveManager
-from xrdpattern.xrd import XrdPatternData, XRayInfo, PowderExperiment, Metadata
+from xrdpattern.xrd import XrdData, XRayInfo, PowderExperiment, Metadata
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
 from .csv import CsvParser, Orientation
@@ -28,7 +28,7 @@ class MasterParser:
     # -------------------------------------------
     # pattern
 
-    def extract(self, fpath : str, csv_orientation : Optional[Orientation] = None) -> list[XrdPatternData]:
+    def extract(self, fpath : str, csv_orientation : Optional[Orientation] = None) -> list[XrdData]:
         suffix = SaveManager.get_suffix(fpath)
         if not suffix in Formats.get_all_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
@@ -62,15 +62,15 @@ class MasterParser:
 
 
     @staticmethod
-    def load_json(fpath: str) -> XrdPatternData:
+    def load_json(fpath: str) -> XrdData:
         with open(fpath, 'r') as file:
             data = file.read()
-            new_pattern = XrdPatternData.from_str(json_str=data)
+            new_pattern = XrdData.from_str(json_str=data)
         return new_pattern
 
 
     @staticmethod
-    def _load_xylib_file(fpath: str, format_hint : XrdFormat) -> XrdPatternData:
+    def _load_xylib_file(fpath: str, format_hint : XrdFormat) -> XrdData:
         xylib_repr = get_xylib_repr(fpath=fpath, format_name=format_hint.name)
         header,data_str = xylib_repr.get_header(), xylib_repr.get_data()
         powder_experiment = MasterParser.parse_experiment_params(header_str=header)
@@ -85,10 +85,10 @@ class MasterParser:
             intensities.append(intensity)
 
         two_theta_values, intensities = np.array(two_theta_values), np.array(intensities)
-        return XrdPatternData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=powder_experiment, metadata=metadata)
+        return XrdData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=powder_experiment, metadata=metadata)
 
 
-    def _load_csv(self, fpath : str, orientation : Optional[Orientation] = None) -> list[XrdPatternData]:
+    def _load_csv(self, fpath : str, orientation : Optional[Orientation] = None) -> list[XrdData]:
         if SaveManager.get_suffix(fpath) == 'xlsx':
             tmp_fpath = tempfile.mktemp(suffix='.csv')
             CsvParser.xlsx_to_csv(xlsx_fpath=fpath, csv_fpath=tmp_fpath)
@@ -100,10 +100,10 @@ class MasterParser:
 
         return self.csv_parser.extract_multi(fpath=fpath, pattern_dimension=orientation)
 
-    def _load_cif(self, fpath : str) -> XrdPatternData:
+    def _load_cif(self, fpath : str) -> XrdData:
         return self.cif_parser.extract(fpath=fpath)
 
-    def _load_plaintext_dat(self, fpath : str) -> list[XrdPatternData]:
+    def _load_plaintext_dat(self, fpath : str) -> list[XrdData]:
         return self.dat_parser.extract_multi(fpath=fpath)
 
     # -------------------------------------------

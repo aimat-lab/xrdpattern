@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
+import pkg_resources
 import torch
-from tensordict import TensorDict
-from torch import Tensor
 
 from holytools.abstract import JsonDataclass
 from xrdpattern.crystal import CrystalPhase, CrystalBase, AtomicSite
-from xrdpattern.xrd.xray import XRayInfo
+from xrdpattern.xrd.tensorization import LabelTensor
 
 NUM_SPACEGROUPS = 230
 MAX_ATOMIC_SITES = 100
@@ -92,8 +91,6 @@ class PowderExperiment(JsonDataclass):
         alpha, beta, gamma = primary_phase.angles
         lattice_params_nonempty = not all(math.isnan(x) for x in [a, b, c, alpha, beta, gamma])
         crystal_basis_nonempty = len(primary_phase.base) > 0
-        # print(f'lattiice params, crystal basis, xray info = {lattice_params_nonempty, crystal_basis_nonempty, xray_info_nonemtpy}')
-        
         return xray_info_nonemtpy or composition_nonempty or lattice_params_nonempty or crystal_basis_nonempty
 
     @property
@@ -151,34 +148,63 @@ class PowderExperiment(JsonDataclass):
         return LabelTensor(tensor)
 
 
-class LabelType(Enum):
-    spg = "spg"
-    lattice = "lattice"
-    atom_coords = "atom_coords"
-    composition = "composition"
+@dataclass
+class XRayInfo(JsonDataclass):
+    primary_wavelength: Optional[float]
+    secondary_wavelength: Optional[float]
 
-class LabelTensor(TensorDict):
-    def get_lattice_params(self) -> Tensor:
-        return self['lattice_params']
+    @classmethod
+    def mk_empty(cls):
+        return cls(primary_wavelength=None, secondary_wavelength=None)
 
-    def get_atomic_site(self, index : int) -> Tensor:
-        return self[f'atomic_site_{index}']
+    def as_list(self) -> list[float]:
+        return [self.primary_wavelength, self.secondary_wavelength]
 
-    def get_spg_logits(self) -> Tensor:
-        return self['spg_logits']
-
-    def get_spg_probabilities(self) -> Tensor:
-        logits = self.get_spg_logits()
-        return torch.softmax(logits, dim=-1)
-
-    def get_artifacts(self) -> LabelTensor:
-        return self['artifacts']
-
-    def get_simulated_probability(self) -> LabelTensor:
-        return self['is_simulated']
-
-    # noinspection PyTypeChecker
-    def to_sample(self) -> PowderExperiment:
-        raise NotImplementedError
+    @staticmethod
+    def default_ratio() -> float:
+        return 0.5
 
 
+class XrdAnode(Enum):
+    Cu = "Cu"
+    Mo = "Mo"
+    Cr = "Cr"
+    Fe = "Fe"
+    Co = "Co"
+    Ag = "Ag"
+
+    def get_wavelengths(self) -> (float, float):
+        MATERiAL_TO_WAVELENGTHS = {
+            "Cu": (1.54439, 1.54056),
+            "Mo": (0.71359, 0.70930),
+            "Cr": (2.29361, 2.28970),
+            "Fe": (1.93998, 1.93604),
+            "Co": (1.79285, 1.78896),
+            "Ag": (0.563813, 0.559421),
+        }
+        return MATERiAL_TO_WAVELENGTHS[self.value]
+
+    def get_xray_info(self) -> XRayInfo:
+        primary, secondary = self.get_wavelengths()
+        return XRayInfo(primary_wavelength=primary, secondary_wavelength=secondary)
+
+
+@dataclass
+class Metadata(JsonDataclass):
+    filename: Optional[str] = None
+    institution: Optional[str] = None
+    contributor_name: Optional[str] = None
+    original_file_format: Optional[str] = None
+    measurement_date: Optional[str] = None
+    tags: list[str] = field(default_factory=list)
+    xrdpattern_version: str = field(default_factory=lambda: get_library_version('xrdpattern'))
+
+    def __eq__(self, other : Metadata):
+        s1, s2 = self.to_str(), other.to_str()
+        return s1 == s2
+
+    def remove_filename(self):
+        self.filename = None
+
+def get_library_version(library_name):
+    return pkg_resources.get_distribution(library_name).version

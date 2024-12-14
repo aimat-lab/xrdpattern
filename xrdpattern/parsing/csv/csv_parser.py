@@ -6,7 +6,7 @@ import math
 import pandas as pd
 
 from xrdpattern.parsing.csv.matrix import Orientation, Matrix
-from xrdpattern.xrd import XrdPatternData, XrdAnode
+from xrdpattern.xrd import XrdData, XrdAnode
 
 copper_wavelength, _ = XrdAnode.Cu.get_wavelengths()
 # -------------------------------------------
@@ -14,7 +14,7 @@ copper_wavelength, _ = XrdAnode.Cu.get_wavelengths()
 class CsvParser:
     MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr;  Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
 
-    def extract_multi(self, fpath: str, pattern_dimension : Orientation) -> list[XrdPatternData]:
+    def extract_multi(self, fpath: str, pattern_dimension : Orientation) -> list[XrdData]:
         matrix = self._as_matrix(fpath=fpath, pattern_orientation=pattern_dimension)
         x_axis_row = matrix.get_data(row=0)
         y_axis_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
@@ -38,7 +38,7 @@ class CsvParser:
 
         pattern_infos = []
         for intensities in y_axis_rows:
-            new = XrdPatternData.make_unlabeled(two_theta_values=two_theta_degs, intensities=intensities)
+            new = XrdData.make_unlabeled(two_theta_values=two_theta_degs, intensities=intensities)
             if is_qvalues:
                 new.powder_experiment.xray_info = XrdAnode.Cu.get_xray_info()
             pattern_infos.append(new)

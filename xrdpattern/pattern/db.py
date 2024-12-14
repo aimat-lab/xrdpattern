@@ -8,7 +8,7 @@ from typing import Optional
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
-from xrdpattern.xrd import XRayInfo, XrdPatternData
+from xrdpattern.xrd import XRayInfo, XrdData
 from .analysis import histograms, plot_all
 from .pattern import XrdPattern
 
@@ -56,7 +56,7 @@ class PatternDB:
     def _make_empty(cls) -> PatternDB:
         return cls(patterns=[], fpath_dict={})
 
-    def _add_data(self, info : XrdPatternData, fpath : str, strict : bool):
+    def _add_data(self, info : XrdData, fpath : str, strict : bool):
         try:
             p = XrdPattern(**info.to_init_dict())
             if not fpath in self.fpath_dict:

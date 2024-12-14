@@ -10,8 +10,10 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tabulate import tabulate
 
 from databases.tools.spg_converter import SpacegroupConverter
+from xrdpattern.xrd.recordings import LabelType
 from .pattern import XrdPattern
-from xrdpattern.xrd import LabelType
+
+
 
 # -----------------------------------------
 
