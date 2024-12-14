@@ -1,5 +1,5 @@
-from xrdpattern.examples import DataExamples
 from xrdpattern.parsing import MasterParser
+from xrdpattern.parsing.examples import DataExamples
 from xrdpattern.pattern import XrdPattern
 from holytools.devtools import Unittest
 

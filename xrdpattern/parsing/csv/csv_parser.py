@@ -112,7 +112,7 @@ class CsvParser:
         for row_num, row in enumerate(data):
             try:
                 float_data = [self.convert_to_float(x, row_num + row_start + 1, col_num + 1) for col_num, x in enumerate(row)]
-            except Exception as e:
+            except Exception:
                 continue
             numerical_data.append(float_data)
 

@@ -1,17 +1,16 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import Optional
 from .pattern import XrdPattern
-from .pattern_report import ParsingReport
-
 
 @dataclass
-class DatabaseReport:
+class DirpathParsingReport:
     data_dirpath : str
     failed_files : set[str]
     fpath_dict : dict[str, list[XrdPattern]]
 
     def __post_init__(self):
         self.num_err, self.num_warn = 0, 0
-        self.pattern_reports : list[ParsingReport] = []
+        self.pattern_reports : list[FileParsingReport] = []
         for fpath, fpath_patterns in self.fpath_dict.items():
             self.pattern_reports += [pattern.get_parsing_report(datafile_fpath=fpath) for pattern in fpath_patterns]
 
@@ -52,5 +51,33 @@ class DatabaseReport:
         return summary_str
 
 
+
+@dataclass
+class FileParsingReport:
+    datafile_fpath: Optional[str]
+    errors: list[str] = field(default_factory=list)
+
+    def has_error(self):
+        return len(self.errors) != 0
+
+    def add_error(self, msg : str):
+        self.errors.append(f'\n{msg}')
+
+    def as_str(self):
+        report_str = f'--- Successfully processed file ---'
+        data_file_info = self.datafile_fpath if self.datafile_fpath else 'Unavailable'
+        report_str += f'\nData file path: {data_file_info}'
+        report_str += f'\nNum errors: {len(self.errors)}'
+
+        if len(self.errors) != 0:
+            report_str += f'\nFound errors:'
+            for error_msg in self.errors:
+                report_str += error_msg
+
+        report_str += '\n'
+        return report_str
+
+    def __str__(self):
+        return self.as_str()
 
 

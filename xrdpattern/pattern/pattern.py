@@ -11,7 +11,7 @@ from numpy.typing import NDArray
 
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrdPatternData
-from .pattern_report import ParsingReport
+from .reports import FileParsingReport
 
 parser = MasterParser()
 
@@ -86,8 +86,8 @@ class XrdPattern(XrdPatternData):
         # print(f'Time taken = {time.time() - now} seconds')
         # return intensities, labels
 
-    def get_parsing_report(self, datafile_fpath : str = 'Unmarked pattern') -> ParsingReport:
-        pattern_health = ParsingReport(datafile_fpath=datafile_fpath)
+    def get_parsing_report(self, datafile_fpath : str = 'Unmarked pattern') -> FileParsingReport:
+        pattern_health = FileParsingReport(datafile_fpath=datafile_fpath)
         if self.powder_experiment.primary_wavelength is None:
             pattern_health.add_error('Primary wavelength missing!')
         return pattern_health

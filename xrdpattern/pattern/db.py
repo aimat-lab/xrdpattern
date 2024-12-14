@@ -4,21 +4,13 @@ import os
 from dataclasses import dataclass
 from typing import Optional
 
-import matplotlib.colors
-import matplotlib.gridspec as gridspec
-import numpy as np
-from matplotlib import pyplot as plt
-from matplotlib.axes import Axes
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-
-from databases.tools.spg_converter import SpacegroupConverter
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from xrdpattern.xrd import XRayInfo, XrdPatternData
-from .analysis_tools import multiplot, get_valid_values, get_counts
-from .db_report import DatabaseReport
+from .analysis import histograms, plot_all
 from .pattern import XrdPattern
+from .reports import DirpathParsingReport
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
 parser = MasterParser()
@@ -33,7 +25,45 @@ class PatternDB:
     name : str = ''
 
     # -------------------------------------------
-    # save/load
+    # load/save
+
+    @classmethod
+    def load(cls, dirpath : str, strict : bool = False, suffixes : Optional[list[str]] = None, csv_orientation : Optional[Orientation] = None) -> PatternDB:
+        dirpath = os.path.normpath(path=dirpath)
+        if not os.path.isdir(dirpath):
+            raise ValueError(f"Given path {dirpath} is not a directory")
+
+        data_fpaths = Formats.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=suffixes)
+        if len(data_fpaths) == 0:
+            raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
+
+        db = cls._make_empty()
+        for fpath in TrackedCollection(data_fpaths):
+            try:
+                xrd_datas = parser.extract(fpath=fpath, csv_orientation=csv_orientation)
+                [db._add_data(info=info, fpath=fpath, strict=strict) for info in xrd_datas]
+            except Exception as e:
+                print(f'Failed to parse file {fpath}:\n- Reason: {e.__repr__()}')
+                if strict:
+                    raise e
+        return db
+
+    @classmethod
+    def _make_empty(cls) -> PatternDB:
+        return cls(patterns=[], failed_files=set(), fpath_dict={})
+
+    def _add_data(self, info : XrdPatternData, fpath : str, strict : bool):
+        try:
+            p = XrdPattern(**info.to_dict())
+            if not fpath in self.fpath_dict:
+                self.fpath_dict[fpath] = []
+            self.fpath_dict[fpath].append(p)
+            self.patterns.append(p)
+        except Exception as e:
+            self.failed_files.add(fpath)
+            patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
+            if strict:
+                raise e
 
     def save(self, dirpath : str, label_groups : bool = False, force_overwrite : bool = False):
         if os.path.isfile(dirpath):
@@ -50,45 +80,6 @@ class PatternDB:
             for j, pattern in enumerate(self.patterns):
                 fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_suffix()}')
                 pattern.save(fpath=fpath, force_overwrite=force_overwrite)
-
-    @classmethod
-    def load(cls, dirpath : str, strict : bool = False, suffixes : Optional[list[str]] = None, csv_orientation : Optional[Orientation] = None) -> PatternDB:
-        dirpath = os.path.normpath(path=dirpath)
-        if not os.path.isdir(dirpath):
-            raise ValueError(f"Given path {dirpath} is not a directory")
-
-        data_fpaths = Formats.get_xrd_fpaths(dirpath=dirpath, selected_suffixes=suffixes)
-        if len(data_fpaths) == 0:
-            raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
-
-        db = cls.make_empty()
-        for fpath in TrackedCollection(data_fpaths):
-            try:
-                xrd_datas = parser.extract(fpath=fpath, csv_orientation=csv_orientation)
-                [db._add_data(info=info, fpath=fpath, strict=strict) for info in xrd_datas]
-            except Exception as e:
-                print(f'Failed to parse file {fpath}:\n- Reason: {e.__repr__()}')
-                if strict:
-                    raise e
-        return db
-
-    @classmethod
-    def make_empty(cls) -> PatternDB:
-        return cls(patterns=[], failed_files=set(), fpath_dict={})
-
-    def _add_data(self, info : XrdPatternData, fpath : str, strict : bool):
-        try:
-            p = XrdPattern(**info.to_dict())
-            if not fpath in self.fpath_dict:
-                self.fpath_dict[fpath] = []
-            self.fpath_dict[fpath].append(p)
-            self.patterns.append(p)
-        except Exception as e:
-            self.failed_files.add(fpath)
-            patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
-            if strict:
-                raise e
-
 
     # -------------------------------------------
     # operations
@@ -108,15 +99,14 @@ class PatternDB:
 
         return PatternDB(patterns=patterns, failed_files=failed_files, fpath_dict=fpath_dict)
 
-
     def set_xray(self, xray_info : XRayInfo):
         for p in self.patterns:
             p.powder_experiment.xray_info = xray_info
 
     # -------------------------------------------
-    # attributes
+    # view
 
-    def __eq__(self, other):
+    def __eq__(self, other : PatternDB):
         if not isinstance(other, PatternDB):
             return False
         if len(self.patterns) != len(other.patterns):
@@ -126,133 +116,13 @@ class PatternDB:
                 return False
         return True
 
-    def get_parsing_report(self) -> DatabaseReport:
-        return DatabaseReport(data_dirpath=self.name, failed_files=self.failed_files, fpath_dict=self.fpath_dict)
+    def get_parsing_report(self) -> DirpathParsingReport:
+        return DirpathParsingReport(data_dirpath=self.name, failed_files=self.failed_files, fpath_dict=self.fpath_dict)
 
-    def plot_all(self, single_plot : bool = False):
-        if single_plot:
-            data = [p.get_pattern_data() for p in patterns]
-            fig, ax = plt.subplots()
-            for x, y in data:
-                ax.plot(x, y, linewidth=0.1)
-
-            ax.set_xlabel('X Label')
-            ax.set_ylabel('Y Label')
-            ax.set_title('Multiple XY Plots')
-            plt.show()
-
-        batch_size = 32
-        j = 0
-        while j < len(self.patterns):
-            pattern_batch = self.patterns[j:j + batch_size]
-            for k,p in enumerate(pattern_batch):
-                p.metadata.filename = p.get_name() or f'pattern_{j+k}'
-            multiplot(patterns=pattern_batch, start_idx=j)
-            j += batch_size
-
-            user_input = input(f'Press enter to continue or q to quit')
-            if user_input.lower() == 'q':
-                break
+    def show_all(self, single_plot : bool = False):
+        plot_all(patterns=self.patterns, single_plot=single_plot)
 
     def show_histograms(self, save_fpath : Optional[str] = None, attach_colorbar : bool = True):
-        fig = plt.figure(figsize=(12,8))
-
-        figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig, hspace=0.35)
-        figure.update(top=0.96, bottom=0.075)
-        upper_half = figure[0].subgridspec(1, 3)
-        ax2 = fig.add_subplot(upper_half[:, :])
-        self.define_spg_ax(patterns=self.patterns, ax=ax2)
-        
-        lower_half = figure[1].subgridspec(1, 2)
-        ax3 = fig.add_subplot(lower_half[:, 0])
-        self.define_recorded_angles_ax(patterns=self.patterns, ax=ax3)
-
-        if attach_colorbar:
-            lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3, width_ratios=[3, 3, 4])
-            ax4 = fig.add_subplot(lower_half_right[1:, :2])  # scaatter
-            ax5 = fig.add_subplot(lower_half_right[:1, :2], sharex=ax4)  # Above
-            ax6 = fig.add_subplot(lower_half_right[1:, 2:], sharey=ax4)  # Right
-            ax7 = fig.add_subplot(lower_half_right[:1, 2:])
-            ax7.axis('off')
-        else:
-            lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=4, width_ratios=[4,3,3,3])
-            ax4 = fig.add_subplot(lower_half_right[1:, 1:3]) # scatter
-            ax5 = fig.add_subplot(lower_half_right[:1, 1:3], sharex=ax4)  # Above
-            ax6 = fig.add_subplot(lower_half_right[1:, 3:4], sharey=ax4)  # Right
-            ax7 = fig.add_subplot(lower_half_right[:4, :1])
-
-        self.defined_start_end_ax(patterns=self.patterns, density_ax=ax4, top_marginal=ax5, right_marginal=ax6, cmap_ax=ax7, attach_colorbar=attach_colorbar)
-
-        if save_fpath:
-            plt.savefig(save_fpath)
-        plt.show()
-
-    @staticmethod
-    def define_spg_ax(patterns : list[XrdPattern], ax : Axes):
-        keys, counts = get_counts(patterns=patterns, attr='primary_phase.spacegroup')
-        keys, counts = keys[:30], counts[:30]
-
-        spgs = [int(k) for k in keys]
-        spg_formulas = [f'${SpacegroupConverter.to_formula(spg, mathmode=True)}$' for spg in spgs]
-        ax.bar(spg_formulas, counts)
-        ax.tick_params(labelbottom=True, labelleft=True)  # Enable labels
-        ax.set_title(f'(a)')
-        ax.set_ylabel(f'No. patterns')
-        ax.set_xticklabels(spg_formulas, rotation=90)
-        
-    @staticmethod
-    def define_recorded_angles_ax(patterns : list[XrdPattern], ax : Axes):
-        values = get_valid_values(patterns=patterns, attr='angular_resolution')
-        ax.set_title(f'(b)')
-        ax.hist(values, bins=10, range=(0,0.1), edgecolor='black')
-        ax.set_xlabel(r'Angular resolution $\Delta(2\theta)$ [$^\circ$]')
-        ax.set_yscale('log')
-        ax.set_ylabel(f'No. patterns')
-
-    @staticmethod
-    def defined_start_end_ax(patterns : list[XrdPattern], density_ax : Axes, top_marginal : Axes, right_marginal : Axes, cmap_ax : Axes, attach_colorbar : bool):
-        start_data = get_valid_values(patterns=patterns, attr='startval')
-        end_data = get_valid_values(patterns=patterns, attr='endval')
-        start_angle_range = (0,60)
-        end_angle_range = (0,180)
-
-        # noinspection PyTypeChecker
-        h = density_ax.hist2d(start_data,end_data, bins=(10,10), range=[list(start_angle_range),list(end_angle_range)], norm=matplotlib.colors.LogNorm())
-        density_ax.set_xlabel(r'Smallest recorded $2\theta$ [$^\circ$]')
-        density_ax.set_ylabel(r'Largest recorded $2\theta$ [$^\circ$]')
-        density_ax.set_xlim(start_angle_range)
-        density_ax.set_ylim(end_angle_range)
-
-        if attach_colorbar:
-            divider = make_axes_locatable(density_ax)
-            cax = divider.append_axes('right', size='5%', pad=0.0)
-            plt.colorbar(h[3], cax=cax, orientation='vertical')
-
-        else:
-            plt.colorbar(h[3], cax=cmap_ax, orientation='vertical', location='left')
-            cmap_ax.set_ylabel(f'No. patterns')
-
-        top_marginal.hist(start_data, bins=np.linspace(*start_angle_range, num=10), edgecolor='black')
-        top_marginal.set_title(f'(c)')
-        top_marginal.set_yscale('log')
-        top_marginal.tick_params(axis="x", labelbottom=False, which='both', bottom=False)
-
-        if attach_colorbar:
-            divider = make_axes_locatable(top_marginal)
-            cax = divider.append_axes('right', size='5%', pad=0.0)
-            cax.axis('off')
-
-            divider = make_axes_locatable(right_marginal)
-            cax = divider.append_axes('left', size='15%', pad=0.0)
-            cax.axis('off')
-
-        else:
-            divider = make_axes_locatable(cmap_ax)
-            cax = divider.append_axes('right', size=0.8, pad=0.0)
-            cax.axis('off')
-
-        right_marginal.hist(end_data, bins=np.linspace(*end_angle_range, num=10), orientation='horizontal', edgecolor='black')
-        right_marginal.set_xscale('log')
-        right_marginal.tick_params(axis="y", labelleft=False, which='both', left=False)
+        histograms(patterns=self.patterns, attach_colorbar=attach_colorbar, save_fpath=save_fpath)
 
 

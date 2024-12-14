@@ -36,11 +36,9 @@ class DataExamples:
     def get_dat_fpath(cls) -> str:
         return os.path.join(cls.get_example_dirpath(), 'data.dat')
 
-
     @classmethod
     def get_datafolder_fpath(cls) -> str:
         return os.path.join(cls.get_example_dirpath(), 'datafolder')
-
 
     @staticmethod
     def get_example_dirpath() -> str:
