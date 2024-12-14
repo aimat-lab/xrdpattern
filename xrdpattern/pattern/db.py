@@ -9,7 +9,7 @@ from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats, Orientation
 from xrdpattern.xrd import XRayInfo, XrdData
-from .analysis import histograms, plot_all
+from .visualization import histograms, plot_all
 from .pattern import XrdPattern
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
