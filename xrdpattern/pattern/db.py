@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+import random
 from typing import Optional
 
 from holytools.logging import LoggerFactory
@@ -116,8 +117,9 @@ class PatternDB:
                 return False
         return True
 
-    def show_all(self, single_plot : bool = False):
-        plot_all(patterns=self.patterns, single_plot=single_plot)
+    def show_all(self, single_plot : bool = False, limit_patterns : int = 100):
+        patterns = self.patterns if len(self.patterns) <= limit_patterns else random.sample(self.patterns, limit_patterns)
+        plot_all(patterns=patterns, single_plot=single_plot, db_name=self.name)
 
     def show_histograms(self, save_fpath : Optional[str] = None, attach_colorbar : bool = True):
         histograms(patterns=self.patterns, attach_colorbar=attach_colorbar, save_fpath=save_fpath)

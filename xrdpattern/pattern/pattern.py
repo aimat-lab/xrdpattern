@@ -45,7 +45,6 @@ class XrdPattern(XrdPatternData):
         intensities = np.zeros(shape=(len(two_theta_values),)).tolist()
         return cls.make_unlabeled(two_theta_values=two_theta_values, intensities=intensities)
 
-
     # -------------------------------------------
     # save/load
 
