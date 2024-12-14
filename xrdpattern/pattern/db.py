@@ -35,7 +35,7 @@ class PatternDB:
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
-        patterdb_logger.info(f'- Loading patterns from local dirpath {dirpath}')
+        patterdb_logger.info(f'Loading patterns from local dirpath {dirpath}')
         db = cls._make_empty()
         for fpath in TrackedCollection(data_fpaths):
             try:
@@ -47,7 +47,7 @@ class PatternDB:
                     raise e
 
         patterdb_logger.info(f'Finished processing pattern database located at {dirpath}')
-        patterdb_logger.info(f'Successfully extracted data from : {len(db.fpath_dict)}/{len(data_fpaths)} xrd files')
+        patterdb_logger.info(f'Successfully extracted data from {len(db.fpath_dict)}/{len(data_fpaths)} xrd files')
 
         return db
 
