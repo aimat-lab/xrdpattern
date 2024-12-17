@@ -17,7 +17,11 @@ class DataExamples:
         return os.path.join(cls.get_example_dirpath(), 'single.csv')
 
     @classmethod
-    def get_multi_csv_fpath(cls) -> str:
+    def get_vertical_csv_fpath(cls) -> str:
+        return os.path.join(cls.get_example_dirpath(), 'vertical.csv')
+
+    @classmethod
+    def get_horizontal_fpath(cls) -> str:
         return os.path.join(cls.get_example_dirpath(), 'horizontal.csv')
 
     @classmethod

@@ -1,11 +1,13 @@
 import tempfile
+from typing import Optional
 
+from holytools.devtools import Unittest
 from tests.base_pattern import ParserBaseTest
+from xrdpattern.parsing import Formats
 from xrdpattern.parsing.csv.matrix import CsvOrientations
 from xrdpattern.parsing.examples import DataExamples
 from xrdpattern.pattern import XrdPattern, PatternDB
 from xrdpattern.xrd import XrdData
-
 
 # -----------------------------------------------------------------
 
@@ -55,8 +57,8 @@ class TestCustomFormats(ParserBaseTest):
         for p in patterns:
             self.assertIsInstance(p, XrdData)
 
-    def test_multi_csv(self):
-        patterns = self.parser.extract(fpath=DataExamples.get_multi_csv_fpath(), csv_orientation=CsvOrientations.VERTICAL)
+    def test_horizontal_csv(self):
+        patterns = self.parser.extract(fpath=DataExamples.get_horizontal_fpath(), csv_orientation=CsvOrientations.HORIZONTAL)
         for p in patterns:
             self.assertIsInstance(p, XrdData)
 
@@ -65,12 +67,20 @@ class TestCustomFormats(ParserBaseTest):
         for p in patterns:
             self.assertIsInstance(p, XrdData)
 
+original_get_fpaths = Formats.get_xrd_fpaths
+def load_excluding_horizontal(dirpath : str, selected_suffixes : Optional[list[str]]):
+    xrd_fpaths = original_get_fpaths(dirpath=dirpath, selected_suffixes=selected_suffixes)
+    xrd_fpaths = [fpath for fpath in xrd_fpaths if not 'horizontal' in fpath]
+    return xrd_fpaths
 
 class TestParserDatabase(ParserBaseTest):
+    @Unittest.patch_module(original=Formats.get_xrd_fpaths, replacement=load_excluding_horizontal)
     def test_db_parsing_ok(self):
         all_db = PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=CsvOrientations.VERTICAL, strict=True)
         all_db.save(dirpath=tempfile.mktemp())
         self.assertIsInstance(all_db, PatternDB)
+
+
 
 if __name__ == "__main__":
     TestParserDatabase.execute_all()

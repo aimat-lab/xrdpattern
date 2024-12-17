@@ -2,6 +2,7 @@ import os
 from xrdpattern.parsing.csv import CsvParser
 from holytools.devtools import Unittest
 from xrdpattern.parsing.csv.matrix import CsvOrientations
+from xrdpattern.parsing.examples import DataExamples
 
 
 class TestCsvReader(Unittest):
@@ -9,13 +10,12 @@ class TestCsvReader(Unittest):
     def setUp(self):
         # Setup CsvReader with comma as a separator
         test_dirpath = os.path.dirname(os.path.abspath(__file__))
-        self.vertical_csv_path = os.path.join(test_dirpath,'vertical.csv')
-        self.horizontal_csv_path = os.path.join(test_dirpath,'horizontal.csv')
-        self.single_csv_path = os.path.join(test_dirpath, 'single.csv')
+        self.vertical_csv_path = DataExamples.get_vertical_csv_fpath()
+        self.horizontal_csv_path = DataExamples.get_horizontal_fpath()
+        self.single_csv_path = DataExamples.get_single_csv_fpath()
 
         self.multi_first_datarow = [0.322219,0.22494,0.116506,0.14788,0.161613,0.229082]
         self.single_first_datarow = [232.0, 185.0, 227.0, 216.0, 199.0, 227.0]
-
 
     def test_read_csv_vertical(self):
         csv_orientation = CsvOrientations.VERTICAL
