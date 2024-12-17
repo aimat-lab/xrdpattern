@@ -55,15 +55,16 @@ class CsvParser:
                 row = [item.strip() for item in line.strip().split(seperator)]
                 if row and any(item for item in row):
                     table.append(row)
-        if pattern_orientation == CsvOrientations.VERTICAL:
-            table = [list(col) for col in zip(*table)]
 
         if self.is_numerical(values=table[0]):
-            headers, numerical_part = None, table
+            numerical_part = table
         else:
-            headers, numerical_part = table[0], table[1:]
-        data = self.to_numerical(numerical_part, row_start=0 if headers else 1)
-        matrix = Matrix(headers=headers, numerical_data=data)
+            numerical_part = table[1:]
+
+        if pattern_orientation == CsvOrientations.VERTICAL:
+            numerical_part = [list(col) for col in zip(*numerical_part)]
+        data = self.to_numerical(numerical_part)
+        matrix = Matrix( numerical_data=data)
 
         delta = len(numerical_part) - len(matrix.numerical_data)
         if delta > 0:
@@ -94,7 +95,7 @@ class CsvParser:
     @staticmethod
     def xlsx_to_csv(xlsx_fpath : str, csv_fpath : str):
         data = pd.read_excel(xlsx_fpath)
-        data.to_csv(csv_fpath, index=False)
+        data.to_csv(csv_fpath, index=False, sep=';')
 
     # ------------------------------------------
     # datatype tools

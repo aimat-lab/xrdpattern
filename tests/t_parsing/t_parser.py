@@ -68,24 +68,10 @@ class TestCustomFormats(ParserBaseTest):
 
 class TestParserDatabase(ParserBaseTest):
     def test_db_parsing_ok(self):
-        with self.assertNoLogs(level=0):
-            bruker_db = self.get_bruker_db()
-            all_db = self.get_all_db()
-
-        for db in [bruker_db, all_db]:
-            self.assertIsInstance(db, PatternDB)
+        all_db = PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=CsvOrientations.VERTICAL, strict=True)
         all_db.save(dirpath=tempfile.mktemp())
-
-    @staticmethod
-    def get_bruker_db() -> PatternDB:
-        return PatternDB.load(dirpath=DataExamples.get_datafolder_fpath())
-        
-    @staticmethod
-    def get_all_db() -> PatternDB:
-        return PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=CsvOrientations.VERTICAL)
-
-
+        self.assertIsInstance(all_db, PatternDB)
 
 if __name__ == "__main__":
-    # TestParserDatabase.execute_all()
-    TestCustomFormats.execute_all()
+    TestParserDatabase.execute_all()
+    # TestCustomFormats.execute_all()

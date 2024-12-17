@@ -12,14 +12,7 @@ class CsvOrientations:
 
 @dataclass
 class Matrix:
-    headers : list[str]
     numerical_data : list[list[float]]
-
-    def __post_init__(self):
-        if self.headers:
-            if not len(self.headers) == len(self.numerical_data[0]):
-                raise ValueError(f"Number of headers ({len(self.headers)}) does not match number"
-                                 f" of data columns ({len(self.numerical_data)})")
 
     def get_x_values(self) -> list[float]:
         return self.numerical_data[0]
