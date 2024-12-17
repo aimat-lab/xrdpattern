@@ -20,7 +20,7 @@ MAX_ATOMIC_SITES = 100
 @dataclass
 class PowderExperiment(JsonDataclass):
     phases: list[CrystalPhase]
-    xray_info : XRayInfo
+    xray_info : XrayInfo
     is_simulated : bool = False
     crystallite_size: Optional[float] = None
     temp_in_celcius: Optional[float] = None
@@ -43,16 +43,16 @@ class PowderExperiment(JsonDataclass):
             p = CrystalPhase(lengths=lengths, angles=angles, base=base)
             phases.append(p)
 
-        xray_info = XRayInfo.mk_empty()
+        xray_info = XrayInfo.mk_empty()
         return cls(phases=phases, crystallite_size=None, temp_in_celcius=None, xray_info=xray_info, is_simulated=is_simulated)
 
     @classmethod
     def from_multi_phase(cls, phases : list[CrystalPhase]):
-        return cls(phases=phases, crystallite_size=None, xray_info=XRayInfo.mk_empty(), is_simulated=False)
+        return cls(phases=phases, crystallite_size=None, xray_info=XrayInfo.mk_empty(), is_simulated=False)
 
     @classmethod
     def from_single_phase(cls, phase : CrystalPhase, crystallite_size : Optional[float] = None, is_simulated : bool = False):
-        artifacts = XRayInfo.mk_empty()
+        artifacts = XrayInfo.mk_empty()
         return cls(phases=[phase], crystallite_size=crystallite_size, xray_info=artifacts, is_simulated=is_simulated)
 
     @classmethod
@@ -60,7 +60,7 @@ class PowderExperiment(JsonDataclass):
         structure = CrystalPhase.from_cif(cif_content)
         structure.calculate_properties()
 
-        xray_info = XRayInfo.mk_empty()
+        xray_info = XrayInfo.mk_empty()
         lines = cif_content.split('\n')
         for l in lines:
             if '_diffrn_radiation_wavelength' in l:
@@ -149,7 +149,7 @@ class PowderExperiment(JsonDataclass):
 
 
 @dataclass
-class XRayInfo(JsonDataclass):
+class XrayInfo(JsonDataclass):
     primary_wavelength: Optional[float]
     secondary_wavelength: Optional[float]
 
@@ -184,9 +184,9 @@ class XrdAnode(Enum):
         }
         return MATERiAL_TO_WAVELENGTHS[self.value]
 
-    def get_xray_info(self) -> XRayInfo:
+    def get_xray_info(self) -> XrayInfo:
         primary, secondary = self.get_wavelengths()
-        return XRayInfo(primary_wavelength=primary, secondary_wavelength=secondary)
+        return XrayInfo(primary_wavelength=primary, secondary_wavelength=secondary)
 
 
 @dataclass

@@ -8,7 +8,7 @@ from typing import Optional
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats
-from xrdpattern.xrd import XRayInfo, XrdData
+from xrdpattern.xrd import XrayInfo, XrdData
 from .visualization import histograms, plot_all
 from .pattern import XrdPattern
 
@@ -89,7 +89,7 @@ class PatternDB:
     # -------------------------------------------
     # operations
 
-    def __add__(self, other):
+    def __add__(self, other : PatternDB) -> PatternDB:
         return PatternDB.merge(dbs=[self, other])
 
     @classmethod
@@ -102,7 +102,7 @@ class PatternDB:
 
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict)
 
-    def set_xray(self, xray_info : XRayInfo):
+    def set_xray(self, xray_info : XrayInfo):
         for p in self.patterns:
             p.powder_experiment.xray_info = xray_info
 

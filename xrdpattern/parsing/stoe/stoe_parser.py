@@ -1,6 +1,6 @@
 import numpy as np
 
-from xrdpattern.xrd import XrdData, XRayInfo
+from xrdpattern.xrd import XrdData, XrayInfo
 from .quantities import Quantity, FloatQuantity, IntegerQuantity
 from xrdpattern.xrd import PowderExperiment
 
@@ -31,7 +31,7 @@ class StoeParser(BinaryReader):
     def extract(self, fpath : str) -> XrdData:
         self.read(fpath=fpath)
         experiment = PowderExperiment.make_empty()
-        experiment.xray_info = XRayInfo(primary_wavelength=self.primary_wavelength.get_value(),
+        experiment.xray_info = XrayInfo(primary_wavelength=self.primary_wavelength.get_value(),
                                         secondary_wavelength=self.secondary_wavelength.get_value())
 
         two_theta_values = self._get_x_values()

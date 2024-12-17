@@ -9,7 +9,7 @@ from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.pattern import PatternDB
-from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
+from xrdpattern.xrd import PowderExperiment, XrayInfo, XrdAnode
 
 
 # -------------------------------------------
@@ -19,7 +19,7 @@ class OpXRDProcessor:
         self.root_dirpath : str = root_dirpath
         self.processed_dirpath : str = os.path.join(root_dirpath, 'processed')
         self.final_dirpath : str = os.path.join(root_dirpath, 'final')
-        self.cu_xray : XRayInfo = XrdAnode.Cu.get_xray_info()
+        self.cu_xray : XrayInfo = XrdAnode.Cu.get_xray_info()
 
     # ---------------------------------------
     # Parsing individual contributions
@@ -35,9 +35,9 @@ class OpXRDProcessor:
     def get_db(self, dirname: str,
                suffixes : Optional[list[str]] = None,
                use_cif_labels : bool = False,
-               xray_info : Optional[XRayInfo] = None,
+               xray_info : Optional[XrayInfo] = None,
                csv_orientation : Optional[str] = None,
-               strict : bool = False):
+               strict : bool = False) -> PatternDB:
         print(f'Started processing contributino {dirname}')
         data_dirpath = os.path.join(self.processed_dirpath, dirname, 'data')
         contrib_dirpath = os.path.join(self.processed_dirpath, dirname)
@@ -52,7 +52,7 @@ class OpXRDProcessor:
 
         return pattern_db
 
-    def get_csv_db(self, dirname: str, orientation : str, suffixes: Optional[list[str]] = None):
+    def get_csv_db(self, dirname: str, orientation : str, suffixes: Optional[list[str]] = None) -> PatternDB:
         return self.get_db(dirname=dirname, csv_orientation=orientation, suffixes=suffixes, strict=True)
 
     # ---------------------------------------
@@ -125,7 +125,7 @@ class OpXRDProcessor:
         out_dirpath = os.path.join(self.final_dirpath, dirname)
         if not os.path.isdir(out_dirpath):
             os.makedirs(out_dirpath)
-        pattern_db.save(dirpath=out_dirpath,label_groups=label_groups, force_overwrite=True)
+        pattern_db.save(dirpath=out_dirpath, force_overwrite=True)
 
     # -----------------------------
     # Helper methods
@@ -143,3 +143,6 @@ class OpXRDProcessor:
         except:
             extracted_phase = None
         return extracted_phase
+
+    def get_final_dirpath(self, *path_elements : str):
+        return os.path.join(self.final_dirpath, *path_elements)

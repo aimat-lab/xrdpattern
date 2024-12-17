@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from special.tools.spg_converter import SpacegroupConverter
 from xrdpattern.crystal import CrystalBase, CrystalPhase
 from xrdpattern.pattern import XrdPattern
-from xrdpattern.xrd import PowderExperiment, XRayInfo
+from xrdpattern.xrd import PowderExperiment, XrayInfo
 
 
 # ---------------------------------------------------------
@@ -80,7 +80,7 @@ if __name__ == "__main__":
             a,b,c,alpha, beta, gamma = labels.lattice_parameters
 
             crystal_structure = CrystalPhase(lengths=(a,b,c), angles=(alpha, beta, gamma), spacegroup=spacegroup, base=CrystalBase())
-            artifacts = XRayInfo(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength)
+            artifacts = XrayInfo(primary_wavelength=labels.wavelength, secondary_wavelength=copper_wavelength)
             pattern.powder_experiment = PowderExperiment(phases=[crystal_structure], xray_info=artifacts, is_simulated=False)
             pattern.save(fpath=os.path.join(output_dirpath, base_name))
 
