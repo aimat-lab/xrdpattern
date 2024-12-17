@@ -7,7 +7,7 @@ from typing import Optional
 
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
-from xrdpattern.parsing import MasterParser, Formats, Orientation
+from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XRayInfo, XrdData
 from .visualization import histograms, plot_all
 from .pattern import XrdPattern
@@ -27,7 +27,7 @@ class PatternDB:
     # load/save
 
     @classmethod
-    def load(cls, dirpath : str, strict : bool = False, suffixes : Optional[list[str]] = None, csv_orientation : Optional[Orientation] = None) -> PatternDB:
+    def load(cls, dirpath : str, strict : bool = False, suffixes : Optional[list[str]] = None, csv_orientation : Optional[str] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")

@@ -8,7 +8,6 @@ from holytools.devtools import ModuleInspector
 from holytools.fsys import SaveManager
 from holytools.logging.tools import log_execution
 from xrdpattern.crystal import CrystalPhase
-from xrdpattern.parsing import Orientation
 from xrdpattern.pattern import PatternDB
 from xrdpattern.xrd import PowderExperiment, XRayInfo, XrdAnode
 
@@ -33,18 +32,18 @@ class OpXRDProcessor:
             print(f'mthd name = {mthd.__name__}')
             mthd()
 
-    def get_pattern_db(self, input_dirname: str,
-                       selected_suffixes : Optional[list[str]] = None,
-                       use_cif_labels : bool = False,
-                       xray_info : Optional[XRayInfo] = None,
-                       csv_orientation : Optional[Orientation] = None,
-                       strict : bool = False):
-        print(f'Started processing contributino {input_dirname}')
-        data_dirpath = os.path.join(self.processed_dirpath, input_dirname, 'data')
-        contrib_dirpath = os.path.join(self.processed_dirpath, input_dirname)
-        pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=selected_suffixes, csv_orientation=csv_orientation, strict=strict)
+    def get_db(self, dirname: str,
+               suffixes : Optional[list[str]] = None,
+               use_cif_labels : bool = False,
+               xray_info : Optional[XRayInfo] = None,
+               csv_orientation : Optional[str] = None,
+               strict : bool = False):
+        print(f'Started processing contributino {dirname}')
+        data_dirpath = os.path.join(self.processed_dirpath, dirname, 'data')
+        contrib_dirpath = os.path.join(self.processed_dirpath, dirname)
+        pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=suffixes, csv_orientation=csv_orientation, strict=strict)
 
-        self.attach_metadata(pattern_db, dirname=input_dirname)
+        self.attach_metadata(pattern_db, dirname=dirname)
         self.attach_labels(pattern_db=pattern_db, contrib_dirpath=contrib_dirpath, use_cif_labels=use_cif_labels)
         if xray_info:
             pattern_db.set_xray(xray_info=xray_info)
@@ -53,6 +52,8 @@ class OpXRDProcessor:
 
         return pattern_db
 
+    def get_csv_db(self, dirname: str, orientation : str, suffixes: Optional[list[str]] = None):
+        return self.get_db(dirname=dirname, csv_orientation=orientation, suffixes=suffixes, strict=True)
 
     # ---------------------------------------
     # Parsing steps

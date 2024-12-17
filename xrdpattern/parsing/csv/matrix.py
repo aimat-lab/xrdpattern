@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
 
 
 # -------------------------------------------
 
 
-class Orientation(Enum):
+class CsvOrientations:
     VERTICAL = 'vertical'
     HORIZONTAL = 'horizontal'
-
 
 @dataclass
 class Matrix:

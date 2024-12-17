@@ -1,6 +1,8 @@
 import os
-from xrdpattern.parsing.csv import Orientation, CsvParser
+from xrdpattern.parsing.csv import CsvParser
 from holytools.devtools import Unittest
+from xrdpattern.parsing.csv.matrix import CsvOrientations
+
 
 class TestCsvReader(Unittest):
 
@@ -16,18 +18,18 @@ class TestCsvReader(Unittest):
 
 
     def test_read_csv_vertical(self):
-        self.read_as_matrix(Orientation.VERTICAL, self.vertical_csv_path)
-        self.read_as_pattern_info(Orientation.VERTICAL, self.vertical_csv_path)
+        self.read_as_matrix(CsvOrientations.VERTICAL, self.vertical_csv_path)
+        self.read_as_pattern_info(CsvOrientations.VERTICAL, self.vertical_csv_path)
 
     def test_read_csv_horizontal(self):
-        self.read_as_matrix(Orientation.HORIZONTAL, self.horizontal_csv_path)
-        self.read_as_pattern_info(Orientation.HORIZONTAL, self.horizontal_csv_path)
+        self.read_as_matrix(CsvOrientations.HORIZONTAL, self.horizontal_csv_path)
+        self.read_as_pattern_info(CsvOrientations.HORIZONTAL, self.horizontal_csv_path)
 
     def test_read_csv_single(self):
-        self.read_as_matrix(Orientation.VERTICAL, self.single_csv_path)
-        self.read_as_pattern_info(Orientation.VERTICAL, self.single_csv_path)
+        self.read_as_matrix(CsvOrientations.VERTICAL, self.single_csv_path)
+        self.read_as_pattern_info(CsvOrientations.VERTICAL, self.single_csv_path)
 
-    def read_as_matrix(self, pattern_data_axis : Orientation, csv_path : str):
+    def read_as_matrix(self, pattern_data_axis : str, csv_path : str):
         reader = CsvParser()
         table = reader._as_matrix(fpath=csv_path, pattern_orientation=pattern_data_axis)
         expected_set = set(self.single_first_row) if csv_path==self.single_csv_path else set(self.multi_first_row)
@@ -37,7 +39,7 @@ class TestCsvReader(Unittest):
         self.assertTrue(expected_set.issubset(actual_set))
 
     @staticmethod
-    def read_as_pattern_info(pattern_data_axis : Orientation, csv_path : str):
+    def read_as_pattern_info(pattern_data_axis : str, csv_path : str):
         reader = CsvParser()
         reader.extract_multi(fpath=csv_path, pattern_dimension=pattern_data_axis)
 

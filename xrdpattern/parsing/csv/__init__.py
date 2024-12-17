@@ -1,2 +1,2 @@
 from .matrix import Matrix
-from .csv_parser import Orientation, CsvParser
+from .csv_parser import CsvParser

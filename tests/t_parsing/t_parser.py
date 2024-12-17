@@ -1,7 +1,7 @@
 import tempfile
 
 from tests.base_pattern import ParserBaseTest
-from xrdpattern.parsing import Orientation
+from xrdpattern.parsing.csv.matrix import CsvOrientations
 from xrdpattern.parsing.examples import DataExamples
 from xrdpattern.pattern import XrdPattern, PatternDB
 from xrdpattern.xrd import XrdData
@@ -51,12 +51,12 @@ class TestCustomFormats(ParserBaseTest):
         self.assertIsInstance(pattern, XrdPattern)
 
     def test_xlsx(self):
-        patterns = self.parser.extract(fpath=DataExamples.get_xlsx_fpath(), csv_orientation=Orientation.VERTICAL)
+        patterns = self.parser.extract(fpath=DataExamples.get_xlsx_fpath(), csv_orientation=CsvOrientations.VERTICAL)
         for p in patterns:
             self.assertIsInstance(p, XrdData)
 
     def test_multi_csv(self):
-        patterns = self.parser.extract(fpath=DataExamples.get_multi_csv_fpath(), csv_orientation=Orientation.VERTICAL)
+        patterns = self.parser.extract(fpath=DataExamples.get_multi_csv_fpath(), csv_orientation=CsvOrientations.VERTICAL)
         for p in patterns:
             self.assertIsInstance(p, XrdData)
 
@@ -82,7 +82,7 @@ class TestParserDatabase(ParserBaseTest):
         
     @staticmethod
     def get_all_db() -> PatternDB:
-        return PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=Orientation.VERTICAL)
+        return PatternDB.load(dirpath=DataExamples.get_example_dirpath(), csv_orientation=CsvOrientations.VERTICAL)
 
 
 

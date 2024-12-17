@@ -10,7 +10,7 @@ from holytools.fsys import SaveManager
 from xrdpattern.xrd import XrdData, XRayInfo, PowderExperiment, Metadata
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
-from .csv import CsvParser, Orientation
+from .csv import CsvParser
 from .dat.dat_parser import DatParser
 from .formats import XrdFormat, Formats
 from .xylib import get_xylib_repr
@@ -28,7 +28,7 @@ class MasterParser:
     # -------------------------------------------
     # pattern
 
-    def extract(self, fpath : str, csv_orientation : Optional[Orientation] = None) -> list[XrdData]:
+    def extract(self, fpath : str, csv_orientation : Optional[str] = None) -> list[XrdData]:
         suffix = SaveManager.get_suffix(fpath)
         if not suffix in Formats.get_all_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
@@ -88,13 +88,13 @@ class MasterParser:
         return XrdData(two_theta_values=two_theta_values, intensities=intensities, powder_experiment=powder_experiment, metadata=metadata)
 
 
-    def _load_csv(self, fpath : str, orientation : Optional[Orientation] = None) -> list[XrdData]:
+    def _load_csv(self, fpath : str, orientation : Optional[str] = None) -> list[XrdData]:
         if SaveManager.get_suffix(fpath) == 'xlsx':
             tmp_fpath = tempfile.mktemp(suffix='.csv')
             CsvParser.xlsx_to_csv(xlsx_fpath=fpath, csv_fpath=tmp_fpath)
             fpath = tmp_fpath
         if CsvParser.has_two_columns(fpath=fpath):
-            orientation = Orientation.VERTICAL
+            orientation = 'vertical'
         if orientation is None:
             raise ValueError(f"Could not determine orientation of data in csv file {fpath}")
 

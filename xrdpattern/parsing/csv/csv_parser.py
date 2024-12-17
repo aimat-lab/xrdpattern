@@ -5,16 +5,17 @@ import math
 
 import pandas as pd
 
-from xrdpattern.parsing.csv.matrix import Orientation, Matrix
+from xrdpattern.parsing.csv.matrix import Matrix
 from xrdpattern.xrd import XrdData, XrdAnode
 
 copper_wavelength, _ = XrdAnode.Cu.get_wavelengths()
 # -------------------------------------------
 
+
 class CsvParser:
     MAX_Q_VALUE = 60 # Two_theta = 180; lambda=0.21 Angstr;  Wavelength is k-alpha of W (Z=74); In practice no higher sources than Ag (Z=47) found
 
-    def extract_multi(self, fpath: str, pattern_dimension : Orientation) -> list[XrdData]:
+    def extract_multi(self, fpath: str, pattern_dimension : str) -> list[XrdData]:
         matrix = self._as_matrix(fpath=fpath, pattern_orientation=pattern_dimension)
         x_axis_row = matrix.get_data(row=0)
         y_axis_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
@@ -29,7 +30,7 @@ class CsvParser:
         print(f'The format of the csv file {fpath} was automatically determined/specified as:'
               f'\n- XAxisType     : \"{x_axis_type}\"'
               f'\n- Csv Seperator : \"{CsvParser.get_separator(fpath=fpath)}\"'
-              f'\n- Orientation   : \"{pattern_dimension.value}\"')
+              f'\n- Orientation   : \"{pattern_dimension}\"')
 
         if is_qvalues:
             two_theta_degs = qvalues_to_copper_angles(qvalues=x_axis_row)
@@ -45,7 +46,7 @@ class CsvParser:
 
         return pattern_infos
 
-    def _as_matrix(self, fpath: str, pattern_orientation: Orientation) -> Matrix:
+    def _as_matrix(self, fpath: str, pattern_orientation : str) -> Matrix:
         table = []
         seperator = self.get_separator(fpath=fpath)
 
@@ -54,7 +55,7 @@ class CsvParser:
                 row = [item.strip() for item in line.strip().split(seperator)]
                 if row and any(item for item in row):
                     table.append(row)
-        if pattern_orientation.name == Orientation.VERTICAL.name:
+        if pattern_orientation == 'vertical':
             table = [list(col) for col in zip(*table)]
 
         if self.is_numerical(values=table[0]):
