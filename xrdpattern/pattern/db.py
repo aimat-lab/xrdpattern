@@ -27,7 +27,10 @@ class PatternDB:
     # load/save
 
     @classmethod
-    def load(cls, dirpath : str, strict : bool = False, suffixes : Optional[list[str]] = None, csv_orientation : Optional[str] = None) -> PatternDB:
+    def load(cls, dirpath : str,
+             strict : bool = False,
+             suffixes : Optional[list[str]] = None,
+             csv_orientation : Optional[str] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
         if not os.path.isdir(dirpath):
             raise ValueError(f"Given path {dirpath} is not a directory")
@@ -48,7 +51,8 @@ class PatternDB:
                     raise e
 
         patterdb_logger.info(f'Finished processing pattern database located at {dirpath}')
-        patterdb_logger.info(f'Successfully extracted {len(db.patterns)} patterns from {len(db.fpath_dict)}/{len(data_fpaths)} xrd files')
+        patterdb_logger.info(f'Successfully extracted {len(db.patterns)} patterns '
+                             f'from {len(db.fpath_dict)}/{len(data_fpaths)} xrd files')
 
         return db
 
@@ -68,21 +72,19 @@ class PatternDB:
             if strict:
                 raise e
 
-    def save(self, dirpath : str, label_groups : bool = False, force_overwrite : bool = False):
+    def save(self, dirpath : str, force_overwrite : bool = False):
         if os.path.isfile(dirpath):
             raise ValueError(f'Path \"{dirpath}\" is occupied by file')
         os.makedirs(dirpath, exist_ok=True)
 
-        if label_groups:
-            for j, patterns in enumerate(self.fpath_dict.values()):
-                for k, p in enumerate(patterns):
-                    fpath = os.path.join(dirpath, f'pattern_group_{j}_{k}.{Formats.aimat_suffix()}')
-                    p.save(fpath=fpath, force_overwrite=force_overwrite)
-
-        else:
-            for j, pattern in enumerate(self.patterns):
-                fpath = os.path.join(dirpath, f'pattern_{j}.{Formats.aimat_suffix()}')
-                pattern.save(fpath=fpath, force_overwrite=force_overwrite)
+        for j, patterns in enumerate(self.fpath_dict.values()):
+            for k, p in enumerate(patterns):
+                if len(patterns) > 1:
+                    fname = f'pattern_group_{j}_{k}.{Formats.aimat_suffix()}'
+                else:
+                    fname = f'pattern_{j}.{Formats.aimat_suffix()}'
+                fpath = os.path.join(dirpath, fname)
+                p.save(fpath=fpath, force_overwrite=force_overwrite)
 
     # -------------------------------------------
     # operations
