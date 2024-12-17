@@ -33,13 +33,13 @@ class ContributionProcessor(OpXRDProcessor):
         perovskite_db =  get_contribution(dirname='sutter-fella_singh_0')
         perovskite_db += get_contribution(dirname='sutter-fella_kodalle_0', selected_suffixes=['dat','csv'])
         perovskite_db += get_contribution(dirname='sutter-fella_abdelsamie_0')
-        perovskite_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL_perovskite'), label_groups=True)
+        perovskite_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL','perovskite_precursor_solutions'), label_groups=True)
 
         uio_db = get_contribution(dirname='sutter-fella_hu_0')
-        uio_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL_uio'), label_groups=True)
+        uio_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL','UiO_compounds'), label_groups=True)
 
         mn_sb_db = get_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'])
-        mn_sb_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL_mn_sb_o'), label_groups=True)
+        mn_sb_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL','MnSbO_annealing'), label_groups=True)
 
     def parse_EMPA(self):
         db0 = self.get_pattern_db(input_dirname='siol_wieczorek_0', xray_info=self.cu_xray)
@@ -53,7 +53,10 @@ class ContributionProcessor(OpXRDProcessor):
 
     def parse_HKUST(self):
         db = self.get_pattern_db(input_dirname='zhang_cao_0', use_cif_labels=True, selected_suffixes=['txt'], xray_info=self.cu_xray)
-        db.save(dirpath=os.path.join(self.final_dirpath, 'HKUST'))
+        db.save(dirpath=os.path.join(self.final_dirpath, 'HKUST','in_house'))
+
+        db1 = self.get_pattern_db(input_dirname='zhang_cao_1', xray_info=self.cu_xray)
+        db1.save(dirpath=os.path.join(self.final_dirpath, 'HKUST', 'accumulated'))
 
     def prepare_zips(self):
         dir_content_names = os.listdir(self.final_dirpath)
@@ -90,6 +93,7 @@ class ContributionProcessor(OpXRDProcessor):
 
 if __name__ == "__main__":
     processor = ContributionProcessor(root_dirpath='/home/daniel/aimat/data/opXRD/')
-    processor.parse_LBNL()
+    processor.parse_all()
+    processor.prepare_zips()
+    # processor.parse_LBNL()
     # processor.parse_all()
-    # processor.prepare_zips()
