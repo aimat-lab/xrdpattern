@@ -3,7 +3,7 @@ import shutil
 import tempfile
 from typing import Optional
 
-from databases.processors.opxrd import OpXRDProcessor
+from special.processors.opxrd import OpXRDProcessor
 from xrdpattern.parsing import Orientation
 
 
@@ -26,19 +26,18 @@ class ContributionProcessor(OpXRDProcessor):
         merged.save(dirpath=os.path.join(self.final_dirpath, 'USC'))
 
     def parse_LBNL(self):
-        def get_contribution(dirname : str, selected_suffixes : Optional[list[str]] = None):
-            return self.get_pattern_db(input_dirname=dirname, csv_orientation=Orientation.HORIZONTAL,
-                                       selected_suffixes=selected_suffixes, strict=True)
+        def get_sub_database(dirname : str, selected_suffixes : Optional[list[str]] = None):
+            return self.get_pattern_db(input_dirname=dirname, csv_orientation=Orientation.HORIZONTAL, selected_suffixes=selected_suffixes, strict=True)
 
-        perovskite_db =  get_contribution(dirname='sutter-fella_singh_0')
-        perovskite_db += get_contribution(dirname='sutter-fella_kodalle_0', selected_suffixes=['dat','csv'])
-        perovskite_db += get_contribution(dirname='sutter-fella_abdelsamie_0')
+        perovskite_db =  get_sub_database(dirname='sutter-fella_singh_0')
+        perovskite_db += get_sub_database(dirname='sutter-fella_kodalle_0', selected_suffixes=['dat','csv'])
+        perovskite_db += get_sub_database(dirname='sutter-fella_abdelsamie_0')
         perovskite_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL','perovskite_precursor_solutions'), label_groups=True)
 
-        uio_db = get_contribution(dirname='sutter-fella_hu_0')
+        uio_db = get_sub_database(dirname='sutter-fella_hu_0')
         uio_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL','UiO_compounds'), label_groups=True)
 
-        mn_sb_db = get_contribution(dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'])
+        mn_sb_db = self.get_pattern_db(input_dirname='sutter-fella_heymans_0', selected_suffixes=['xlsx'], strict=True, csv_orientation=Orientation.VERTICAL)
         mn_sb_db.save(dirpath=os.path.join(self.final_dirpath, 'LBNL','MnSbO_annealing'), label_groups=True)
 
     def parse_EMPA(self):

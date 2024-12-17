@@ -54,7 +54,7 @@ class CsvParser:
                 row = [item.strip() for item in line.strip().split(seperator)]
                 if row and any(item for item in row):
                     table.append(row)
-        if pattern_orientation == Orientation.VERTICAL:
+        if pattern_orientation.name == Orientation.VERTICAL.name:
             table = [list(col) for col in zip(*table)]
 
         if self.is_numerical(values=table[0]):

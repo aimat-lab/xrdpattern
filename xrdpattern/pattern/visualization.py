@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-from databases.tools.spg_converter import SpacegroupConverter
+from special.tools.spg_converter import SpacegroupConverter
 from .pattern import XrdPattern
 
 

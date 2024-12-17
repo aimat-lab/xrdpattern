@@ -107,7 +107,7 @@ class MasterParser:
         return self.dat_parser.extract_multi(fpath=fpath)
 
     # -------------------------------------------
-    # databases xylib header
+    # special xylib header
 
     @classmethod
     def parse_experiment_params(cls, header_str: str) -> PowderExperiment:

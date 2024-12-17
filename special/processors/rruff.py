@@ -1,7 +1,7 @@
 import os
 from dataclasses import dataclass
 
-from databases.tools.spg_converter import SpacegroupConverter
+from special.tools.spg_converter import SpacegroupConverter
 from xrdpattern.crystal import CrystalBase, CrystalPhase
 from xrdpattern.pattern import XrdPattern
 from xrdpattern.xrd import PowderExperiment, XRayInfo

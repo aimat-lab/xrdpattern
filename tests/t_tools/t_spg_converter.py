@@ -1,4 +1,4 @@
-from databases.tools.spg_converter import SpacegroupConverter
+from special.tools.spg_converter import SpacegroupConverter
 from holytools.devtools import Unittest
 
 
