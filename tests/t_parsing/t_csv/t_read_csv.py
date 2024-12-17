@@ -18,7 +18,8 @@ class TestCsvReader(Unittest):
 
 
     def test_read_csv_vertical(self):
-        self.read_as_matrix(CsvOrientations.VERTICAL, self.vertical_csv_path)
+        csv_orientation = CsvOrientations.VERTICAL
+        self.read_as_matrix(csv_orientation, self.vertical_csv_path)
         self.read_as_pattern_info(CsvOrientations.VERTICAL, self.vertical_csv_path)
 
     def test_read_csv_horizontal(self):

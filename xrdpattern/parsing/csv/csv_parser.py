@@ -5,7 +5,7 @@ import math
 
 import pandas as pd
 
-from xrdpattern.parsing.csv.matrix import Matrix
+from xrdpattern.parsing.csv.matrix import Matrix, CsvOrientations
 from xrdpattern.xrd import XrdData, XrdAnode
 
 copper_wavelength, _ = XrdAnode.Cu.get_wavelengths()
@@ -55,7 +55,7 @@ class CsvParser:
                 row = [item.strip() for item in line.strip().split(seperator)]
                 if row and any(item for item in row):
                     table.append(row)
-        if pattern_orientation == 'vertical':
+        if pattern_orientation == CsvOrientations.VERTICAL:
             table = [list(col) for col in zip(*table)]
 
         if self.is_numerical(values=table[0]):
