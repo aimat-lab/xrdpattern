@@ -17,8 +17,8 @@ class CsvParser:
 
     def extract_multi(self, fpath: str, pattern_dimension : str) -> list[XrdData]:
         matrix = self._as_matrix(fpath=fpath, pattern_orientation=pattern_dimension)
-        x_axis_row = matrix.get_data(row=0)
-        y_axis_rows = [matrix.get_data(row=row) for row in range(1, matrix.get_row_count())]
+        x_axis_row = matrix.get_y_data(row=0)
+        y_axis_rows = [matrix.get_y_data(row=row) for row in range(1, matrix.get_row_count())]
 
         if len(y_axis_rows) == 0:
             return []
@@ -103,7 +103,7 @@ class CsvParser:
     def is_numerical(values : list[str]) -> bool:
         try:
             for x in values:
-                int(x)
+                float(x)
             return True
         except:
             return False
