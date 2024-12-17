@@ -12,7 +12,7 @@ from scipy.interpolate import CubicSpline
 
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrdData
-from xrdpattern.xrd.powder import PowderExperiment
+from xrdpattern.xrd.experiment import PowderExperiment
 
 parser = MasterParser()
 
