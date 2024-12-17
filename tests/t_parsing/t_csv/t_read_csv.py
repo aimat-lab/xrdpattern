@@ -34,7 +34,7 @@ class TestCsvReader(Unittest):
         reader = CsvParser()
         table = reader._as_matrix(fpath=csv_path, pattern_orientation=pattern_data_axis)
         expected_set = set(self.single_first_datarow) if csv_path == self.single_csv_path else set(self.multi_first_datarow)
-        actual_set = set(table.data[0])
+        actual_set = set(table.get_y_data(row=1))
         print(f'Actual, expected row: \n{actual_set} \n{expected_set}')
 
         self.assertTrue(expected_set.issubset(actual_set))

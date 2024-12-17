@@ -17,7 +17,7 @@ class CsvParser:
 
     def extract_multi(self, fpath: str, pattern_dimension : str) -> list[XrdData]:
         matrix = self._as_matrix(fpath=fpath, pattern_orientation=pattern_dimension)
-        x_axis_row = matrix.get_y_data(row=0)
+        x_axis_row = matrix.get_x_values()
         y_axis_rows = [matrix.get_y_data(row=row) for row in range(1, matrix.get_row_count())]
 
         if len(y_axis_rows) == 0:
@@ -63,9 +63,9 @@ class CsvParser:
         else:
             headers, numerical_part = table[0], table[1:]
         data = self.to_numerical(numerical_part, row_start=0 if headers else 1)
-        matrix = Matrix(headers=headers, data=data)
+        matrix = Matrix(headers=headers, numerical_data=data)
 
-        delta = len(numerical_part) - len(matrix.data)
+        delta = len(numerical_part) - len(matrix.numerical_data)
         if delta > 0:
             print(f'Warning: In {fpath}, {delta} rows were skipped due to non-numerical values')
 
