@@ -61,12 +61,15 @@ class XrdPattern(XrdData):
         x = np.array(self.two_theta_values)
         y = np.array(self.intensities)
         x, y = self.to_strictly_increasing(x, y)
-        y -= np.min(y)
 
         cs = CubicSpline(x, y)
         std_intensities = cs(std_angles)
         below_start_indices = np.where(std_angles < start)[0]
         above_end_indices = np.where(std_angles > end)[0]
+
+        indices_in_range = np.where((std_angles >= start) & (std_angles <= end))[0]
+        range_min = np.min(std_intensities[indices_in_range])
+        std_intensities -= range_min
 
         if constant_padding:
             below_start, after_end = y[0], y[-1]

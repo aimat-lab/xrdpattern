@@ -127,7 +127,7 @@ class PatternDB:
             data = [p.get_pattern_data() for p in patterns]
             fig, ax = plt.subplots(dpi=600)
             for x, y in data:
-                ax.plot(x, y, linewidth=0.25, alpha=0.75)
+                ax.plot(x, y, linewidth=0.25, alpha=0.75, linestyle='--')
 
             ax.set_xlabel(r'$2\theta$ [$^\circ$]')
             ax.set_ylabel('Standardized relative intensity (a.u.)')
