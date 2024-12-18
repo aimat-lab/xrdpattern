@@ -40,7 +40,7 @@ class PatternDB:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
         patterdb_logger.info(f'Loading patterns from local dirpath {dirpath}')
-        db = cls._make_empty()
+        db = cls._make_empty(name=os.path.basename(dirpath))
         for fpath in TrackedCollection(data_fpaths):
             try:
                 xrd_datas = parser.extract(fpath=fpath, csv_orientation=csv_orientation)
@@ -57,8 +57,8 @@ class PatternDB:
         return db
 
     @classmethod
-    def _make_empty(cls) -> PatternDB:
-        return cls(patterns=[], fpath_dict={})
+    def _make_empty(cls, name : str = '') -> PatternDB:
+        return cls(patterns=[], fpath_dict={}, name=name)
 
     def _add_data(self, info : XrdData, fpath : str, strict : bool):
         try:

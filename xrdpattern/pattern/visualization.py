@@ -19,10 +19,10 @@ def plot_all(patterns : list[XrdPattern], db_name : Optional[str] = None, single
         data = [p.get_pattern_data() for p in patterns]
         fig, ax = plt.subplots(dpi=600)
         for x, y in data:
-            ax.plot(x, y, linewidth=0.75, linestyle='--', alpha=0.75)
+            ax.plot(x, y, linewidth=0.25, linestyle='--', alpha=0.75)
 
-        ax.set_xlabel('X Label')
-        ax.set_ylabel('Y Label')
+        ax.set_xlabel(r'$2\theta$ [$^\circ$]')
+        ax.set_ylabel('Standardized relative intensity (a.u.)')
         ax.set_title(f'Multiplot of patterns from {db_name}')
         plt.show()
 
