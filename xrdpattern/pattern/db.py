@@ -5,11 +5,13 @@ from dataclasses import dataclass
 import random
 from typing import Optional
 
+from matplotlib import pyplot as plt
+
 from holytools.logging import LoggerFactory
 from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrayInfo, XrdData
-from .visualization import histograms, plot_all
+from .visualization import histograms, multiplot
 from .pattern import XrdPattern
 
 patterdb_logger = LoggerFactory.get_logger(name=__name__)
@@ -119,9 +121,35 @@ class PatternDB:
                 return False
         return True
 
-    def show_all(self, single_plot : bool = False, limit_patterns : int = 100):
+    def show_all(self, single_plot : bool = False, limit_patterns : int = 100, title : Optional[str] = None):
         patterns = self.patterns if len(self.patterns) <= limit_patterns else random.sample(self.patterns, limit_patterns)
-        plot_all(patterns=patterns, single_plot=single_plot, db_name=self.name)
+        if single_plot:
+            data = [p.get_pattern_data() for p in patterns]
+            fig, ax = plt.subplots(dpi=600)
+            for x, y in data:
+                ax.plot(x, y, linewidth=0.25, alpha=0.75)
+
+            ax.set_xlabel(r'$2\theta$ [$^\circ$]')
+            ax.set_ylabel('Standardized relative intensity (a.u.)')
+            if title:
+                ax.set_title(title)
+            else:
+                ax.set_title(f'XRD Patterns from {self.name}')
+            plt.show()
+
+        else:
+            batch_size = 32
+            j = 0
+            while j < len(patterns):
+                pattern_batch = patterns[j:j + batch_size]
+                for k, p in enumerate(pattern_batch):
+                    p.metadata.filename = p.get_name() or f'pattern_{j + k}'
+                multiplot(patterns=pattern_batch, start_idx=j)
+                j += batch_size
+
+                user_input = input(f'Press enter to continue or q to quit')
+                if user_input.lower() == 'q':
+                    break
 
     def show_histograms(self, save_fpath : Optional[str] = None, attach_colorbar : bool = True):
         histograms(patterns=self.patterns, attach_colorbar=attach_colorbar, save_fpath=save_fpath)

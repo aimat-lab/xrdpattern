@@ -14,32 +14,6 @@ from .pattern import XrdPattern
 
 # -----------------------------------------
 
-def plot_all(patterns : list[XrdPattern], db_name : Optional[str] = None, single_plot : bool = False):
-    if single_plot:
-        data = [p.get_pattern_data() for p in patterns]
-        fig, ax = plt.subplots(dpi=600)
-        for x, y in data:
-            ax.plot(x, y, linewidth=0.25, linestyle='--', alpha=0.75)
-
-        ax.set_xlabel(r'$2\theta$ [$^\circ$]')
-        ax.set_ylabel('Standardized relative intensity (a.u.)')
-        if db_name:
-            ax.set_title(f'{len(patterns)} of patterns from {db_name}')
-        plt.show()
-
-    else:
-        batch_size = 32
-        j = 0
-        while j < len(patterns):
-            pattern_batch = patterns[j:j + batch_size]
-            for k, p in enumerate(pattern_batch):
-                p.metadata.filename = p.get_name() or f'pattern_{j + k}'
-            multiplot(patterns=pattern_batch, start_idx=j)
-            j += batch_size
-
-            user_input = input(f'Press enter to continue or q to quit')
-            if user_input.lower() == 'q':
-                break
 
 def multiplot(patterns : list[XrdPattern], start_idx : int):
     labels = [p.get_name() for p in patterns]
