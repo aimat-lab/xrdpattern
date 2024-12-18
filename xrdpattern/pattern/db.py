@@ -121,7 +121,7 @@ class PatternDB:
                 return False
         return True
 
-    def show_all(self, single_plot : bool = False, limit_patterns : int = 100, title : Optional[str] = None):
+    def show_all(self, single_plot : bool = False, limit_patterns : int = 100, title : Optional[str] = None, save_fpath : Optional[str] = None):
         patterns = self.patterns if len(self.patterns) <= limit_patterns else random.sample(self.patterns, limit_patterns)
         if single_plot:
             data = [p.get_pattern_data() for p in patterns]
@@ -135,7 +135,6 @@ class PatternDB:
                 ax.set_title(title)
             else:
                 ax.set_title(f'XRD Patterns from {self.name}')
-            plt.show()
 
         else:
             batch_size = 32
@@ -150,6 +149,10 @@ class PatternDB:
                 user_input = input(f'Press enter to continue or q to quit')
                 if user_input.lower() == 'q':
                     break
+
+        if save_fpath:
+            plt.savefig(save_fpath)
+        plt.show()
 
     def show_histograms(self, save_fpath : Optional[str] = None, attach_colorbar : bool = True):
         histograms(patterns=self.patterns, attach_colorbar=attach_colorbar, save_fpath=save_fpath)
