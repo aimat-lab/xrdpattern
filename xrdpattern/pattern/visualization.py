@@ -23,7 +23,8 @@ def plot_all(patterns : list[XrdPattern], db_name : Optional[str] = None, single
 
         ax.set_xlabel(r'$2\theta$ [$^\circ$]')
         ax.set_ylabel('Standardized relative intensity (a.u.)')
-        ax.set_title(f'Multiplot of patterns from {db_name}')
+        if db_name:
+            ax.set_title(f'{len(patterns)} of patterns from {db_name}')
         plt.show()
 
     else:

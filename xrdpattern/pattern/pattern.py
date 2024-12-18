@@ -76,7 +76,6 @@ class XrdPattern(XrdData):
         std_intensities[below_start_indices] = below_start
         std_intensities[above_end_indices] = after_end
 
-        std_intensities -= np.min(std_intensities)
         max_intensity = np.max(std_intensities)
         normalization_factor = max_intensity if max_intensity > 0 else 1
         std_intensities = std_intensities/normalization_factor
