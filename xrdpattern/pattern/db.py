@@ -31,6 +31,7 @@ class PatternDB:
     @classmethod
     def load(cls, dirpath : str,
              strict : bool = False,
+             limit_patterns: Optional[int] = None,
              suffixes : Optional[list[str]] = None,
              csv_orientation : Optional[str] = None) -> PatternDB:
         dirpath = os.path.normpath(path=dirpath)
@@ -51,6 +52,10 @@ class PatternDB:
                 patterdb_logger.warning(f'Failed to parse file {fpath}:\n- Reason: {e.__repr__()}')
                 if strict:
                     raise e
+
+            if not limit_patterns is None:
+                if len(db.patterns) >= limit_patterns:
+                    break
 
         patterdb_logger.info(f'Finished loading pattern database located at {dirpath}')
         patterdb_logger.info(f'Successfully extracted {len(db.patterns)} patterns '
@@ -121,7 +126,7 @@ class PatternDB:
                 return False
         return True
 
-    def show_all(self, single_plot : bool = False, limit_patterns : int = 100, title : Optional[str] = None, save_fpath : Optional[str] = None):
+    def show_all(self, single_plot : bool = True, limit_patterns : int = 10**6, title : Optional[str] = None, save_fpath : Optional[str] = None):
         patterns = self.patterns if len(self.patterns) <= limit_patterns else random.sample(self.patterns, limit_patterns)
         if single_plot:
             data = [p.get_pattern_data() for p in patterns]
