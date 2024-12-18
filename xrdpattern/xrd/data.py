@@ -32,6 +32,8 @@ class XrdData(Serializable):
             raise ValueError(f'Pattern contains only one unique value. Two theta values = {self.two_theta_values[:20]}...')
         if np.isnan(self.two_theta_values).any() or np.isnan(self.intensities).any():
             raise ValueError(f'TwoThetaValues or Intensities contain NaN values')
+        if np.isinf(self.two_theta_values).any() or np.isinf(self.intensities).any():
+            raise ValueError(f'TwoThetaValues or Intensities contain Inf values')
         if np.all(self.intensities == 0):
             raise ValueError(f'All intensities are zero')
         if np.any(self.two_theta_values < 0):
