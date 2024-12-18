@@ -50,7 +50,7 @@ class PatternDB:
                 if strict:
                     raise e
 
-        patterdb_logger.info(f'Finished processing pattern database located at {dirpath}')
+        patterdb_logger.info(f'Finished loading pattern database located at {dirpath}')
         patterdb_logger.info(f'Successfully extracted {len(db.patterns)} patterns '
                              f'from {len(db.fpath_dict)}/{len(data_fpaths)} xrd files')
 

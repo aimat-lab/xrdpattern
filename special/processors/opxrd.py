@@ -1,8 +1,10 @@
 import os
+from logging import Logger
 from typing import Optional
 
 import pandas as pd
 
+from holytools.logging import LoggerFactory
 from special.tools.csv_label import get_powder_experiment, get_label_mapping
 from holytools.devtools import ModuleInspector
 from holytools.fsys import SaveManager
@@ -20,6 +22,7 @@ class OpXRDProcessor:
         self.processed_dirpath : str = os.path.join(root_dirpath, 'processed')
         self.final_dirpath : str = os.path.join(root_dirpath, 'final')
         self.cu_xray : XrayInfo = XrdAnode.Cu.get_xray_info()
+        self.logger : Logger = LoggerFactory.get_logger(name=__name__)
 
     # ---------------------------------------
     # Parsing individual contributions
@@ -38,7 +41,7 @@ class OpXRDProcessor:
                xray_info : Optional[XrayInfo] = None,
                csv_orientation : Optional[str] = None,
                strict : bool = False) -> PatternDB:
-        print(f'Started processing contributino {dirname}')
+        self.logger.info(f'Started processing contribution {dirname}')
         data_dirpath = os.path.join(self.processed_dirpath, dirname, 'data')
         contrib_dirpath = os.path.join(self.processed_dirpath, dirname)
         pattern_db = PatternDB.load(dirpath=data_dirpath, suffixes=suffixes, csv_orientation=csv_orientation, strict=strict)
@@ -49,6 +52,7 @@ class OpXRDProcessor:
             pattern_db.set_xray(xray_info=xray_info)
         for p in pattern_db.patterns:
             p.metadata.remove_filename()
+        self.logger.info(f'Finished processing contribution {dirname}')
 
         return pattern_db
 
@@ -121,7 +125,7 @@ class OpXRDProcessor:
 
 
     @log_execution
-    def save(self, pattern_db : PatternDB, dirname : str, label_groups : bool):
+    def save(self, pattern_db : PatternDB, dirname : str):
         out_dirpath = os.path.join(self.final_dirpath, dirname)
         if not os.path.isdir(out_dirpath):
             os.makedirs(out_dirpath)

@@ -6,10 +6,7 @@ from xrdpattern.parsing.examples import DataExamples
 
 
 class TestCsvReader(Unittest):
-
     def setUp(self):
-        # Setup CsvReader with comma as a separator
-        test_dirpath = os.path.dirname(os.path.abspath(__file__))
         self.vertical_csv_path = DataExamples.get_vertical_csv_fpath()
         self.horizontal_csv_path = DataExamples.get_horizontal_fpath()
         self.single_csv_path = DataExamples.get_single_csv_fpath()
