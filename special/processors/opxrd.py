@@ -57,7 +57,7 @@ class OpXRDProcessor:
         return pattern_db
 
     def get_csv_db(self, dirname: str, orientation : str, suffixes: Optional[list[str]] = None) -> PatternDB:
-        return self.get_db(dirname=dirname, csv_orientation=orientation, suffixes=suffixes, strict=True)
+        return self.get_db(dirname=dirname, csv_orientation=orientation, suffixes=suffixes, strict=False)
 
     # ---------------------------------------
     # Parsing steps
