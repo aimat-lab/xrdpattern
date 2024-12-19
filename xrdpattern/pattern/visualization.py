@@ -6,6 +6,7 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
+from matplotlib.ticker import MaxNLocator
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from special.tools.spg_converter import SpacegroupConverter
@@ -65,6 +66,12 @@ def define_angle_start_stop_ax(patterns: list[XrdPattern], density_ax: Axes, top
     density_ax.set_xlim(start_angle_range)
     density_ax.set_ylim(end_angle_range)
 
+    density_ax.xaxis.set_major_locator(MaxNLocator(4))
+    xticks = density_ax.get_xticks()
+    density_ax.set_xticks(xticks[:-1])
+
+
+
     if attach_colorbar:
         divider = make_axes_locatable(density_ax)
         cax = divider.append_axes('right', size='5%', pad=0.0)
@@ -93,8 +100,7 @@ def define_angle_start_stop_ax(patterns: list[XrdPattern], density_ax: Axes, top
         cax = divider.append_axes('right', size=0.8, pad=0.0)
         cax.axis('off')
 
-    right_marginal.hist(end_data, bins=np.linspace(*end_angle_range, num=10), orientation='horizontal',
-                        edgecolor='black')
+    right_marginal.hist(end_data, bins=np.linspace(*end_angle_range, num=10), orientation='horizontal',edgecolor='black')
     right_marginal.set_xscale('log')
     right_marginal.tick_params(axis="y", labelleft=False, which='both', left=False)
 
