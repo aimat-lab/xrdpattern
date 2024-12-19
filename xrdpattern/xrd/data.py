@@ -128,7 +128,7 @@ class XrdData(Serializable):
 
     @classmethod
     def std_num_entries(cls) -> int:
-        return 8192
+        return 512
 
     @classmethod
     def std_two_theta_range(cls) -> (float, float):

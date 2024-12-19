@@ -14,7 +14,6 @@ from .pattern import XrdPattern
 
 # -----------------------------------------
 
-
 def multiplot(patterns : list[XrdPattern], start_idx : int):
     labels = [p.get_name() for p in patterns]
     fig, axes = plt.subplots(4, 8, figsize=(20, 10))
@@ -30,40 +29,6 @@ def multiplot(patterns : list[XrdPattern], start_idx : int):
     plt.show()
 
 
-def histograms(patterns : list[XrdPattern], attach_colorbar : bool, save_fpath : str):
-    fig = plt.figure(figsize=(12, 8))
-
-    figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig, hspace=0.35)
-    figure.update(top=0.96, bottom=0.075)
-    upper_half = figure[0].subgridspec(1, 3)
-    ax2 = fig.add_subplot(upper_half[:, :])
-    define_spg_ax(patterns=patterns, ax=ax2)
-
-    lower_half = figure[1].subgridspec(1, 2)
-    ax3 = fig.add_subplot(lower_half[:, 0])
-    define_recorded_angles_ax(patterns=patterns, ax=ax3)
-
-    if attach_colorbar:
-        lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3, width_ratios=[3, 3, 4])
-        ax4 = fig.add_subplot(lower_half_right[1:, :2])  # scaatter
-        ax5 = fig.add_subplot(lower_half_right[:1, :2], sharex=ax4)  # Above
-        ax6 = fig.add_subplot(lower_half_right[1:, 2:], sharey=ax4)  # Right
-        ax7 = fig.add_subplot(lower_half_right[:1, 2:])
-        ax7.axis('off')
-    else:
-        lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=4, width_ratios=[4, 3, 3, 3])
-        ax4 = fig.add_subplot(lower_half_right[1:, 1:3])  # scatter
-        ax5 = fig.add_subplot(lower_half_right[:1, 1:3], sharex=ax4)  # Above
-        ax6 = fig.add_subplot(lower_half_right[1:, 3:4], sharey=ax4)  # Right
-        ax7 = fig.add_subplot(lower_half_right[:4, :1])
-
-    defined_start_end_ax(patterns=patterns, density_ax=ax4, top_marginal=ax5, right_marginal=ax6, cmap_ax=ax7,
-                              attach_colorbar=attach_colorbar)
-
-    if save_fpath:
-        plt.savefig(save_fpath)
-    plt.show()
-
 def define_spg_ax(patterns: list[XrdPattern], ax: Axes):
     keys, counts = get_counts(patterns=patterns, attr='primary_phase.spacegroup')
     keys, counts = keys[:30], counts[:30]
@@ -72,21 +37,21 @@ def define_spg_ax(patterns: list[XrdPattern], ax: Axes):
     spg_formulas = [f'${SpacegroupConverter.to_formula(spg, mathmode=True)}$' for spg in spgs]
     ax.bar(spg_formulas, counts)
     ax.tick_params(labelbottom=True, labelleft=True)  # Enable labels
-    ax.set_title(f'(a)')
+    ax.set_title(f'(a)', loc='left')
     ax.set_ylabel(f'No. patterns')
     ax.set_xticklabels(spg_formulas, rotation=90)
 
 
 def define_recorded_angles_ax(patterns: list[XrdPattern], ax: Axes):
     values = get_valid_values(patterns=patterns, attr='angular_resolution')
-    ax.set_title(f'(b)')
+    ax.set_title(f'(b)', loc='left')
     ax.hist(values, bins=10, range=(0, 0.1), edgecolor='black')
     ax.set_xlabel(r'Angular resolution $\Delta(2\theta)$ [$^\circ$]')
     ax.set_yscale('log')
     ax.set_ylabel(f'No. patterns')
 
 
-def defined_start_end_ax(patterns: list[XrdPattern], density_ax: Axes, top_marginal: Axes, right_marginal: Axes, cmap_ax: Axes, attach_colorbar: bool):
+def define_angle_start_stop_ax(patterns: list[XrdPattern], density_ax: Axes, top_marginal: Axes, right_marginal: Axes, cmap_ax: Axes, attach_colorbar: bool):
     start_data = get_valid_values(patterns=patterns, attr='startval')
     end_data = get_valid_values(patterns=patterns, attr='endval')
     start_angle_range = (0, 60)
@@ -110,7 +75,7 @@ def defined_start_end_ax(patterns: list[XrdPattern], density_ax: Axes, top_margi
         cmap_ax.set_ylabel(f'No. patterns')
 
     top_marginal.hist(start_data, bins=np.linspace(*start_angle_range, num=10), edgecolor='black')
-    top_marginal.set_title(f'(c)')
+    top_marginal.set_title(f'(c)', loc='left')
     top_marginal.set_yscale('log')
     top_marginal.tick_params(axis="x", labelbottom=False, which='both', bottom=False)
 
