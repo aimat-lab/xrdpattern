@@ -41,10 +41,15 @@ class XrdPattern(XrdData):
     # ------------------------------------------
     # standardization
 
-    def get_pattern_data(self, apply_standardization : bool = True) -> tuple[NDArray, NDArray]:
+    def get_pattern_data(self, apply_standardization : bool = True, num_entries : Optional[int] = None) -> tuple[NDArray, NDArray]:
+        if not apply_standardization and not num_entries is None:
+            raise ValueError('num_entries specifies target number entries for standardization. '
+                             'Cannot be used without standardization')
+
         if apply_standardization:
+            if num_entries is None:
+                num_entries = self.std_num_entries()
             start, stop = self.std_two_theta_range()
-            num_entries = self.std_num_entries()
             angles, intensities = self._get_uniform(start_val=start, stop_val=stop, num_entries=num_entries)
         else:
             angles, intensities = copy.deepcopy(self.two_theta_values), copy.copy(self.intensities)
