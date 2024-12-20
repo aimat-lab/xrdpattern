@@ -60,7 +60,7 @@ class TestXrdPattern(ParserBaseTest):
 
         a1, i1 = self.pattern.get_pattern_data(apply_standardization=False)
         a2, i2 = self.pattern.get_pattern_data(apply_standardization=True)
-        a3, i3 = self.pattern.get_pattern_data(apply_standardization=True, apply_constant_padding=True)
+        a3, i3 = self.pattern.get_pattern_data(apply_standardization=True, use_constant_padding=True)
 
         plt.figure(figsize=(15, 5))
         titles = ['Without Standardization', 'With Standardization', 'With Standardization and Constant Padding']

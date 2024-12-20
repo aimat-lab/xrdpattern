@@ -84,12 +84,15 @@ class XrdData(Serializable):
     def has_label(self, label_type: LabelType) -> bool:
         if label_type == LabelType.composition:
             return self.primary_phase.chemical_composition is not None
-        if label_type == LabelType.spg:
-            return self.primary_phase.spacegroup is not None
         if label_type == LabelType.lattice:
             return all(not math.isnan(x) for x in self.primary_phase.lengths) and all(not math.isnan(x) for x in self.primary_phase.angles)
         if label_type == LabelType.atom_coords:
             return len(self.primary_phase.base) > 0
+        if label_type == LabelType.spg:
+            spg_explicit = self.primary_phase.spacegroup is not None
+            spg_implicit = self.has_label(label_type=LabelType.lattice) and self.has_label(
+                label_type=LabelType.atom_coords)
+            return spg_explicit or spg_implicit
         return False
 
     def is_labeled(self) -> bool:
@@ -126,13 +129,6 @@ class XrdData(Serializable):
             comp += phase.chemical_composition
         return comp
 
-    @classmethod
-    def std_num_entries(cls) -> int:
-        return 512
-
-    @classmethod
-    def std_two_theta_range(cls) -> (float, float):
-        return 0, 90
 
 
 class LabelType(Enum):
