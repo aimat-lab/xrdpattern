@@ -175,14 +175,14 @@ class PatternDB:
         define_recorded_angles_ax(patterns=self.patterns, ax=ax3)
 
         if attach_colorbar:
-            lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3, width_ratios=[3, 3, 4])
+            lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3, width_ratios=[3, 3, 4] , hspace=0, wspace=0)
             ax4 = fig.add_subplot(lower_half_right[1:, :2])  # scaatter
             ax5 = fig.add_subplot(lower_half_right[:1, :2], sharex=ax4)  # Above
             ax6 = fig.add_subplot(lower_half_right[1:, 2:], sharey=ax4)  # Right
             ax7 = fig.add_subplot(lower_half_right[:1, 2:])
             ax7.axis('off')
         else:
-            lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=4, width_ratios=[3, 3, 3, 3], hspace=0, wspace=0)
+            lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=4, width_ratios=[2.75, 3, 3, 3], hspace=0, wspace=0)
             ax4 = fig.add_subplot(lower_half_right[1:, 1:3])  # scatter
             ax5 = fig.add_subplot(lower_half_right[:1, 1:3], sharex=ax4)  # Above
             ax6 = fig.add_subplot(lower_half_right[1:, 3:4], sharey=ax4)  # Right
