@@ -162,7 +162,7 @@ class XrdPattern(XrdData):
 
     @classmethod
     def std_num_entries(cls) -> int:
-        return 512
+        return 8192
 
     @classmethod
     def std_two_theta_range(cls) -> (float, float):
