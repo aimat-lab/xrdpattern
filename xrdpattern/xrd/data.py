@@ -7,6 +7,7 @@ from enum import Enum
 
 import numpy as np
 from numpy.typing import NDArray
+from orjson import orjson
 
 from holytools.abstract import Serializable
 from xrdpattern.crystal import CrystalPhase
@@ -47,7 +48,7 @@ class XrdData(Serializable):
 
     @classmethod
     def from_str(cls, json_str: str) -> XrdData:
-        data = json.loads(json_str)
+        data = orjson.loads(json_str)
         two_theta_values = np.array(data['two_theta_values'])
         intensities = np.array(data['intensities'])
         label = PowderExperiment.from_str(data['label'])
