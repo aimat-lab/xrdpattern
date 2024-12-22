@@ -11,23 +11,25 @@ from xrdpattern.xrd import PowderExperiment, XrdAnode
 
 # -------------------------------------
 
-def get_xrdpattern(database: Database, index: int) -> XrdPattern:
-    atom = database.get_atoms(id=index)
+def get_xrdpattern(database: Database, index: int, add_labels : bool = True) -> XrdPattern:
     row = database.get(id=index)
+    two_theta_values = get_as_float_arr('angle', row=row)
+    intensities = get_as_float_arr('intensity', row=row)
 
-    base = make_base(chemical_symbols=atom.get_chemical_symbols(), fract_positions=atom.get_positions())
-    a, b, c, alpha, beta, gamma = atom.get_cell_lengths_and_angles().tolist()
-    phase = CrystalPhase(base=base, lengths=(a, b, c), angles=(alpha, beta, gamma))
-    experiment = PowderExperiment(phases=[phase], xray_info=XrdAnode.Cu.get_xray_info())
+    if add_labels:
+        atom = database.get_atoms(id=index)
+        base = make_base(chemical_symbols=atom.get_chemical_symbols(), fract_positions=atom.get_positions())
+        a, b, c, alpha, beta, gamma = atom.get_cell_lengths_and_angles().tolist()
+        phase = CrystalPhase(base=base, lengths=(a, b, c), angles=(alpha, beta, gamma))
+        experiment = PowderExperiment(phases=[phase], xray_info=XrdAnode.Cu.get_xray_info())
+        p = XrdPattern(two_theta_values=np.array(two_theta_values), intensities=np.array(intensities), powder_experiment=experiment)
+    else:
+        p = XrdPattern.make_unlabeled(two_theta_values=two_theta_values, intensities=intensities)
 
-    two_theta_values = get_as_np_arr('angle', row=row)
-    intensities = get_as_np_arr('intensity', row=row)
+    return p
 
-    return XrdPattern(two_theta_values=np.array(two_theta_values), intensities=intensities,powder_experiment=experiment)
-
-def get_as_np_arr(name : str, row) -> NDArray:
-    float_list = eval(getattr(row, name))
-    return np.array(float_list)
+def get_as_float_arr(name : str, row) -> list[float]:
+    return eval(getattr(row, name))
 
 def make_base(chemical_symbols : list[str], fract_positions : NDArray) -> CrystalBase:
     if not len(chemical_symbols) == len(fract_positions):
@@ -39,15 +41,15 @@ def make_base(chemical_symbols : list[str], fract_positions : NDArray) -> Crysta
 
     return CrystalBase(atoms)
 
-
 if __name__ == "__main__":
     processing_dirpath = '/home/daniel/aimat/data/opXRD/processed/zhang_cao_1'
     database_fpath = os.path.join(processing_dirpath,'caobin.db')
     print(f'Reading form database at {database_fpath}')
     data = connect(database_fpath)
-    print(f'Data contains {data.count()} entries')
+
+    print(f'Reading data from database containing {data.count()} entries')
     for idx in range(1, data.count()+1):
-        xrdpattern = get_xrdpattern(data, index=idx)
+        xrdpattern = get_xrdpattern(data, index=idx, add_labels=False)
         xrdpattern.save(fpath=os.path.join(processing_dirpath, 'data', f'pattern_{idx}.json'), force_overwrite=True)
         print(f'Saved pattern {idx} to file')
 
