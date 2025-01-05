@@ -122,6 +122,7 @@ class Formats:
     def get_xrd_fpaths(dirpath: str, selected_suffixes : Optional[list[str]]) -> list[str]:
         if selected_suffixes is None:
             selected_suffixes = Formats.get_all_suffixes()
+        selected_suffixes = [x.replace('.', '') for x in selected_suffixes]
 
         root_node = FsysNode(path=dirpath)
         subfile_paths = root_node.get_subfile_paths()

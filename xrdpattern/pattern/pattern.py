@@ -126,6 +126,7 @@ class XrdPattern(XrdData):
         plt.figure(figsize=(10, 6))
         plt.title(title)
         plt.ylabel(f'{label}')
+        plt.xlim(self.std_two_theta_range())
         plt.xlabel(r'$2\theta$ [$^\circ$]')
         plt.plot(x_values, intensities, label=label)
         plt.legend()
@@ -166,4 +167,4 @@ class XrdPattern(XrdData):
 
     @classmethod
     def std_two_theta_range(cls) -> (float, float):
-        return 0, 90
+        return 0, 180
