@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from holytools.fsys import SaveManager
+from holytools.fsys import PathTools
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.xrd import PowderExperiment
 
@@ -61,6 +61,6 @@ def get_label_mapping(data : pd.DataFrame, phase_num : int) -> dict[str, CsvLabe
     return csv_label_dict
 
 def standardize_path(fpath : str):
-    fpath = SaveManager.prune_suffix(fpath)
+    fpath = PathTools.prune_suffix(fpath)
     fpath = fpath.replace('\\','/')
     return fpath

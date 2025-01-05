@@ -1,6 +1,5 @@
-import os
-from xrdpattern.parsing.csv import CsvParser
 from holytools.devtools import Unittest
+from xrdpattern.parsing.csv import CsvParser
 from xrdpattern.parsing.csv.matrix import CsvOrientations
 from xrdpattern.parsing.examples import DataExamples
 

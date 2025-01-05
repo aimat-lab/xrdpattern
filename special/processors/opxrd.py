@@ -7,7 +7,7 @@ import pandas as pd
 from holytools.logging import LoggerFactory
 from special.tools.csv_label import get_powder_experiment, get_label_mapping
 from holytools.devtools import ModuleInspector
-from holytools.fsys import SaveManager
+from holytools.fsys import PathTools
 from holytools.logging.tools import log_execution
 from xrdpattern.crystal import CrystalPhase
 from xrdpattern.pattern import PatternDB
@@ -88,7 +88,7 @@ class OpXRDProcessor:
     def attach_cif_labels(self, pattern_db : PatternDB):
         for fpath, patterns in pattern_db.fpath_dict.items():
             dirpath = os.path.dirname(fpath)
-            cif_fnames = [fname for fname in os.listdir(dirpath) if SaveManager.get_suffix(fname) == 'cif']
+            cif_fnames = [fname for fname in os.listdir(dirpath) if PathTools.get_suffix(fname) == 'cif']
 
             phases = []
             for fname in cif_fnames:

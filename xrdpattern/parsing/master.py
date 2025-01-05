@@ -6,7 +6,7 @@ from typing import Optional, Iterator, Tuple
 
 import numpy as np
 
-from holytools.fsys import SaveManager
+from holytools.fsys import PathTools
 from xrdpattern.xrd import XrdData, XrayInfo, PowderExperiment, Metadata
 from xrdpattern.parsing.stoe import StoeParser
 from .cif.cif_parser import CifParser
@@ -29,7 +29,7 @@ class MasterParser:
     # pattern
 
     def extract(self, fpath : str, csv_orientation : Optional[str] = None) -> list[XrdData]:
-        suffix = SaveManager.get_suffix(fpath)
+        suffix = PathTools.get_suffix(fpath)
         if not suffix in Formats.get_all_suffixes():
             raise ValueError(f"File {fpath} has unsupported format .{suffix}")
         if suffix:
@@ -89,7 +89,7 @@ class MasterParser:
 
 
     def _load_csv(self, fpath : str, orientation : Optional[str] = None) -> list[XrdData]:
-        if SaveManager.get_suffix(fpath) == 'xlsx':
+        if PathTools.get_suffix(fpath) == 'xlsx':
             tmp_fpath = tempfile.mktemp(suffix='.csv')
             CsvParser.xlsx_to_csv(xlsx_fpath=fpath, csv_fpath=tmp_fpath)
             fpath = tmp_fpath

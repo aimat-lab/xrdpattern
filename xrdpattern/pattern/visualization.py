@@ -1,8 +1,6 @@
 from collections import Counter
-from typing import Optional
 
 import matplotlib.colors
-import matplotlib.gridspec as gridspec
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes

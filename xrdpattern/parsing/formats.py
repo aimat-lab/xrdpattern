@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from holytools.fsys import SaveManager, FsysNode
+from holytools.fsys import PathTools, FsysNode
 from xrdpattern.parsing.xylib import get_xylib_repr
 from .stoe import StoeParser
 
@@ -62,7 +62,7 @@ class Formats:
 
     @classmethod
     def get_format(cls, fpath : str) -> XrdFormat:
-        suffix = SaveManager.get_suffix(fpath)
+        suffix = PathTools.get_suffix(fpath)
         if suffix == 'raw':
             return Formats.stoe_raw if cls.is_stoe(fpath) else Formats.bruker_raw
         if suffix == 'dat':
@@ -124,8 +124,8 @@ class Formats:
             selected_suffixes = Formats.get_all_suffixes()
 
         root_node = FsysNode(path=dirpath)
-        xrd_file_nodes = root_node.get_file_subnodes(select_formats=selected_suffixes)
-        data_fpaths = [node.get_path() for node in xrd_file_nodes]
+        subfile_paths = root_node.get_subfile_paths()
+        data_fpaths = [p for p in subfile_paths if PathTools.get_suffix(fpath=p) in selected_suffixes]
 
         return data_fpaths
 
