@@ -1,0 +1,10 @@
+name: "Setup Dependencies"
+description: "Installs required system dependencies using apt"
+runs:
+  using: "composite"
+  steps:
+    - name: Update package lists and install dependencies
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential libboost-all-dev swig
