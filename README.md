@@ -5,7 +5,7 @@ The data file import functionalities are largely built on the C++ library  [xyli
 - A C++ compiler and standard library
 - A C++ to python bridge (Swig)
 
-## Setup
+## Installation
 
 ### System level requirements
 For Ubuntu 22.04:
@@ -24,7 +24,6 @@ choco install swig   # python -> C++ bridge
 Once the system level requirements are installed, the library can be installed using pip:
 ```
 pip install git+https://github.com/aimat-lab/xrdpattern
-
 ```
 
 
