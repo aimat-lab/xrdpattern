@@ -1,8 +1,6 @@
-from holytools.events import Timer
-
-from special.tools.spg_converter import SpacegroupConverter
 from holytools.devtools import Unittest
 
+from xrdpattern.tools.spg_converter import SpacegroupConverter
 
 
 class SpacegroupConversionTest(Unittest):
