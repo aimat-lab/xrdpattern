@@ -49,5 +49,5 @@ setup(name='xrdpattern',
       py_modules=['xylib'],
       cmdclass={'build': CustomBuild},
       package_data = {'xrdpattern.crystal.atomic_constants': ['*'],'xrdpattern.crystal.cifs': ['*'],
-                      'xrdpattern.parsing.examples': ['*']}
+                      'xrdpattern.parsing.examples': ['*'], 'xrdpattern.tools': ['*']}
 )
