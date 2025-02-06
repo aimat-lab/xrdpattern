@@ -1,19 +1,22 @@
 name: Workflows
 
-on:
-  push:
-  schedule:
-    - cron: '0 0 * * *'
+on: [push]
 
 jobs:
-  setup-env:
+  ToxTests:
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential libboost-all-dev swig
+      - uses: Somerandomguy10111/devops/actions/basepy@main
+      - uses: Somerandomguy10111/devops/actions/toxtests@main
+  Dependencies:
     runs-on: ubuntu-latest
     steps:
       - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y build-essential libboost-all-dev swig
-
-  StdPyTests:
-    needs: setup-env  # Ensures setup-env runs first
-    uses: Somerandomguy10111/devops/.github/workflows/stdpy.yml@main
+      - uses: Somerandomguy10111/devops/actions/basepy@main
+      - uses: Somerandomguy10111/devops/actions/deptry@main
