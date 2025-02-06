@@ -3,9 +3,9 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass, field
 from enum import Enum
+from importlib.metadata import version
 from typing import Optional
 
-import pkg_resources
 import torch
 
 from holytools.abstract import JsonDataclass
@@ -206,5 +206,5 @@ class Metadata(JsonDataclass):
     def remove_filename(self):
         self.filename = None
 
-def get_library_version(library_name):
-    return pkg_resources.get_distribution(library_name).version
+def get_library_version(library_name : str):
+    return version(library_name)

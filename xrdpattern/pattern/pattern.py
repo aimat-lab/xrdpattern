@@ -97,7 +97,7 @@ class XrdPattern(XrdData):
 
         return x, y
 
-    def __eq__(self, other : XrdData):
+    def __eq__(self, other : XrdPattern):
         for attr in fields(self):
             v1, v2 = getattr(self, attr.name), getattr(other, attr.name)
             if isinstance(v1, np.ndarray):
