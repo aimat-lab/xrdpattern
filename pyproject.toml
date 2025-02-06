@@ -19,10 +19,8 @@ dependencies = [
     "gemmi",
     "holytools @ git+https://github.com/Somerandomguy10111/holytools",
     "pandas",
-    "openpyxl",
     "tensordict",
-    "seaborn",
-    "ase"
+    "orjson"
 ]
 
 [tool.setuptools]
