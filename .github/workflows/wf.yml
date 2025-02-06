@@ -4,15 +4,16 @@ on:
   push:
   schedule:
     - cron: '0 0 * * *'
+
 jobs:
-  StdPyTests:
-    runs-on: ubuntu-latest  # Runs on Ubuntu, required for `apt` commands
+  setup-env:
+    runs-on: ubuntu-latest
     steps:
       - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install build-essential libboost-all-dev swig -y
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Run StdPyTests
-        uses: Somerandomguy10111/actions/.github/workflows/stdpy.yml@main
+          sudo apt install -y build-essential libboost-all-dev swig
+
+  StdPyTests:
+    needs: setup-env  # Ensures setup-env runs first
+    uses: Somerandomguy10111/actions/.github/workflows/stdpy.yml@main
