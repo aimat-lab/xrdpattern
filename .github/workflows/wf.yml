@@ -6,13 +6,13 @@ jobs:
   ToxTests:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/systemreqs@main
+      - uses: aimat-lab/xrdpattern/.github/systemreqs@main
       - uses: Somerandomguy10111/devops/actions/basepy@main
       - uses: Somerandomguy10111/devops/actions/toxtests@main
 
   Dependencies:
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/systemreqs@main
+      - uses: aimat-lab/xrdpattern/.github/systemreqs@main
       - uses: Somerandomguy10111/devops/actions/basepy@main
       - uses: Somerandomguy10111/devops/actions/deptry@main
