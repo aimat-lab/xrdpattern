@@ -16,4 +16,4 @@ jobs:
 
   StdPyTests:
     needs: setup-env  # Ensures setup-env runs first
-    uses: Somerandomguy10111/actions/.github/workflows/stdpy.yml@main
+    uses: Somerandomguy10111/devops/.github/workflows/stdpy.yml@main
