@@ -1,7 +1,18 @@
 name: Workflows
 
-on: [push]
-
+on:
+  push:
+  schedule:
+    - cron: '0 0 * * *'
 jobs:
   StdPyTests:
-    uses: Somerandomguy10111/actions/.github/workflows/stdpy.yml@main
+    runs-on: ubuntu-latest  # Runs on Ubuntu, required for `apt` commands
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install build-essential libboost-all-dev swig -y
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run StdPyTests
+        uses: Somerandomguy10111/actions/.github/workflows/stdpy.yml@main
