@@ -23,7 +23,7 @@ choco install swig   # python -> C++ bridge
 ### Python library
 Once the system level requirements are installed, the library can be installed using pip:
 ```
-pip install git+https://github.com/aimat-lab/xrdpattern
+pip install xrdpattern
 ```
 
 
