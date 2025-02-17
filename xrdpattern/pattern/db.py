@@ -50,9 +50,11 @@ class PatternDB:
                 xrd_datas = parser.extract(fpath=fpath, csv_orientation=csv_orientation)
                 [db._add_data(info=info, fpath=fpath, strict=strict) for info in xrd_datas]
             except Exception as e:
-                patterdb_logger.warning(f'Failed to parse file {fpath}:\n- Reason: {e.__repr__()}')
+                err_msg = f'Failed to parse file {fpath}:\n- Reason: {e.__repr__()}'
                 if strict:
-                    raise e
+                    raise ValueError(err_msg)
+                else:
+                    patterdb_logger.warning(err_msg)
 
             if not limit_patterns is None:
                 if len(db.patterns) >= limit_patterns:
