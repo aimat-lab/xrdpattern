@@ -17,7 +17,7 @@ dependencies = [
     "pymatgen",
     "torch",
     "gemmi",
-    "holytools==0.9.13",
+    "holytools==0.9.14",
     "pandas",
     "tensordict",
     "orjson",
