@@ -82,11 +82,13 @@ class PatternDB:
             if strict:
                 raise e
 
-    def save(self, dirpath : str, force_overwrite : bool = False):
-        if os.path.isfile(dirpath):
-            raise ValueError(f'Path \"{dirpath}\" is occupied by file')
+    def save(self, dirpath : str, skip_if_occupied : bool = True):
+        is_occupied = os.path.isfile(dirpath) or os.path.isdir(dirpath)
+        if is_occupied and skip_if_occupied:
+            patterdb_logger.warning(f'Path \"{dirpath}\" already exists. Skipping save operation')
+            return
+        
         os.makedirs(dirpath, exist_ok=True)
-
         for j, patterns in enumerate(self.fpath_dict.values()):
             for k, p in enumerate(patterns):
                 if len(patterns) > 1:
@@ -94,7 +96,7 @@ class PatternDB:
                 else:
                     fname = f'pattern_{j}.{Formats.aimat_suffix()}'
                 fpath = os.path.join(dirpath, fname)
-                p.save(fpath=fpath, force_overwrite=force_overwrite)
+                p.save(fpath=fpath, force_overwrite=True)
 
     # -------------------------------------------
     # operations
