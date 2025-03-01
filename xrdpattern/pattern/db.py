@@ -87,7 +87,7 @@ class PatternDB:
         if is_occupied and skip_if_occupied:
             patterdb_logger.warning(f'Path \"{dirpath}\" already exists. Skipping save operation')
             return
-        
+
         os.makedirs(dirpath, exist_ok=True)
         for j, patterns in enumerate(self.fpath_dict.values()):
             for k, p in enumerate(patterns):
@@ -101,9 +101,6 @@ class PatternDB:
     # -------------------------------------------
     # operations
 
-    def __add__(self, other : PatternDB) -> PatternDB:
-        return PatternDB.merge(dbs=[self, other])
-
     @classmethod
     def merge(cls, dbs : list[PatternDB]):
         patterns = []
@@ -114,12 +111,12 @@ class PatternDB:
 
         return PatternDB(patterns=patterns, fpath_dict=fpath_dict)
 
+    def __add__(self, other : PatternDB) -> PatternDB:
+        return PatternDB.merge(dbs=[self, other])
+
     def set_xray(self, xray_info : XrayInfo):
         for p in self.patterns:
             p.powder_experiment.xray_info = xray_info
-
-    # -------------------------------------------
-    # view
 
     def __eq__(self, other : PatternDB):
         if not isinstance(other, PatternDB):
@@ -131,39 +128,41 @@ class PatternDB:
                 return False
         return True
 
-    def show_all(self, single_plot : bool = True, limit_patterns : int = 10**6, title : Optional[str] = None, save_fpath : Optional[str] = None):
-        patterns = self.patterns if len(self.patterns) <= limit_patterns else random.sample(self.patterns, limit_patterns)
-        if single_plot:
-            data = [p.get_pattern_data() for p in patterns]
-            fig, ax = plt.subplots(dpi=600)
-            for x, y in data:
-                ax.plot(x, y, linewidth=0.25, alpha=0.75, linestyle='--')
+    # -------------------------------------------
+    # view
 
-            ax.set_xlabel(r'$2\theta$ [$^\circ$]')
-            ax.set_ylabel('Standardized relative intensity (a.u.)')
-            if title:
-                ax.set_title(title)
-            else:
-                ax.set_title(f'XRD Patterns from {self.name}')
+    def plot_combined(self, max_patterns : int = 10 ** 4, title : Optional[str] = None, save_fpath : Optional[str] = None):
+        patterns = self.patterns if len(self.patterns) <= max_patterns else random.sample(self.patterns, max_patterns)
+        data = [p.get_pattern_data() for p in patterns]
+        fig, ax = plt.subplots(dpi=600)
+        for x, y in data:
+            ax.plot(x, y, linewidth=0.25, alpha=0.75, linestyle='--')
 
+        ax.set_xlabel(r'$2\theta$ [$^\circ$]')
+        ax.set_ylabel('Standardized relative intensity (a.u.)')
+        if title:
+            ax.set_title(title)
         else:
-            batch_size = 32
-            j = 0
-            while j < len(patterns):
-                pattern_batch = patterns[j:j + batch_size]
-                for k, p in enumerate(pattern_batch):
-                    p.metadata.filename = p.get_name() or f'pattern_{j + k}'
-                multiplot(patterns=pattern_batch, start_idx=j)
-                j += batch_size
-
-                user_input = input(f'Press enter to continue or q to quit')
-                if user_input.lower() == 'q':
-                    break
+            ax.set_title(f'XRD Patterns from {self.name}')
 
         if save_fpath:
             plt.savefig(save_fpath)
         plt.show()
 
+    def show_gallery(self):
+        patterns = random.sample(self.patterns, len(self.patterns))
+        batch_size = 32
+        j = 0
+        while j < len(patterns):
+            pattern_batch = patterns[j:j + batch_size]
+            for k, p in enumerate(pattern_batch):
+                p.metadata.filename = p.get_name() or f'pattern_{j + k}'
+            multiplot(patterns=pattern_batch, start_idx=j)
+            j += batch_size
+
+            user_input = input(f'Press enter to continue or q to quit')
+            if user_input.lower() == 'q':
+                break
 
     def show_histograms(self, save_fpath : Optional[str] = None, attach_colorbar : bool = True):
         fig = plt.figure(figsize=(12, 8))
