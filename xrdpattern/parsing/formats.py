@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from holytools.fsys import PathTools, FsysNode
+from holytools.fsys.fsys_node import Directory
 from xrdpattern.parsing.xylib import get_xylib_repr
 from .stoe import StoeParser
 
@@ -124,8 +125,8 @@ class Formats:
             selected_suffixes = Formats.get_all_suffixes()
         selected_suffixes = [x.replace('.', '') for x in selected_suffixes]
 
-        root_node = FsysNode(path=dirpath)
-        subfile_paths = root_node.get_subfile_paths()
+        root_node = Directory(path=dirpath)
+        subfile_paths = root_node.get_subfile_fpaths()
         data_fpaths = [p for p in subfile_paths if PathTools.get_suffix(fpath=p) in selected_suffixes]
 
         return data_fpaths
