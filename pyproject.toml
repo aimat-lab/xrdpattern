@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "xrdpattern"
-version = "0.9.5"
+version = "0.9.6"
 description = "Python library for XrdPatterns including file import, file export and postprocessing functionalities"
 readme = "README.md"
 authors = [{ name = "Daniel Hollarek", email = "daniel.hollarek@googlemail.com" }]
