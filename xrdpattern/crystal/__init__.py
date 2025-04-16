@@ -1,2 +1,2 @@
-from .components import CrystalPhase, CrystalBasis, AtomicSite, AtomLike, CrystalSystem
+from .components import CrystalStructure, CrystalBasis, AtomSite, Atom, CrystalSystem
 from .examples import CrystalExamples

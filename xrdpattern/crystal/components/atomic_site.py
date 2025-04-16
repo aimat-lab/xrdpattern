@@ -12,7 +12,7 @@ ScatteringParams = tuple[float, float, float, float, float, float, float, float]
 #---------------------------------------------------------
 
 @dataclass
-class AtomicSite(Serializable):
+class AtomSite(Serializable):
     """x,y,z are the coordinates of the site given in the basis of the lattice"""
     x: Optional[float]
     y: Optional[float]
@@ -22,27 +22,10 @@ class AtomicSite(Serializable):
     wyckoff_letter : Optional[str] = None
 
     def __post_init__(self):
-        self.atom : AtomLike = AtomLike(symbol=self.species_str)
-
-    @classmethod
-    def make_void(cls) -> AtomicSite:
-        return cls(x=None, y=None, z=None, occupancy=0.0, species_str=AtomLike.void_symbol)
-
-    @classmethod
-    def make_placeholder(cls):
-        return cls(x=None, y=None, z=None, occupancy=None, species_str=AtomLike.placeholder_symbol)
-
-
-    # ---------------------------------------------------------
-    # properties
-
-    def is_nonstandard(self) -> bool:
-        if self.species_str == AtomLike.void_symbol or self.species_str == AtomLike.placeholder_symbol:
-            return True
-        return False
+        self.atom : Atom = Atom(symbol=self.species_str)
 
     def as_list(self) -> list[float]:
-        site_arr = [*self.atom.scattering_params, self.x, self.y, self.z, self.occupancy]
+        site_arr = [*self.atom.get_scattering_params, self.x, self.y, self.z, self.occupancy]
         return site_arr
 
     # ---------------------------------------------------------
@@ -62,40 +45,24 @@ class AtomicSite(Serializable):
                    species_str=the_dict['symbol'], wyckoff_letter=the_dict['wyckoff_letter'])
 
 
-class AtomLike:
-    void_symbol = '⊥'
-    placeholder_symbol = '*'
-
+class Atom:
     def __init__(self, symbol : str):
-        self.symbol : str = symbol
-
-    @property
-    def element_symbol(self) -> str:
-        return self.as_pymatgen.element.symbol
+        self.full_symbol : str = symbol
+        self.element_symbol : str = self.as_pymatgen.element.symbol
 
     @property
     def as_pymatgen(self) -> Optional[Species]:
-        is_standard = not self.symbol in [self.void_symbol, self.placeholder_symbol]
-        pymatgen_type = Species.from_str(species_string=self.symbol) if is_standard else None
-        return pymatgen_type
-
-    # -------------------------------
+        return Species.from_str(species_string=self.full_symbol)
 
     # TODO: These are currently the scattering factors in pymat gen atomic_scattering_parmas.json
     # These are *different* paramters from what you may commonly see e.g. here (https://lampz.tugraz.at/~hadley/ss1/crystaldiffraction/atomicformfactors/formfactors.php)
     # since pymatgen uses a different formula to compute the form factor
     @property
-    def scattering_params(self) -> ScatteringParams:
-        if self.symbol == self.void_symbol:
-            values = (0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (0.0, 0.0)
-        elif self.symbol == self.placeholder_symbol:
-            fnan = float('nan')
-            values = (fnan, fnan), (fnan, fnan), (fnan, fnan), (fnan, fnan)
-        else:
-            # TODO: This casting only currently exists beacuse the scattering param table only has values for (unoxidized) elements, not ions
-            # TODO: Normally would simply be species_symbol=str(self.species_like)
-            species_symbol = self.as_pymatgen.element.symbol
-            values = scattering_params[species_symbol]
+    def get_scattering_params(self) -> ScatteringParams:
+        # TODO: This casting only currently exists beacuse the scattering param table only has values for (unoxidized) elements, not ions
+        # TODO: Normally would simply be species_symbol=str(self.species_like)
+        species_symbol = self.as_pymatgen.element.symbol
+        values = scattering_params[species_symbol]
 
         (a1, b1), (a2, b2), (a3, b3), (a4, b4) = values
         return a1, b1, a2, b2, a3, b3, a4, b4
@@ -105,7 +72,6 @@ class AtomLike:
 
     def get_covalent(self) -> float:
         return covalent_radii[self.element_symbol]
-
 
 
 def load_constants_json(fname: str) -> dict:

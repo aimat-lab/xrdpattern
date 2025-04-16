@@ -5,7 +5,7 @@ import numpy as np
 from pymatgen.core import Lattice, Structure, Composition, PeriodicSite, Site, Species, Element
 
 import tests.t_crystal.base_crystal as BaseTest
-from xrdpattern.crystal import AtomicSite, CrystalPhase
+from xrdpattern.crystal import AtomSite, CrystalStructure
 
 # ---------------------------------------------------------
 
@@ -76,7 +76,7 @@ class TestPropertyCalculation(BaseTest.CrystalTest):
 
 
     @staticmethod
-    def to_clustered_pymatgen(crystal : CrystalPhase) -> Structure:
+    def to_clustered_pymatgen(crystal : CrystalStructure) -> Structure:
         a, b, c = crystal.lengths
         alpha, beta, gamma = crystal.angles
         lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
@@ -84,7 +84,7 @@ class TestPropertyCalculation(BaseTest.CrystalTest):
         non_void_sites = crystal.base.get_non_void_sites()
 
         EPSILON = 0.001
-        clusters: list[list[AtomicSite]] = []
+        clusters: list[list[AtomSite]] = []
 
         def matching_cluster(the_site):
             for cl in clusters:
@@ -109,10 +109,10 @@ class TestPropertyCalculation(BaseTest.CrystalTest):
 
 
 
-def dist_from_origin(site : PeriodicSite | AtomicSite):
+def dist_from_origin(site : PeriodicSite | AtomSite):
     return math.sqrt(site.x ** 2 + site.y ** 2 + site.z ** 2)
 
-def euclidean_dist(siteA : PeriodicSite | AtomicSite, siteB: PeriodicSite | AtomicSite):
+def euclidean_dist(siteA : PeriodicSite | AtomSite, siteB: PeriodicSite | AtomSite):
     return np.sqrt((siteA.x - siteB.x) ** 2 + (siteA.y - siteB.y) ** 2 + (siteA.z - siteB.z) ** 2)
 
 if __name__ == '__main__':

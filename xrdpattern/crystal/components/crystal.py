@@ -10,7 +10,7 @@ from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.groups import SpaceGroup
 
 from xrdpattern.serialization import JsonDataclass
-from .atomic_site import AtomicSite
+from .atomic_site import AtomSite
 from .base import CrystalBasis
 
 
@@ -19,11 +19,10 @@ CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tet
 # ---------------------------------------------------------
 
 @dataclass
-class CrystalPhase(JsonDataclass):
+class CrystalStructure(JsonDataclass):
     lengths : tuple[float, float, float]
     angles : tuple[float, float, float]
     base : CrystalBasis
-    phase_fraction : Optional[float] = None
     chemical_composition : Optional[str] = None
     spacegroup : Optional[int] = None
     volume_uc : Optional[float] = None
@@ -32,13 +31,13 @@ class CrystalPhase(JsonDataclass):
     crystal_system : Optional[str] = None
 
     @classmethod
-    def from_cif(cls, cif_content : str) -> CrystalPhase:
+    def from_cif(cls, cif_content : str) -> CrystalStructure:
         pymatgen_structure = Structure.from_str(cif_content, fmt='cif')
         crystal_structure = cls.from_pymatgen(pymatgen_structure)
         return crystal_structure
 
     @classmethod
-    def from_pymatgen(cls, pymatgen_structure: Structure) -> CrystalPhase:
+    def from_pymatgen(cls, pymatgen_structure: Structure) -> CrystalStructure:
         lattice = pymatgen_structure.lattice
         base : CrystalBasis = CrystalBasis.empty()
 
@@ -48,7 +47,7 @@ class CrystalPhase(JsonDataclass):
                 if isinstance(species, Element):
                     species = Species(symbol=species.symbol, oxidation_state=0)
                 x,y,z = lattice.get_fractional_coords(site.coords)
-                atomic_site = AtomicSite(x, y, z, occupancy=occupancy, species_str=str(species))
+                atomic_site = AtomSite(x, y, z, occupancy=occupancy, species_str=str(species))
                 base.append(atomic_site)
 
         crystal_str = cls(lengths=(lattice.a, lattice.b, lattice.c),
@@ -69,16 +68,17 @@ class CrystalPhase(JsonDataclass):
         alpha, beta, gamma = self.angles
         lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
 
-        non_void_sites = self.base.get_non_void_sites()
+        non_void_sites = self.base.atom_sites
         atoms = [site.atom.as_pymatgen for site in non_void_sites]
         positions = [(site.x, site.y, site.z) for site in non_void_sites]
 
         if len(atoms) == 0:
             logger.warning('Structure has no atoms!')
+            raise ValueError('Structure has no atoms! Cannot convert phase without atoms to pymatgen structure')
 
         return Structure(lattice, atoms, positions)
 
-    def as_str(self) -> str:
+    def get_view(self) -> str:
         the_dict = asdict(self)
         the_dict = {str(key) : str(value) for key, value in the_dict.items() if not isinstance(value, Structure)}
         the_dict['base'] = f'{self.base[0]}, ...'
@@ -90,7 +90,7 @@ class CrystalPhase(JsonDataclass):
     def calculate_properties(self):
         if len(self.base) == 0:
             logger.error(msg=f'Base is empty! Cannot calculate properties of empty crystal. Aborting ...')
-            return
+            raise ValueError('Base is empty! Cannot calculate properties of empty crystal. Aborting ...')
 
         pymatgen_structure = self.to_pymatgen()
         self.volume_uc = pymatgen_structure.volume
@@ -104,8 +104,7 @@ class CrystalPhase(JsonDataclass):
         self.crystal_system = pymatgen_spacegroup.crystal_system
         self.chemical_composition = pymatgen_structure.composition.formula
 
-
-    def get_standardized(self) -> CrystalPhase:
+    def get_standardized(self) -> CrystalStructure:
         if len(self.base) > 0:
             structure = self.to_pymatgen()
         elif all([not x is None for x in self.lengths+self.angles]):
@@ -120,9 +119,9 @@ class CrystalPhase(JsonDataclass):
         standardized_pymatgen = analzyer.get_conventional_standard_structure()
         if len(self.base) == 0:
             lenghts, angles = standardized_pymatgen.lattice.abc, standardized_pymatgen.lattice.angles
-            return CrystalPhase(lengths=lenghts, angles=angles, base=CrystalBasis.empty())
+            return CrystalStructure(lengths=lenghts, angles=angles, base=CrystalBasis.empty())
         else:
-            return CrystalPhase.from_pymatgen(pymatgen_structure=standardized_pymatgen)
+            return CrystalStructure.from_pymatgen(pymatgen_structure=standardized_pymatgen)
 
     def scale(self, target_density: float):
         volume_scaling = self.packing_density / target_density

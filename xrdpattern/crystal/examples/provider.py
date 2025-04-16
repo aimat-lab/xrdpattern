@@ -1,6 +1,6 @@
 import os
 
-from xrdpattern.crystal.components import CrystalBasis, CrystalPhase
+from xrdpattern.crystal.components import CrystalBasis, CrystalStructure
 
 # ---------------------------------------------------------
 
@@ -8,7 +8,7 @@ class CrystalExamples:
     @staticmethod
     def get_crystal(num: int, verbose: bool = False):
         cif_content = CrystalExamples.get_cif_content(num=num)
-        crystal_structure = CrystalPhase.from_cif(cif_content=cif_content)
+        crystal_structure = CrystalStructure.from_cif(cif_content=cif_content)
         if verbose:
             print(f'--> Cif content:\n {cif_content}')
             print(f'--> Crystal structure:\n {crystal_structure}')

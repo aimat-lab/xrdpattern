@@ -1,5 +1,5 @@
 import tests.t_crystal.base_crystal as BaseTest
-from xrdpattern.crystal import CrystalPhase, CrystalBasis
+from xrdpattern.crystal import CrystalStructure, CrystalBasis
 
 
 # ---------------------------------------------------------
@@ -34,7 +34,7 @@ class TestCifParsing(BaseTest.CrystalTest):
             print(f'CIF = \n{cif}')
 
     def test_standardize(self):
-        phase = CrystalPhase(lengths=(5.801, 11.272, 5.57), angles=(90, 90, 90), base=CrystalBasis.empty())
+        phase = CrystalStructure(lengths=(5.801, 11.272, 5.57), angles=(90, 90, 90), base=CrystalBasis.empty())
         new_phase = phase.get_standardized()
 
         self.assertTrue(len(new_phase.base) == 0)

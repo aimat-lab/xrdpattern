@@ -9,7 +9,7 @@ import numpy as np
 from numpy.typing import NDArray
 from orjson import orjson
 
-from xrdpattern.crystal import CrystalPhase
+from xrdpattern.crystal import CrystalStructure
 from xrdpattern.serialization import Serializable
 from xrdpattern.xrd.experiment import PowderExperiment
 from xrdpattern.xrd import Metadata
@@ -79,7 +79,7 @@ class XrdData(Serializable):
 
         return name
 
-    def get_phase(self, phase_num : int) -> CrystalPhase:
+    def get_phase(self, phase_num : int) -> CrystalStructure:
         return self.powder_experiment.phases[phase_num]
 
     def has_label(self, label_type: LabelType) -> bool:
@@ -104,7 +104,7 @@ class XrdData(Serializable):
         return len(self.two_theta_values)
 
     @property
-    def primary_phase(self) -> CrystalPhase:
+    def primary_phase(self) -> CrystalStructure:
         return self.powder_experiment.phases[0]
 
     @property

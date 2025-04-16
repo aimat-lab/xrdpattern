@@ -8,7 +8,7 @@ from typing import Optional
 
 import torch
 
-from xrdpattern.crystal import CrystalPhase, CrystalBasis, AtomicSite
+from xrdpattern.crystal import CrystalStructure, CrystalBasis, AtomSite
 from xrdpattern.serialization import JsonDataclass
 from xrdpattern.xrd.tensorization import LabelTensor
 
@@ -19,7 +19,7 @@ MAX_ATOMIC_SITES = 100
 
 @dataclass
 class PowderExperiment(JsonDataclass):
-    phases: list[CrystalPhase]
+    phases: list[CrystalStructure]
     xray_info : XrayInfo
     is_simulated : bool = False
     crystallite_size: Optional[float] = None
@@ -40,24 +40,24 @@ class PowderExperiment(JsonDataclass):
             angles = (float('nan'),float('nan'), float('nan'))
             base = CrystalBasis.empty()
 
-            p = CrystalPhase(lengths=lengths, angles=angles, base=base)
+            p = CrystalStructure(lengths=lengths, angles=angles, base=base)
             phases.append(p)
 
         xray_info = XrayInfo.mk_empty()
         return cls(phases=phases, crystallite_size=None, temp_in_celcius=None, xray_info=xray_info, is_simulated=is_simulated)
 
     @classmethod
-    def from_multi_phase(cls, phases : list[CrystalPhase]):
+    def from_multi_phase(cls, phases : list[CrystalStructure]):
         return cls(phases=phases, crystallite_size=None, xray_info=XrayInfo.mk_empty(), is_simulated=False)
 
     @classmethod
-    def from_single_phase(cls, phase : CrystalPhase, crystallite_size : Optional[float] = None, is_simulated : bool = False):
+    def from_single_phase(cls, phase : CrystalStructure, crystallite_size : Optional[float] = None, is_simulated : bool = False):
         artifacts = XrayInfo.mk_empty()
         return cls(phases=[phase], crystallite_size=crystallite_size, xray_info=artifacts, is_simulated=is_simulated)
 
     @classmethod
     def from_cif(cls, cif_content : str) -> PowderExperiment:
-        structure = CrystalPhase.from_cif(cif_content)
+        structure = CrystalStructure.from_cif(cif_content)
         structure.calculate_properties()
 
         xray_info = XrayInfo.mk_empty()
@@ -130,9 +130,9 @@ class PowderExperiment(JsonDataclass):
     def get_padded_base(base: CrystalBasis, nan_padding : bool) -> CrystalBasis:
         def make_padding_site():
             if nan_padding:
-                site = AtomicSite.make_placeholder()
+                site = AtomSite.make_placeholder()
             else:
-                site = AtomicSite.make_void()
+                site = AtomSite.make_void()
             return site
 
         delta = MAX_ATOMIC_SITES - len(base)
