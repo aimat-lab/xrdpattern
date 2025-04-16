@@ -12,8 +12,8 @@ from matplotlib import pyplot as plt
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrayInfo, XrdData
 from .pattern import XrdPattern
+from .progress_tracker import TrackedCollection
 from .visualization import multiplot, define_angle_start_stop_ax, define_recorded_angles_ax, define_spg_ax
-from xrdpattern.tools.tracked_collection import TrackedCollection
 
 patterdb_logger = logging.getLogger(__name__)
 patterdb_logger.setLevel(logging.INFO)
