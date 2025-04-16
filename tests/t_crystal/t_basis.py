@@ -1,6 +1,6 @@
 from holytools.devtools import Unittest
 
-from xrdpattern.crystal import CrystalBasis, AtomSite, Atom, CrystalExamples
+from xrdpattern.crystal import CrystalBasis, AtomSite, CrystalExamples
 
 
 # ---------------------------------------------------------
@@ -9,8 +9,6 @@ class TestCrystalBase(Unittest):
     def test_scattering_params(self):
         mock_base = CrystalBasis([
             AtomSite(x=0.5, y=0.5, z=0.5, occupancy=1.0, species_str="Si0"),
-            AtomSite(x=0.1, y=0.1, z=0.1, occupancy=1.0, species_str=Atom.placeholder_symbol),
-            AtomSite(x=0.9, y=0.9, z=0.9, occupancy=1.0, species_str=Atom.void_symbol)
         ])
         real_base = CrystalExamples.get_base()
 

@@ -21,8 +21,8 @@ class TestXYLib(ParserBaseTest):
 
     def test_metadata_ok(self):
         metadata = self.pattern.powder_experiment
-        primary_wavelength = metadata.primary_wavelength
-        secondary_wavelength = metadata.secondary_wavelength
+        primary_wavelength = metadata.xray_info.primary_wavelength
+        secondary_wavelength = metadata.xray_info.secondary_wavelength
 
         for prop in [primary_wavelength, secondary_wavelength]:
             self.assertIsNotNone(obj=prop)

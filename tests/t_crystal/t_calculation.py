@@ -81,8 +81,6 @@ class TestPropertyCalculation(BaseTest.CrystalTest):
         alpha, beta, gamma = crystal.angles
         lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
 
-        non_void_sites = crystal.basis.get_non_void_sites()
-
         EPSILON = 0.001
         clusters: list[list[AtomSite]] = []
 
@@ -92,7 +90,7 @@ class TestPropertyCalculation(BaseTest.CrystalTest):
                     return cl
             return None
 
-        for site in non_void_sites:
+        for site in crystal.basis.atom_sites:
             match = matching_cluster(site)
             if match:
                 match.append(site)
