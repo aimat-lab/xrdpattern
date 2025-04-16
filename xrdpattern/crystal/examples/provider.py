@@ -21,7 +21,7 @@ class CrystalExamples:
 
     @staticmethod
     def get_cif_content(num : int = 1) -> str:
-        cif_fpath = os.path.join(os.path.dirname(__file__), 'cifs', f"test{num}.cif")
+        cif_fpath = os.path.join(os.path.dirname(__file__), f"test{num}.cif")
         with open(cif_fpath, 'r') as f:
             cif_content = f.read()
         return cif_content

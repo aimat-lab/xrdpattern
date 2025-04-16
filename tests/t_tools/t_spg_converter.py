@@ -1,6 +1,6 @@
 from holytools.devtools import Unittest
 
-from xrdpattern.tools.spg_converter import SpacegroupConverter
+from xrdpattern.crystal.spgs import SpacegroupConverter
 
 
 class SpacegroupConversionTest(Unittest):
