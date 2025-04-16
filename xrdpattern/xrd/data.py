@@ -86,7 +86,7 @@ class XrdData(Serializable):
         if label_type == LabelType.composition:
             return self.primary_phase.chemical_composition is not None
         if label_type == LabelType.lattice:
-            return all(not math.isnan(x) for x in self.primary_phase.lengths) and all(not math.isnan(x) for x in self.primary_phase.angles)
+            return
         if label_type == LabelType.atom_coords:
             return len(self.primary_phase.basis) > 0
         if label_type == LabelType.spg:

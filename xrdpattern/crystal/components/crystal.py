@@ -8,12 +8,10 @@ from typing import Optional, Literal
 from distlib.util import cached_property
 from pymatgen.core import Structure, Lattice, Species, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
-from pymatgen.symmetry.groups import SpaceGroup
 
 from xrdpattern.serialization import JsonDataclass
 from .atomic_site import AtomSite
 from .base import CrystalBasis
-
 
 logger = logging.getLogger(__name__)
 CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tetragonal", "triclinic", "trigonal"]
@@ -26,6 +24,11 @@ class CrystalStructure(JsonDataclass):
     spacegroup : Optional[int] = None
     chemical_composition : Optional[str] = None
     wyckoff_symbols : Optional[list[str]] = None
+    phase_fraction: Optional[float] = None
+
+    def __post_init__(self):
+        if not 0 <= self.phase_fraction <= 1:
+            raise ValueError(f'Phase fraction must be between 0 and 1. Got {self.phase_fraction}')
 
     @classmethod
     def from_cif(cls, cif_content : str) -> CrystalStructure:
@@ -138,3 +141,11 @@ class CrystalStructure(JsonDataclass):
         if spg <= 194:
             return "hexagonal"
         return "cubic"
+
+    @property
+    def angles(self) -> tuple[float, float, float]:
+        return self.lattice.angles
+
+    @property
+    def lengths(self) -> tuple[float, float, float]:
+        return self.lattice.lengths

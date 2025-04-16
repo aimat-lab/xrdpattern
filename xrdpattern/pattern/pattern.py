@@ -103,8 +103,7 @@ class XrdPattern(XrdData):
             if isinstance(v1, np.ndarray):
                 is_ok = np.array_equal(v1, v2)
             elif isinstance(v1, PowderExperiment):
-                objs_equal = [str(x)==str(y) for x,y in zip(v1.get_list_repr(), v2.get_list_repr())]
-                is_ok = all(objs_equal)
+                is_ok = v1
             else:
                 is_ok = v1 == v2
 
