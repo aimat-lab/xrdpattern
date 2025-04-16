@@ -1,4 +1,6 @@
 import tests.t_crystal.base_crystal as BaseTest
+from xrdpattern.crystal import CrystalPhase, CrystalBase
+
 
 # ---------------------------------------------------------
 
@@ -31,6 +33,9 @@ class TestCifParsing(BaseTest.CrystalTest):
             cif = crystal.to_cif()
             print(f'CIF = \n{cif}')
 
+    def test_standardize(self):
+        phase = CrystalPhase(lengths=(5.801, 11.272, 5.57), angles=(90, 90, 90), base=CrystalBase.empty())
+        phase.get_standardized()
 
 if __name__ == "__main__":
     TestCifParsing.execute_all()

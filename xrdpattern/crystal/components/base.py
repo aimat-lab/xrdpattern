@@ -11,12 +11,13 @@ from .atomic_site import AtomicSite
 # ---------------------------------------------------------
 
 class CrystalBase(Serializable):
-    def __init__(self, atomic_sites : Optional[list[AtomicSite]] = None):
+    def __init__(self, atomic_sites : list[AtomicSite]):
         super().__init__()
-        if not atomic_sites is None:
-            self.atomic_sites : list[AtomicSite] = atomic_sites
-        else:
-            self.atomic_sites : list[AtomicSite] = []
+        self.atomic_sites : list[AtomicSite] = atomic_sites
+
+    @classmethod
+    def empty(cls):
+        return cls(atomic_sites=[])
 
     def calculate_atomic_volume(self) -> float:
         total_atomic_volume = 0
@@ -50,7 +51,7 @@ class CrystalBase(Serializable):
         self.atomic_sites.append(item)
 
     def __add__(self, other : list[AtomicSite]):
-        new_base = CrystalBase()
+        new_base = CrystalBase.empty()
         for site in self:
             new_base.append(site)
         for site in other:

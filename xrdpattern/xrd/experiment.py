@@ -38,7 +38,7 @@ class PowderExperiment(JsonDataclass):
         for j in range(num_phases):
             lengths = (float('nan'),float('nan'), float('nan'))
             angles = (float('nan'),float('nan'), float('nan'))
-            base = CrystalBase()
+            base = CrystalBase.empty()
 
             p = CrystalPhase(lengths=lengths, angles=angles, base=base)
             phases.append(p)

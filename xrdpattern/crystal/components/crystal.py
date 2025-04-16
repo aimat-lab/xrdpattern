@@ -40,7 +40,7 @@ class CrystalPhase(JsonDataclass):
     @classmethod
     def from_pymatgen(cls, pymatgen_structure: Structure) -> CrystalPhase:
         lattice = pymatgen_structure.lattice
-        base : CrystalBase = CrystalBase()
+        base : CrystalBase = CrystalBase.empty()
 
         for index, site in enumerate(pymatgen_structure.sites):
             site_composition = site.species
