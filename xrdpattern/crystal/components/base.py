@@ -3,10 +3,9 @@ from __future__ import annotations
 import math
 import json
 from typing import Optional, Iterable
-
+from xrdpattern.serialization import Serializable
 
 from .atomic_site import AtomicSite
-from ...tools.serialization import Serializable
 
 
 # ---------------------------------------------------------

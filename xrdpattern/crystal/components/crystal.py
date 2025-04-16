@@ -9,7 +9,7 @@ from pymatgen.core import Structure, Lattice, Species, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.groups import SpaceGroup
 
-from xrdpattern.tools.serialization import JsonDataclass
+from xrdpattern.serialization import JsonDataclass
 from .atomic_site import AtomicSite
 from .base import CrystalBase
 

@@ -9,7 +9,7 @@ from typing import Optional
 import torch
 
 from xrdpattern.crystal import CrystalPhase, CrystalBase, AtomicSite
-from xrdpattern.tools.serialization import JsonDataclass
+from xrdpattern.serialization import JsonDataclass
 from xrdpattern.xrd.tensorization import LabelTensor
 
 NUM_SPACEGROUPS = 230

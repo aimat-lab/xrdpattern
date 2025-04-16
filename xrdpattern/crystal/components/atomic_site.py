@@ -6,7 +6,7 @@ from typing import Optional
 
 from pymatgen.core import Species
 
-from xrdpattern.tools.serialization import Serializable
+from xrdpattern.serialization import Serializable
 
 ScatteringParams = tuple[float, float, float, float, float, float, float, float]
 #---------------------------------------------------------

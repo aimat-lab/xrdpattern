@@ -10,7 +10,7 @@ from numpy.typing import NDArray
 from orjson import orjson
 
 from xrdpattern.crystal import CrystalPhase
-from xrdpattern.tools.serialization import Serializable
+from xrdpattern.serialization import Serializable
 from xrdpattern.xrd.experiment import PowderExperiment
 from xrdpattern.xrd import Metadata
 

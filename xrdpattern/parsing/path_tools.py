@@ -1,12 +1,8 @@
-from __future__ import annotations
-
 import os
 from typing import Optional
 
 from pathvalidate import sanitize_filename
 
-
-# --------------------------------------------------------------------------------------------
 
 class PathTools:
     @staticmethod
@@ -58,8 +54,3 @@ class PathTools:
                 fpath = os.path.join(root, file)
                 subfile_paths.append(fpath)
         return subfile_paths
-
-
-
-if __name__ == "__main__":
-    pass

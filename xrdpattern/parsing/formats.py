@@ -1,11 +1,13 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import Optional
 
 from xrdpattern.parsing.xylib import get_xylib_repr
 
-from xrdpattern.tools.pathtools import PathTools
+from xrdpattern.parsing.path_tools import PathTools
 from .stoe import StoeParser
+
 
 # -------------------------------------------
 
@@ -125,10 +127,12 @@ class Formats:
             selected_suffixes = Formats.get_all_suffixes()
         selected_suffixes = [x.replace('.', '') for x in selected_suffixes]
 
-        subfile_paths = PathTools.get_subfile_fpaths(dirpath=dirpath, recursive=True)
+        subfile_paths = PathTools.get_subfile_fpaths(dirpath=dirpath)
         data_fpaths = [p for p in subfile_paths if PathTools.get_suffix(fpath=p) in selected_suffixes]
 
         return data_fpaths
+
+
 
 if __name__ == "__main__":
     # tha_format = Formats.get_format(fpath='/home/daniel/aimat/opXRD/raw/zhang_cao_0/data/caobin_pxrd_xy/C/xy.txt')

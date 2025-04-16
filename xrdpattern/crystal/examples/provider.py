@@ -1,6 +1,6 @@
 import os
 
-from .components import CrystalPhase, CrystalBase
+from xrdpattern.crystal.components import CrystalBase, CrystalPhase
 
 # ---------------------------------------------------------
 

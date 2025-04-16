@@ -12,8 +12,8 @@ from .cif.cif_parser import CifParser
 from .csv import CsvParser
 from .dat.dat_parser import DatParser
 from .formats import XrdFormat, Formats
+from .path_tools import PathTools
 from .xylib import get_xylib_repr
-from ..tools.pathtools import PathTools
 
 
 # -------------------------------------------
