@@ -1,6 +1,6 @@
 import os
 
-from xrdpattern.crystal.components import CrystalBase, CrystalPhase
+from xrdpattern.crystal.components import CrystalBasis, CrystalPhase
 
 # ---------------------------------------------------------
 
@@ -15,7 +15,7 @@ class CrystalExamples:
         return crystal_structure
 
     @staticmethod
-    def get_base(num : int = 1, verbose : bool = False) -> CrystalBase:
+    def get_base(num : int = 1, verbose : bool = False) -> CrystalBasis:
         crystal_stucture = CrystalExamples.get_crystal(num=num, verbose=verbose)
         return crystal_stucture.base
 

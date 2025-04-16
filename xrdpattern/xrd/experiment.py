@@ -8,7 +8,7 @@ from typing import Optional
 
 import torch
 
-from xrdpattern.crystal import CrystalPhase, CrystalBase, AtomicSite
+from xrdpattern.crystal import CrystalPhase, CrystalBasis, AtomicSite
 from xrdpattern.serialization import JsonDataclass
 from xrdpattern.xrd.tensorization import LabelTensor
 
@@ -38,7 +38,7 @@ class PowderExperiment(JsonDataclass):
         for j in range(num_phases):
             lengths = (float('nan'),float('nan'), float('nan'))
             angles = (float('nan'),float('nan'), float('nan'))
-            base = CrystalBase.empty()
+            base = CrystalBasis.empty()
 
             p = CrystalPhase(lengths=lengths, angles=angles, base=base)
             phases.append(p)
@@ -127,7 +127,7 @@ class PowderExperiment(JsonDataclass):
         return list_repr
 
     @staticmethod
-    def get_padded_base(base: CrystalBase, nan_padding : bool) -> CrystalBase:
+    def get_padded_base(base: CrystalBasis, nan_padding : bool) -> CrystalBasis:
         def make_padding_site():
             if nan_padding:
                 site = AtomicSite.make_placeholder()

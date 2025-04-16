@@ -10,7 +10,7 @@ from .atomic_site import AtomicSite
 
 # ---------------------------------------------------------
 
-class CrystalBase(Serializable):
+class CrystalBasis(Serializable):
     def __init__(self, atomic_sites : list[AtomicSite]):
         super().__init__()
         self.atomic_sites : list[AtomicSite] = atomic_sites
@@ -55,7 +55,7 @@ class CrystalBase(Serializable):
         self.atomic_sites.append(item)
 
     def __add__(self, other : list[AtomicSite]):
-        new_base = CrystalBase.empty()
+        new_base = CrystalBasis.empty()
         for site in self:
             new_base.append(site)
         for site in other:

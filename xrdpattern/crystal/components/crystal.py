@@ -11,7 +11,7 @@ from pymatgen.symmetry.groups import SpaceGroup
 
 from xrdpattern.serialization import JsonDataclass
 from .atomic_site import AtomicSite
-from .base import CrystalBase
+from .base import CrystalBasis
 
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tet
 class CrystalPhase(JsonDataclass):
     lengths : tuple[float, float, float]
     angles : tuple[float, float, float]
-    base : CrystalBase
+    base : CrystalBasis
     phase_fraction : Optional[float] = None
     chemical_composition : Optional[str] = None
     spacegroup : Optional[int] = None
@@ -40,7 +40,7 @@ class CrystalPhase(JsonDataclass):
     @classmethod
     def from_pymatgen(cls, pymatgen_structure: Structure) -> CrystalPhase:
         lattice = pymatgen_structure.lattice
-        base : CrystalBase = CrystalBase.empty()
+        base : CrystalBasis = CrystalBasis.empty()
 
         for index, site in enumerate(pymatgen_structure.sites):
             site_composition = site.species
@@ -120,7 +120,7 @@ class CrystalPhase(JsonDataclass):
         standardized_pymatgen = analzyer.get_conventional_standard_structure()
         if len(self.base) == 0:
             lenghts, angles = standardized_pymatgen.lattice.abc, standardized_pymatgen.lattice.angles
-            return CrystalPhase(lengths=lenghts, angles=angles, base=CrystalBase.empty())
+            return CrystalPhase(lengths=lenghts, angles=angles, base=CrystalBasis.empty())
         else:
             return CrystalPhase.from_pymatgen(pymatgen_structure=standardized_pymatgen)
 
