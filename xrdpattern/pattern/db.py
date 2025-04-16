@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import random
 from dataclasses import dataclass
@@ -8,14 +9,14 @@ from typing import Optional
 import matplotlib.gridspec as gridspec
 from matplotlib import pyplot as plt
 
-from holytools.logging import LoggerFactory
-from holytools.userIO import TrackedCollection
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrayInfo, XrdData
 from .pattern import XrdPattern
 from .visualization import multiplot, define_angle_start_stop_ax, define_recorded_angles_ax, define_spg_ax
+from xrdpattern.tools.tracked_collection import TrackedCollection
 
-patterdb_logger = LoggerFactory.get_logger(name=__name__)
+patterdb_logger = logging.getLogger(__name__)
+patterdb_logger.setLevel(logging.INFO)
 parser = MasterParser()
 
 # -------------------------------------------

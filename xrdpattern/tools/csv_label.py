@@ -3,8 +3,8 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from holytools.fsys import PathTools
 from xrdpattern.crystal import CrystalPhase
+from xrdpattern.tools.pathtools import PathTools
 from xrdpattern.xrd import PowderExperiment
 
 

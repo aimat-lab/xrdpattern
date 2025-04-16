@@ -9,8 +9,8 @@ import numpy as np
 from numpy.typing import NDArray
 from orjson import orjson
 
-from holytools.abstract import Serializable
 from xrdpattern.crystal import CrystalPhase
+from xrdpattern.tools.serialization import Serializable
 from xrdpattern.xrd.experiment import PowderExperiment
 from xrdpattern.xrd import Metadata
 

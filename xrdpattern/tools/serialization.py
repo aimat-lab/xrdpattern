@@ -1,8 +1,19 @@
 from __future__ import annotations
+
+import dataclasses
 import os
 from abc import abstractmethod
+from dataclasses import dataclass
+from datetime import datetime, date, time
+from decimal import Decimal
+from enum import Enum
+from types import NoneType
 from typing import Optional
+from typing import get_type_hints, get_origin, get_args, Union
 
+import orjson
+
+# ---------------------------------------------------------------------
 
 class Serializable:
     @abstractmethod
@@ -64,24 +75,7 @@ def get_free_path(save_dirpath : str, name : str, suffix : Optional[str] = None,
     return fpath
 
 
-import dataclasses
-from dataclasses import dataclass
-from datetime import datetime, date, time
-from decimal import Decimal
-from enum import Enum
-from types import NoneType
-from typing import get_type_hints, get_origin, get_args, Union
-
-import orjson
-from PIL.Image import Image
-
-from holytools.abstract.serialization.serializable import Serializable
-from holytools.fileIO import ImageConverter
-
-BasicSerializable = (bool | int | float | str | Serializable | Decimal | datetime | date | time | Enum | Image | None)
-
-
-# -------------------------------------------
+BasicSerializable = (bool | int | float | str | Serializable | Decimal | datetime | date | time | Enum | None)
 
 @dataclass
 class JsonDataclass(Serializable):
@@ -163,8 +157,6 @@ class JsonDataclass(Serializable):
             entry = obj.name
         elif isinstance(obj, float) and obj != obj:
             entry = 'nan'
-        elif isinstance(obj, Image):
-            entry = ImageConverter.to_base64_str(image=obj)
         elif isinstance(obj, bool):
             entry = bool(int(obj))
         else:
@@ -188,8 +180,6 @@ class JsonDataclass(Serializable):
             instance = basic_cls[s]
         elif issubclass(basic_cls, Serializable):
             instance = basic_cls.from_str(s)
-        elif basic_cls == Image:
-            instance = ImageConverter.from_base64_str(s)
         elif basic_cls == NoneType:
             instance = None
         else:
@@ -225,7 +215,3 @@ class TypeAnalzer:
     def get_inner_types(dtype: type) -> tuple:
         inner_dtypes = get_args(dtype)
         return inner_dtypes
-
-
-if __name__ == "__main__":
-    pass

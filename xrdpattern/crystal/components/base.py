@@ -4,9 +4,9 @@ import math
 import json
 from typing import Optional, Iterable
 
-from holytools.abstract import Serializable
 
 from .atomic_site import AtomicSite
+from ...tools.serialization import Serializable
 
 
 # ---------------------------------------------------------

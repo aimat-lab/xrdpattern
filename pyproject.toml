@@ -20,7 +20,9 @@ dependencies = [
     "pandas",
     "tensordict",
     "orjson",
-    "openpyxl"
+    "openpyxl",
+    "pathvalidate",
+    "progressbar2"
 ]
 
 

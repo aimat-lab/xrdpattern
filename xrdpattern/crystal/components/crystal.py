@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import dataclass, asdict
 from typing import Optional, Literal
 
@@ -8,12 +9,12 @@ from pymatgen.core import Structure, Lattice, Species, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 from pymatgen.symmetry.groups import SpaceGroup
 
-from holytools.abstract import JsonDataclass
-from holytools.logging import LoggerFactory
+from xrdpattern.tools.serialization import JsonDataclass
 from .atomic_site import AtomicSite
 from .base import CrystalBase
 
-logger = LoggerFactory.get_logger(name=__name__)
+
+logger = logging.getLogger(__name__)
 CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tetragonal", "triclinic", "trigonal"]
 # ---------------------------------------------------------
 
