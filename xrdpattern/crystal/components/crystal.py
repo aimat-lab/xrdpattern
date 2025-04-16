@@ -106,9 +106,23 @@ class CrystalPhase(JsonDataclass):
 
 
     def get_standardized(self) -> CrystalPhase:
-        analzyer = SpacegroupAnalyzer(self.to_pymatgen())
+        if len(self.base) > 0:
+            structure = self.to_pymatgen()
+        elif all([not x is None for x in self.lengths+self.angles]):
+            a, b, c = self.lengths
+            alpha, beta, gamma = self.angles
+            lattice = Lattice.from_parameters(a, b, c, alpha, beta, gamma)
+            structure = Structure(lattice, ["H"], [[0, 0, 0]])
+        else:
+            raise ValueError('Cannot standardize crystal with no base and no lengths/angles')
+
+        analzyer = SpacegroupAnalyzer(structure=structure)
         standardized_pymatgen = analzyer.get_conventional_standard_structure()
-        return CrystalPhase.from_pymatgen(pymatgen_structure=standardized_pymatgen)
+        if len(self.base) == 0:
+            lenghts, angles = standardized_pymatgen.lattice.abc, standardized_pymatgen.lattice.angles
+            return CrystalPhase(lengths=lenghts, angles=angles, base=CrystalBase.empty())
+        else:
+            return CrystalPhase.from_pymatgen(pymatgen_structure=standardized_pymatgen)
 
     def scale(self, target_density: float):
         volume_scaling = self.packing_density / target_density

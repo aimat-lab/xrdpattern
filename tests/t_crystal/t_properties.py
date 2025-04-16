@@ -35,7 +35,9 @@ class TestCifParsing(BaseTest.CrystalTest):
 
     def test_standardize(self):
         phase = CrystalPhase(lengths=(5.801, 11.272, 5.57), angles=(90, 90, 90), base=CrystalBase.empty())
-        phase.get_standardized()
+        new_phase = phase.get_standardized()
+
+        self.assertTrue(len(new_phase.base) == 0)
 
 if __name__ == "__main__":
     TestCifParsing.execute_all()

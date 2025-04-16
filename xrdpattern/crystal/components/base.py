@@ -19,6 +19,10 @@ class CrystalBase(Serializable):
     def empty(cls):
         return cls(atomic_sites=[])
 
+    @classmethod
+    def placeholder(cls):
+        return cls(atomic_sites=[AtomicSite.make_placeholder()])
+
     def calculate_atomic_volume(self) -> float:
         total_atomic_volume = 0
         for site in self.get_non_void_sites():
