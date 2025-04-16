@@ -2,8 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from holytools.fsys import PathTools, FsysNode
-from holytools.fsys.fsys_node import Directory
+from holytools.fsys import PathTools, Directory
 from xrdpattern.parsing.xylib import get_xylib_repr
 from .stoe import StoeParser
 

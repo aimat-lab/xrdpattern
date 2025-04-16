@@ -126,5 +126,3 @@ class CrystalPhase(JsonDataclass):
     def num_atoms(self) -> int:
         return len(self.base)
 
-
-
