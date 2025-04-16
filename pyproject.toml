@@ -22,7 +22,8 @@ dependencies = [
     "orjson",
     "openpyxl",
     "pathvalidate",
-    "progressbar2"
+    "progressbar2",
+    "distlib"
 ]
 
 
