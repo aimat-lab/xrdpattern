@@ -25,7 +25,7 @@ class TestCifParsing(BaseTest.CrystalTest):
     def test_num_atoms(self):
         expected_atom_counts = [4*4, 6]
         for crystal, num_atoms_exp in zip(self.custom_structures, expected_atom_counts):
-            self.assertEqual(len(crystal.base), num_atoms_exp)
+            self.assertEqual(len(crystal.basis), num_atoms_exp)
 
 
     def test_to_cif(self):
@@ -34,10 +34,10 @@ class TestCifParsing(BaseTest.CrystalTest):
             print(f'CIF = \n{cif}')
 
     def test_standardize(self):
-        phase = CrystalStructure(lengths=(5.801, 11.272, 5.57), angles=(90, 90, 90), base=CrystalBasis.empty())
+        phase = CrystalStructure(lengths=(5.801, 11.272, 5.57), angles=(90, 90, 90), basis=CrystalBasis.empty())
         new_phase = phase.get_standardized()
 
-        self.assertTrue(len(new_phase.base) == 0)
+        self.assertTrue(len(new_phase.basis) == 0)
 
 if __name__ == "__main__":
     TestCifParsing.execute_all()

@@ -40,7 +40,7 @@ class PowderExperiment(JsonDataclass):
             angles = (float('nan'),float('nan'), float('nan'))
             base = CrystalBasis.empty()
 
-            p = CrystalStructure(lengths=lengths, angles=angles, base=base)
+            p = CrystalStructure(lengths=lengths, angles=angles, basis=base)
             phases.append(p)
 
         xray_info = XrayInfo.mk_empty()
@@ -90,7 +90,7 @@ class PowderExperiment(JsonDataclass):
         a,b,c = primary_phase.lengths
         alpha, beta, gamma = primary_phase.angles
         lattice_params_nonempty = not all(math.isnan(x) for x in [a, b, c, alpha, beta, gamma])
-        crystal_basis_nonempty = len(primary_phase.base) > 0
+        crystal_basis_nonempty = len(primary_phase.basis) > 0
         return xray_info_nonemtpy or composition_nonempty or lattice_params_nonempty or crystal_basis_nonempty
 
     @property
@@ -110,7 +110,7 @@ class PowderExperiment(JsonDataclass):
         lattice_params = [a, b, c, alpha, beta, gamma]
         list_repr += lattice_params
 
-        base = structure.base
+        base = structure.basis
         padded_base = self.get_padded_base(base=base, nan_padding=base.is_empty())
         for atomic_site in padded_base:
             list_repr += atomic_site.as_list()

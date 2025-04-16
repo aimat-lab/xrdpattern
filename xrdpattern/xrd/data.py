@@ -88,7 +88,7 @@ class XrdData(Serializable):
         if label_type == LabelType.lattice:
             return all(not math.isnan(x) for x in self.primary_phase.lengths) and all(not math.isnan(x) for x in self.primary_phase.angles)
         if label_type == LabelType.atom_coords:
-            return len(self.primary_phase.base) > 0
+            return len(self.primary_phase.basis) > 0
         if label_type == LabelType.spg:
             spg_explicit = self.primary_phase.spacegroup is not None
             spg_implicit = self.has_label(label_type=LabelType.lattice) and self.has_label(

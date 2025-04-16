@@ -17,7 +17,7 @@ class CrystalExamples:
     @staticmethod
     def get_base(num : int = 1, verbose : bool = False) -> CrystalBasis:
         crystal_stucture = CrystalExamples.get_crystal(num=num, verbose=verbose)
-        return crystal_stucture.base
+        return crystal_stucture.basis
 
     @staticmethod
     def get_cif_content(num : int = 1) -> str:

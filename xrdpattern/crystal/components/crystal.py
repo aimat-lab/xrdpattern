@@ -22,7 +22,7 @@ CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tet
 @dataclass
 class CrystalStructure(JsonDataclass):
     lattice : Lattice
-    base : CrystalBasis
+    basis : CrystalBasis
     spacegroup : Optional[int] = None
     chemical_composition : Optional[str] = None
     wyckoff_symbols : Optional[list[str]] = None
@@ -47,7 +47,7 @@ class CrystalStructure(JsonDataclass):
                 atomic_site = AtomSite(x, y, z, occupancy=occupancy, species_str=str(species))
                 base.append(atomic_site)
 
-        crystal_str = cls(lattice=lattice, base=base)
+        crystal_str = cls(lattice=lattice, basis=base)
 
         return crystal_str
 
@@ -59,7 +59,7 @@ class CrystalStructure(JsonDataclass):
         return pymatgen_structure.to(filename='', fmt='cif')
 
     def to_pymatgen(self) -> Structure:
-        non_void_sites = self.base.atom_sites
+        non_void_sites = self.basis.atom_sites
         atoms = [site.atom.as_pymatgen for site in non_void_sites]
         positions = [(site.x, site.y, site.z) for site in non_void_sites]
 
@@ -72,14 +72,14 @@ class CrystalStructure(JsonDataclass):
     def get_view(self) -> str:
         the_dict = asdict(self)
         the_dict = {str(key) : str(value) for key, value in the_dict.items() if not isinstance(value, Structure)}
-        the_dict['base'] = f'{self.base[0]}, ...'
+        the_dict['base'] = f'{self.basis[0]}, ...'
         return json.dumps(the_dict, indent='-')
 
     # ---------------------------------------------------------
     # properties
 
     def calculate_properties(self):
-        if len(self.base) == 0:
+        if len(self.basis) == 0:
             raise ValueError('Base is empty! Cannot calculate properties of empty crystal. Aborting ...')
 
         pymatgen_structure = self.to_pymatgen()
@@ -91,11 +91,11 @@ class CrystalStructure(JsonDataclass):
         self.chemical_composition = pymatgen_structure.composition.formula
 
     def get_standardized(self) -> CrystalStructure:
-        struct = self.to_pymatgen() if len(self.base) > 0 else Structure(self.lattice, ["H"], [[0, 0, 0]])
+        struct = self.to_pymatgen() if len(self.basis) > 0 else Structure(self.lattice, ["H"], [[0, 0, 0]])
         analzyer = SpacegroupAnalyzer(structure=struct)
         std_struct = analzyer.get_conventional_standard_structure()
-        if len(self.base) == 0:
-            return CrystalStructure(lattice=std_struct.lattice, base=CrystalBasis.empty())
+        if len(self.basis) == 0:
+            return CrystalStructure(lattice=std_struct.lattice, basis=CrystalBasis.empty())
         else:
             return CrystalStructure.from_pymatgen(pymatgen_structure=std_struct)
 
@@ -106,12 +106,12 @@ class CrystalStructure(JsonDataclass):
     @cached_property
     def packing_density(self) -> float:
         volume_uc = self.volume_uc
-        atomic_volume = self.base.calculate_atomic_volume()
+        atomic_volume = self.basis.calculate_atomic_volume()
         return atomic_volume/volume_uc
 
     @cached_property
     def num_atoms(self) -> int:
-        return len(self.base)
+        return len(self.basis)
 
     @cached_property
     def volume_uc(self) -> float:
