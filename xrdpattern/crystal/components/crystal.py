@@ -3,13 +3,14 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass, asdict
+from types import NoneType
 from typing import Optional, Literal
 
 from distlib.util import cached_property
 from pymatgen.core import Structure, Lattice, Species, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
-from xrdpattern.serialization import JsonDataclass
+from xrdpattern.serialization import JsonDataclass, Serializable
 from .atomic_site import AtomSite
 from .base import CrystalBasis
 
@@ -150,3 +151,21 @@ class CrystalStructure(JsonDataclass):
     @property
     def lengths(self) -> tuple[float, float, float]:
         return self.lattice.lengths
+
+    @staticmethod
+    def make_basic(basic_cls, s: str):
+        if basic_cls == Lattice:
+            print(f's = {s}')
+            arr = s[1:-1].split(',')
+            params = [float(x) for x in arr]
+            return Lattice.from_parameters(*params)
+        else:
+            return JsonDataclass.make_basic(basic_cls, s)
+
+    @staticmethod
+    def get_basic_entry(obj):
+        if isinstance(obj, Lattice):
+            params = *obj.lengths, *obj.angles
+            return str(params)
+        else:
+            return JsonDataclass.get_basic_entry(obj)
