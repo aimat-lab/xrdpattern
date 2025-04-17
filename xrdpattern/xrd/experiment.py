@@ -67,8 +67,10 @@ class PowderExperiment(JsonDataclass):
     # properties
 
     def is_nonempty(self) -> bool:
-        xray_info_nonemtpy = self.xray_info.primary_wavelength or self.xray_info.secondary_wavelength
-        
+        xray_info_nonemtpy = not self.xray_info.primary_wavelength is None or not self.xray_info.secondary_wavelength is None
+        if len(self.phases) == 0:
+            return xray_info_nonemtpy
+
         primary_phase = self.phases[0]
         composition_nonempty = primary_phase.chemical_composition
 

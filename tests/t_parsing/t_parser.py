@@ -81,7 +81,6 @@ class TestParserDatabase(ParserBaseTest):
         self.assertIsInstance(all_db, PatternDB)
 
 
-
 if __name__ == "__main__":
     TestParserDatabase.execute_all()
     # TestCustomFormats.execute_all()

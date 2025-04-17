@@ -9,6 +9,7 @@ class ParserBaseTest(Unittest):
     def setUpClass(cls):
         cls.pattern: XrdPattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
         cls.parser : MasterParser = MasterParser()
+        cls.pattern.save(fpath=DataExamples.get_aimat_fpath(), force_overwrite=True)
 
     def check_data_ok(self, two_theta_values : list[float], intensities : list[float]):
         data_view = str(two_theta_values)[:100]+ '...' +  str(two_theta_values)[-100:]

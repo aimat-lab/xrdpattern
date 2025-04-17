@@ -3,14 +3,13 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass, asdict
-from types import NoneType
 from typing import Optional, Literal
 
 from distlib.util import cached_property
 from pymatgen.core import Structure, Lattice, Species, Element
 from pymatgen.symmetry.analyzer import SpacegroupAnalyzer
 
-from xrdpattern.serialization import JsonDataclass, Serializable
+from xrdpattern.serialization import JsonDataclass
 from .atomic_site import AtomSite
 from .base import CrystalBasis
 
