@@ -34,9 +34,9 @@ class XrayInfo(JsonDataclass):
 
 
 class XrdAnode:
-    Cu = "Cu"
-    Mo = "Mo"
-    Cr = "Cr"
-    Fe = "Fe"
-    Co = "Co"
-    Ag = "Ag"
+    Cu : str = "Cu"
+    Mo : str = "Mo"
+    Cr : str = "Cr"
+    Fe : str = "Fe"
+    Co : str = "Co"
+    Ag : str = "Ag"
