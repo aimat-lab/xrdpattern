@@ -1,6 +1,6 @@
 import numpy as np
 
-from xrdpattern.xrd import XrdData, XrdAnode
+from xrdpattern.xrd import XrdData, XrdAnode, XrayInfo
 
 
 class DatParser:
@@ -21,7 +21,7 @@ class DatParser:
             x,y = x[l:], y[l:]
 
             new_pattern = XrdData.make_unlabeled(two_theta_values=pattern_angles, intensities=pattern_intensities)
-            new_pattern.powder_experiment.xray_info = XrdAnode.Cu.get_xray_info()
+            new_pattern.powder_experiment.xray_info = XrayInfo.copper_xray()
             patterns.append(new_pattern)
 
         return patterns

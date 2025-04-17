@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
@@ -8,6 +9,10 @@ from xrdpattern.serialization import JsonDataclass
 class XrayInfo(JsonDataclass):
     primary_wavelength: Optional[float]
     secondary_wavelength: Optional[float]
+
+    @classmethod
+    def copper_xray(cls) -> XrayInfo:
+        return cls.from_anode(element=XrdAnode.Cu)
 
     @classmethod
     def from_anode(cls, element : str):

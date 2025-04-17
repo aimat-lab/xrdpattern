@@ -27,8 +27,9 @@ class CrystalStructure(JsonDataclass):
     phase_fraction: Optional[float] = None
 
     def __post_init__(self):
-        if not 0 <= self.phase_fraction <= 1:
-            raise ValueError(f'Phase fraction must be between 0 and 1. Got {self.phase_fraction}')
+        if not self.phase_fraction is None:
+            if not 0 <= self.phase_fraction <= 1:
+                raise ValueError(f'Phase fraction must be between 0 and 1. Got {self.phase_fraction}')
 
     @classmethod
     def from_cif(cls, cif_content : str) -> CrystalStructure:
