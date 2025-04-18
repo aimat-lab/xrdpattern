@@ -1,6 +1,6 @@
 import numpy as np
 
-from xrdpattern.xrd import XrdData, XrdAnode, XrayInfo
+from xrdpattern.xrd import XrdData, XrayInfo
 
 
 class DatParser:
