@@ -6,14 +6,12 @@ import random
 from dataclasses import dataclass
 from typing import Optional
 
-import matplotlib.gridspec as gridspec
 from matplotlib import pyplot as plt
 
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrayInfo, XrdData
 from .pattern import XrdPattern
 from .progress_tracker import TrackedCollection
-from .visualization import multiplot, define_angle_start_stop_ax, define_recorded_angles_ax, define_spg_ax
 
 patterdb_logger = logging.getLogger(__name__)
 patterdb_logger.setLevel(logging.INFO)
@@ -165,38 +163,17 @@ class PatternDB:
             if user_input.lower() == 'q':
                 break
 
-    def show_histograms(self, save_fpath : Optional[str] = None, attach_colorbar : bool = True):
-        fig = plt.figure(figsize=(12, 8))
 
-        figure = gridspec.GridSpec(nrows=2, ncols=1, figure=fig, hspace=0.35)
-        figure.update(top=0.96, bottom=0.075)
-        upper_half = figure[0].subgridspec(1, 3)
-        ax2 = fig.add_subplot(upper_half[:, :])
-        define_spg_ax(patterns=self.patterns, ax=ax2)
-
-        lower_half = figure[1].subgridspec(1, 2)
-        ax3 = fig.add_subplot(lower_half[:, 0])
-        define_recorded_angles_ax(patterns=self.patterns, ax=ax3)
-
-        if attach_colorbar:
-            lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=3, width_ratios=[3, 3, 4] , hspace=0, wspace=0)
-            ax4 = fig.add_subplot(lower_half_right[1:, :2])  # scaatter
-            ax5 = fig.add_subplot(lower_half_right[:1, :2], sharex=ax4)  # Above
-            ax6 = fig.add_subplot(lower_half_right[1:, 2:], sharey=ax4)  # Right
-            ax7 = fig.add_subplot(lower_half_right[:1, 2:])
-            ax7.axis('off')
-        else:
-            lower_half_right = lower_half[1].subgridspec(nrows=3, ncols=4, width_ratios=[2.75, 3, 3, 3], hspace=0, wspace=0)
-            ax4 = fig.add_subplot(lower_half_right[1:, 1:3])  # scatter
-            ax5 = fig.add_subplot(lower_half_right[:1, 1:3], sharex=ax4)  # Above
-            ax6 = fig.add_subplot(lower_half_right[1:, 3:4], sharey=ax4)  # Right
-            ax7 = fig.add_subplot(lower_half_right[:4, :1])
-
-        define_angle_start_stop_ax(patterns=self.patterns, density_ax=ax4, top_marginal=ax5, right_marginal=ax6, cmap_ax=ax7, attach_colorbar=attach_colorbar)
-
-        if save_fpath:
-            plt.savefig(save_fpath)
-        plt.show()
-
-
-
+def multiplot(patterns : list[XrdPattern], start_idx : int):
+    labels = [p.get_name() for p in patterns]
+    fig, axes = plt.subplots(4, 8, figsize=(20, 10))
+    for i, pattern in enumerate(patterns):
+        ax = axes[i // 8, i % 8]
+        x_values, intensities = pattern.get_pattern_data(apply_standardization=False)
+        ax.set_xlabel(r'$2\theta$ (Degrees)')
+        ax.plot(x_values, intensities, label='Interpolated Intensity')
+        ax.set_ylabel('Intensity')
+        ax.set_title(f'({i+start_idx}){labels[i][:20]}')
+        ax.legend(fontsize=8)
+    plt.tight_layout()
+    plt.show()
