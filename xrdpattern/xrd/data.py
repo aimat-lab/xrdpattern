@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, fields, field
-from enum import Enum
+from dataclasses import dataclass, field
+from dataclasses import fields
 
 import numpy as np
 from numpy.typing import NDArray
@@ -10,8 +10,8 @@ from orjson import orjson
 
 from xrdpattern.crystal import CrystalStructure
 from xrdpattern.serialization import Serializable
-from xrdpattern.xrd import Metadata
 from xrdpattern.xrd.experiment import PowderExperiment
+from xrdpattern.xrd.metadata import Metadata
 
 
 # -------------------------------------------
@@ -82,25 +82,6 @@ class XrdData(Serializable):
     def get_phase(self, phase_num : int) -> CrystalStructure:
         return self.powder_experiment.phases[phase_num]
 
-
-    def has_label(self, label_type: LabelType) -> bool:
-        raise NotImplementedError
-        # if label_type == LabelType.composition:
-        #     return self.primary_phase.chemical_composition is not None
-        # if label_type == LabelType.lattice:
-        #     return
-        # if label_type == LabelType.atom_coords:
-        #     return len(self.primary_phase.basis) > 0
-        # if label_type == LabelType.spg:
-        #     spg_explicit = self.primary_phase.spacegroup is not None
-        #     spg_implicit = self.has_label(label_type=LabelType.lattice) and self.has_label(
-        #         label_type=LabelType.atom_coords)
-        #     return spg_explicit or spg_implicit
-        # return False
-
-    def is_labeled(self) -> bool:
-        return any(self.has_label(label_type=lt) for lt in LabelType)
-
     @property
     def num_entries(self) -> int:
         return len(self.two_theta_values)
@@ -124,18 +105,3 @@ class XrdData(Serializable):
     @property
     def is_simulated(self) -> bool:
         return self.powder_experiment.is_simulated
-
-    @property
-    def composition(self) -> str:
-        comp = ''
-        for phase in self.powder_experiment.phases:
-            comp += phase.chemical_composition
-        return comp
-
-
-
-class LabelType(Enum):
-    spg = "spg"
-    lattice = "lattice"
-    atom_coords = "atom_coords"
-    composition = "composition"

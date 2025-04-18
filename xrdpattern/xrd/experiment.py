@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
-from importlib.metadata import version
+from dataclasses import dataclass
+from enum import Enum
 from typing import Optional
 
 import torch
@@ -69,19 +69,36 @@ class PowderExperiment(JsonDataclass):
     # ---------------------------------------------------------
     # properties
 
-    def is_nonempty(self) -> bool:
-        xray_info_nonemtpy = not self.xray_info.primary_wavelength is None or not self.xray_info.secondary_wavelength is None
+    @property
+    def primary_phase(self):
+        return self.phases[0]
+
+    def has_label(self, label_type: LabelType) -> bool:
+        if label_type == LabelType.primary_wavelength:
+            return not self.xray_info.primary_wavelength is None
+        if label_type == LabelType.secondary_wavelength:
+            return not self.xray_info.secondary_wavelength is None
+
         if len(self.phases) == 0:
-            return xray_info_nonemtpy
+            return False
 
-        primary_phase = self.phases[0]
-        composition_nonempty = primary_phase.chemical_composition
+        if label_type == LabelType.lattice:
+            return True
+        elif label_type == LabelType.spg:
+            return self.primary_phase.spacegroup is not None
+        elif label_type == LabelType.composition:
+            return self.primary_phase.chemical_composition is not None
+        elif label_type == LabelType.temperature:
+            return self.temp_K is not None
+        elif label_type == LabelType.crystallite_size:
+            return self.crystallite_size_nm is not None
+        elif label_type == LabelType.atom_coords:
+            return len(self.primary_phase.basis.atom_sites) > 0
+        else:
+            raise ValueError(f'Label type {label_type} is not supported.')
 
-        a,b,c = primary_phase.lengths
-        alpha, beta, gamma = primary_phase.angles
-        lattice_params_nonempty = not all(math.isnan(x) for x in [a, b, c, alpha, beta, gamma])
-        crystal_basis_nonempty = len(primary_phase.basis) > 0
-        return xray_info_nonemtpy or composition_nonempty or lattice_params_nonempty or crystal_basis_nonempty
+    def is_labeled(self) -> bool:
+        return any(self.has_label(label_type=lt) for lt in LabelType)
 
     def __eq__(self, other : PowderExperiment):
         return self.to_str() == other.to_str()
@@ -97,34 +114,16 @@ class PowderExperiment(JsonDataclass):
 
         spg_list = [self.phases[0].spacegroup == j for j in range(1,NUM_SPACEGROUPS+1)]
         feature_dict = {
-            'lengths': to_tensor(self.phases[0].lengths),
-            'angles' : to_tensor(self.phases[0].angles),
-            'spg_probabilities' : to_tensor(spg_list),
-            'crystallite_size' : to_tensor(self.crystallite_size_nm) if self.crystallite_size_nm else None,
-            'temperature' : to_tensor(self.temp_K) if self.temp_K else None,
-            'primary_wavelength' : to_tensor(self.xray_info.primary_wavelength) if self.xray_info.primary_wavelength else None,
-            'secondary_wavelength' : to_tensor(self.xray_info.secondary_wavelength) if self.xray_info.secondary_wavelength else None,
+            LabelType.lengths.value: to_tensor(self.phases[0].lengths),
+            LabelType.angles.value : to_tensor(self.phases[0].angles),
+            LabelType.spg.value : to_tensor(spg_list),
+            LabelType.crystallite_size.value : to_tensor(self.crystallite_size_nm) if self.crystallite_size_nm else None,
+            LabelType.temperature.value : to_tensor(self.temp_K) if self.temp_K else None,
+            LabelType.primary_wavelength.value : to_tensor(self.xray_info.primary_wavelength) if self.xray_info.primary_wavelength else None,
+            LabelType.secondary_wavelength.value : to_tensor(self.xray_info.secondary_wavelength) if self.xray_info.secondary_wavelength else None,
         }
         td = ExperimentTensor(feature_dict)
         return td
-
-
-@dataclass
-class Metadata(JsonDataclass):
-    filename: Optional[str] = None
-    institution: Optional[str] = None
-    contributor_name: Optional[str] = None
-    original_file_format: Optional[str] = None
-    measurement_date: Optional[str] = None
-    tags: list[str] = field(default_factory=list)
-    xrdpattern_version: str = field(default_factory=lambda: get_library_version('xrdpattern'))
-
-    def __eq__(self, other : Metadata):
-        s1, s2 = self.to_str(), other.to_str()
-        return s1 == s2
-
-    def remove_filename(self):
-        self.filename = None
 
 
 class ExperimentTensor(TensorDict):
@@ -133,20 +132,31 @@ class ExperimentTensor(TensorDict):
         return torch.cat([lengths, angles], dim=0)
 
     def get_spg_probabilities(self):
-        return self.get('spg_probabilities')
+        return self.get(LabelType.spg.value)
 
     def get_crystallite_size(self):
-        return self.get('crystallite_size')
+        return self.get(LabelType.crystallite_size.value)
 
     def get_ambient_temperature(self):
-        return self.get('temperature')
+        return self.get(LabelType.temperature.value)
 
     def get_primary_wavelength(self):
-        return self.get('primary_wavelength')
+        return self.get(LabelType.primary_wavelength.value)
 
     def get_secondary_wavelength(self):
-        return self.get('secondary_wavelength')
+        return self.get(LabelType.secondary_wavelength.value)
 
 
-def get_library_version(library_name : str):
-    return version(library_name)
+class LabelType(Enum):
+    lattice = "lattice"
+    lengths = "lengths"
+    angles = "angles"
+    atom_coords = "atom_coords"
+    spg = "spg"
+    crystallite_size = 'crystallite_size'
+    temperature = 'temperature'
+    primary_wavelength = 'primary_wavelength'
+    secondary_wavelength = 'secondary_wavelength'
+    composition = "composition"
+
+

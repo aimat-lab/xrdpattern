@@ -1,3 +1,3 @@
-from .experiment import XrayInfo, Metadata, PowderExperiment
-from .data import XrdData, LabelType
+from .experiment import XrayInfo, PowderExperiment, LabelType
+from .data import XrdData
 from .xray import XrdAnode, XrayInfo
