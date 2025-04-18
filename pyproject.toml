@@ -11,20 +11,21 @@ authors = [{ name = "Daniel Hollarek", email = "daniel.hollarek@googlemail.com" 
 license = { file = "LICENSE.txt" }
 urls = { Homepage = "https://github.com/aimat-lab/xrdpattern" }
 dependencies = [
-    "numpy < 2.0.0",
-    "scipy",
-    "matplotlib",
-    "pymatgen",
-    "torch",
-    "gemmi",
-    "pandas",
-    "tensordict",
-    "orjson",
-    "openpyxl",
-    "pathvalidate",
-    "progressbar2",
-    "distlib"
+    "numpy==1.26.4",
+    "scipy==1.15.1",
+    "matplotlib==3.10.0",
+    "pymatgen==2024.8.9",
+    "torch==2.6.0",
+    "gemmi==0.7.0",
+    "pandas==2.2.3",
+    "tensordict==0.7.0",
+    "orjson==3.10.15",
+    "openpyxl==3.1.5",
+    "pathvalidate==3.2.3",
+    "progressbar2==4.5.0",
+    "distlib==0.3.9"
 ]
+
 
 
 [tool.deptry.per_rule_ignores]
