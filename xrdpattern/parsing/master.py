@@ -122,7 +122,7 @@ class MasterParser:
 
         experiment = PowderExperiment.make_empty()
         experiment.xray_info = XrayInfo(primary_wavelength=get_float('ALPHA1'), secondary_wavelength=get_float('ALPHA2'))
-        experiment.temp_in_celcius = get_float('TEMP_CELCIUS')
+        experiment.temp_K = get_float('TEMP_CELCIUS')
 
         return experiment
 

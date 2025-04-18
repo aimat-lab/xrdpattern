@@ -148,7 +148,7 @@ class XrdPattern(XrdData):
               f'- Crystal: {crystal_data} \n'
               f'- Experiment Parameters:\n'
               f'    - Primary wavelength: {self.powder_experiment.xray_info.primary_wavelength}\n'
-              f'    - Temperature : {self.powder_experiment.temp_in_celcius}\n'
+              f'    - Temperature : {self.powder_experiment.temp_K}\n'
               f'- Origin Metadata:\n'
                 f'    - Contributor: {self.metadata.contributor_name}\n'
                 f'    - Institution: {self.metadata.institution}\n'

@@ -5,6 +5,9 @@ from dataclasses import dataclass, field
 from importlib.metadata import version
 from typing import Optional
 
+import torch
+from tensordict import TensorDict
+
 from xrdpattern.crystal import CrystalStructure
 from xrdpattern.serialization import JsonDataclass
 from xrdpattern.xrd.xray import XrayInfo
@@ -19,8 +22,8 @@ class PowderExperiment(JsonDataclass):
     phases: list[CrystalStructure]
     xray_info : XrayInfo
     is_simulated : bool = False
-    crystallite_size: Optional[float] = None
-    temp_in_celcius: Optional[float] = None
+    crystallite_size_nm: Optional[float] = None
+    temp_K: Optional[float] = None
 
     def __post_init__(self):
         if len(self.phases) == 1:
@@ -33,12 +36,12 @@ class PowderExperiment(JsonDataclass):
 
     @classmethod
     def from_multi_phase(cls, phases : list[CrystalStructure]):
-        return cls(phases=phases, crystallite_size=None, xray_info=XrayInfo.mk_empty(), is_simulated=False)
+        return cls(phases=phases, crystallite_size_nm=None, xray_info=XrayInfo.mk_empty(), is_simulated=False)
 
     @classmethod
     def from_single_phase(cls, phase : CrystalStructure, crystallite_size : Optional[float] = None, is_simulated : bool = False):
         artifacts = XrayInfo.mk_empty()
-        return cls(phases=[phase], crystallite_size=crystallite_size, xray_info=artifacts, is_simulated=is_simulated)
+        return cls(phases=[phase], crystallite_size_nm=crystallite_size, xray_info=artifacts, is_simulated=is_simulated)
 
     @classmethod
     def from_cif(cls, cif_content : str) -> PowderExperiment:
@@ -83,8 +86,28 @@ class PowderExperiment(JsonDataclass):
     def __eq__(self, other : PowderExperiment):
         return self.to_str() == other.to_str()
 
-    # def to_tensor(self, dtype : torch.dtype = torch.get_default_dtype(), device : torch.device = torch.get_default_device()) -> LabelTensor:
-    #     return LabelTensor(tensor)
+    def to_tensordict(self, dtype : torch.dtype = torch.get_default_dtype(),
+                            device : torch.device = torch.get_default_device()) -> ExperimentTensor:
+
+        def to_tensor(data):
+            return torch.tensor(data=data, dtype=dtype, device=device)
+
+        if len(self.phases) == 0:
+            raise ValueError('No phases in the experiment. Cannot convert to TensorDict.')
+
+        spg_list = [self.phases[0].spacegroup == j for j in range(1,NUM_SPACEGROUPS+1)]
+        feature_dict = {
+            'lengths': to_tensor(self.phases[0].lengths),
+            'angles' : to_tensor(self.phases[0].angles),
+            'spg_probabilities' : to_tensor(spg_list),
+            'crystallite_size' : to_tensor(self.crystallite_size_nm) if self.crystallite_size_nm else None,
+            'temperature' : to_tensor(self.temp_K) if self.temp_K else None,
+            'primary_wavelength' : to_tensor(self.xray_info.primary_wavelength) if self.xray_info.primary_wavelength else None,
+            'secondary_wavelength' : to_tensor(self.xray_info.secondary_wavelength) if self.xray_info.secondary_wavelength else None,
+        }
+        td = ExperimentTensor(feature_dict)
+        return td
+
 
 @dataclass
 class Metadata(JsonDataclass):
@@ -102,6 +125,27 @@ class Metadata(JsonDataclass):
 
     def remove_filename(self):
         self.filename = None
+
+
+class ExperimentTensor(TensorDict):
+    def get_lattice_params(self):
+        lengths, angles = self.get('lengths'), self.get('angles')
+        return torch.cat([lengths, angles], dim=0)
+
+    def get_spg_probabilities(self):
+        return self.get('spg_probabilities')
+
+    def get_crystallite_size(self):
+        return self.get('crystallite_size')
+
+    def get_ambient_temperature(self):
+        return self.get('temperature')
+
+    def get_primary_wavelength(self):
+        return self.get('primary_wavelength')
+
+    def get_secondary_wavelength(self):
+        return self.get('secondary_wavelength')
 
 
 def get_library_version(library_name : str):

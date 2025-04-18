@@ -1,89 +1,66 @@
 from holytools.devtools import Unittest
-from xrdpattern.xrd import PowderExperiment
+from pymatgen.core import Lattice
+
+from xrdpattern.crystal import CrystalStructure, CrystalBasis
+from xrdpattern.xrd import PowderExperiment, XrayInfo
+from xrdpattern.xrd.experiment import ExperimentTensor
 
 
 class TestPowderExperiment(Unittest):
-    def test_empty(self):
+    def test_is_empty(self):
+        
+        # empty is empty
         empty_experiment = PowderExperiment.make_empty()
         self.assertTrue(not empty_experiment.is_nonempty())
+        
+        #nonempty is nonempty
 
 
-class TestTensorRegions(Unittest):
+    def test_has_label(self):
+        pass
+    
+
+class TestTensorization(Unittest):
     def setUp(self):
-        raise ValueError(f'Tensor regions currently broken! Restore tensorizaation + tests')
-        # self.label : PowderExperiment = self.make_example_label()
-        # self.label_tensor : LabelTensor = self.label.to_tensor()
-        # self.crystal_structure : CrystalPhase = self.label.powder.phases
+        self.label : PowderExperiment = self.make_example_label()
+        self.crystal_structure: CrystalStructure = self.label.phases[0]
+        self.experiment_tensor : ExperimentTensor = self.label.to_tensordict()
 
+    def test_lattice_params(self):
+        expected = (*self.crystal_structure.lengths, *self.crystal_structure.angles)
+        actual = self.experiment_tensor.get_lattice_params().tolist()
+        print(f'Tensor lattice params are {actual}')
+        for x,y in zip(expected, actual):
+            self.assertEqual(x, y)
 
-    #
-    # def test_lattice_params(self):
-    #     expected = (*self.crystal_structure.lengths, *self.crystal_structure.angles)
-    #     actual = self.label_tensor.get_lattice_params().tolist()
-    #     print(f'Tensor lattice params are {actual}')
-    #     for x,y in zip(expected, actual):
-    #         self.assertEqual(x, y)
-    #
-    #
-    # def test_atomic_sites(self):
-    #     base = self.crystal_structure.base
-    #     for i, region in enumerate(self.label.atomic_site_regions):
-    #         expected_site = base[i] if i < len(base) else AtomicSite.make_void()
-    #         expected = expected_site.as_list()
-    #         actual = self.label_tensor.get_atomic_site(i).tolist()
-    #         if i == 0:
-    #             print(f'Tensor atomic site is {actual}\n Atomic site length = {len(actual)}')
-    #         # 3 coordinates, 8 scattering params, 1 occupancy
-    #         self.assertEqual(len(actual), 3+8+1)
-    #         for x,y, in zip(expected, actual):
-    #             if x is None:
-    #                 self.assertTrue(is_nan(y))
-    #             else:
-    #                 self.assertEqual(x,y)
-    #
-    # def test_spacegroups(self):
-    #     expected = [1.0 if j ==  self.crystal_structure.spacegroup else 0.0 for j in range(1,231)]
-    #     actual = self.label_tensor.get_spg_probabilities().tolist()
-    #     print(f'Tensor spacegroups are {actual}; \nSpacegroups tensor length = {len(actual)}')
-    #     self.assertEqual(actual, expected, f'Expected: {expected}, Actual: {actual}')
-    #     self.assertEqual(len(actual), 230)
-    #
-    #
-    # def test_artifacts(self):
-    #     expected = [round(num, 2) for num in self.label.artifacts.as_list()]
-    #     actual = [round(num, 2) for num in self.label_tensor.get_artifacts().tolist()]
-    #     print(f'Tensor artifacts are {actual}')
-    #     self.assertEqual(actual, expected)
-    #
-    # def test_total_length(self):
-    #     expected = len(self.label.list_repr)
-    #     # noinspection PyTypeChecker
-    #     actual = len(self.label_tensor)
-    #     print(f'Tensor length is {actual}')
-    #     self.assertEqual(actual, expected)
-    #
-    #
-    # def test_returns_powder_tensors(self):
-    #     tensors = [self.label_tensor.get_atomic_site(0), self.label_tensor.get_lattice_params(), self.label_tensor.get_lattice_params()]
-    #     for t in tensors:
-    #         print(f'Type of {t} is {type(t)}')
-    #         self.assertEqual(t.__class__, LabelTensor)
-    #
-    # @staticmethod
-    # def make_example_label() -> PowderExperiment:
-    #     primitives = Lengths(a=3, b=3, c=3)
-    #     angles = Angles(alpha=90, beta=90, gamma=90)
-    #     base = CrystalBase([AtomicSite.make_void()])
-    #     crystal_structure = CrystalPhase(lengths=primitives, angles=angles, base=base)
-    #     crystal_structure.spacegroup = 120
-    #
-    #     powder = PowderSample(phases=[crystal_structure], crystallite_size=10.0)
-    #     artifacts = XRayInfo(primary_wavelength=1.54, secondary_wavelength=1.54)
-    #     return PowderExperiment(powder, artifacts, is_simulated=True)
-    #
+    def test_spacegroups(self):
+        expected = [1.0 if j ==  self.crystal_structure.spacegroup else 0.0 for j in range(1,231)]
+        actual = self.experiment_tensor.get_spg_probabilities().tolist()
+        print(f'Tensor spacegroups probabilities are {actual}; \nSpacegroups tensor length = {len(actual)}')
+        self.assertEqual(actual, expected, f'Expected: {expected}, Actual: {actual}')
+        self.assertEqual(len(actual), 230)
 
-def is_nan(value):
-    return value != value
+    def test_wavelength(self):
+        expected = self.label.xray_info.primary_wavelength
+        actual = self.experiment_tensor.get_primary_wavelength()
+        print(f'Tensor primary wavelength is {actual}')
+        self.assertAlmostEqual(actual, expected)
+
+        expected_secondary = self.label.xray_info.secondary_wavelength
+        actual_secondary = self.experiment_tensor.get_secondary_wavelength()
+        print(f'Tensor secondary wavelength is {actual_secondary}')
+        self.assertAlmostEqual(actual_secondary, expected_secondary)
+
+    @staticmethod
+    def make_example_label() -> PowderExperiment:
+        lattice = Lattice.from_parameters(3,3,3,90,90,90)
+        basis = CrystalBasis.empty()
+        crystal_structure = CrystalStructure(lattice=lattice, basis=basis)
+        crystal_structure.spacegroup = 120
+
+        xray_info = XrayInfo.copper_xray()
+        return PowderExperiment(phases=[crystal_structure], xray_info=xray_info, crystallite_size_nm=10, temp_K=300)
 
 if __name__ == "__main__":
-    TestPowderExperiment.execute_all()
+    # TestPowderExperiment.execute_all()
+    TestTensorization.execute_all()
