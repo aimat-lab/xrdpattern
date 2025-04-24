@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 import os
 import random
 from dataclasses import dataclass
@@ -51,7 +50,7 @@ class PatternDB:
                 if strict:
                     raise ValueError(err_msg)
                 else:
-                    patterdb_logger.warning(err_msg)
+                    print(err_msg)
 
             if not limit_patterns is None:
                 if len(db.patterns) >= limit_patterns:
@@ -75,14 +74,14 @@ class PatternDB:
             self.fpath_dict[fpath].append(p)
             self.patterns.append(p)
         except Exception as e:
-            patterdb_logger.warning(msg=f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
+            print(f"Could not import pattern from file {fpath}:\n- Reason: \"{e}\"\n")
             if strict:
                 raise e
 
     def save(self, dirpath : str, skip_if_occupied : bool = True):
         is_occupied = os.path.isfile(dirpath) or os.path.isdir(dirpath)
         if is_occupied and skip_if_occupied:
-            patterdb_logger.warning(f'Path \"{dirpath}\" already exists. Skipping save operation')
+            print(f'Path \"{dirpath}\" already exists. Skipping save operation')
             return
 
         os.makedirs(dirpath, exist_ok=True)

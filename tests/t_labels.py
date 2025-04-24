@@ -15,8 +15,8 @@ class TestPowderExperiment(Unittest):
 
     def test_is_empty(self):
         empty_experiment = PowderExperiment.make_empty()
-        self.assertTrue(not empty_experiment.is_labeled())
-        self.assertTrue(self.full_experiment.is_labeled())
+        self.assertTrue(not empty_experiment.is_labeled)
+        self.assertTrue(self.full_experiment.is_labeled)
 
     def test_has_label(self):
         self.assertTrue(not self.empty_experiment.has_label(label_type=LabelType.lattice))
