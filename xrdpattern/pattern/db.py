@@ -15,6 +15,12 @@ from .progress_tracker import TrackedCollection
 
 patterdb_logger = logging.getLogger(__name__)
 patterdb_logger.setLevel(logging.INFO)
+if not patterdb_logger.hasHandlers():
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    patterdb_logger.addHandler(handler)
+
 parser = MasterParser()
 
 # -------------------------------------------

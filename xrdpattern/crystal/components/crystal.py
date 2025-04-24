@@ -154,7 +154,6 @@ class CrystalStructure(JsonDataclass):
     @staticmethod
     def make_basic(basic_cls, s: str):
         if basic_cls == Lattice:
-            print(f's = {s}')
             arr = s[1:-1].split(',')
             params = [float(x) for x in arr]
             return Lattice.from_parameters(*params)

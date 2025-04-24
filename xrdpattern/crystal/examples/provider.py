@@ -6,7 +6,7 @@ from xrdpattern.crystal.components import CrystalBasis, CrystalStructure
 
 class CrystalExamples:
     @staticmethod
-    def get_crystal(num: int, verbose: bool = False):
+    def get_crystal(num: int = 1, verbose: bool = False):
         cif_content = CrystalExamples.get_cif_content(num=num)
         crystal_structure = CrystalStructure.from_cif(cif_content=cif_content)
         if verbose:

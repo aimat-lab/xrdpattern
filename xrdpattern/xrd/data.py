@@ -72,15 +72,12 @@ class XrdData(Serializable):
 
     def get_name(self) -> str:
         name = self.metadata.filename
-        if not name:
+        if not name and len(self.powder_experiment.phases) > 0:
             name = self.primary_phase.chemical_composition
         if not name:
             name = f'unnamed_pattern'
 
         return name
-
-    def get_phase(self, phase_num : int) -> CrystalStructure:
-        return self.powder_experiment.phases[phase_num]
 
     @property
     def num_entries(self) -> int:

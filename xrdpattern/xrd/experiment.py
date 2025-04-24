@@ -68,9 +68,6 @@ class PowderExperiment(JsonDataclass):
     # ---------------------------------------------------------
     # properties
 
-    @property
-    def primary_phase(self):
-        return self.phases[0]
 
     def has_label(self, label_type: LabelType) -> bool:
         if label_type == LabelType.primary_wavelength:
@@ -97,7 +94,7 @@ class PowderExperiment(JsonDataclass):
             raise ValueError(f'Label type {label_type} is not supported.')
 
     def is_labeled(self) -> bool:
-        return any(self.has_label(label_type=lt) for lt in LabelType)
+        return any(self.has_label(label_type=lt) for lt in LabelType.get_main_labels())
 
     def __eq__(self, other : PowderExperiment):
         return self.to_str() == other.to_str()
@@ -159,3 +156,7 @@ class LabelType(Enum):
     composition = "composition"
 
 
+
+    @classmethod
+    def get_main_labels(cls) -> list[LabelType]:
+        return [LabelType.lattice, LabelType.spg, LabelType.atom_coords, LabelType.composition]
