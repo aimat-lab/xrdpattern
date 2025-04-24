@@ -22,7 +22,7 @@ class TestPowderExperiment(Unittest):
         self.assertTrue(not self.empty_experiment.has_label(label_type=LabelType.lattice))
 
         self.assertTrue(self.full_experiment.has_label(label_type=LabelType.lattice))
-        self.assertTrue(self.full_experiment.has_label(label_type=LabelType.atom_coords))
+        self.assertTrue(self.full_experiment.has_label(label_type=LabelType.basis))
         self.assertTrue(self.full_experiment.has_label(label_type=LabelType.spg))
 
 

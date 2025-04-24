@@ -11,7 +11,7 @@ from orjson import orjson
 
 from xrdpattern.crystal import CrystalStructure
 from xrdpattern.serialization import Serializable
-from xrdpattern.xrd.experiment import PowderExperiment
+from xrdpattern.xrd.experiment import PowderExperiment, LabelType
 from xrdpattern.xrd.metadata import Metadata
 
 
@@ -107,3 +107,32 @@ class XrdData(Serializable):
     @property
     def is_simulated(self) -> bool:
         return self.powder_experiment.is_simulated
+
+    @property
+    def is_labeled(self) -> bool:
+        return any(self.has_label(label_type=lt) for lt in LabelType.get_main_labels())
+
+    def has_label(self, label_type: LabelType) -> bool:
+        powder_experiment = self.powder_experiment
+        if label_type == LabelType.primary_wavelength:
+            return not powder_experiment.xray_info.primary_wavelength is None
+        if label_type == LabelType.secondary_wavelength:
+            return not powder_experiment.xray_info.secondary_wavelength is None
+
+        if len(powder_experiment.phases) == 0:
+            return False
+
+        if label_type == LabelType.lattice:
+            return True
+        elif label_type == LabelType.spg:
+            return powder_experiment.phases[0].spacegroup is not None
+        elif label_type == LabelType.composition:
+            return powder_experiment.phases[0].chemical_composition is not None
+        elif label_type == LabelType.temperature:
+            return powder_experiment.temp_K is not None
+        elif label_type == LabelType.crystallite_size:
+            return powder_experiment.crystallite_size_nm is not None
+        elif label_type == LabelType.basis:
+            return len(powder_experiment.phases[0].basis.atom_sites) > 0
+        else:
+            raise ValueError(f'Label type {label_type} is not supported.')

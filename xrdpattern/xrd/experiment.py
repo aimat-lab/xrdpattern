@@ -68,34 +68,6 @@ class PowderExperiment(JsonDataclass):
     # ---------------------------------------------------------
     # properties
 
-
-    def has_label(self, label_type: LabelType) -> bool:
-        if label_type == LabelType.primary_wavelength:
-            return not self.xray_info.primary_wavelength is None
-        if label_type == LabelType.secondary_wavelength:
-            return not self.xray_info.secondary_wavelength is None
-
-        if len(self.phases) == 0:
-            return False
-
-        if label_type == LabelType.lattice:
-            return True
-        elif label_type == LabelType.spg:
-            return self.phases[0].spacegroup is not None
-        elif label_type == LabelType.composition:
-            return self.phases[0].chemical_composition is not None
-        elif label_type == LabelType.temperature:
-            return self.temp_K is not None
-        elif label_type == LabelType.crystallite_size:
-            return self.crystallite_size_nm is not None
-        elif label_type == LabelType.atom_coords:
-            return len(self.phases[0].basis.atom_sites) > 0
-        else:
-            raise ValueError(f'Label type {label_type} is not supported.')
-
-    def is_labeled(self) -> bool:
-        return any(self.has_label(label_type=lt) for lt in LabelType.get_main_labels())
-
     def __eq__(self, other : PowderExperiment):
         return self.to_str() == other.to_str()
 
@@ -147,7 +119,7 @@ class LabelType(Enum):
     lattice = "lattice"
     lengths = "lengths"
     angles = "angles"
-    atom_coords = "atom_coords"
+    basis = "basis"
     spg = "spg"
     crystallite_size = 'crystallite_size'
     temperature = 'temperature'
@@ -159,4 +131,4 @@ class LabelType(Enum):
 
     @classmethod
     def get_main_labels(cls) -> list[LabelType]:
-        return [LabelType.lattice, LabelType.spg, LabelType.atom_coords, LabelType.composition]
+        return [LabelType.lattice, LabelType.spg, LabelType.basis, LabelType.composition]
