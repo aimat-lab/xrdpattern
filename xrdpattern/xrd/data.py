@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from dataclasses import fields
+from typing import Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -84,8 +85,12 @@ class XrdData(Serializable):
         return len(self.two_theta_values)
 
     @property
-    def primary_phase(self) -> CrystalStructure:
-        return self.powder_experiment.phases[0]
+    def primary_phase(self) -> Optional[CrystalStructure]:
+        phases = self.powder_experiment.phases
+        if len(phases) > 0:
+            return phases[0]
+        else:
+            return None
 
     @property
     def startval(self):

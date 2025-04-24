@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from numpy.typing import NDArray
 from scipy.interpolate import CubicSpline
-from xrdpattern.crystal import CrystalStructure
 
 from xrdpattern.parsing import MasterParser, Formats
 from xrdpattern.xrd import XrdData

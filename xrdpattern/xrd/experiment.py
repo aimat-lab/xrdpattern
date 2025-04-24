@@ -81,15 +81,15 @@ class PowderExperiment(JsonDataclass):
         if label_type == LabelType.lattice:
             return True
         elif label_type == LabelType.spg:
-            return self.primary_phase.spacegroup is not None
+            return self.phases[0].spacegroup is not None
         elif label_type == LabelType.composition:
-            return self.primary_phase.chemical_composition is not None
+            return self.phases[0].chemical_composition is not None
         elif label_type == LabelType.temperature:
             return self.temp_K is not None
         elif label_type == LabelType.crystallite_size:
             return self.crystallite_size_nm is not None
         elif label_type == LabelType.atom_coords:
-            return len(self.primary_phase.basis.atom_sites) > 0
+            return len(self.phases[0].basis.atom_sites) > 0
         else:
             raise ValueError(f'Label type {label_type} is not supported.')
 
