@@ -13,14 +13,6 @@ from xrdpattern.xrd import XrayInfo, XrdData
 from .pattern import XrdPattern
 from .progress_tracker import TrackedCollection
 
-patterdb_logger = logging.getLogger(__name__)
-patterdb_logger.setLevel(logging.INFO)
-if not patterdb_logger.hasHandlers():
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    patterdb_logger.addHandler(handler)
-
 parser = MasterParser()
 
 # -------------------------------------------
@@ -48,7 +40,7 @@ class PatternDB:
         if len(data_fpaths) == 0:
             raise ValueError(f"No data files matching suffixes {suffixes} found in directory {dirpath}")
 
-        patterdb_logger.info(f'Loading patterns from local dirpath {dirpath}')
+        print(f'Loading patterns from local dirpath {dirpath}')
         db = cls._make_empty(name=os.path.basename(dirpath))
         for fpath in TrackedCollection(data_fpaths):
             try:
@@ -65,8 +57,8 @@ class PatternDB:
                 if len(db.patterns) >= limit_patterns:
                     break
 
-        patterdb_logger.info(f'Finished loading pattern database located at {dirpath}')
-        patterdb_logger.info(f'Successfully extracted {len(db.patterns)} patterns '
+        print(f'Finished loading pattern database located at {dirpath}')
+        print(f'Successfully extracted {len(db.patterns)} patterns '
                              f'from {len(db.fpath_dict)}/{len(data_fpaths)} xrd files')
 
         return db

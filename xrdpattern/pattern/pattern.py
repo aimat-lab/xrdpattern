@@ -20,7 +20,7 @@ parser = MasterParser()
 
 class XrdPattern(XrdData):
     @classmethod
-    def load(cls, fpath : str, mute : bool = False) -> XrdPattern:
+    def load(cls, fpath : str) -> XrdPattern:
         pattern_list = parser.extract(fpath=fpath)
         if len(pattern_list) > 1:
             raise ValueError('Multiple patterns found in file. Please use PatternDB class instead')
