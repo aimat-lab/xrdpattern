@@ -38,10 +38,6 @@ class CrystalStructure(JsonDataclass):
         if self.phase_fraction != self.phase_fraction:
             raise ValueError(f'Phase fraction {self.phase_fraction} is nan')
 
-        if not self.basis is None:
-            self.calculate_properties()
-
-
 
     @classmethod
     def make_empty(cls):
