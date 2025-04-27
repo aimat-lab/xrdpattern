@@ -8,24 +8,27 @@ from xrdpattern.crystal import CrystalExamples
 from xrdpattern.parsing import Formats
 from xrdpattern.parsing.examples import DataExamples
 from xrdpattern.pattern import XrdPattern
-from xrdpattern.xrd import PowderExperiment
+from xrdpattern.xrd import PowderExperiment, LabelType
 
 
 # ---------------------------------------------------------
 
 class TestXrdPattern(ParserBaseTest):
+    def setUp(self):
+        self.unlabeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
+        self.labeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
+        self.labeled_pattern.powder_experiment = PowderExperiment.from_cif(cif_content=CrystalExamples.get_cif_content())
+
     def test_save_load_roundtrip(self):
-        unlabeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
-        labeled_pattern = XrdPattern.load(fpath=DataExamples.get_bruker_fpath())
-        labeled_pattern.powder_experiment = PowderExperiment.from_cif(cif_content=CrystalExamples.get_cif_content())
 
-        reloaded_unlabeled = self.save_and_load(unlabeled_pattern)
-        reloaded_labeled = self.save_and_load(labeled_pattern)
 
-        self.assertEqual(unlabeled_pattern, reloaded_unlabeled)
-        self.assertEqual(labeled_pattern, reloaded_labeled)
-        print(f'labeled after roundtrip \n:{labeled_pattern.get_info_as_str()[:500]} + '
-              f'{labeled_pattern.get_info_as_str()[-500:]}')
+        reloaded_unlabeled = self.save_and_load(self.unlabeled_pattern)
+        reloaded_labeled = self.save_and_load(self.labeled_pattern)
+
+        self.assertEqual(self.unlabeled_pattern, reloaded_unlabeled)
+        self.assertEqual(self.labeled_pattern, reloaded_labeled)
+        print(f'labeled after roundtrip \n:{self.labeled_pattern.get_info_as_str()[:500]} + '
+              f'{self.labeled_pattern.get_info_as_str()[-500:]}')
 
     def test_plot(self):
         if self.is_manual_mode:
@@ -72,6 +75,13 @@ class TestXrdPattern(ParserBaseTest):
 
         plt.tight_layout()
         plt.show()
+
+    def test_has_label(self):
+        self.assertTrue(not self.unlabeled_pattern.has_label(label_type=LabelType.lattice))
+
+        self.assertTrue(self.labeled_pattern.has_label(label_type=LabelType.lattice))
+        self.assertTrue(self.labeled_pattern.has_label(label_type=LabelType.basis))
+        self.assertTrue(self.labeled_pattern.has_label(label_type=LabelType.spg))
 
     @staticmethod
     def save_and_load(pattern : XrdPattern) -> XrdPattern:

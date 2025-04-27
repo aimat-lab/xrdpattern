@@ -6,25 +6,6 @@ from xrdpattern.xrd import PowderExperiment, XrayInfo
 from xrdpattern.xrd.experiment import ExperimentTensor, LabelType
 from xrdpattern.crystal.examples import CrystalExamples
 
-class TestPowderExperiment(Unittest):
-    def setUp(self):
-        cif_content = CrystalExamples.get_cif_content(num=1)
-        self.empty_experiment : PowderExperiment = PowderExperiment.make_empty()
-        self.full_experiment : PowderExperiment = PowderExperiment.from_cif(cif_content=cif_content)
-        self.full_experiment.phases[0].calculate_properties()
-
-    def test_is_empty(self):
-        empty_experiment = PowderExperiment.make_empty()
-        self.assertTrue(not empty_experiment.is_labeled)
-        self.assertTrue(self.full_experiment.is_labeled)
-
-    def test_has_label(self):
-        self.assertTrue(not self.empty_experiment.has_label(label_type=LabelType.lattice))
-
-        self.assertTrue(self.full_experiment.has_label(label_type=LabelType.lattice))
-        self.assertTrue(self.full_experiment.has_label(label_type=LabelType.basis))
-        self.assertTrue(self.full_experiment.has_label(label_type=LabelType.spg))
-
 
 class TestTensorization(Unittest):
     def setUp(self):

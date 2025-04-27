@@ -56,4 +56,4 @@ class TestCifParsing(BaseTest.CrystalTest):
 
 
 if __name__ == "__main__":
-    TestCifParsing.execute_all()2
+    TestCifParsing.execute_all()
