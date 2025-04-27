@@ -1,7 +1,7 @@
 from pymatgen.core import Lattice
 
 import tests.t_crystal.base_crystal as BaseTest
-from xrdpattern.crystal import CrystalStructure, CrystalBasis
+from xrdpattern.crystal import CrystalStructure, CrystalBasis, CrystalExamples
 
 
 # ---------------------------------------------------------
@@ -36,11 +36,24 @@ class TestCifParsing(BaseTest.CrystalTest):
             print(f'CIF = \n{cif}')
 
     def test_standardize(self):
-        lattice = Lattice.from_parameters(5.801, 11.272, 5.57, 90, 90, 90)
-        phase = CrystalStructure(lattice=lattice, basis=CrystalBasis.empty())
-        new_phase = phase.get_standardized()
+        a,b,c = 5.801, 11.272, 5.57
+        alpha, beta, gamma = 90,90,90
+        
+        lattice = Lattice.from_parameters(a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma)
+        empty_phase = CrystalStructure(lattice=lattice, basis=CrystalBasis.empty())
+        empty_standardized = empty_phase.get_standardized()
+        self.assertTrue(len(empty_standardized.basis) == 0)
 
-        self.assertTrue(len(new_phase.basis) == 0)
+        nonempty_phase = CrystalStructure.from_cif(cif_content=CrystalExamples.get_cif_content())
+        nonempty_standardized = nonempty_phase.get_standardized()
+        for j,l in enumerate(sorted([a,b,c])):
+            self.assertAlmostEqual(nonempty_standardized.lengths[j],l)
+
+        for k,angle in enumerate(sorted([alpha, beta, gamma])):
+            self.assertAlmostEqual(nonempty_standardized.angles[k], angle)
+
+        self.assertTrue(len(nonempty_standardized.basis) == len(nonempty_phase.basis))
+
 
 if __name__ == "__main__":
-    TestCifParsing.execute_all()
+    TestCifParsing.execute_all()2
