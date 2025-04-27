@@ -3,8 +3,7 @@ from pymatgen.core import Lattice
 
 from xrdpattern.crystal import CrystalStructure, CrystalBasis
 from xrdpattern.xrd import PowderExperiment, XrayInfo
-from xrdpattern.xrd.experiment import ExperimentTensor, LabelType
-from xrdpattern.crystal.examples import CrystalExamples
+from xrdpattern.xrd.experiment import ExperimentTensor
 
 
 class TestTensorization(Unittest):
@@ -41,8 +40,7 @@ class TestTensorization(Unittest):
     @staticmethod
     def make_example_label() -> PowderExperiment:
         lattice = Lattice.from_parameters(3,3,3,90,90,90)
-        basis = CrystalBasis.empty()
-        crystal_structure = CrystalStructure(lattice=lattice, basis=basis)
+        crystal_structure = CrystalStructure(lattice=lattice, basis=None)
         crystal_structure.spacegroup = 120
 
         xray_info = XrayInfo.copper_xray()

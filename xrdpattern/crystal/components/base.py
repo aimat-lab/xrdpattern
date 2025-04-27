@@ -15,10 +15,6 @@ class CrystalBasis(Serializable):
         super().__init__()
         self.atom_sites : list[AtomSite] = atomic_sites
 
-    @classmethod
-    def empty(cls):
-        return cls(atomic_sites=[])
-
     def calculate_atomic_volume(self) -> float:
         total_atomic_volume = 0
         for site in self.atom_sites:
@@ -45,7 +41,7 @@ class CrystalBasis(Serializable):
         self.atom_sites.append(item)
 
     def __add__(self, other : list[AtomSite]):
-        new_base = CrystalBasis.empty()
+        new_base = CrystalBasis()
         for site in self:
             new_base.append(site)
         for site in other:

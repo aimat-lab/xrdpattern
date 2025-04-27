@@ -56,7 +56,7 @@ class CrystalStructure(JsonDataclass):
     @classmethod
     def from_pymatgen(cls, pymatgen_structure: Structure) -> CrystalStructure:
         lattice = pymatgen_structure.lattice
-        base : CrystalBasis = CrystalBasis.empty()
+        base : CrystalBasis = CrystalBasis(atomic_sites=[])
 
         for index, site in enumerate(pymatgen_structure.sites):
             site_composition = site.species
@@ -119,7 +119,7 @@ class CrystalStructure(JsonDataclass):
         std_struct = analzyer.get_conventional_standard_structure()
 
         if self.basis is None:
-            return CrystalStructure(lattice=std_struct.lattice, basis=CrystalBasis.empty())
+            return CrystalStructure(lattice=std_struct.lattice, basis=None)
         else:
             return CrystalStructure.from_pymatgen(pymatgen_structure=std_struct)
 

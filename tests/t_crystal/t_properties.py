@@ -1,7 +1,7 @@
 from pymatgen.core import Lattice
 
 import tests.t_crystal.base_crystal as BaseTest
-from xrdpattern.crystal import CrystalStructure, CrystalBasis, CrystalExamples
+from xrdpattern.crystal import CrystalStructure, CrystalExamples
 
 
 # ---------------------------------------------------------
@@ -23,7 +23,6 @@ class TestCifParsing(BaseTest.CrystalTest):
             self.assertAlmostEqual(beta, beta_exp, places=3)
             self.assertEqual(gamma, gamma_exp)
 
-
     def test_num_atoms(self):
         expected_atom_counts = [4*4, 6]
         for crystal, num_atoms_exp in zip(self.custom_structures, expected_atom_counts):
@@ -40,9 +39,11 @@ class TestCifParsing(BaseTest.CrystalTest):
         alpha, beta, gamma = 90,90,90
         
         lattice = Lattice.from_parameters(a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma)
-        empty_phase = CrystalStructure(lattice=lattice, basis=CrystalBasis.empty())
+        empty_phase = CrystalStructure(lattice=lattice, basis=None)
         empty_standardized = empty_phase.get_standardized()
-        self.assertTrue(len(empty_standardized.basis) == 0)
+        self.assertTrue(empty_standardized.basis is None)
+
+
 
         nonempty_phase = CrystalStructure.from_cif(cif_content=CrystalExamples.get_cif_content())
         nonempty_standardized = nonempty_phase.get_standardized()

@@ -123,7 +123,7 @@ class XrdData(Serializable):
             return False
 
         if label_type == LabelType.lattice:
-            return True
+            return not powder_experiment.phases[0].lattice is None
         elif label_type == LabelType.spg:
             return powder_experiment.phases[0].spacegroup is not None
         elif label_type == LabelType.composition:
@@ -133,6 +133,6 @@ class XrdData(Serializable):
         elif label_type == LabelType.crystallite_size:
             return powder_experiment.crystallite_size_nm is not None
         elif label_type == LabelType.basis:
-            return len(powder_experiment.phases[0].basis.atom_sites) > 0
+            return not powder_experiment.phases[0].basis is None
         else:
             raise ValueError(f'Label type {label_type} is not supported.')
