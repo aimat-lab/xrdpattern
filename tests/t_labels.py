@@ -49,5 +49,4 @@ class TestTensorization(Unittest):
         return PowderExperiment(phases=[crystal_structure], xray_info=xray_info, crystallite_size_nm=10, temp_K=300)
 
 if __name__ == "__main__":
-    TestPowderExperiment.execute_all()
-    # TestTensorization.execute_all()
+    TestTensorization.execute_all()

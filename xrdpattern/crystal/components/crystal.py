@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import logging
 from dataclasses import dataclass, asdict
@@ -19,8 +20,8 @@ CrystalSystem = Literal["cubic", "hexagonal", "monoclinic", "orthorhombic", "tet
 
 @dataclass
 class CrystalStructure(JsonDataclass):
-    lattice : Lattice
-    basis : CrystalBasis
+    lattice : Optional[Lattice]
+    basis : Optional[CrystalBasis]
     spacegroup : Optional[int] = None
     chemical_composition : Optional[str] = None
     wyckoff_symbols : Optional[list[str]] = None
@@ -30,8 +31,21 @@ class CrystalStructure(JsonDataclass):
         if not self.phase_fraction is None:
             if not 0 <= self.phase_fraction <= 1:
                 raise ValueError(f'Phase fraction must be between 0 and 1. Got {self.phase_fraction}')
-        if not len(self.basis) == 0:
+        if not self.lattice is None:
+            for p in self.lattice.parameters:
+                if p != p:
+                    raise ValueError(f'Lattice parameters {self.lattice.parameters} contain nan values')
+        if self.phase_fraction != self.phase_fraction:
+            raise ValueError(f'Phase fraction {self.phase_fraction} is nan')
+
+        if not self.basis is None:
             self.calculate_properties()
+
+
+
+    @classmethod
+    def make_empty(cls):
+        return CrystalStructure(lattice=None, basis=None)
 
     @classmethod
     def from_cif(cls, cif_content : str) -> CrystalStructure:
@@ -85,7 +99,7 @@ class CrystalStructure(JsonDataclass):
     # properties
 
     def calculate_properties(self):
-        if len(self.basis) == 0:
+        if self.basis is None:
             raise ValueError('Base is empty! Cannot calculate properties of empty crystal. Aborting ...')
 
         pymatgen_structure = self.to_pymatgen()
@@ -97,10 +111,14 @@ class CrystalStructure(JsonDataclass):
         self.chemical_composition = pymatgen_structure.composition.formula
 
     def get_standardized(self) -> CrystalStructure:
-        struct = self.to_pymatgen() if len(self.basis) > 0 else Structure(self.lattice, ["H"], [[0, 0, 0]])
+        if self.lattice is None:
+            return copy.deepcopy(self)
+
+        struct = self.to_pymatgen() if not self.basis is None else Structure(self.lattice, ["H"], [[0, 0, 0]])
         analzyer = SpacegroupAnalyzer(structure=struct)
         std_struct = analzyer.get_conventional_standard_structure()
-        if len(self.basis) == 0:
+
+        if self.basis is None:
             return CrystalStructure(lattice=std_struct.lattice, basis=CrystalBasis.empty())
         else:
             return CrystalStructure.from_pymatgen(pymatgen_structure=std_struct)
