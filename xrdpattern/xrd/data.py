@@ -109,8 +109,13 @@ class XrdData(Serializable):
         return self.powder_experiment.is_simulated
 
     @property
-    def is_labeled(self) -> bool:
+    def is_partially_labeled(self) -> bool:
         return any(self.has_label(label_type=lt) for lt in LabelType.get_main_labels())
+
+    @property
+    def is_fully_labeled(self):
+        lattice_label, basis_label = LabelType.lattice, LabelType.basis
+        return self.has_label(label_type=lattice_label) and self.has_label(label_type=basis_label)
 
     def has_label(self, label_type: LabelType) -> bool:
         powder_experiment = self.powder_experiment

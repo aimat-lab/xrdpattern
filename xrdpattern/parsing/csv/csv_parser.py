@@ -106,7 +106,8 @@ class CsvParser:
     def is_numerical(values : list[str]) -> bool:
         try:
             for x in values:
-                float(x)
+                val = float(x)
+                assert(val == val)
             return True
         except:
             return False
@@ -137,3 +138,4 @@ def qvalues_to_copper_angles(qvalues : list[float]) -> list[float]:
     two_theta_degs = [2*math.degrees(theta) for theta in theta_values_rad]
 
     return two_theta_degs
+

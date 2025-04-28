@@ -131,4 +131,4 @@ class LabelType(Enum):
 
     @classmethod
     def get_main_labels(cls) -> list[LabelType]:
-        return [LabelType.lattice, LabelType.spg, LabelType.basis, LabelType.composition]
+        return [LabelType.composition,LabelType.spg, LabelType.lattice, LabelType.basis]
