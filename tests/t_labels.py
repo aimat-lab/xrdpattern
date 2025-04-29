@@ -1,7 +1,7 @@
 from holytools.devtools import Unittest
 from pymatgen.core import Lattice
 
-from xrdpattern.crystal import CrystalStructure, CrystalBasis
+from xrdpattern.crystal import CrystalStructure
 from xrdpattern.xrd import PowderExperiment, XrayInfo
 from xrdpattern.xrd.experiment import ExperimentTensor
 

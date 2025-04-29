@@ -41,7 +41,7 @@ class CrystalBasis(Serializable):
         self.atom_sites.append(item)
 
     def __add__(self, other : list[AtomSite]):
-        new_base = CrystalBasis()
+        new_base = CrystalBasis(atomic_sites=[])
         for site in self:
             new_base.append(site)
         for site in other:
