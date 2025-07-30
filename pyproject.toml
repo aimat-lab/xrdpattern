@@ -26,15 +26,18 @@ dependencies = [
     "distlib==0.3.9"
 ]
 
+#Uncomment the following lines to enable to use of xylib
+#xylib is a C++ library for reading and writing various X-ray diffraction file formats
+#xylib is not a Python package, but a C++ library that can be used
+#through a Python wrapper. The wrapper is generated using SWIG.
 
+#[tool.deptry.per_rule_ignores]
+#DEP002 = ["openpyxl"]
+#DEP001 = ["mpl_toolkits", "xylib"]
 
-[tool.deptry.per_rule_ignores]
-DEP002 = ["openpyxl"]
-DEP001 = ["mpl_toolkits", "xylib"]
-
-[tool.setuptools]
-ext-modules = [{name = "_xylib",sources = ["xylib/philips_udf.cpp","xylib/uxd.cpp","xylib/winspec_spe.cpp","xylib/xrdml.cpp","xylib/xfit_xdd.cpp","xylib/cache.cpp","xylib/bruker_raw.cpp","xylib/spectra.cpp","xylib/riet7.cpp","xylib/csv.cpp","xylib/specsxy.cpp","xylib/bruker_spc.cpp","xylib/pdcif.cpp","xylib/canberra_mca.cpp","xylib/xylib.cpp","xylib/philips_raw.cpp","xylib/vamas.cpp","xylib/rigaku_dat.cpp","xylib/util.cpp","xylib/cpi.cpp","xylib/text.cpp","xylib/dbws.cpp","xylib/canberra_cnf.cpp","xylib/xsyg.cpp","xylib/chiplot.cpp", "xylib.i"],include-dirs = ["."],language = "c++",swig-opts = ["-c++"]}]
-py-modules = ["xylib"]
+#[tool.setuptools]
+#ext-modules = [{name = "_xylib",sources = ["xylib/philips_udf.cpp","xylib/uxd.cpp","xylib/winspec_spe.cpp","xylib/xrdml.cpp","xylib/xfit_xdd.cpp","xylib/cache.cpp","xylib/bruker_raw.cpp","xylib/spectra.cpp","xylib/riet7.cpp","xylib/csv.cpp","xylib/specsxy.cpp","xylib/bruker_spc.cpp","xylib/pdcif.cpp","xylib/canberra_mca.cpp","xylib/xylib.cpp","xylib/philips_raw.cpp","xylib/vamas.cpp","xylib/rigaku_dat.cpp","xylib/util.cpp","xylib/cpi.cpp","xylib/text.cpp","xylib/dbws.cpp","xylib/canberra_cnf.cpp","xylib/xsyg.cpp","xylib/chiplot.cpp", "xylib.i"],include-dirs = ["."],language = "c++",swig-opts = ["-c++"]}]
+#py-modules = ["xylib"]
 
 
 [tool.setuptools.packages.find]

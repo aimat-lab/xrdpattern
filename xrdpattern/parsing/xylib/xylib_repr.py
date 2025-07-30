@@ -5,7 +5,14 @@ import os
 from tempfile import NamedTemporaryFile
 from typing import Optional
 
-import xylib
+try:
+    import xylib
+except ImportError:
+    import warnings
+    warnings.warn("""xylib is not installed. Setting xylib module to None.
+                  This will result in errors when using this module. 
+                  Please install xylib to use this module.""")
+    xylib = None
 
 __version__ = xylib.xylib_get_version()
 
