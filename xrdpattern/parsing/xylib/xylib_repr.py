@@ -7,6 +7,7 @@ from typing import Optional
 
 try:
     import xylib
+    __version__ = xylib.xylib_get_version()
 except ImportError:
     import warnings
     warnings.warn("""xylib is not installed. Setting xylib module to None.
@@ -14,7 +15,7 @@ except ImportError:
                   Please install xylib to use this module.""")
     xylib = None
 
-__version__ = xylib.xylib_get_version()
+
 
 import re
 from dataclasses import dataclass
